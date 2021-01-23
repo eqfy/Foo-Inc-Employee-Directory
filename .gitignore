@@ -9,7 +9,7 @@ logs
 **/*.backup.*
 **/*.back.*
 Frontend/build
-
+Frontend/.eslintcache
 node_modules
 bower_components
 

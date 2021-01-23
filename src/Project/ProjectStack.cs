@@ -12,7 +12,7 @@ namespace Project
         {
             // The code that defines your stack goes here
             //S3 Bucket to hold all the website related files
-            Bucket websiteBucket = new Bucket(this, "websiteBucket", new BucketProps{
+            Bucket websiteBucket = new Bucket(this, "webbsiteBucket", new BucketProps{
                 Versioned = true,
                 PublicReadAccess = true,
                 WebsiteIndexDocument = "index.html"
@@ -26,6 +26,7 @@ namespace Project
                 Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
                 Handler = "Handler::Handler.Function::Get" 
             });
+            
 
 
             //APIGateway
@@ -35,7 +36,7 @@ namespace Project
             apiGateway.LambdaIntegration getEmployeeIntegration =  new apiGateway.LambdaIntegration(getEmployees);
             apiGateway.Method getEmployeeMethod =  employeeResource.AddMethod("GET", getEmployeeIntegration);
 
-            s3dep.ISource[] temp = {s3dep.Source.Asset("./frontEnd")};
+            s3dep.ISource[] temp = {s3dep.Source.Asset("./FrontEnd/build")};
             //deploy the frontend to the s3 bucket
             new s3dep.BucketDeployment(this,"DeployWebsite", new s3dep.BucketDeploymentProps{
                 Sources = temp,
