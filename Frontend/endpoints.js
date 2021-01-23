@@ -1,0 +1,1 @@
+var apiEndpoint = https://${Token[TOKEN.101]}.execute-api.${Token[AWS.Region.4]}.${Token[AWS.URLSuffix.1]}/${Token[TOKEN.119]}/
