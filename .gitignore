@@ -12,6 +12,12 @@ Frontend/build
 Frontend/.eslintcache
 node_modules
 bower_components
+src/Project/obj
+Handler/src/Handler/bin
+Handler/src/Handler/obj
+cdk.out
+.vscode
+src/Project/bin
 
 *.sublime*
 

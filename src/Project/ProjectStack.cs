@@ -10,13 +10,13 @@ namespace Project
     {
         internal ProjectStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
         {
-            // The code that defines your stack goes here
+            // This code has been moved to the frontend stack
             //S3 Bucket to hold all the website related files
-            Bucket websiteBucket = new Bucket(this, "webbsiteBucket", new BucketProps{
+            /*Bucket websiteBucket = new Bucket(this, "webbsiteBucket", new BucketProps{
                 Versioned = true,
                 PublicReadAccess = true,
                 WebsiteIndexDocument = "index.html"
-            });
+            });*/
 
             
 
@@ -36,16 +36,20 @@ namespace Project
             apiGateway.LambdaIntegration getEmployeeIntegration =  new apiGateway.LambdaIntegration(getEmployees);
             apiGateway.Method getEmployeeMethod =  employeeResource.AddMethod("GET", getEmployeeIntegration);
 
-            s3dep.ISource[] temp = {s3dep.Source.Asset("./FrontEnd/build")};
+
+            //This code has been moved to the frontend stack
+            /*s3dep.ISource[] temp = {s3dep.Source.Asset("./FrontEnd/build")};
             //deploy the frontend to the s3 bucket
             new s3dep.BucketDeployment(this,"DeployWebsite", new s3dep.BucketDeploymentProps{
                 Sources = temp,
                 DestinationBucket = websiteBucket
-            });
+            });*/
 
-            //TODO find a way to properly pass the enpoint to the frontend
-            string text = "var apiEndpoint = " + api.UrlForPath();
-            System.IO.File.WriteAllText("./Frontend/endpoints.js", text);
+
+
+            //CfnOutput output = new CfnOutput(this, "endpoint output", new CfnOutputProps{
+            //    Value = api.Url, ExportName = "gateWayURL"
+            //});
         }
     }
 }

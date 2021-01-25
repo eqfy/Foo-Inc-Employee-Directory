@@ -11,7 +11,8 @@ namespace Project
         {
             var app = new App();
             new ProjectStack(app, "ProjectStack");
-            app.Synth();   
+            new FrontendStack(app, "FrontendStack");
+            app.Synth();
         }
     }
 }
