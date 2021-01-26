@@ -17,5 +17,5 @@ jobs:
         AWS_S3_BUCKET: ${{ secrets.MOHSIN_BUCKET }}
         AWS_ACCESS_KEY_ID: ${{ secrets.MOHSIN_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.MOHSIN_SECRET_ACCESSKEY }}
-        AWS_REGION: 'us-west-2'   # optional: defaults to us-east-1
+        AWS_REGION: 'us-west-2'   # optional: default to us-east-1
         SOURCE_DIR: 'Frontend/build'      # optional: defaults to entire repository
