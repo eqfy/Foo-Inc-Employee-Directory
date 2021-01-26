@@ -21,9 +21,10 @@ namespace Project
             
 
             //Lambdas
+            //"./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"
             lambda.Function getEmployees = new lambda.Function(this,"getEmployees", new lambda.FunctionProps{
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
-                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/Handler.zip"),
                 Handler = "Handler::Handler.Function::Get" 
             });
             
