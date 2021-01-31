@@ -4,7 +4,7 @@ import "./App.css";
 import Routes from "./Routes";
 import Nav from "react-bootstrap/Nav";
 import { LinkContainer } from "react-router-bootstrap";
-// import { Auth } from "aws-amplify";
+
 
 // function App() {
 //   return (

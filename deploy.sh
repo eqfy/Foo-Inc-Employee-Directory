@@ -4,9 +4,9 @@ cd Handler/src/Handler
 dotnet build -c Release
 dotnet lambda package
 cd ../../..
+cdk deploy ProjectStack --outputs-file Frontend/src/endpoint.json
 cd Frontend
 yarn install
 yarn build
 cd ..
-cdk deploy ProjectStack --outputs-file Frontend/build/endpoint.json
 cdk deploy FrontendStack

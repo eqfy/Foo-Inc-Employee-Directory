@@ -4,8 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from 'react-router-dom';
-// import { Amplify } from 'aws-amplify';
-// import config from './config';
+import { Amplify } from 'aws-amplify';
+import config from './config';
 
 // ReactDOM.render(
 //   <React.StrictMode>
@@ -15,17 +15,17 @@ import { BrowserRouter as Router } from 'react-router-dom';
 // );
 
 
-// Amplify.configure({
-//   API: {
-//     endpoints: [
-//       {
-//         name: "search",
-//         endpoint: config.apiGateway.URL,
-//         region: config.apiGateway.REGION
-//       },
-//     ]
-//   }
-// });
+Amplify.configure({
+  API: {
+    endpoints: [
+      {
+        name: "search",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION
+      },
+    ]
+  }
+});
 
 ReactDOM.render(
   <React.StrictMode>
