@@ -4,11 +4,13 @@ import { API } from "aws-amplify";
 
 export default function Home() {
 
-  API.get("search", "/employee").then(response => {
+  var data = API.get("search", "/employee").then(response => {
     console.log(response)
   }).catch(error => {
     console.log(error)
-  })
+  });
+  console.log(data);
+
   return (
     <div className="Home">
       <div className="lander">

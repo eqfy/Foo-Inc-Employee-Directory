@@ -30,7 +30,7 @@ namespace Handler
             var response = new APIGatewayProxyResponse
             {
                 StatusCode = 200,
-                Body = "",
+                Body = "JOHN DOE",
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
