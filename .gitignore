@@ -19,6 +19,7 @@ cdk.out
 .vscode
 src/Project/bin
 
+endpoint.json
 *.sublime*
 
 psd
