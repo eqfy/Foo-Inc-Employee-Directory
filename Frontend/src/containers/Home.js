@@ -2,7 +2,7 @@ import React from "react";
 import "./Home.css";
 // import { API } from "aws-amplify";
 
-export default async function Home() {
+export default function Home() {
 
 
   return (
