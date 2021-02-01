@@ -3,6 +3,8 @@ using Amazon.CDK.AWS.S3;
 using apiGateway = Amazon.CDK.AWS.APIGateway;
 using lambda = Amazon.CDK.AWS.Lambda;
 using s3dep = Amazon.CDK.AWS.S3.Deployment;
+using rds = Amazon.CDK.AWS.RDS;
+using ec2 = Amazon.CDK.AWS.EC2;
 
 namespace Project
 {
@@ -37,6 +39,24 @@ namespace Project
             apiGateway.LambdaIntegration getEmployeeIntegration =  new apiGateway.LambdaIntegration(getEmployees);
             apiGateway.Method getEmployeeMethod =  employeeResource.AddMethod("GET", getEmployeeIntegration);
 
+            ec2.Vpc ourVpc = new ec2.Vpc(this, "VPC");
+            //Database
+            //Oracle 11.2.0.4.v25
+            rds.DatabaseInstance database = new rds.DatabaseInstance(this, "database", new rds.DatabaseInstanceProps{
+                Engine = rds.DatabaseInstanceEngine.Postgres(new rds.PostgresInstanceEngineProps{Version = rds.PostgresEngineVersion.VER_12}),                    
+                InstanceType = ec2.InstanceType.Of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.MICRO),
+                Vpc = ourVpc,
+                VpcSubnets = new ec2.SubnetSelection{SubnetType = ec2.SubnetType.PUBLIC},
+                AllocatedStorage = 10,
+                PubliclyAccessible = true             
+            });
+
+            database.Connections.AllowFromAnyIpv4(ec2.Port.Tcp(5432));
+
+            new CfnOutput(this, "SQLserverEndpoint", new CfnOutputProps{
+                Value = database.DbInstanceEndpointAddress
+            });
+            
 
             //This code has been moved to the frontend stack
             /*s3dep.ISource[] temp = {s3dep.Source.Asset("./FrontEnd/build")};
