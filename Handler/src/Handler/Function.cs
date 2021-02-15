@@ -92,13 +92,14 @@ namespace Handler
             con.Open();
             LambdaLogger.Log("After con open");
 
-            var sql = "SELECT NOW()";
+            var sql = "Select * FROM \"Employee\"";
 
             using var cmd = new NpgsqlCommand(sql, con);
             //using var cmd = new MySqlCommand(sql, con);
             LambdaLogger.Log("cmd created");
 
-            var version = cmd.ExecuteScalar().ToString();
+            //var version = cmd.ExecuteScalar().ToString();
+            var version = cmd.ExecuteReader().ToString();
             LambdaLogger.Log("after cmd executed");
             LambdaLogger.Log(version);
 
@@ -117,6 +118,105 @@ namespace Handler
             };
 
             return response;
+        }
+
+        public APIGatewayProxyResponse Init(APIGatewayProxyRequest request, ILambdaContext context)
+        {
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+
+            var sql = "CREATE TABLE \"LocationCompany\" (" + 
+            "\"CompanyCode\" varchar(2) PRIMARY KEY NOT NULL," +
+            "\"Label\" varchar(20) NOT NULL," +
+            "\"ManagerEmployeeNumber\" varchar(10) NOT NULL" +
+        ");"+
+        "CREATE TABLE \"LocationOffice\" (" +
+            "\"CompanyCode\" varchar(2) NOT NULL,"+
+            "\"OfficeCode\" varchar(2) NOT NULL,"+
+            "\"Label\" varchar(20) NOT NULL,"+
+            "\"ManagerEmployeeNumber\" varchar(10) NOT NULL,"+
+            "PRIMARY KEY (\"CompanyCode\", \"OfficeCode\")"+
+        ");"+
+        "CREATE TABLE \"LocationGroup\" ("+
+            "\"CompanyCode\" varchar(2) NOT NULL,"+
+            "\"OfficeCode\" varchar(2) NOT NULL,"+
+            "\"GroupCode\" varchar(2) NOT NULL,"+
+            "\"Label\" varchar(20) NOT NULL,"+
+            "\"ManagerEmployeeNumber\" varchar(10) NOT NULL,"+
+            "PRIMARY KEY (\"CompanyCode\", \"OfficeCode\", \"GroupCode\")"+
+        ");"+
+        "CREATE TABLE \"LocationPhysical\" ("+
+            "\"PhysicalLoacationId\" varchar(20) PRIMARY KEY NOT NULL,"+
+            "\"Label\" varchar(100) NOT NULL,"+
+            "\"SortValue\" varchar(100) NOT NULL"+
+        ");"+
+        "CREATE TABLE \"SkillCategory\" ("+
+            "\"SkillCategoryId\" varchar(20) PRIMARY KEY NOT NULL,"+
+            "\"Label\" varchar(100) NOT NULL,"+
+            "\"SortValue\" varchar(10) NOT NULL"+
+        ");"+
+        "CREATE TABLE \"Skill\" ("+
+            "\"SkillCategoryId\" varchar(32) NOT NULL,"+
+            "\"SkillId\" varchar(32) NOT NULL,"+
+            "\"Label\" varchar(100) NOT NULL,"+
+            "\"SortValue\" varchar(10) NOT NULL,"+
+            "PRIMARY KEY (\"SkillCategoryId\", \"SkillId\")"+
+        ");"+
+        "CREATE TABLE \"Employee\" ("+
+            "\"EmployeeNumber\" varchar(10) PRIMARY KEY NOT NULL,"+
+            "\"CompanyCode\" varchar(2) NOT NULL,"+
+            "\"OfficeCode\" varchar(2) NOT NULL,"+
+            "\"GroupCode\" varchar(2) NOT NULL,"+
+            "\"LastName\" varchar(50),"+
+            "\"FirstName\" varchar(25),"+
+            "\"Title\" varchar(10),"+
+            "\"HireDate\" date,"+
+            "\"TerminateDate\" date,"+
+            "\"SupervisorEmployeeNumber\" varchar(10) NOT NULL,"+
+            "\"YearsPriorExperience\" numeric(3,1),"+
+            "\"Email\" varchar(50),"+
+            "\"WorkPhone\" varchar(24),"+
+            "\"WorkCell\" varchar(24),"+
+            "\"PhysicalLoacationId\" varchar(20) NOT NULL,"+
+            "\"PhotoUrl\" varchar(255),"+
+            "\"isContractor\" boolean NOT NULL DEFAULT false"+
+        ");"+
+        "CREATE TABLE \"EmployeeSkills\" ("+
+            "\"EmployeeNumber\" varchar(10) NOT NULL,"+
+            "\"SkillCategoryId\" varchar(32) NOT NULL,"+
+            "\"SkillId\" varchar(32) NOT NULL,"+
+            "PRIMARY KEY (\"EmployeeNumber\", \"SkillCategoryId\", \"SkillId\")"+
+        ");"+
+        "ALTER TABLE \"LocationOffice\" ADD FOREIGN KEY (\"ManagerEmployeeNumber\") REFERENCES \"Employee\" (\"EmployeeNumber\");"+
+        "ALTER TABLE \"LocationOffice\" ADD FOREIGN KEY (\"CompanyCode\") REFERENCES \"LocationCompany\" (\"CompanyCode\");"+
+        "ALTER TABLE \"Employee\" ADD FOREIGN KEY (\"PhysicalLoacationId\") REFERENCES \"LocationPhysical\" (\"PhysicalLoacationId\");"+
+        "ALTER TABLE \"Employee\" ADD FOREIGN KEY (\"GroupCode\", \"OfficeCode\", \"CompanyCode\") REFERENCES \"LocationGroup\" (\"GroupCode\", \"OfficeCode\", \"CompanyCode\");"+
+        "ALTER TABLE \"Employee\" ADD FOREIGN KEY (\"SupervisorEmployeeNumber\") REFERENCES \"Employee\" (\"EmployeeNumber\");"+
+        "ALTER TABLE \"LocationCompany\" ADD FOREIGN KEY (\"ManagerEmployeeNumber\") REFERENCES \"Employee\" (\"EmployeeNumber\");"+
+        "ALTER TABLE \"LocationGroup\" ADD FOREIGN KEY (\"ManagerEmployeeNumber\") REFERENCES \"Employee\" (\"EmployeeNumber\");"+
+        "ALTER TABLE \"LocationGroup\" ADD FOREIGN KEY (\"OfficeCode\", \"CompanyCode\") REFERENCES \"LocationOffice\" (\"OfficeCode\", \"CompanyCode\");"+
+        "ALTER TABLE \"Skill\" ADD FOREIGN KEY (\"SkillCategoryId\") REFERENCES \"SkillCategory\" (\"SkillCategoryId\");"+
+        "ALTER TABLE \"EmployeeSkills\" ADD FOREIGN KEY (\"SkillId\", \"SkillCategoryId\") REFERENCES \"Skill\" (\"SkillId\", \"SkillCategoryId\");"+
+        "ALTER TABLE \"EmployeeSkills\" ADD FOREIGN KEY (\"EmployeeNumber\") REFERENCES \"Employee\" (\"EmployeeNumber\");";
+
+            using var cmd = new NpgsqlCommand(sql, con);
+            LambdaLogger.Log("cmd created");
+
+            var output = cmd.ExecuteNonQuery().ToString();
+
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = output,
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" } 
+                }
+            };
+
+            return response;
+
         }
     }
 }

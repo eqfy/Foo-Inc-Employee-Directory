@@ -109,6 +109,26 @@ namespace Project
             getEmployees.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getEmployees.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
 
+            
+            lambda.Function databaseInitLambda = new lambda.Function(this,"databaseInit", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::Init",//TODO fix
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                SecurityGroups = new[] {securityGroup}  
+            });
+
+            databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            databaseInitLambda.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            
+            /*
+            CustomResourceProvider databaseInit = new CustomResourceProvider(this,"databaseInit",new CustomResourceProviderProps{});
+            new CustomResource(this,"ffdfs", new CustomResourceProps{ServiceToken = databaseInit.ServiceToken});
+            */
             new CfnOutput(this, "SQLserverEndpoint", new CfnOutputProps{
                 Value = database.DbInstanceEndpointAddress
             });
