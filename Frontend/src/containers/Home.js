@@ -3,25 +3,21 @@ import "./Home.css";
 import { API } from "aws-amplify";
 
 export default function Home() {
+    var data = API.get("search", "employee")
+        .then((response) => {
+            console.log(response);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    console.log(data);
 
-  var data = API.get("search", "employee").then(response => {
-    console.log(response)
-  }).catch(error => {
-    console.log(error)
-  });
-  console.log(data);
-
-
-
-  return (
-    <div className="Home">
-      <div className="lander">
-        <h1>Main Dashboard</h1>
-        <p className="text-muted">AE Dashboard</p>
-      </div>
-    </div>
-  );
-
+    return (
+        <div className="Home">
+            <div className="lander">
+                <h1>Main Dashboard</h1>
+                <p className="text-muted">AE Dashboard</p>
+            </div>
+        </div>
+    );
 }
-
-
