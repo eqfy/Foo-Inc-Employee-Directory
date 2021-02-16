@@ -9,9 +9,10 @@ function Header(props) {
         <AppBar position="static">
             <StyledToolbar>
                 <StyledNavContainer>
-                    <StyledLink to="/">Search Home</StyledLink>
+                    <StyledLink to="/search">Search Home</StyledLink>
                     <StyledLink to="/profile">Profile View</StyledLink>
                     <StyledLink to="/orgchart">Org Chart</StyledLink>
+                    <StyledLink to="/">Dashboard (with redux demo)</StyledLink>
                 </StyledNavContainer>
             </StyledToolbar>
         </AppBar>
