@@ -48,7 +48,7 @@ function App(props) {
         </div>
       </Router>
       {/* {TODO delete the entire thing below} */}
-      <header className="App-header">
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Hello! Edit <code>src/App.js</code> and save to reload.
@@ -61,7 +61,7 @@ function App(props) {
         >
           Learn React
         </a>
-      </header>
+      </header> */}
       <pre>{JSON.stringify(props)}</pre>
       <button onClick={simpleAction}>Test redux action</button>
     </div>
