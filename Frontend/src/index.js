@@ -9,24 +9,24 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 Amplify.configure({
-  API: {
-    endpoints: [
-      {
-        name: "search",
-        endpoint: config.apiGateway.URL,
-        region: config.apiGateway.REGION,
-      },
-    ],
-  },
+    API: {
+        endpoints: [
+            {
+                name: "search",
+                endpoint: config.apiGateway.URL,
+                region: config.apiGateway.REGION,
+            },
+        ],
+    },
 });
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={configureStore()}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById("root")
+    <React.StrictMode>
+        <Provider store={configureStore()}>
+            <App />
+        </Provider>
+    </React.StrictMode>,
+    document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
