@@ -18,7 +18,9 @@ Handler/src/Handler/obj
 cdk.out
 .vscode
 src/Project/bin
+Frontend/.eslintcache
 
+endpoint.json
 *.sublime*
 
 psd
