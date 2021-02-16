@@ -5,8 +5,3 @@ dotnet build -c Release
 dotnet lambda package
 cd ../../..
 cdk deploy ProjectStack --outputs-file Frontend/src/endpoint.json
-cd Frontend
-yarn install
-yarn build
-cd ..
-cdk deploy FrontendStack

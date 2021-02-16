@@ -1,10 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
+import { Amplify } from "aws-amplify";
+import config from "./config";
 import configureStore from "./store";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+
+Amplify.configure({
+  API: {
+    endpoints: [
+      {
+        name: "search",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION,
+      },
+    ],
+  },
+});
 
 ReactDOM.render(
   <React.StrictMode>
