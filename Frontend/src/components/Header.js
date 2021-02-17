@@ -6,7 +6,7 @@ import styled from "styled-components";
 function Header(props) {
     // See React router for more info about headers
     return (
-        <AppBar position="static">
+        <AppBar position="fixed">
             <StyledToolbar>
                 <StyledNavContainer>
                     <StyledLink to="/search">Search Home</StyledLink>

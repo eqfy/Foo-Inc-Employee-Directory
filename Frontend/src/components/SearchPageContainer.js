@@ -4,9 +4,10 @@ import SearchArea from "./searchPage/SearchArea";
 
 export function SearchPageContainer(props) {
     return (
-        <div>
+        // TODO: Refactor so this div doesn't need to be added for every page container
+        <div className="page-container">
             <h1>Search page</h1>
-            <SearchArea></SearchArea>
+            <SearchArea />
         </div>
     );
 }

@@ -11,7 +11,7 @@ function App(props) {
         <div className="App">
             <Router>
                 <Header />
-                <div>{Routes()}</div>
+                {Routes()}
             </Router>
         </div>
     );
