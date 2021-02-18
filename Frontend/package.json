@@ -60,6 +60,6 @@
         }
     },
     "lint-staged": {
-        "*.{js,jsx,css,md}": "yarn run prettier"
+        "*.{js,jsx,css,md}": "prettier --write '**/*.?(ts|tsx|js|jsx|json)'"
     }
 }
