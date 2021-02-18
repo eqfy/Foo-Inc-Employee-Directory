@@ -4,13 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-//using System.Data.SqlClient;
-
-//using Microsoft.AspNet.Identity;
-//using Microsoft.AspNet.Identity.EntityFramework;
-
-
-//TODO download these
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -18,8 +11,6 @@ using Amazon.S3.Model;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 
-//using MySql.Data;
-//using MySql.Data.MySqlClient;
 using Npgsql;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
