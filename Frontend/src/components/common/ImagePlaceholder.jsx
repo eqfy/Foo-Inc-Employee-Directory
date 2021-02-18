@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function ImagePlaceholder() {
     return (
         <svg width="162" height="173" viewBox="0 0 162 173" fill="none">

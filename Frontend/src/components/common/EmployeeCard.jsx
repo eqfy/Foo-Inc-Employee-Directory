@@ -4,6 +4,7 @@ import ImagePlaceholder from "./ImagePlaceholder";
 import styled from "styled-components";
 import OrgChartIcon from "./OrgChartIcon";
 import "../common/Common.css";
+import React from "react";
 
 export default function EmployeeCard(props) {
     const { employee } = props;

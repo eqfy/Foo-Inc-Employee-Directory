@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function OrgChartIcon(props) {
     return (
         <svg width="24" height="25" viewBox="0 0 24 25" fill="none" {...props}>

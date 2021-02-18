@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppBar, Toolbar } from "@material-ui/core";
 import styled from "styled-components";
+import React from "react";
 
 function Header(props) {
-    // See React router for more info about headers
     return (
         <AppBar position="fixed">
             <StyledToolbar>
