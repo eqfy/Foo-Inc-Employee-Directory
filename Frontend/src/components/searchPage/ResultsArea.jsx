@@ -5,6 +5,8 @@ import styled from "styled-components";
 import data from "../../mocks/mockEmployees.json";
 import "../common/Common.css";
 
+const entriesPerPage = 6;
+
 const getEmployee = (index) => {
     if (index < data.length) {
         return (
@@ -24,14 +26,14 @@ function ResultsArea(props) {
     return (
         <>
             <div className="card-grid">
-                {getEmployee((page - 1) * 6 + 0)}
-                {getEmployee((page - 1) * 6 + 1)}
-                {getEmployee((page - 1) * 6 + 2)}
+                {getEmployee((page - 1) * entriesPerPage + 0)}
+                {getEmployee((page - 1) * entriesPerPage + 1)}
+                {getEmployee((page - 1) * entriesPerPage + 2)}
             </div>
             <div className="card-grid">
-                {getEmployee((page - 1) * 6 + 3)}
-                {getEmployee((page - 1) * 6 + 4)}
-                {getEmployee((page - 1) * 6 + 5)}
+                {getEmployee((page - 1) * entriesPerPage + 3)}
+                {getEmployee((page - 1) * entriesPerPage + 4)}
+                {getEmployee((page - 1) * entriesPerPage + 5)}
             </div>
             <StyledPagination
                 count={Math.max(Math.ceil(data.length / 6), 1)}
