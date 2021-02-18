@@ -1,7 +1,8 @@
 import { connect } from "react-redux";
+import "../common/Common.css";
 
 function SearchArea(props) {
-    return <div>I am the search area</div>;
+    return null;
 }
 
 export default connect()(SearchArea);

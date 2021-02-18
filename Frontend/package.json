@@ -7,6 +7,7 @@
     },
     "dependencies": {
         "@material-ui/core": "^4.11.3",
+        "@material-ui/lab": "^4.0.0-alpha.57",
         "@testing-library/jest-dom": "^5.11.4",
         "@testing-library/react": "^11.1.0",
         "@testing-library/user-event": "^12.1.10",
@@ -27,7 +28,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "prettier": "prettier --write '**/*.?(ts|tsx|js|jsx|json)'"
+        "prettier": "prettier --write '**/*.?(ts|tsx|js|jsx|json|css)'"
     },
     "eslintConfig": {
         "extends": [
