@@ -1,2 +1,2 @@
 import endpoints from "endpoint.js";
-console.log(endpoints.api)
+console.log(endpoints.api);

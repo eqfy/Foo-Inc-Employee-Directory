@@ -7,11 +7,4 @@ dotnet lambda package
 cd ../../..
 echo "***Deploying backend***"
 cdk deploy ProjectStack --outputs-file Frontend/src/endpoint.json
-cd Frontend
-echo "***Bulding frontend***"
-yarn install
-yarn build
-cd ..
-echo "***Deploying frontend***"
-cdk deploy FrontendStack
 echo "Done"

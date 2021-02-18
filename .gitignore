@@ -10,6 +10,7 @@ logs
 **/*.back.*
 Frontend/build
 Frontend/.eslintcache
+Frontend/src/aws-exports.js
 node_modules
 bower_components
 src/Project/obj
@@ -19,6 +20,7 @@ cdk.out
 .vscode
 src/Project/bin
 
+endpoint.json
 *.sublime*
 
 psd
