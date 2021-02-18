@@ -1,9 +1,9 @@
-import { Card, CardContent, Typography } from '@material-ui/core';
+import { Card, CardContent, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import ImagePlaceholder from './ImagePlaceholder';
-import styled from 'styled-components';
-import OrgChartIcon from './OrgChartIcon';
-import "../common/Common.css"
+import ImagePlaceholder from "./ImagePlaceholder";
+import styled from "styled-components";
+import OrgChartIcon from "./OrgChartIcon";
+import "../common/Common.css";
 
 export default function EmployeeCard(props) {
     const { employee } = props;
@@ -17,9 +17,16 @@ export default function EmployeeCard(props) {
                         </Link>
                     </PositionDiv>
                     <ImagePlaceholder />
-                    <Typography variant="body1" color="textPrimary" component="p">
-                        <b>Name:</b> {`${employee.firstName} ${employee.lastName}`}<br />
-                        <b>Title:</b> {employee.title}<br />
+                    <Typography
+                        variant="body1"
+                        color="textPrimary"
+                        component="p"
+                    >
+                        <b>Name:</b>{" "}
+                        {`${employee.firstName} ${employee.lastName}`}
+                        <br />
+                        <b>Title:</b> {employee.title}
+                        <br />
                     </Typography>
                 </EmployeeCardContent>
             </Link>
@@ -30,7 +37,7 @@ export default function EmployeeCard(props) {
 const StyledCard = styled(Card)`
     box-shadow: none !important;
     max-width: 250px;
-    max-height: 275px; 
+    max-height: 275px;
 `;
 
 const EmployeeCardContent = styled(CardContent)`
@@ -41,8 +48,8 @@ const EmployeeCardContent = styled(CardContent)`
     box-sizing: border-box;
     border-radius: 25px;
     > * {
-      width: 100%;
-      text-align: center;
+        width: 100%;
+        text-align: center;
     }
 `;
 
@@ -54,13 +61,13 @@ const PositionDiv = styled.div`
 `;
 
 const StyledOrgChartIcon = styled(OrgChartIcon)`
-  position: absolute;
-  rect {
-    transition: fill .25s
-  }
-  &:hover {
-      rect {
-          fill: midnightblue;
-      }
-  }
+    position: absolute;
+    rect {
+        transition: fill 0.25s;
+    }
+    &:hover {
+        rect {
+            fill: midnightblue;
+        }
+    }
 `;

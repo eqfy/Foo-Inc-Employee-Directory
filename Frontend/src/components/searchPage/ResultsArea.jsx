@@ -7,9 +7,13 @@ import "../common/Common.css";
 
 const getEmployee = (index) => {
     if (index < data.length) {
-        return <div className="card-grid-col"><EmployeeCard employee={data[index]} /></div>
+        return (
+            <div className="card-grid-col">
+                <EmployeeCard employee={data[index]} />
+            </div>
+        );
     }
-}
+};
 
 function ResultsArea(props) {
     const [page, setPage] = React.useState(1);
@@ -29,7 +33,11 @@ function ResultsArea(props) {
                 {getEmployee((page - 1) * 6 + 4)}
                 {getEmployee((page - 1) * 6 + 5)}
             </div>
-            <StyledPagination count={Math.max(Math.ceil(data.length / 6), 1)} page={page} onChange={handleChange} />
+            <StyledPagination
+                count={Math.max(Math.ceil(data.length / 6), 1)}
+                page={page}
+                onChange={handleChange}
+            />
         </>
     );
 }

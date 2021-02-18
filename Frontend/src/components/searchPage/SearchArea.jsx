@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
-import ResultsArea from './ResultsArea';
+import ResultsArea from "./ResultsArea";
 import styled from "styled-components";
-import "../common/Common.css"
+import "../common/Common.css";
 
 function SearchArea(props) {
     return (

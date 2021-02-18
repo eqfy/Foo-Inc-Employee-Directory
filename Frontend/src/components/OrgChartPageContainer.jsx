@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
-import { PageContainer } from './common/PageContainer';
+import { PageContainer } from "./common/PageContainer";
 
 export function OrgChartPageContainer(props) {
     return (

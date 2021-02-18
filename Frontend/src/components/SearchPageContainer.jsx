@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
-import { PageContainer } from './common/PageContainer';
+import { PageContainer } from "./common/PageContainer";
 import SearchArea from "./searchPage/SearchArea";
 
 export function SearchPageContainer(props) {

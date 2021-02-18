@@ -50,16 +50,6 @@
     },
     "homepage": ".",
     "devDependencies": {
-        "husky": "^5.0.9",
-        "lint-staged": "^10.5.4",
         "prettier": "2.2.1"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "yarn run prettier"
-        }
-    },
-    "lint-staged": {
-        "src/**/*.{js,jsx,css,md}": "prettier --write '**/*.?(ts|tsx|js|jsx|json)'"
     }
 }

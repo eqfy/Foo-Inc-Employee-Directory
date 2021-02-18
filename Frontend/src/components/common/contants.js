@@ -1,2 +1,1 @@
-      export const NAVBAR_HEIGHT = "65px";
-// asd
+export const NAVBAR_HEIGHT = "65px";
