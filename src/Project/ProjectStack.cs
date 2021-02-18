@@ -14,18 +14,20 @@ namespace Project
         internal ProjectStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
         {
 
+            /*
             //How to get the default VPC
-            /*ec2.IVpc vpc = ec2.Vpc.FromLookup(this, "VPC", new ec2.VpcLookupOptions{
+            ec2.IVpc vpc = ec2.Vpc.FromLookup(this, "VPC", new ec2.VpcLookupOptions{
                 // This imports the default VPC but you can also
                 // specify a 'vpcName' or 'tags'.
                 IsDefault = true
-            });*/
+            });
 
             //If this works make the security group id an environment variable
-            //ec2.ISecurityGroup SG = ec2.SecurityGroup.FromLookup(this, "SG", "sg-ae37e689");
-
+            ec2.ISecurityGroup securityGroup = ec2.SecurityGroup.FromLookup(this, "SG", "sg-ae37e689");
+            */
 
  
+            
             //Virtual private cloud
             //reference: https://blog.codecentric.de/en/2019/09/aws-cdk-create-custom-vpc/
             ec2.Vpc vpc = new ec2.Vpc(this, "VPC", new ec2.VpcProps{
@@ -39,6 +41,7 @@ namespace Project
                 NatGateways = 0
             });
 
+
             //Security group
             ec2.SecurityGroup securityGroup = new ec2.SecurityGroup(this, "security-group", new ec2.SecurityGroupProps{
                 Vpc = vpc,
@@ -46,9 +49,23 @@ namespace Project
                 SecurityGroupName = "inSecurityGroup",
             });
             securityGroup.AddIngressRule(ec2.Peer.Ipv4("10.0.0.0/16"), ec2.Port.Tcp(5432));
-
+            
             //Subnet
             ec2.SubnetSelection selection =  new ec2.SubnetSelection{SubnetType = ec2.SubnetType.ISOLATED};
+
+
+            //Add the VPC endpoint for the S3 bucket so the lambdas can read from the database scripts bucket
+            vpc.AddGatewayEndpoint("s3Endpoint", new ec2.GatewayVpcEndpointOptions{
+                Service = ec2.GatewayVpcEndpointAwsService.S3,
+                Subnets = (ec2.ISubnetSelection[])selection.Subnets
+            });
+
+
+
+
+
+            //database password no secretsManager
+            var databasePassword = new SecretValue("123456789");
 
             //This is a way to do it with the secrets manager
             /*var databasePassword = new Secret(this, "DatabasePassword", new SecretProps
@@ -58,10 +75,6 @@ namespace Project
                     PasswordLength = 20
                 }
             });*/
-
-
-            //database password no secretsManager
-            var databasePassword = new SecretValue("123456789");
 
             //Database
             rds.DatabaseInstance database = new rds.DatabaseInstance(this, "database", new rds.DatabaseInstanceProps{
@@ -103,17 +116,24 @@ namespace Project
             apiGateway.Method getEmployeeMethod =  employeeResource.AddMethod("GET", getEmployeeIntegration);
             
             
-            //Add database information to the lambda
-            //TODO pass the the needed info so there is no hardcoded stuff in the lambda
-            getEmployees.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
-            getEmployees.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
-            getEmployees.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+
 
             
             lambda.Function databaseInitLambda = new lambda.Function(this,"databaseInit", new lambda.FunctionProps{
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
                 Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
-                Handler = "Handler::Handler.Function::Init",//TODO fix
+                Handler = "Handler::Handler.Function::Init",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(30),
+                SecurityGroups = new[] {securityGroup}  
+            });
+
+            lambda.Function databaseDropAllLambda = new lambda.Function(this,"databaseDropAll", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::dropAll",
                 Vpc = vpc,
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
@@ -121,14 +141,41 @@ namespace Project
                 SecurityGroups = new[] {securityGroup}  
             });
 
+
+            //S3 Bucket to hold all Database scripts
+            Bucket databaseScriptsBucket = new Bucket(this, "databaseScriptsBucket", new BucketProps{
+                Versioned = true,
+                PublicReadAccess = false
+            });
+            databaseScriptsBucket.GrantRead(databaseInitLambda);
+            databaseScriptsBucket.GrantRead(databaseDropAllLambda);
+
+
+            s3dep.ISource[] temp = {s3dep.Source.Asset("./Database")};
+            //deploy the database scripts to the s3 bucket
+            new s3dep.BucketDeployment(this,"DeployDatabaseScripts", new s3dep.BucketDeploymentProps{
+                Sources = temp,
+                DestinationBucket = databaseScriptsBucket
+            });
+
+            //Add database information to the lambdas
+            getEmployees.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            getEmployees.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            getEmployees.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+
             databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             databaseInitLambda.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-            
-            /*
-            CustomResourceProvider databaseInit = new CustomResourceProvider(this,"databaseInit",new CustomResourceProviderProps{});
-            new CustomResource(this,"ffdfs", new CustomResourceProps{ServiceToken = databaseInit.ServiceToken});
-            */
+            databaseInitLambda.AddEnvironment("OBJECT_KEY", "dbInit.sql");
+            databaseInitLambda.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+            databaseDropAllLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            databaseDropAllLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            databaseDropAllLambda.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            databaseDropAllLambda.AddEnvironment("OBJECT_KEY", "DropAllTables.sql");
+            databaseDropAllLambda.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+
             new CfnOutput(this, "SQLserverEndpoint", new CfnOutputProps{
                 Value = database.DbInstanceEndpointAddress
             });

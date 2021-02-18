@@ -13,6 +13,27 @@
 * cdk deploy ProjectStack --outputs-file Frontend/build/endpoint.json
 * cdk deploy FrontendStack
 
+## How to initialize the Database
+After deploying everything else:
+* go to the AWS console in your browser
+* go to the lambda service
+* select the databaseInit lambda
+* Click the "test" button in the upper right
+* this should the ask you to create a test. All you have to do it is give it a name and click save
+* with your test selected from the drop down (it should be selected automatically) press test and wait
+* hopefully after a while (these lambdas have a long cold start time and is something we are looking into) the lambdas returns successfully
+* The database should now have all the table and data in it
+
+## Testing that the data got initialized in the database
+* go to the AWS console in your browser
+* go to the lambda service
+* select the getEmployees lambda
+* Click the "test" button in the upper right
+* this should the ask you to create a test. All you have to do it is give it a name and click save
+* with your test selected from the drop down (it should be selected automatically) press test and wait
+* hopefully after a while (these lambdas have a long cold start time and is something we are looking into) the lambdas returns successfully
+* There should be a bunch of number returned (It isn't displayed nicely but aslong as you see an output of a bunch of numbers then it's good)
+
 
 for lambdas (in Handler/src/Handler):
 * dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
@@ -21,6 +42,7 @@ for lambdas (in Handler/src/Handler):
 * dotnet add package Microsoft.EntityFrameworkCore.Tools --version 5.0.2
 * dotnet add package System.Data.SqlClient
 * dotnet add package Npgsql --version 5.0.3
+* dotnet add package AWSSDK.S3 --version 3.5.8.5
 
 
 ## Database:
