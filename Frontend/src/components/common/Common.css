@@ -1,14 +1,10 @@
-.page-container {
-  padding: 64px 25px 15px 25px;
-}
-
 .card-grid {
   display: flex;
   margin-bottom: 20px;
   justify-content: center;
 }
 
-.card-col {
+.card-grid-col {
   display: block;
   margin-right: 20px;
 }

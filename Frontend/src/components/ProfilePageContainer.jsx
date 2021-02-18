@@ -1,13 +1,12 @@
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
-import OrgChartIcon from './common/OrgChartIcon';
+import { PageContainer } from './common/PageContainer';
 
 export function ProfilePageContainer(props) {
     return (
-        <div className="page-container">
+        <PageContainer>
             <h1>Profile page</h1>
-            <OrgChartIcon />
-        </div>
+        </PageContainer>
     );
 }
 
