@@ -11,5 +11,3 @@ export default function ImagePlaceholder() {
     </svg>
   );
 }
-
-// Pre-commit test
