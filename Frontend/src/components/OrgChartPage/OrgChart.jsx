@@ -33,12 +33,19 @@ const useStyles = makeStyles({
         borderColor: "black",
         "&.current": {
             borderColor: "#00569C",
+            "&:hover": {
+                boxShadow: "1px 1px 2px 2px #004680",
+            },
         },
         "&.contractor": {
             borderColor: "#FF9900",
+            "&:hover": {
+                boxShadow: "1px 1px 2px 2px #CC7A00",
+            },
         },
         "&:hover": {
             cursor: "pointer",
+            boxShadow: "1px 1px 2px 2px black",
         },
         display: "flex",
     },
