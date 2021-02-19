@@ -1,0 +1,88 @@
+#orgChartTopArea {
+    display: flex;
+    list-style: none;
+}
+
+#searchLegendArea {
+    height: 150px;
+}
+
+#searchArea {
+    margin-top: 20px;
+    vertical-align: middle;
+    display: inline-flex;
+}
+
+#searchArea > * {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#legend {
+    float: right;
+    margin-right: 50px;
+    margin-top: 20px;
+    /* display: inline-flex; */
+    list-style: none;
+    font-size: 20px;
+}
+
+#legend li {
+    display: flex;
+    align-items: center;
+}
+
+#legend div {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.orange-background {
+    background: #ff9900;
+}
+
+.dark-blue-background {
+    background: #00569c;
+}
+
+.orgchart-container {
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 220px);
+    margin: 0;
+}
+
+.orgchart {
+    background: none;
+}
+
+.orgchart ul li .oc-node {
+    margin-bottom: 70px;
+}
+
+.orgchart ul li .oc-node.selected,
+.orgchart ul li .oc-node:hover {
+    background: none;
+}
+
+.orgchart > ul > li > ul li > .oc-node::before {
+    background-color: black;
+    height: 40px;
+    top: -36px;
+}
+
+.orgchart ul li .oc-node:not(:only-child)::after {
+    background-color: black;
+    height: 40px;
+    bottom: -36px;
+}
+
+.orgchart > ul > li > ul li::before,
+.orgchart > ul > li > ul li::after {
+    border-color: black;
+    top: -36px;
+}
