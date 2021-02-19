@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import { PageContainer } from "./common/PageContainer";
 import ResultsArea from "./searchPage/ResultsArea";
-import SearchArea from "./searchPage/SearchArea";
+import SearchArea from "./searchPage/searchArea/SearchArea";
 import FilterArea from "./searchPage/FilterArea";
 import { Grid, styled } from "@material-ui/core";
 import { SEARCH_AREA_WIDTH } from "./common/constants";

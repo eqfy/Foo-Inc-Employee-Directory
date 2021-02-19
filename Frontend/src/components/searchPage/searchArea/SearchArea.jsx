@@ -1,10 +1,9 @@
 import { Grid, styled } from "@material-ui/core";
 import React from "react";
 import { connect } from "react-redux";
-
-import "../common/Common.css";
 import ApplyFilterArea from "./ApplyFilterArea";
 import SearchByNameBar from "./SearchByNameBar";
+import "./SearchArea.css";
 
 function SearchArea() {
     return (
@@ -14,12 +13,13 @@ function SearchArea() {
             justify="center"
             alignItems="center"
             spacing={2}
+            className="search-area"
         >
             <StyledSearchAreaGridItem item>
                 <SearchByNameBar />
             </StyledSearchAreaGridItem>
             <StyledSearchAreaGridItem item>
-                <h5>Apply filters</h5>
+                <div className="heading">Apply filters</div>
             </StyledSearchAreaGridItem>
             <StyledSearchAreaGridItem item>
                 <ApplyFilterArea />
@@ -30,7 +30,6 @@ function SearchArea() {
 
 const StyledSearchAreaGridItem = styled(Grid)({
     width: "100%",
-    display: "flex",
 });
 
 export default connect()(SearchArea);
