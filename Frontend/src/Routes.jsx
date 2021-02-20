@@ -9,7 +9,7 @@ import SearchPageContainer from "./components/SearchPageContainer";
 export default function Routes() {
     return (
         <Switch>
-            <Route exact path="/profile">
+            <Route exact path="/profile/:employeeId">
                 <ProfilePageContainer />
             </Route>
             <Route exact path="/orgchart">

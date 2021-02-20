@@ -10,7 +10,8 @@ function Header(props) {
             <StyledToolbar>
                 <StyledNavContainer>
                     <StyledLink to="/search">Search Home</StyledLink>
-                    <StyledLink to="/profile">Profile View</StyledLink>
+                    {/* Profile view won't be accessible from the nav bar */}
+                    {/* <StyledLink to="/profile">Profile View</StyledLink> */}
                     <StyledLink to="/orgchart">Org Chart</StyledLink>
                     <StyledLink to="/">Dashboard (with redux demo)</StyledLink>
                 </StyledNavContainer>
