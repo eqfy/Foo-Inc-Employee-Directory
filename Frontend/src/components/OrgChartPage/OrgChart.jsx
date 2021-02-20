@@ -34,18 +34,18 @@ const useStyles = makeStyles({
         "&.current": {
             borderColor: "#00569C",
             "&:hover": {
-                boxShadow: "1px 1px 2px 2px #004680",
+                boxShadow: "0 0 3px 3px #004680",
             },
         },
         "&.contractor": {
             borderColor: "#FF9900",
             "&:hover": {
-                boxShadow: "1px 1px 2px 2px #CC7A00",
+                boxShadow: "0 0 3px 3px #CC7A00",
             },
         },
         "&:hover": {
             cursor: "pointer",
-            boxShadow: "1px 1px 2px 2px black",
+            boxShadow: "0 0 3px 3px black",
         },
         display: "flex",
     },
