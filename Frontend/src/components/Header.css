@@ -1,0 +1,17 @@
+.MuiToolbar-root {
+    background-color: white;
+}
+
+.MuiToolbar-root img {
+    height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.MuiToolbar-root a {
+    text-decoration: none;
+}
+
+.grow {
+    flex-grow: 1;
+}
