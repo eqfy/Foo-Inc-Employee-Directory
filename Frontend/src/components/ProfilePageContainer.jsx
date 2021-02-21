@@ -39,5 +39,5 @@ export function ProfilePageContainer(props) {
 export default withRouter(connect()(ProfilePageContainer));
 
 const StyledDiv = styled.div`
-    margin: 25px 0;
+    margin-bottom: 25px;
 `;
