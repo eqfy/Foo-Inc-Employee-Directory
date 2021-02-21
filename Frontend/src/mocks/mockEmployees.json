@@ -1,6 +1,9 @@
 [
     {
-        "employeeID": "10001",
+        "employeeId": "10001",
+        "companycode": "01",
+        "officecode": "01",
+        "groupcode": "01",
         "lastName": "Acme",
         "firstName": "Susan",
         "employmentType": "Salary",
@@ -13,10 +16,14 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/acmes.jpg"
+        "image": "some-url/acmes.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10002",
+        "employeeId": "10002",
+        "companycode": "01",
+        "officecode": "01",
+        "groupcode": "01",
         "lastName": "Johnson",
         "firstName": "Jill",
         "employmentType": "Salary",
@@ -29,10 +36,13 @@
         "workPhone": "604-123-5678",
         "workCell": "604-123-8765",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/johnsonj.jpg"
+        "image": "some-url/johnsonj.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10003",
+        "employeeId": "10003",
+        "companycode": "01",
+        "officecode": "01",
         "groupcode": "02",
         "lastName": "Sampson",
         "firstName": "Saul",
@@ -46,10 +56,13 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/sampsons.jpg"
+        "image": "some-url/sampsons.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10004",
+        "employeeId": "10004",
+        "companycode": "01",
+        "officecode": "01",
         "groupcode": "03",
         "lastName": "Da Silva",
         "firstName": "Gregore",
@@ -63,10 +76,13 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/dasilvag.jpg"
+        "image": "some-url/dasilvag.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10005",
+        "employeeId": "10005",
+        "companycode": "01",
+        "officecode": "01",
         "groupcode": "05",
         "lastName": "Conner",
         "firstName": "Connie",
@@ -80,10 +96,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/connerc.jpg"
+        "image": "some-url/connerc.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20006",
+        "employeeId": "20006",
         "companycode": "02",
         "officecode": "01",
         "groupcode": "02",
@@ -99,10 +116,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/broadfootb.jpg"
+        "image": "some-url/broadfootb.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20002",
+        "employeeId": "20002",
         "companycode": "02",
         "officecode": "01",
         "groupcode": "02",
@@ -118,10 +136,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/smitherss.jpg"
+        "image": "some-url/smitherss.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20003",
+        "employeeId": "20003",
         "companycode": "02",
         "officecode": "01",
         "groupcode": "03",
@@ -137,10 +156,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/joneso.jpg"
+        "image": "some-url/joneso.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20004",
+        "employeeId": "20004",
         "companycode": "02",
         "officecode": "02",
         "groupcode": "04",
@@ -156,10 +176,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/westersonw.jpg"
+        "image": "some-url/westersonw.jpg",
+        "skills": "Marketing & Sales: Customer Service, Management: Planning, Marketing & Sales: Preparing Marketing Materials"
     },
     {
-        "employeeID": "20005",
+        "employeeId": "20005",
         "companycode": "02",
         "officecode": "02",
         "groupcode": "05",
@@ -175,10 +196,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/mastersm.jpg"
+        "image": "some-url/mastersm.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30015",
+        "employeeId": "30015",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "03",
@@ -194,10 +216,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/amerasa.jpg"
+        "image": "some-url/amerasa.jpg",
+        "skills": "Accounting: Reconciling, Management: Planning, Management: Performance Reviews"
     },
     {
-        "employeeID": "30008",
+        "employeeId": "30008",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "03",
@@ -213,10 +236,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/lonsl.jpg"
+        "image": "some-url/lonsl.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30012",
+        "employeeId": "30012",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "03",
@@ -232,10 +256,11 @@
         "workPhone": "250-123-4567",
         "workCell": "250-123-7654",
         "physicalLocation": "JGH7T",
-        "image": "some-url/pessurp.jpg"
+        "image": "some-url/pessurp.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30023",
+        "employeeId": "30023",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "04",
@@ -251,10 +276,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/robsonr.jpg"
+        "image": "some-url/robsonr.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30024",
+        "employeeId": "30024",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "05",
@@ -270,10 +296,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/sanderss.jpg"
+        "image": "some-url/sanderss.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30025",
+        "employeeId": "30025",
         "companycode": "03",
         "officecode": "04",
         "groupcode": "08",
@@ -289,10 +316,14 @@
         "workPhone": "250-123-4567",
         "workCell": "250-123-7654",
         "physicalLocation": "JGH7T",
-        "image": "some-url/thompsont.jpg"
+        "image": "some-url/thompsont.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10101",
+        "employeeId": "10101",
+        "companycode": "01",
+        "officecode": "01",
+        "groupcode": "01",
         "lastName": "Employee01",
         "firstName": "Name",
         "employmentType": "Salary",
@@ -305,10 +336,14 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10102",
+        "employeeId": "10102",
+        "companycode": "01",
+        "officecode": "01",
+        "groupcode": "01",
         "lastName": "Employee02",
         "firstName": "Name",
         "employmentType": "Salary",
@@ -321,10 +356,13 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10103",
+        "employeeId": "10103",
+        "companycode": "01",
+        "officecode": "01",
         "groupcode": "02",
         "lastName": "Employee03",
         "firstName": "Name",
@@ -338,10 +376,13 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10104",
+        "employeeId": "10104",
+        "companycode": "01",
+        "officecode": "01",
         "groupcode": "03",
         "lastName": "Employee04",
         "firstName": "Name",
@@ -355,10 +396,13 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "10105",
+        "employeeId": "10105",
+        "companycode": "01",
+        "officecode": "01",
         "groupcode": "04",
         "lastName": "Employee05",
         "firstName": "Name",
@@ -372,10 +416,13 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": "Accounting: Transaction Processing, Accounting: Reconciling, Accounting: Auditing, Management: Budgeting"
     },
     {
-        "employeeID": "10106",
+        "employeeId": "10106",
+        "companycode": "01",
+        "officecode": "01",
         "groupcode": "05",
         "lastName": "Employee06",
         "firstName": "Name",
@@ -389,10 +436,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20106",
+        "employeeId": "20106",
         "companycode": "02",
         "officecode": "01",
         "groupcode": "02",
@@ -408,10 +456,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20102",
+        "employeeId": "20102",
         "companycode": "02",
         "officecode": "02",
         "groupcode": "04",
@@ -427,10 +476,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20103",
+        "employeeId": "20103",
         "companycode": "02",
         "officecode": "01",
         "groupcode": "03",
@@ -446,10 +496,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20104",
+        "employeeId": "20104",
         "companycode": "02",
         "officecode": "02",
         "groupcode": "04",
@@ -465,10 +516,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "20105",
+        "employeeId": "20105",
         "companycode": "02",
         "officecode": "02",
         "groupcode": "05",
@@ -484,10 +536,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30115",
+        "employeeId": "30115",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "03",
@@ -503,10 +556,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30112",
+        "employeeId": "30112",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "03",
@@ -522,10 +576,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30123",
+        "employeeId": "30123",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "04",
@@ -541,10 +596,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30124",
+        "employeeId": "30124",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "05",
@@ -560,10 +616,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "30125",
+        "employeeId": "30125",
         "companycode": "03",
         "officecode": "04",
         "groupcode": "08",
@@ -579,10 +636,14 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "JGH7T",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": "Agriculture: Harvesting, Agriculture: Fertilizing, Agriculture: Soil Preparation"
     },
     {
-        "employeeID": "19102",
+        "employeeId": "19102",
+        "companycode": "01",
+        "officecode": "01",
+        "groupcode": "01",
         "lastName": "TermEmployee01",
         "firstName": "Name",
         "employmentType": "Salary",
@@ -595,10 +656,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "29102",
+        "employeeId": "29102",
         "companycode": "02",
         "officecode": "02",
         "groupcode": "04",
@@ -614,10 +676,11 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     },
     {
-        "employeeID": "39123",
+        "employeeId": "39123",
         "companycode": "03",
         "officecode": "03",
         "groupcode": "04",
@@ -633,6 +696,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg"
+        "image": "some-url/photo_default.jpg",
+        "skills": null
     }
 ]

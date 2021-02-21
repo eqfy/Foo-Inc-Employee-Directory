@@ -14,20 +14,20 @@ export default function Routes() {
                 <Header activeTabIndex={0} />
                 <SearchPageContainer />
             </Route>
-            <Route exact path="/profile">
+            <Route exact path="/profile/:employeeId">
                 <Header activeTabIndex={1} />
                 <ProfilePageContainer />
             </Route>
-            <Route exact path="/orgchart">
+            <Route exact path="/orgchart/:employeeId">
                 <Header activeTabIndex={2} />
                 <OrgChartPageContainer />
             </Route>
-            <Route exact path="/">
+            {/* <Route exact path="/">
                 <Header activeTabIndex={3} />
                 <Home />
-            </Route>
+            </Route> */}
             <Route>
-                <Header activeTabIndex={3} />
+                <Header />
                 <NotFound />
             </Route>
         </Switch>

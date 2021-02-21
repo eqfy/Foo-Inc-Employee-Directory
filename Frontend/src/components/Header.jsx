@@ -47,20 +47,20 @@ function Header(props) {
                             label="Profile View"
                             classes={{ root: classes.tab }}
                             component={Link}
-                            to="/profile"
+                            to="/profile/10001"
                         />
                         <Tab
                             label="Organization Chart"
                             classes={{ root: classes.tab }}
                             component={Link}
-                            to="/orgChart"
+                            to="/orgChart/10001"
                         />
-                        <Tab
+                        {/* <Tab
                             label="Dashboard (redux demo)"
                             classes={{ root: classes.tab }}
                             component={Link}
                             to="/"
-                        />
+                        /> */}
                     </Tabs>
                 </Toolbar>
             </AppBar>
