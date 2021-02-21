@@ -1,24 +1,24 @@
 {
-    "filters": {
-        "locations": ["Vancouver", "Calgary", "Toronto", "Montreal"],
-        "skills": [
-            {
-                "name": "Accounting",
-                "values": ["Auditing", "Reconciling", "Transaction Processing"]
-            },
-            {
-                "name": "Agrigulture",
-                "values": ["Fertilizing", "Harvesting", "Soil Preparation"]
-            },
-            {
-                "name": "Management",
-                "values": ["Planning", "Performance Reviews"]
-            },
-            {
-                "name": "Marketing Sales",
-                "values": ["Customer Service", "Preparing Marketing Materials"]
-            }
-        ],
-        "titles": ["CEO", "COO", "Manager-Sales", "Worker"]
-    }
+    "locations": [
+        "Vancouver",
+        "Calgary",
+        "Toronto",
+        "Montreal",
+        "Edmonton",
+        "Victoria",
+        "Quebec City"
+    ],
+    "skills": {
+        "Accounting": ["Auditing", "Reconciling", "Transaction Processing"],
+        "Agriculture": ["Fertilizing", "Harvesting", "Soil Preparation"],
+        "Marketing Sales": ["Customer Service", "Preparing Marketing Materials"]
+    },
+    "titles": [
+        "CEO",
+        "COO",
+        "Manager-Sales",
+        "Manager-Engineering",
+        "Engineer",
+        "Worker"
+    ]
 }
