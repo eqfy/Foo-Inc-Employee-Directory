@@ -21,10 +21,10 @@ const useStyles = makeStyles({
         paddingRight: 20,
         paddingTop: 5,
         paddingbottom: 5,
-        backgroundColor: "#00569C",
+        backgroundColor: "#1c83fb",
         color: "#FFFFFF",
         "&:hover": {
-            backgroundColor: "#004680",
+            backgroundColor: "#00569C",
         },
     },
     card: {
@@ -99,13 +99,15 @@ function OrgChart(props) {
             <div id="searchLegendArea">
                 <form id="searchArea">
                     <TextField
-                        label="Employee name"
+                        label="Search by name"
                         variant="outlined"
                         classes={{ root: classes.searchRect }}
+                        size="small"
                     />
                     <Button
                         variant="contained"
                         classes={{ root: classes.searchButton }}
+                        size="small"
                     >
                         Search
                     </Button>

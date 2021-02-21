@@ -43,6 +43,9 @@ const StyledButton = styled(Button)({
     height: "40px",
     backgroundColor: "#1c83fb",
     color: "white",
+    "&:hover": {
+        backgroundColor: "#00569C",
+    }
 });
 
 const mapDispatchToProps = () => ({

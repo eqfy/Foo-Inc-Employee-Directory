@@ -49,14 +49,16 @@ const [chipData, setChipData] = React.useState([
 
 const useStyles = makeStyles(() => ({
     filterArea: {
-        maxWidth: "800px",
+        maxWidth: "90%",
         marginLeft: "auto",
-        marginRight: "auto"
+        marginRight: "auto",
+        marginBottom: "30px"
     },
     skillsBox: {
-        margin: "10px",
+        marginTop: "20px",
+        marginBottom: "20px",
         border: "1px solid #8A8989",
-        borderRadius: "10px",
+        borderRadius: "4px",
         display: "flex",
         minHeight: "42px",
         justifyContent: "left",
