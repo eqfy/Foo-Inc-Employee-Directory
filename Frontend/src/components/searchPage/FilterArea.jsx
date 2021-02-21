@@ -27,7 +27,7 @@ const [chipData, setChipData] = React.useState([
     <div className={classes.filterArea}>
       <div className={classes.sortingArea}>
      <Dropdown values={["all", "employees","contractors"]} label="show"/>
-     <Dropdown values={["name", "title"]} label="sort by"/>
+     <Dropdown values={["name", "title", "none"]} label="sort by"/>
      <CustomCheckBox name="sortAsc" label="Ascending"/>
       </div>
       <div className={classes.skillsBox}>
@@ -71,6 +71,7 @@ const useStyles = makeStyles(() => ({
     },
     chip: {
         margin: "5px",
-        background: "orange"
+        background: "orange",
+        fontSize: "1rem",
     }
   }));

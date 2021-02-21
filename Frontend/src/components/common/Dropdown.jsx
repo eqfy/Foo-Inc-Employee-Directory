@@ -18,7 +18,7 @@ export default function Dropdown(props) {
 
   return (
     <div>
-      <FormControl variant="outlined" className={classes.formControl}>
+      <FormControl variant="outlined" className={classes.formControl} size="small">
         <InputLabel id="select-label">{capitalize(props.label)}</InputLabel>
         <Select labelId="select-label" onChange={handleChange} label={capitalize(props.label)}>
           {values.map((value) => {
