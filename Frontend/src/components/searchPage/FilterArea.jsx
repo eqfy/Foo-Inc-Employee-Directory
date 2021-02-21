@@ -13,6 +13,9 @@ const [chipData, setChipData] = React.useState([
     { key: 1, label: 'Programming', type: 'skill' },
     { key: 2, label: 'Program Management', type: 'skill' },
     { key: 3, label: 'Capital', type: 'skill' },
+    { key: 4, label: 'Programming', type: 'skill' },
+    { key: 5, label: 'Vancouver', type: 'location' },
+    { key: 6, label: 'Water Waste Management', type: 'skill' },
   ]);
 
   const handleDelete = (chipToDelete) => () => {
@@ -27,7 +30,7 @@ const [chipData, setChipData] = React.useState([
      <Dropdown values={["name", "title"]} label="sort by"/>
      <CustomCheckBox name="sortAsc" label="Ascending"/>
       </div>
-      <div className={classes.skills}>
+      <div className={classes.skillsBox}>
       {chipData.map((data) => {
         return (
           <li key={data.key} className={classes.chipItem}>
@@ -50,12 +53,14 @@ const useStyles = makeStyles(() => ({
         marginLeft: "auto",
         marginRight: "auto"
     },
-    skills: {
+    skillsBox: {
         margin: "10px",
-        border: "1px solid black",
+        border: "1px solid #8A8989",
         borderRadius: "10px",
         display: "flex",
-        minHeight: "42px"
+        minHeight: "42px",
+        justifyContent: "left",
+        flexWrap: 'wrap',
       },
     sortingArea: {
         display: "flex",
