@@ -1,6 +1,5 @@
-import { Grid, styled } from "@material-ui/core";
+import { Grid, styled, Typography } from "@material-ui/core";
 import React from "react";
-import { connect } from "react-redux";
 import ApplyFilterArea from "./ApplyFilterArea";
 import SearchByNameBar from "./SearchByNameBar";
 import "./SearchArea.css";
@@ -19,7 +18,7 @@ function SearchArea() {
                 <SearchByNameBar />
             </StyledSearchAreaGridItem>
             <StyledSearchAreaGridItem item>
-                <div className="heading">Apply filters</div>
+                <Typography className="heading">Apply filters</Typography>
             </StyledSearchAreaGridItem>
             <StyledSearchAreaGridItem item>
                 <ApplyFilterArea />
@@ -32,4 +31,4 @@ const StyledSearchAreaGridItem = styled(Grid)({
     width: "100%",
 });
 
-export default connect()(SearchArea);
+export default SearchArea;

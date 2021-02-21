@@ -5,3 +5,34 @@
     font-size: 18px;
     font-weight: 700;
 }
+
+.search-area .search-bar {
+    display: flex;
+}
+.apply-filter .experience-slider {
+    margin-bottom: 2px;
+}
+
+.apply-filter .filter-form {
+    align-items: center;
+    justify-content: center;
+}
+
+.apply-filter .filter-searchbar {
+    display: flex;
+    justify-content: center;
+}
+
+.apply-filter .filter-checkboxes {
+    margin-left: 0;
+}
+
+.MuiIconButton-root.expand-more {
+    padding: 0;
+}
+
+.apply-filter .categorized-dropdown {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+}

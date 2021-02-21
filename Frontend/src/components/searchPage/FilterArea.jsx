@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 
 function FilterArea(props) {
-    return <h5>I am the filter area</h5>;
+    return <div style={{ backgroundColor: "#1c83fb" }}>FILTER AREA</div>;
 }
 
 export default connect()(FilterArea);

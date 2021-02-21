@@ -9,11 +9,19 @@ import { Grid, styled } from "@material-ui/core";
 import { SEARCH_AREA_WIDTH } from "./common/constants";
 
 export function SearchPageContainer(props) {
+    React.useEffect(() => {
+        // TODO get the current user's stored filters
+    });
+
     return (
         // TODO: Refactor so this container div doesn't need to be added for every page container
         <PageContainer>
-            <h1>Search page</h1>
-            <Grid container className="" spacing={1} wrap="nowrap">
+            <StyledSearchPageGridContainer
+                container
+                className=""
+                spacing={1}
+                wrap="nowrap"
+            >
                 <StyledSearchAreaGridItem item xs={2}>
                     <SearchArea />
                 </StyledSearchAreaGridItem>
@@ -21,12 +29,26 @@ export function SearchPageContainer(props) {
                     <FilterArea />
                     <ResultsArea />
                 </Grid>
-            </Grid>
+            </StyledSearchPageGridContainer>
         </PageContainer>
     );
 }
 
-export default withRouter(connect()(SearchPageContainer));
+const mapStateToProps = (state) => {
+    // TODO get the current filter info from the state
+};
+
+const mapDispatchToProps = (dispatch) => ({
+    // TODO dispatches getUserFilterAction
+});
+
+export default withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(SearchPageContainer)
+);
+
+const StyledSearchPageGridContainer = styled(Grid)({
+    marginTop: 20,
+});
 
 const StyledSearchAreaGridItem = styled(Grid)({
     minWidth: SEARCH_AREA_WIDTH,

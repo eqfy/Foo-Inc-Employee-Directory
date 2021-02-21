@@ -1,26 +1,42 @@
 import { IconButton, Paper, styled, TextField } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
+import { Search } from "@material-ui/icons";
 import React from "react";
 import { connect } from "react-redux";
 
 function SearchByNameBar(props) {
+    const handleTextChange = (event) => {
+        // searchNameAction();
+    };
+
+    const handleSearchBtnClick = (event) => {
+        // searchNameAction();
+    };
+
     return (
-        <Paper component="form" elevation={2}>
-            <StyleTextField label="Search by name" size="small" />
+        <Paper component="form" elevation={2} className="search-bar">
+            <StyledTextField
+                label="Search by name"
+                size="small"
+                onChange={handleTextChange}
+            />
             <IconButton
-                type="submit"
                 className="icon-button"
                 aria-label="search"
+                onClick={handleSearchBtnClick}
             >
-                <SearchIcon />
+                <Search />
             </IconButton>
         </Paper>
     );
 }
 
-const StyleTextField = styled(TextField)({
-    width: 190,
+const StyledTextField = styled(TextField)({
+    width: "100%",
     marginLeft: 20,
 });
 
-export default connect()(SearchByNameBar);
+const mapDispatchToProps = (dispatch) => ({
+    // TODO dispatches searchNameAction
+});
+
+export default connect(null, mapDispatchToProps)(SearchByNameBar);
