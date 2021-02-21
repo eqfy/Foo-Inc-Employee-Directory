@@ -1,0 +1,11 @@
+.heading {
+    padding: 18px;
+    background-color: #1c83fb;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 18px 18px 18px 0;
+}
+.test {
+    padding-left: 0 !important;
+}
