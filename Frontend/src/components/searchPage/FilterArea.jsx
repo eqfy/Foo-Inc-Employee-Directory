@@ -55,6 +55,7 @@ const useStyles = makeStyles(() => ({
         border: "1px solid black",
         borderRadius: "10px",
         display: "flex",
+        minHeight: "42px"
       },
     sortingArea: {
         display: "flex",
