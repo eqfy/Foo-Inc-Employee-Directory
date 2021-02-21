@@ -31,14 +31,21 @@
     padding: 0;
 }
 
-.apply-filter .categorized-dropdown {
+.apply-filter .category {
     display: flex;
     justify-content: space-between;
-    padding: 6px;
+    padding-left: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
-.apply-filter .category {
+.apply-filter .category-text {
     color: #1c83fb;
     font-size: 16px;
     font-weight: 700;
+    text-transform: none;
+}
+
+.apply-filter .category-icon {
+    color: rgba(0, 0, 0, 0.54);
 }

@@ -11,6 +11,7 @@ const {
     FormGroup,
     IconButton,
     styled,
+    Button,
 } = require("@material-ui/core");
 const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 
@@ -118,19 +119,19 @@ function ApplyFilterCategorizedCheckboxGroup(props) {
     const categories = {
         Accounting: ["Auditing", "Reconciling", "Transaction Processing"],
         Agriculture: ["Fertilizing", "Harvesting", "Soil Preparation"],
-        EmptyCategory: [],
+        "Empty Category": [],
     };
 
     const [categoryExpandMore, setCategoryExpandMore] = React.useState({
         Accounting: true,
         Agriculture: true,
-        EmptyCategory: true,
+        "Empty Category": true,
     });
 
     const [checkboxCount, setCheckboxCount] = React.useState({
         Accounting: defaultCheckboxCount,
         Agriculture: defaultCheckboxCount,
-        EmptyCategory: defaultCheckboxCount,
+        "Empty Category": defaultCheckboxCount,
     });
 
     const handleCategoryExpandMoreClick = (name) => {
@@ -155,27 +156,25 @@ function ApplyFilterCategorizedCheckboxGroup(props) {
         <FormGroup>
             {Object.entries(categoryExpandMore)
                 .slice(0, categoryCount)
-                .map(([name, categoryExpandMore]) => (
+                .map(([name, categoryExpandMore], index) => (
                     <div>
-                        <div className="categorized-dropdown">
-                            <div className="category">{name}</div>
-                            {
-                                <IconButton
-                                    type="submit"
-                                    className="expand-more"
-                                    aria-label="expand less"
-                                    onClick={() =>
-                                        handleCategoryExpandMoreClick(name)
-                                    }
-                                >
-                                    {categoryExpandMore ? (
-                                        <ExpandMore />
-                                    ) : (
-                                        <ExpandLess />
-                                    )}
-                                </IconButton>
-                            }
-                        </div>
+                        <Button
+                            variant="text"
+                            fullWidth
+                            className="category"
+                            component="div"
+                            key={index}
+                            onClick={() => {
+                                handleCategoryExpandMoreClick(name);
+                            }}
+                        >
+                            <div className="category-text">{name}</div>
+                            {categoryExpandMore ? (
+                                <ExpandMore className="category-icon" />
+                            ) : (
+                                <ExpandLess className="category-icon" />
+                            )}
+                        </Button>
                         <SearchCheckboxWidget
                             category={name}
                             options={categories[name]}
