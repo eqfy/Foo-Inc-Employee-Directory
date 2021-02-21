@@ -1,14 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
-import { PageContainer } from "./common/PageContainer";
+import OrgChart from "./OrgChartPage/OrgChart";
 
 export function OrgChartPageContainer(props) {
-    return (
-        <PageContainer>
-            <h1>Org chart</h1>
-        </PageContainer>
-    );
+    return <OrgChart />;
 }
 
 export default withRouter(connect()(OrgChartPageContainer));

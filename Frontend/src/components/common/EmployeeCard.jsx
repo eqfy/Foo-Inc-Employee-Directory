@@ -7,13 +7,16 @@ import "../common/Common.css";
 import React from "react";
 
 export default function EmployeeCard(props) {
-    const { employee } = props;
+    const { employee, centered } = props;
     return (
-        <StyledCard>
-            <Link to={`/profile/${employee.employeeID}`}>
+        <StyledCard
+            // @ts-ignore
+            centered={centered}
+        >
+            <Link to={`/profile/${employee.employeeId}`}>
                 <EmployeeCardContent>
                     <PositionDiv>
-                        <Link to={`/orgchart/${employee.employeeID}`}>
+                        <Link to={`/orgchart/${employee.employeeId}`}>
                             <StyledOrgChartIcon />
                         </Link>
                     </PositionDiv>
@@ -36,14 +39,17 @@ export default function EmployeeCard(props) {
 }
 
 const StyledCard = styled(Card)`
-    box-shadow: none !important;
+    && {
+        box-shadow: none;
+    }
     max-width: 250px;
-    max-height: 275px;
+    height: 275px;
+    ${(props /* @ts-ignore */) => props.centered && "margin: auto;"}
 `;
 
 const EmployeeCardContent = styled(CardContent)`
     max-width: 250px;
-    max-height: 275px;
+    height: 275px;
     width: 100%;
     border: 1px solid #000000;
     box-sizing: border-box;
