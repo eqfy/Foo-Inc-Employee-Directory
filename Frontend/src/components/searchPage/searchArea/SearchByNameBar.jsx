@@ -13,7 +13,7 @@ function SearchByNameBar(props) {
     };
 
     return (
-        <Paper component="form" elevation={2} className="search-bar">
+        <Paper component="form" elevation={4} className="search-bar">
             <StyledTextField
                 label="Search by name"
                 size="small"

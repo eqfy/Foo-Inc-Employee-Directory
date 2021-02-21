@@ -18,6 +18,7 @@ const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 function ApplyFilterArea() {
     return (
         <div className="apply-filter">
+            <div className="heading">Apply filters</div>
             <ExperienceSlider />
             <ApplyFilterWidget
                 filters={data.locations}
@@ -48,7 +49,7 @@ function ApplyFilterWidget(props) {
     const formLabel = `Select one or more ${dataLabel}s displayed below`;
     return (
         <div className="filter-form">
-            <Paper component="form" elevation={2} className="filter-searchbar">
+            <Paper component="form" elevation={4} className="filter-searchbar">
                 <StyledTextField
                     label={textFieldLabel}
                     size="small"

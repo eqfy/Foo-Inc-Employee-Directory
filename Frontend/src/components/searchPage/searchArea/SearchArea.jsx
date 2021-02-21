@@ -18,9 +18,6 @@ function SearchArea() {
                 <SearchByNameBar />
             </StyledSearchAreaGridItem>
             <StyledSearchAreaGridItem item>
-                <div className="heading">Apply filters</div>
-            </StyledSearchAreaGridItem>
-            <StyledSearchAreaGridItem item>
                 <ApplyFilterArea />
             </StyledSearchAreaGridItem>
         </Grid>
