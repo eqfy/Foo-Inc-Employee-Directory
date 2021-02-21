@@ -64,7 +64,8 @@ const useStyles = makeStyles(() => ({
       },
     sortingArea: {
         display: "flex",
-        margin: "10px"
+        margin: "10px",
+        marginTop: 0,
     },
     chipItem: {
         listStyle: "none"
