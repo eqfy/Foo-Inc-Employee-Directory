@@ -42,7 +42,7 @@ const StyledCard = styled(Card)`
     && {
         box-shadow: none;
     }
-    max-width: 250px;
+    width: 250px;
     height: 275px;
     ${(props /* @ts-ignore */) => props.centered && "margin: auto;"}
 `;
