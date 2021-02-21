@@ -5,7 +5,6 @@ import ExperienceSlider from "./ExperienceSlider";
 import SearchCheckboxWidget from "./CheckboxWidget";
 const React = require("react");
 const {
-    Paper,
     TextField,
     FormLabel,
     FormGroup,
@@ -49,13 +48,12 @@ function ApplyFilterWidget(props) {
     const formLabel = `Select one or more ${dataLabel}s displayed below`;
     return (
         <div className="filter-form">
-            <Paper component="form" elevation={4} className="filter-searchbar">
-                <StyledTextField
-                    label={textFieldLabel}
-                    size="small"
-                    onChange={handleTextChange}
-                />
-            </Paper>
+            <StyledTextField
+                label={textFieldLabel}
+                size="small"
+                variant="outlined"
+                onChange={handleTextChange}
+            />
             <StyledFormLabel>{formLabel}</StyledFormLabel>
             <ApplyFilterCheckboxGroup
                 filters={filters}
@@ -200,7 +198,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(ApplyFilterArea);
 
 const StyledTextField = styled(TextField)({
     alignSelf: "center",
-    width: "85%",
+    width: "100%",
     paddingBottom: 4,
 });
 

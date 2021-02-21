@@ -2,6 +2,10 @@
     display: flex;
 }
 
+.search-area .full-width {
+    width: 100%;
+}
+
 .apply-filter .heading {
     padding: 12px 0 12px 16px;
     margin: 4px 0 10px 0;
