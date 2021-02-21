@@ -11,7 +11,6 @@ const {
     FormGroup,
     IconButton,
     styled,
-    Typography,
 } = require("@material-ui/core");
 const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 
@@ -159,7 +158,7 @@ function ApplyFilterCategorizedCheckboxGroup(props) {
                 .map(([name, categoryExpandMore]) => (
                     <div>
                         <div className="categorized-dropdown">
-                            <Typography>{name}</Typography>
+                            <div className="category">{name}</div>
                             {
                                 <IconButton
                                     type="submit"

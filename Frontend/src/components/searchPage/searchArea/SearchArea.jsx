@@ -1,4 +1,4 @@
-import { Grid, styled, Typography } from "@material-ui/core";
+import { Grid, styled } from "@material-ui/core";
 import React from "react";
 import ApplyFilterArea from "./ApplyFilterArea";
 import SearchByNameBar from "./SearchByNameBar";
@@ -18,7 +18,7 @@ function SearchArea() {
                 <SearchByNameBar />
             </StyledSearchAreaGridItem>
             <StyledSearchAreaGridItem item>
-                <Typography className="heading">Apply filters</Typography>
+                <div className="heading">Apply filters</div>
             </StyledSearchAreaGridItem>
             <StyledSearchAreaGridItem item>
                 <ApplyFilterArea />

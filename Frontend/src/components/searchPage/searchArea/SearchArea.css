@@ -27,12 +27,18 @@
     margin-left: 0;
 }
 
-.MuiIconButton-root.expand-more {
+.apply-filter .expand-more {
     padding: 0;
 }
 
 .apply-filter .categorized-dropdown {
     display: flex;
     justify-content: space-between;
-    padding: 12px;
+    padding: 6px;
+}
+
+.apply-filter .category {
+    color: #1c83fb;
+    font-size: 16px;
+    font-weight: 700;
 }
