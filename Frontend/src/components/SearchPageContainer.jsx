@@ -5,6 +5,7 @@ import { withRouter } from "react-router";
 import { PageContainer } from "./common/PageContainer";
 import ResultsArea from "./searchPage/ResultsArea";
 import SearchArea from "./searchPage/SearchArea";
+import FilterArea from "./searchPage/FilterArea";
 
 export function SearchPageContainer(props) {
     return (
@@ -13,6 +14,7 @@ export function SearchPageContainer(props) {
             <h1>Search page</h1>
             <SearchArea />
             <ResultsDiv>
+                <FilterArea />
                 <ResultsArea />
             </ResultsDiv>
         </PageContainer>
