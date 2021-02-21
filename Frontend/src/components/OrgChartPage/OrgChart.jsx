@@ -54,10 +54,12 @@ const useStyles = makeStyles({
             padding: 20,
             flex: "1 0 auto",
         },
+        minWidth: 100,
     },
     cardMedia: {
         padding: 20,
-        width: 50,
+        minWidth: 50,
+        minHeight: 50,
     },
 });
 
@@ -75,7 +77,7 @@ function OrgChartNode(props) {
             classes={{ root: classes.card }}
         >
             <CardMedia
-                image="sample.png"
+                image="./../sample.png"
                 classes={{ root: classes.cardMedia }}
             />
             <CardContent classes={{ root: classes.cardContent }}>
@@ -88,6 +90,9 @@ function OrgChartNode(props) {
 
 function OrgChart(props) {
     const classes = useStyles();
+
+    // only used for demo
+    const [dataSetIndex, setDataSetIndex] = React.useState(0);
 
     return (
         <div>
@@ -117,10 +122,24 @@ function OrgChart(props) {
                 </ul>
             </div>
             <OrganizationChart
-                datasource={dataset}
+                datasource={dataset[dataSetIndex]}
                 collapsible={false}
-                zoominLimit={7}
+                zoom={false}
+                pan={true}
+                zoominLimit={1}
+                zoomoutLimit={0.4}
                 NodeTemplate={OrgChartNode}
+                onClickNode={(node) => {
+                    if (node.id === 'n2') {
+                        if (dataSetIndex === 1) {
+                            setDataSetIndex(0);
+                        }
+                    } else if (node.id === 'n6') {
+                        if (dataSetIndex === 0) {
+                            setDataSetIndex(1);
+                        }
+                    }
+                }}
             />
         </div>
     );
