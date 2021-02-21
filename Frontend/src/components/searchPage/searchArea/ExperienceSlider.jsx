@@ -66,6 +66,7 @@ function ExperienceSlider(props) {
 
 const mapStateToProps = () => {
     // TODO get the year work experience filter info from the state
+    return {};
 };
 
 const mapDispatchToProps = (dispatch) => ({

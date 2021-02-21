@@ -190,6 +190,7 @@ function ApplyFilterCategorizedCheckboxGroup(props) {
 
 const mapStateToProps = () => {
     // TODO get the current filter info from the state
+    return {};
 };
 
 const mapDispatchToProps = (dispatch) => ({
