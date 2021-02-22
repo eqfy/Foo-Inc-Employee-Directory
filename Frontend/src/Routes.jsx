@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
+import { Redirect } from "react-router";
 import Home from "./components/Home";
 import NotFound from "./components/NotFound";
 import OrgChartPageContainer from "./components/OrgChartPageContainer";
@@ -22,10 +23,10 @@ export default function Routes() {
                 <Header activeTabIndex={2} />
                 <OrgChartPageContainer />
             </Route>
-            {/* <Route exact path="/">
-                <Header activeTabIndex={3} />
-                <Home />
-            </Route> */}
+            <Route exact path="/">
+                <Header activeTabIndex={0} />
+                <Redirect to="/search" />
+            </Route>
             <Route>
                 <Header />
                 <NotFound />
