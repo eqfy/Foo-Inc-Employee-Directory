@@ -80,6 +80,44 @@ namespace Handler
             return response;
         }
 
+         public APIGatewayProxyResponse GetByName(APIGatewayProxyRequest request, ILambdaContext context)
+        {
+            LambdaLogger.Log(GetRDSConnectionString());
+            //Open the connection to the postgres database
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+
+            var sql = "Select * FROM \"Employee\" WHERE \"FirstName\" = 'Susan' AND \"LastName\" = 'Acme'";
+            //Create the database sql command
+            using var cmd = new NpgsqlCommand(sql, con);
+
+            //Run the sql command
+            var reader = cmd.ExecuteReader();
+    
+            string output = "";
+            //Test to make sure it is actually getting all the rows
+            while(reader.Read()){
+                string row = reader[0] + ", " + reader[1];
+                LambdaLogger.Log(row);
+                output += row;
+            }
+
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = output,
+                //Body = myDbItems.ToString(),
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" } 
+                }
+            };
+
+            return response;
+        }
+
+
         private GetObjectResponse getS3FileSync(string bucketName, string objectKey){
             //TODO get the region from an environment variable or something else
             RegionEndpoint bucketRegion = RegionEndpoint.USWest2;//region where you store your file

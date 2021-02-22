@@ -115,7 +115,22 @@ namespace Project
             apiGateway.LambdaIntegration getEmployeeIntegration =  new apiGateway.LambdaIntegration(getEmployees);
             apiGateway.Method getEmployeeMethod =  employeeResource.AddMethod("GET", getEmployeeIntegration);
             
-            
+            lambda.Function getEmployeeByName = new lambda.Function(this,"getEmployeeByName", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::GetByName",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource employeeByNameResource = api.Root.AddResource("employeeByName");
+            apiGateway.LambdaIntegration getEmployeeByNameIntegration =  new apiGateway.LambdaIntegration(getEmployeeByName);
+            apiGateway.Method getEmployeeByNameMethod =  employeeByNameResource.AddMethod("GET", getEmployeeIntegration);
+ 
 
 
             
@@ -162,6 +177,10 @@ namespace Project
             getEmployees.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getEmployees.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getEmployees.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+
+            getEmployeeByName.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            getEmployeeByName.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            getEmployeeByName.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
 
             databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
