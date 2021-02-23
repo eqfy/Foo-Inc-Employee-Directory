@@ -13,6 +13,9 @@ using Amazon.Lambda.APIGatewayEvents;
 
 using Npgsql;
 using Newtonsoft.Json.Linq;
+using System.Collections;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -112,12 +115,20 @@ namespace Handler
             //Run the sql command
             var reader = cmd.ExecuteReader();
     
-            string output = "";
+            string output = string.Empty;
+            ArrayList employees = new ArrayList();
+
             //Test to make sure it is actually getting all the rows
-            while(reader.Read()){
-                string row = reader[0] + ", " + reader[1];
-                LambdaLogger.Log(row);
-                output += row;
+            while(reader.Read()) {
+                employees.Add(new 
+                {
+                  firstName = reader[5],
+                  lastName = reader[4],
+                  image = reader[16],
+                  physicalLocation = reader[15],
+                });
+  
+                output = JsonSerializer.Serialize(employees[0]);
             }
 
             var response = new APIGatewayProxyResponse
