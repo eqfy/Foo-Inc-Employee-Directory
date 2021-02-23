@@ -118,7 +118,6 @@ namespace Handler
             string output = string.Empty;
             ArrayList employees = new ArrayList();
 
-            //Test to make sure it is actually getting all the rows
             while(reader.Read()) {
                 employees.Add(new 
                 {
