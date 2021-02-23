@@ -12,6 +12,7 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 
 using Npgsql;
+using Newtonsoft.Json.Linq;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -80,10 +81,27 @@ namespace Handler
             return response;
         }
 
-         public APIGatewayProxyResponse GetByName(APIGatewayProxyRequest request, ILambdaContext context)
+         public APIGatewayProxyResponse GetByName(Stream input, ILambdaContext context)
         {
+            string inputString = string.Empty;
+            LambdaLogger.Log("Inside GetByName\n");
             LambdaLogger.Log(GetRDSConnectionString());
             //Open the connection to the postgres database
+
+            if (input != null)
+            {
+                StreamReader streamReader = new StreamReader(input);
+                inputString = streamReader.ReadToEnd();
+            }
+
+            LambdaLogger.Log($"GetByName: received the following string: {inputString}");
+
+            JObject inputJSON = JObject.Parse(inputString);
+            var firstName = inputJSON["FirstName"].ToString();
+            var lastName = inputJSON["LastName"].ToString();
+            LambdaLogger.Log($"First: {firstName}");
+            LambdaLogger.Log($"Last: {lastName}");  
+
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
