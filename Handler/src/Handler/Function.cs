@@ -105,9 +105,9 @@ namespace Handler
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
-            var sql = "Select * FROM \"Employee\" WHERE \"FirstName\" = 'Susan' AND \"LastName\" = 'Acme'";
-            //Create the database sql command
-            using var cmd = new NpgsqlCommand(sql, con);
+            using var cmd = new NpgsqlCommand("Select * FROM \"Employee\" WHERE \"FirstName\" = :p1 AND \"LastName\" = :p2", con);
+            cmd.Parameters.AddWithValue("p1", firstName);
+            cmd.Parameters.AddWithValue("p2", lastName);
 
             //Run the sql command
             var reader = cmd.ExecuteReader();
