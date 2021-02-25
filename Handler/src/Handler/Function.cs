@@ -12,6 +12,10 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 
 using Npgsql;
+using Newtonsoft.Json.Linq;
+using System.Collections;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -79,6 +83,68 @@ namespace Handler
 
             return response;
         }
+
+         public APIGatewayProxyResponse GetByName(Stream input, ILambdaContext context)
+        {
+            string inputString = string.Empty;
+            LambdaLogger.Log("Inside GetByName\n");
+            LambdaLogger.Log(GetRDSConnectionString());
+            //Open the connection to the postgres database
+
+            if (input != null)
+            {
+                StreamReader streamReader = new StreamReader(input);
+                inputString = streamReader.ReadToEnd();
+            }
+
+            LambdaLogger.Log($"GetByName: received the following string: {inputString}");
+
+            JObject inputJSON = JObject.Parse(inputString);
+            var firstName = inputJSON["FirstName"].ToString();
+            var lastName = inputJSON["LastName"].ToString();
+            LambdaLogger.Log($"First: {firstName}");
+            LambdaLogger.Log($"Last: {lastName}");  
+
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+
+            using var cmd = new NpgsqlCommand("Select * FROM \"Employee\" WHERE \"FirstName\" = :p1 AND \"LastName\" = :p2", con);
+            cmd.Parameters.AddWithValue("p1", firstName);
+            cmd.Parameters.AddWithValue("p2", lastName);
+
+            //Run the sql command
+            var reader = cmd.ExecuteReader();
+    
+            string output = string.Empty;
+            ArrayList employees = new ArrayList();
+
+            while(reader.Read()) {
+                employees.Add(new 
+                {
+                  firstName = reader[5],
+                  lastName = reader[4],
+                  image = reader[16],
+                  physicalLocation = reader[15],
+                });
+  
+                output = JsonSerializer.Serialize(employees[0]);
+            }
+
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = output,
+                //Body = myDbItems.ToString(),
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" } 
+                }
+            };
+
+            return response;
+        }
+
 
         private GetObjectResponse getS3FileSync(string bucketName, string objectKey){
             //TODO get the region from an environment variable or something else
