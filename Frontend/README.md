@@ -1,3 +1,19 @@
+# Foo Inc Frontend
+
+This directory contains the frontend code for the Foo Inc. Associated Engineering project.
+
+## File Structure
+All source code are in `./src`
+
++ `./src/index.js` is the entry point for our project
++ `./src/actions` contains the action creators, we also initiate asynchronous API calls in here.
++ `./src/api` contains logic for calling our backend service
++ `./src/assets` contains assets for this project
++ `./src/components` contains the main UI components and related logic
++ `./src/mocks` contains mock backend API responses
++ `./src/reducers` contains Redux reducers. **Purely for updating Redux store, NO transformation of data is done here!**
++ `./src/states` contains default and mock states
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
