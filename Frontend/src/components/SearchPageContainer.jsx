@@ -39,8 +39,8 @@ const mapStateToProps = (state) => {
     return {};
 };
 
-const mapDispatchToProps = (dispatch) => ({
-    // TODO dispatches getUserFilterAction
+const mapDispatchToProps = () => ({
+    // TODO dispatches setFilters
 });
 
 export default withRouter(
