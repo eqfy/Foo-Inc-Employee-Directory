@@ -3,7 +3,7 @@
 This directory contains the frontend code for the Foo Inc. Associated Engineering project.
 
 ## File Structure
-All source code are in `./src`
+All source code is in the `./src` directory
 
 + `./src/index.js` is the entry point for our project
 + `./src/actions` contains the action creators, we also initiate asynchronous API calls in here.
