@@ -8,7 +8,7 @@ const defaultRootState = {
     appState: defaultAppState,
     searchPageState: defualtSearchPageState,
     orgChartState: defaultOrgChartState,
-    worker: defaultWorkerState,
+    workers: defaultWorkerState,
     filters: defaultFilterState,
 };
 
