@@ -1,4 +1,8 @@
-import { filterTypeEnum } from "states/filter";
+export const filterTypeEnum = {
+    LOCATION: "location",
+    TITLE: "title",
+    SKILL: "skill",
+};
 
 export const mockLocationFilters = {
     byId: {

@@ -1,14 +1,8 @@
 import {
     mockLocationFilters,
-    mockSkillFilters,
     mockTitleFilters,
-} from "./mocks/filter";
-
-export const filterTypeEnum = {
-    LOCATION: "location",
-    TITLE: "title",
-    SKILL: "skill",
-};
+    mockSkillFilters,
+} from "mocks/mockFilterState";
 
 export const defaultFilterState = {
     byId: {},
