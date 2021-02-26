@@ -84,7 +84,7 @@ namespace Handler
             return response;
         }
 
-         public APIGatewayProxyResponse GetByName(Stream input, ILambdaContext context)
+        public  APIGatewayProxyResponse GetByName(Stream input, ILambdaContext context)
         {
             string inputString = string.Empty;
             LambdaLogger.Log("Inside GetByName\n");
@@ -116,20 +116,61 @@ namespace Handler
             var reader = cmd.ExecuteReader();
     
             string output = string.Empty;
-            ArrayList employees = new ArrayList();
+            List<Employee> employees = new List<Employee>();
 
             while(reader.Read()) {
-                employees.Add(new 
-                {
-                  firstName = reader[5],
-                  lastName = reader[4],
-                  image = reader[16],
-                  physicalLocation = reader[15],
-                });
-  
-                output = JsonSerializer.Serialize(employees[0]);
+                Employee e = new Employee();
+                e.employeeNumber = reader[0].ToString();
+                e.firstName = reader[5].ToString();
+                e.lastName = reader[4].ToString();
+                e.image = reader[16].ToString();
+                e.physicalLocation = reader[15].ToString();
+                employees.Add(e);
             }
 
+            reader.Close();
+
+            LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
+            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
+            var employeeNum = employees[0].employeeNumber;
+
+            using var skillCmd = new NpgsqlCommand("Select * FROM \"EmployeeSkills\" WHERE \"EmployeeNumber\" = :p1", con);
+            skillCmd.Parameters.AddWithValue("p1", employeeNum);
+
+            var readerSkillID = skillCmd.ExecuteReader();
+
+            ArrayList employeeSkills = new ArrayList();
+            while(readerSkillID.Read()) {
+                LambdaLogger.Log("SkillID==: " + reader[2].ToString()+ "\n");
+                employeeSkills.Add(reader[2].ToString());
+            } 
+            
+            readerSkillID.Close();
+
+            //LambdaLogger.Log("EmployeeSkill ==: " + employeeSkills[0].ToString() + "\n"); Error
+            
+            ArrayList employeeSkillLabels = new ArrayList();
+            // Retrieve labels for all employee skill IDs
+            for (int i = 0; i < employeeSkills.Count; i++) {
+                var skillID = employeeSkills[i]; 
+                using var skillLabelCmd = new NpgsqlCommand("Select * FROM \"Skill\" WHERE \"SkillId\" = :p1", con); // change later 
+                skillLabelCmd.Parameters.AddWithValue("p1", skillID);
+                var readerSkillLabel= skillLabelCmd.ExecuteReader();
+
+                while(readerSkillLabel.Read()) {
+                    LambdaLogger.Log("SkillLabel==: " + reader[2].ToString()+ "\n");
+                    employeeSkillLabels.Add(reader[2].ToString());
+                } 
+
+                readerSkillLabel.Close();
+            }
+
+            employees[0].skills = employeeSkillLabels;
+            LambdaLogger.Log("Employees==: " + employees[0].ToString()+ "\n");
+            //output = JsonSerializer.Serialize(employees[0]); 
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees[0]); 
+            //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+        
             var response = new APIGatewayProxyResponse
             {
                 StatusCode = 200,
