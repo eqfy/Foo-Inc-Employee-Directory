@@ -6,75 +6,117 @@ export const filterTypeEnum = {
 
 export const mockLocationFilters = {
     byId: {
-        Vancouver: { type: filterTypeEnum.LOCATION },
-        Calgary: { type: filterTypeEnum.LOCATION },
-        Toronto: { type: filterTypeEnum.LOCATION },
-        Montreal: { type: filterTypeEnum.LOCATION },
-        Edmonton: { type: filterTypeEnum.LOCATION },
-        Victoria: { type: filterTypeEnum.LOCATION },
-        "Quebec City": { type: filterTypeEnum.LOCATION },
+        "Vancouver:": { type: filterTypeEnum.LOCATION, label: "Vancouver" },
+        "Calgary:": { type: filterTypeEnum.LOCATION, label: "Calgary" },
+        "Toronto:": { type: filterTypeEnum.LOCATION, label: "Toronto" },
+        "Montreal:": { type: filterTypeEnum.LOCATION, label: "Montreal" },
+        "Edmonton:": { type: filterTypeEnum.LOCATION, label: "Edmonton" },
+        "Victoria:": { type: filterTypeEnum.LOCATION, label: "Victoria" },
+        "Quebec City:": { type: filterTypeEnum.LOCATION, label: "Quebec City" },
     },
     allId: [
-        "Vancouver",
-        "Calgary",
-        "Toronto",
-        "Montreal",
-        "Edmonton",
-        "Victoria",
-        "Quebec City",
+        "Vancouver:",
+        "Calgary:",
+        "Toronto:",
+        "Montreal:",
+        "Edmonton:",
+        "Victoria:",
+        "Quebec City:",
     ],
 };
 
 export const mockTitleFilters = {
     byId: {
-        CEO: { type: filterTypeEnum.TITLE },
-        COO: { type: filterTypeEnum.TITLE },
-        "Manager-Sales": { type: filterTypeEnum.TITLE },
-        "Manager-Engineering": { type: filterTypeEnum.TITLE },
-        Engineer: { type: filterTypeEnum.TITLE },
-        Worker: { type: filterTypeEnum.TITLE },
+        "CEO:": { type: filterTypeEnum.TITLE, label: "CEO" },
+        "COO:": { type: filterTypeEnum.TITLE, label: "COO" },
+        "Manager-Sales:": {
+            type: filterTypeEnum.TITLE,
+            label: "Manager-Sales",
+        },
+        "Manager-Engineering:": {
+            type: filterTypeEnum.TITLE,
+            label: "Manager-Engineering",
+        },
+        "Engineer:": { type: filterTypeEnum.TITLE, label: "Engineer" },
+        "Worker:": { type: filterTypeEnum.TITLE, label: "Worker" },
     },
     allId: [
-        "CEO",
-        "COO",
-        "Manager-Sales",
-        "Manager-Engineering",
-        "Engineer",
-        "Worker",
+        "CEO:",
+        "COO:",
+        "Manager-Sales:",
+        "Manager-Engineering:",
+        "Engineer:",
+        "Worker:",
     ],
 };
 
 export const mockSkillFilters = {
     byId: {
-        Auditing: { type: filterTypeEnum.SKILL, category: "Accounting" },
-        Reconciling: { type: filterTypeEnum.SKILL, category: "Accounting" },
-        "Transaction Processing": {
+        "Auditing:Accounting": {
             type: filterTypeEnum.SKILL,
+            label: "Auditing",
             category: "Accounting",
         },
-        Fertilizing: { type: filterTypeEnum.SKILL, category: "Agriculture" },
-        Harvesting: { type: filterTypeEnum.SKILL, category: "Agriculture" },
-        "Soil Preparation": {
+        "Reconciling:Accounting": {
             type: filterTypeEnum.SKILL,
+            label: "Reconciling",
+            category: "Accounting",
+        },
+        "Transaction Processing:Accounting": {
+            type: filterTypeEnum.SKILL,
+            label: "Transaction Processing",
+            category: "Accounting",
+        },
+        "Fertilizing:Agriculture": {
+            type: filterTypeEnum.SKILL,
+            label: "Fertilizing",
             category: "Agriculture",
         },
-        "Customer Service": {
+        "Harvesting:Agriculture": {
             type: filterTypeEnum.SKILL,
+            label: "Harvesting",
+            category: "Agriculture",
+        },
+        "Soil Preparation:Agriculture": {
+            type: filterTypeEnum.SKILL,
+            label: "Soil Preparation",
+            category: "Agriculture",
+        },
+        "Customer Service:Marketing Sales": {
+            type: filterTypeEnum.SKILL,
+            label: "Customer Service",
             category: "Marketing Sales",
         },
-        "Preparing Marketing Materials": {
+        "Preparing Marketing Materials:Marketing Sales": {
             type: filterTypeEnum.SKILL,
+            label: "Preparing Marketing Materials",
             category: "Marketing Sales",
         },
     },
     allId: [
-        "Auditing",
-        "Reconciling",
-        "Transaction Processing",
-        "Fertilizing",
-        "Harvesting",
-        "Soil Preparation",
-        "Customer Service",
-        "Preparing Marketing Materials",
+        "Auditing:Accounting",
+        "Reconciling:Accounting",
+        "Transaction Processing:Accounting",
+        "Fertilizing:Agriculture",
+        "Harvesting:Agriculture",
+        "Soil Preparation:Agriculture",
+        "Customer Service:Marketing Sales",
+        "Preparing Marketing Materials:Marketing Sales",
     ],
+    categoryById: {
+        Accounting: [
+            "Auditing:Accounting",
+            "Reconciling:Accounting",
+            "Transaction Processing:Accounting",
+        ],
+        Agriculture: [
+            "Fertilizing:Agriculture",
+            "Harvesting:Agriculture",
+            "Soil Preparation:Agriculture",
+        ],
+        "Marketing Sales": [
+            "Customer Service:Marketing Sales",
+            "Preparing Marketing Materials:Marketing Sales",
+        ],
+    },
 };

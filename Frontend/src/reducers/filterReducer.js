@@ -12,6 +12,10 @@ export default function filterReducer(state = defaultFilterState, action) {
                 ...state,
                 byId: { ...state.byId, ...action.payload.byId },
                 allId: state.allId.concat(action.payload.allId),
+                categoryById: {
+                    ...state.categoryById,
+                    ...action.payload.categoryById,
+                },
             };
         default:
             return state;

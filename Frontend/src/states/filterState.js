@@ -7,6 +7,7 @@ import {
 export const defaultFilterState = {
     byId: {},
     allId: [],
+    categoryById: {},
 };
 
 export const mockFilterState = {
@@ -20,4 +21,7 @@ export const mockFilterState = {
         ...mockTitleFilters.allId,
         ...mockSkillFilters.allId,
     ],
+    categoryById: {
+        ...mockSkillFilters.categoryById,
+    },
 };
