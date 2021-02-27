@@ -1,4 +1,4 @@
-import { defaultOrgChartState } from "states/orgChart";
+import { defaultOrgChartState } from "states/orgChartState";
 
 export default function orgChartReducer(state = defaultOrgChartState, action) {
     switch (action.type) {

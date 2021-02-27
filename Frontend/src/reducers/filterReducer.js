@@ -1,4 +1,4 @@
-import { defaultFilterState } from "states/filter";
+import { defaultFilterState } from "states/filterState";
 
 export default function filterReducer(state = defaultFilterState, action) {
     switch (action.type) {

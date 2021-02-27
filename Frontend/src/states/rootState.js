@@ -1,8 +1,8 @@
 import { defaultAppState } from "./appState";
-import { defaultFilterState } from "./filter";
-import { defaultOrgChartState } from "./orgChart";
-import { defualtSearchPageState } from "./searchPage";
-import { defaultWorkerState } from "./worker";
+import { defaultFilterState } from "./filterState";
+import { defaultOrgChartState } from "./orgChartState";
+import { defualtSearchPageState } from "./searchPageState";
+import { defaultWorkerState } from "./workerState";
 
 const defaultRootState = {
     appState: defaultAppState,

@@ -1,4 +1,4 @@
-import { Grid, Slider, Input, makeStyles } from "@material-ui/core";
+import { Grid, Slider, Input } from "@material-ui/core";
 import { Work } from "@material-ui/icons";
 import React from "react";
 import { connect } from "react-redux";
@@ -41,7 +41,7 @@ function ExperienceSlider(props) {
                     onChange={handleSliderChange}
                     aria-labelledby="input-slider"
                     max={MAX_YEARS}
-                    style={{color: "#1c83fb"}}
+                    style={{ color: "#1c83fb" }}
                 />
             </Grid>
             <Grid item>
@@ -59,7 +59,7 @@ function ExperienceSlider(props) {
                         "aria-labelledby": "input-slider",
                         style: {
                             textAlign: "center",
-                        }
+                        },
                     }}
                 />
                 Years

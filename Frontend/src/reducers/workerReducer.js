@@ -1,4 +1,4 @@
-import { defaultWorkerState } from "states/worker";
+import { defaultWorkerState } from "states/workerState";
 
 export default function workerReducer(state = defaultWorkerState, action) {
     switch (action.type) {

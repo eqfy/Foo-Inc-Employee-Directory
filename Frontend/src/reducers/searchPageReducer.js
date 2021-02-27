@@ -1,4 +1,4 @@
-import { defualtSearchPageState } from "states/searchPage";
+import { defualtSearchPageState } from "states/searchPageState";
 
 export default function searchPageReducer(
     state = defualtSearchPageState,
