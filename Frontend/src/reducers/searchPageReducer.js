@@ -5,7 +5,7 @@ export default function searchPageReducer(
     action
 ) {
     switch (action.type) {
-        case "SET_PAGE_STATE":
+        case "SET_SEARCH_STATE":
             return {
                 ...state,
                 ...action.payload,
@@ -18,12 +18,17 @@ export default function searchPageReducer(
         case "SET_EXPERIENCE_FILTER":
             return {
                 ...state,
-                appliedExperienceFilter: action.payload.appliedExperienceFilter,
+                experienceFilter: action.payload.experienceFilter,
             };
-        case "SET_SEARCHPAGE_ORDER":
+        case "SET_SEARCH_RESULT_ORDER":
             return {
                 ...state,
-                searchPageOrder: action.payload.searchPageOrder,
+                resultOrder: action.payload.resultOrder,
+            };
+        case "SET_SEARCH_PAGE_NUMBER":
+            return {
+                ...state,
+                pageNumber: action.payload.pageNumber,
             };
         default:
             return state;

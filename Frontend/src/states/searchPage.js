@@ -1,5 +1,6 @@
 export const defualtSearchPageState = {
     appliedFilters: [],
-    appliedExperienceFilter: 0,
-    searchPageOrder: [],
+    experienceFilter: 0,
+    resultOrder: [],
+    pageNumber: 1,
 };
