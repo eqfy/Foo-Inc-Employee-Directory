@@ -8,9 +8,7 @@ export default function searchPageReducer(
         case "SET_PAGE_STATE":
             return {
                 ...state,
-                appliedFilters: action.payload.appliedFilters,
-                appliedExperienceFilter: action.payload.appliedExperienceFilter,
-                searchPageOrder: action.payload.searchPageOrder,
+                ...action.payload,
             };
         case "SET_APPLIED_FILTERS":
             return {

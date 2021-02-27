@@ -5,11 +5,7 @@ export default function appStateReducer(state = defaultAppState, action) {
         case "SET_APP_STATE":
             return {
                 ...state,
-                isAdmin: action.payload.isAdmin,
-                currPage: action.payload.currPage,
-                currWorkerId: action.payload.currWorkerId,
-                focusedWorkerId: action.payload.focusedWorkerId,
-                profileShowPrevNext: action.payload.profileShowPrevNext,
+                ...action.payload,
             };
         case "SET_ADMIN_PERM":
             return {
@@ -19,12 +15,12 @@ export default function appStateReducer(state = defaultAppState, action) {
         case "SET_CURR_PAGE":
             return {
                 ...state,
-                currPage: action.payload.isAdmin,
+                currPage: action.payload.currPage,
             };
         case "SET_CURR_WORKERID":
             return {
                 ...state,
-                currWorkerId: action.payload.isAdmin,
+                currWorkerId: action.payload.currWorkerId,
             };
         case "SET_FOCUSED_WORKERID":
             return {

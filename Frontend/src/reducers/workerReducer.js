@@ -5,8 +5,7 @@ export default function workerReducer(state = defaultWorkerState, action) {
         case "SET_WORKERS":
             return {
                 ...state,
-                byId: action.payload.byId,
-                allId: action.payload.allId,
+                ...action.payload,
             };
         case "ADD_WORKERS":
             return {

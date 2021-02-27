@@ -5,9 +5,7 @@ export default function orgChartReducer(state = defaultOrgChartState, action) {
         case "SET_ORGCHART":
             return {
                 ...state,
-                supervisor: action.payload.supervisor,
-                peers: action.payload.peers,
-                subordinates: action.payload.subordinates,
+                ...action.payload,
             };
         default:
             return state;

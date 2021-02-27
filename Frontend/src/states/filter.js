@@ -15,9 +15,9 @@ export const mockFilterState = {
         ...mockTitleFilters.byId,
         ...mockSkillFilters.byId,
     },
-    allId: [].concat(
-        mockLocationFilters.allId,
-        mockTitleFilters.allId,
-        mockSkillFilters.allId
-    ),
+    allId: [
+        ...mockLocationFilters.allId,
+        ...mockTitleFilters.allId,
+        ...mockSkillFilters.allId,
+    ],
 };

@@ -5,8 +5,7 @@ export default function filterReducer(state = defaultFilterState, action) {
         case "SET_FILTERS":
             return {
                 ...state,
-                byId: action.payload.byId,
-                allId: action.payload.allId,
+                ...action.payload,
             };
         case "ADD_FILTERS":
             return {
