@@ -3,4 +3,6 @@ export const defualtSearchPageState = {
     experienceFilter: 0,
     resultOrder: [],
     pageNumber: 1,
+    isAscending: false,
+    sortKey: "",
 };
