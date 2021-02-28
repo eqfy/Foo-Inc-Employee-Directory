@@ -84,7 +84,7 @@ namespace Handler
             return response;
         }
 
-         public APIGatewayProxyResponse GetByName(Stream input, ILambdaContext context)
+        public  APIGatewayProxyResponse GetByName(Stream input, ILambdaContext context)
         {
             string inputString = string.Empty;
             LambdaLogger.Log("Inside GetByName\n");
@@ -108,7 +108,8 @@ namespace Handler
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
-            using var cmd = new NpgsqlCommand("Select * FROM \"Employee\" WHERE \"FirstName\" = :p1 AND \"LastName\" = :p2", con);
+            // using var cmd = new NpgsqlCommand("Select * FROM \"Employee\" WHERE \"FirstName\" = :p1 AND \"LastName\" = :p2", con);
+            using var cmd = new NpgsqlCommand("WITH es AS (SELECT \"EmployeeNumber\", string_agg(\"SkillCategory\".\"Label\" || ': ' || \"Skill\".\"Label\", ', ') AS skills FROM \"EmployeeSkills\", \"Skill\", \"SkillCategory\" WHERE \"EmployeeSkills\".\"SkillId\" = \"Skill\".\"SkillId\" AND \"EmployeeSkills\".\"SkillCategoryId\" = \"SkillCategory\".\"SkillCategoryId\" AND \"Skill\".\"SkillCategoryId\" = \"SkillCategory\".\"SkillCategoryId\" GROUP BY \"EmployeeNumber\") SELECT \"Employee\".*, es.skills FROM \"Employee\" LEFT JOIN es ON \"Employee\".\"EmployeeNumber\" = es.\"EmployeeNumber\" WHERE \"Employee\".\"FirstName\" = :p1 AND \"Employee\".\"LastName\" = :p2", con);
             cmd.Parameters.AddWithValue("p1", firstName);
             cmd.Parameters.AddWithValue("p2", lastName);
 
@@ -116,20 +117,39 @@ namespace Handler
             var reader = cmd.ExecuteReader();
     
             string output = string.Empty;
-            ArrayList employees = new ArrayList();
+            List<Employee> employees = new List<Employee>();
 
             while(reader.Read()) {
-                employees.Add(new 
-                {
-                  firstName = reader[5],
-                  lastName = reader[4],
-                  image = reader[16],
-                  physicalLocation = reader[15],
-                });
-  
-                output = JsonSerializer.Serialize(employees[0]);
+                Employee e = new Employee();
+                e.employeeNumber = reader[0].ToString();
+                e.companyCode = reader[1].ToString();
+                e.officeCode = reader[2].ToString();
+                e.groupCode = reader[3].ToString();
+                e.lastName = reader[4].ToString();
+                e.firstName = reader[5].ToString();
+                e.employmentType = reader[6].ToString();
+                e.title = reader[7].ToString();
+                e.hireDate = reader[8].ToString();
+                e.terminationDate = reader[9].ToString();
+                e.supervisorEmployeeNumber = reader[10].ToString();
+                e.yearsPriorExperience = reader[11].ToString();
+                e.email = reader[12].ToString();
+                e.workPhone = reader[13].ToString();
+                e.workCell = reader[14].ToString();
+                e.physicalLocation = reader[15].ToString();
+                e.photoUrl = reader[16].ToString();
+                e.isContractor = reader[17].ToString();
+                e.skills = reader[18].ToString();
+                employees.Add(e);
             }
 
+            reader.Close();
+
+            LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
+            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+        
             var response = new APIGatewayProxyResponse
             {
                 StatusCode = 200,
