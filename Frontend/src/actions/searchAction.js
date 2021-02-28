@@ -5,8 +5,8 @@ export const searchAction = (searchProps) => (dispatch) => {
         .then((response) => {
             console.log(response);
             dispatch({
-                type: "SIMPLE_ACTION",
-                payload: "result_of_simple_action",
+                type: "SEARCH_OPTION",
+                payload: "employee data that satisfy filter",
             });
         })
         .catch((error) => {
