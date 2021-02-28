@@ -3,10 +3,22 @@ using System.Collections;
 public class Employee
 {
   public string employeeNumber;
-  public string firstName;
+  public string companyCode;
+  public string officeCode;
+  public string groupCode;
   public string lastName;
-  public ArrayList skills;
-
-  public string image; 
-  public string physicalLocation; 
+  public string firstName;
+  public string employmentType;
+  public string title;
+  public string hireDate;
+  public string terminationDate;
+  public string supervisorEmployeeNumber;
+  public string yearsPriorExperience;
+  public string email;
+  public string workPhone;
+  public string  workCell;
+  public string physicalLocation;
+  public string photoUrl;
+  public string isContractor;
+  public string skills;
 }
