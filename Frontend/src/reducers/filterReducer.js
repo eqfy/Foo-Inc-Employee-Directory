@@ -13,11 +13,26 @@ export default function filterReducer(state = defaultFilterState, action) {
                 byId: { ...state.byId, ...action.payload.byId },
                 allId: state.allId.concat(action.payload.allId),
                 categoryById: {
-                    ...state.categoryById,
-                    ...action.payload.categoryById,
+                    ...mergeIds(
+                        state.categoryById,
+                        action.payload.categoryById
+                    ),
                 },
+                locationAllId: [...state.location, ...action.payload.location],
+                titleAllId: [...state.title, ...action.payload.title],
             };
         default:
             return state;
     }
 }
+
+const mergeIds = (orig, other) => {
+    for (const [key, value] of Object.entries(other)) {
+        if (!orig[key]) {
+            orig[key] = value;
+        } else {
+            orig[key] = orig[key].concat(value);
+        }
+    }
+    return orig;
+};

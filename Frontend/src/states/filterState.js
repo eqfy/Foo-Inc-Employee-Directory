@@ -8,6 +8,7 @@ export const defaultFilterState = {
     byId: {},
     allId: [],
     categoryById: {},
+    locationAllId: [],
 };
 
 export const mockFilterState = {
@@ -24,4 +25,6 @@ export const mockFilterState = {
     categoryById: {
         ...mockSkillFilters.categoryById,
     },
+    locationAllId: mockLocationFilters.allId,
+    titleAllId: mockTitleFilters.allId,
 };
