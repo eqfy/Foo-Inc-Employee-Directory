@@ -84,26 +84,33 @@ namespace Handler
             return response;
         }
 
-        public  APIGatewayProxyResponse GetByName(Stream input, ILambdaContext context)
+        public  APIGatewayProxyResponse GetByName(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            string inputString = string.Empty;
-            LambdaLogger.Log("Inside GetByName\n");
-            LambdaLogger.Log(GetRDSConnectionString());
+            // string inputString = string.Empty;
+            // LambdaLogger.Log("Inside GetByName\n");
+            // LambdaLogger.Log(GetRDSConnectionString());
             //Open the connection to the postgres database
 
-            if (input != null)
-            {
-                StreamReader streamReader = new StreamReader(input);
-                inputString = streamReader.ReadToEnd();
-            }
+            // if (input != null)
+            // {
+            //     StreamReader streamReader = new StreamReader(input);
+            //     inputString = streamReader.ReadToEnd();
+            // }
 
-            LambdaLogger.Log($"GetByName: received the following string: {inputString}");
+            // LambdaLogger.Log($"GetByName: received the following string: {inputString}");
 
-            JObject inputJSON = JObject.Parse(inputString);
-            var firstName = inputJSON["FirstName"].ToString();
-            var lastName = inputJSON["LastName"].ToString();
-            LambdaLogger.Log($"First: {firstName}");
-            LambdaLogger.Log($"Last: {lastName}");  
+            // JObject inputJSON = JObject.Parse(inputString);
+            // var firstName = inputJSON["FirstName"].ToString();
+            // var lastName = inputJSON["LastName"].ToString();
+            // LambdaLogger.Log($"First: {firstName}");
+            // LambdaLogger.Log($"Last: {lastName}");
+            // LambdaLogger.Log("Hello" + request.QueryStringParameters.Keys.ToString());
+            // LambdaLogger.Log("Hello2" + request.MultiValueQueryStringParameters.Keys.ToString());
+            
+            var firstName = request.QueryStringParameters["FirstName"];
+            var lastName = request.QueryStringParameters["LastName"];  
+            LambdaLogger.Log("FirstName: " + firstName);
+            LambdaLogger.Log("FirstName: " + lastName);
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();

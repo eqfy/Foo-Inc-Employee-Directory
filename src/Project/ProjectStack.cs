@@ -129,7 +129,7 @@ namespace Project
             });
             apiGateway.Resource employeeByNameResource = api.Root.AddResource("employeeByName");
             apiGateway.LambdaIntegration getEmployeeByNameIntegration =  new apiGateway.LambdaIntegration(getEmployeeByName);
-            apiGateway.Method getEmployeeByNameMethod =  employeeByNameResource.AddMethod("GET", getEmployeeIntegration);
+            apiGateway.Method getEmployeeByNameMethod =  employeeByNameResource.AddMethod("GET", getEmployeeByNameIntegration);
  
 
 
