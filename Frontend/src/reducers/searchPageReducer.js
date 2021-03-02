@@ -33,12 +33,12 @@ export default function searchPageReducer(
         case "SET_SORT_ORDER":
             return {
                 ...state,
-                pageNumber: action.payload.isAscending,
+                isAscending: action.payload.isAscending,
             };
         case "SET_SORT_KEY":
             return {
                 ...state,
-                pageNumber: action.payload.sortKey,
+                sortKey: action.payload.sortKey,
             };
         default:
             return state;
