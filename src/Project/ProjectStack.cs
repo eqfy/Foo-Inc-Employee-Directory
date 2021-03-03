@@ -130,6 +130,11 @@ namespace Project
             apiGateway.Resource employeeByNameResource = api.Root.AddResource("employeeByName");
             apiGateway.LambdaIntegration getEmployeeByNameIntegration =  new apiGateway.LambdaIntegration(getEmployeeByName);
             apiGateway.Method getEmployeeByNameMethod =  employeeByNameResource.AddMethod("GET", getEmployeeByNameIntegration);
+
+
+            //search Enpoint
+
+            
  
 
 
@@ -164,6 +169,7 @@ namespace Project
             });
             databaseScriptsBucket.GrantRead(databaseInitLambda);
             databaseScriptsBucket.GrantRead(databaseDropAllLambda);
+            databaseScriptsBucket.GrantRead(getEmployeeByName);
 
 
             s3dep.ISource[] temp = {s3dep.Source.Asset("./Database")};
@@ -181,6 +187,9 @@ namespace Project
             getEmployeeByName.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getEmployeeByName.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getEmployeeByName.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            //adding getByName.sql for lambda
+            getEmployeeByName.AddEnvironment("OBJECT_KEY", "getByName.sql");
+            getEmployeeByName.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());

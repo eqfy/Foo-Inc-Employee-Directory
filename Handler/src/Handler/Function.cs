@@ -86,26 +86,6 @@ namespace Handler
 
         public  APIGatewayProxyResponse GetByName(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            // string inputString = string.Empty;
-            // LambdaLogger.Log("Inside GetByName\n");
-            // LambdaLogger.Log(GetRDSConnectionString());
-            //Open the connection to the postgres database
-
-            // if (input != null)
-            // {
-            //     StreamReader streamReader = new StreamReader(input);
-            //     inputString = streamReader.ReadToEnd();
-            // }
-
-            // LambdaLogger.Log($"GetByName: received the following string: {inputString}");
-
-            // JObject inputJSON = JObject.Parse(inputString);
-            // var firstName = inputJSON["FirstName"].ToString();
-            // var lastName = inputJSON["LastName"].ToString();
-            // LambdaLogger.Log($"First: {firstName}");
-            // LambdaLogger.Log($"Last: {lastName}");
-            // LambdaLogger.Log("Hello" + request.QueryStringParameters.Keys.ToString());
-            // LambdaLogger.Log("Hello2" + request.MultiValueQueryStringParameters.Keys.ToString());
             
             var firstName = request.QueryStringParameters["FirstName"];
             var lastName = request.QueryStringParameters["LastName"];  
@@ -115,8 +95,26 @@ namespace Handler
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
+            
             // using var cmd = new NpgsqlCommand("Select * FROM \"Employee\" WHERE \"FirstName\" = :p1 AND \"LastName\" = :p2", con);
-            using var cmd = new NpgsqlCommand("WITH es AS (SELECT \"EmployeeNumber\", string_agg(\"SkillCategory\".\"Label\" || ': ' || \"Skill\".\"Label\", ', ') AS skills FROM \"EmployeeSkills\", \"Skill\", \"SkillCategory\" WHERE \"EmployeeSkills\".\"SkillId\" = \"Skill\".\"SkillId\" AND \"EmployeeSkills\".\"SkillCategoryId\" = \"SkillCategory\".\"SkillCategoryId\" AND \"Skill\".\"SkillCategoryId\" = \"SkillCategory\".\"SkillCategoryId\" GROUP BY \"EmployeeNumber\") SELECT \"Employee\".*, es.skills FROM \"Employee\" LEFT JOIN es ON \"Employee\".\"EmployeeNumber\" = es.\"EmployeeNumber\" WHERE \"Employee\".\"FirstName\" = :p1 AND \"Employee\".\"LastName\" = :p2", con);
+            //using var cmd = new NpgsqlCommand("WITH es AS (SELECT \"EmployeeNumber\", string_agg(\"SkillCategory\".\"Label\" || ': ' || \"Skill\".\"Label\", ', ') AS skills FROM \"EmployeeSkills\", \"Skill\", \"SkillCategory\" WHERE \"EmployeeSkills\".\"SkillId\" = \"Skill\".\"SkillId\" AND \"EmployeeSkills\".\"SkillCategoryId\" = \"SkillCategory\".\"SkillCategoryId\" AND \"Skill\".\"SkillCategoryId\" = \"SkillCategory\".\"SkillCategoryId\" GROUP BY \"EmployeeNumber\") SELECT \"Employee\".*, es.skills FROM \"Employee\" LEFT JOIN es ON \"Employee\".\"EmployeeNumber\" = es.\"EmployeeNumber\" WHERE \"Employee\".\"FirstName\" = :p1 AND \"Employee\".\"LastName\" = :p2", con);
+            
+            //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+
+            //Get the sql script from the bucket
+            var script = getS3FileSync(bucketName, objectKey);
+        
+            
+            //Read the sql from the file
+            StreamReader readers3 = new StreamReader(script.ResponseStream);
+            String sql = readers3.ReadToEnd();
+            LambdaLogger.Log("sql: " + sql);
+            
+            using var cmd = new NpgsqlCommand(sql,con);
             cmd.Parameters.AddWithValue("p1", firstName);
             cmd.Parameters.AddWithValue("p2", lastName);
 
@@ -262,6 +260,90 @@ namespace Handler
             {
                 StatusCode = 200,
                 Body = "dropped all tables",
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" } 
+                }
+            };
+
+            return response;
+        }
+        
+        public  APIGatewayProxyResponse Search(APIGatewayProxyRequest request, ILambdaContext context)
+        {
+            
+            var firstName = request.QueryStringParameters["FirstName"];
+            var lastName = request.QueryStringParameters["LastName"];  
+            LambdaLogger.Log("FirstName: " + firstName);
+            LambdaLogger.Log("FirstName: " + lastName);
+
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+
+
+            //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+
+            //Get the sql script from the bucket
+            var script = getS3FileSync(bucketName, objectKey);
+        
+            
+            //Read the sql from the file
+            StreamReader readers3 = new StreamReader(script.ResponseStream);
+            String sql = readers3.ReadToEnd();
+            LambdaLogger.Log("sql: " + sql);
+           
+
+            using var cmd = new NpgsqlCommand(sql,con);
+            cmd.Parameters.AddWithValue("p1", firstName);
+            cmd.Parameters.AddWithValue("p2", lastName);
+
+            //Run the sql command
+            var reader = cmd.ExecuteReader();
+    
+            string output = string.Empty;
+            List<Employee> employees = new List<Employee>();
+
+            while(reader.Read()) {
+                Employee e = new Employee();
+                e.firstName = reader[0].ToString();
+                e.lastName = reader[1].ToString();
+                e.photoUrl = reader[2].ToString();
+                e.skills = reader[3].ToString();
+                e.physicalLocation = reader[4].ToString();
+                e.division = reader[5].ToString();
+                e.companyName = reader[6].ToString();
+                e.OfficeLocation = reader[7].ToString();
+                e.title = reader[8].ToString();
+                e.hireDate = reader[9].ToString();
+                e.terminationDate = reader[10].ToString();
+                e.supervisorEmployeeNumber = reader[11].ToString();
+                e.yearsPriorExperience = reader[12].ToString();
+                e.email = reader[13].ToString();
+                e.workPhone = reader[14].ToString();
+                e.workCell = reader[15].ToString();
+                e.isContractor = reader[16].ToString();
+                e.employeeNumber = reader[17].ToString();
+                e.employmentType = reader[18].ToString();
+                employees.Add(e);
+            }
+
+            reader.Close();
+
+            LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
+            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+        
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = output,
+                //Body = myDbItems.ToString(),
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 

@@ -9,6 +9,9 @@ public class Employee
   public string lastName;
   public string firstName;
   public string employmentType;
+  public string division;
+  public string companyName;
+  public string OfficeLocation;
   public string title;
   public string hireDate;
   public string terminationDate;
@@ -16,7 +19,7 @@ public class Employee
   public string yearsPriorExperience;
   public string email;
   public string workPhone;
-  public string  workCell;
+  public string workCell;
   public string physicalLocation;
   public string photoUrl;
   public string isContractor;
