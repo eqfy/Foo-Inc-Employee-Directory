@@ -168,20 +168,16 @@ namespace Handler
          public APIGatewayProxyResponse GetAllFilters(APIGatewayProxyRequest request, ILambdaContext context)
         {
             LambdaLogger.Log(GetRDSConnectionString());
-            //Open the connection to the postgres database
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
             var sqlSkill = "WITH category AS (SELECT \"SkillCategory\".\"Label\", \"SkillCategory\".\"SkillCategoryId\" FROM \"SkillCategory\") SELECT \"Skill\".\"Label\", category.\"Label\" FROM \"Skill\" LEFT JOIN category ON \"Skill\".\"SkillCategoryId\" = category.\"SkillCategoryId\"";
-            //Create the database sql command
             using var cmdSkill = new NpgsqlCommand(sqlSkill, con);
 
-            //Run the sql command
             var readerSkill = cmdSkill.ExecuteReader();
             Filters filters = new Filters();
             List<Skill> skills = new List<Skill>();
     
-            //Test to make sure it is actually getting all the rows
             while(readerSkill.Read()){
                 Skill s = new Skill();
                 s.skillLabel = readerSkill[0].ToString();
@@ -206,7 +202,6 @@ namespace Handler
             }
 
             filters.locations = locs;
-
             readerLocation.Close();
 
             string output = Newtonsoft.Json.JsonConvert.SerializeObject(filters); 
@@ -215,7 +210,6 @@ namespace Handler
             {
                 StatusCode = 200,
                 Body = output,
-                //Body = myDbItems.ToString(),
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
