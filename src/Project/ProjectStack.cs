@@ -149,6 +149,24 @@ namespace Project
             apiGateway.LambdaIntegration searchIntegration =  new apiGateway.LambdaIntegration(search);
             apiGateway.Method searchMethod =  searchResource.AddMethod("GET", searchIntegration);
 
+            //getEmployeeID Enpoint
+            lambda.Function getEmployeeID = new lambda.Function(this,"getEmployeeID", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::getEmployeeID",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource getEmployeeIDResource = api.Root.AddResource("getEmployeeIDResource");
+            apiGateway.LambdaIntegration getEmployeeIDIntegration =  new apiGateway.LambdaIntegration(getEmployeeID);
+            apiGateway.Method getEmployeeIDMethod =  getEmployeeIDResource.AddMethod("GET", getEmployeeIDIntegration);
+
+
             
             lambda.Function databaseInitLambda = new lambda.Function(this,"databaseInit", new lambda.FunctionProps{
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
@@ -182,6 +200,7 @@ namespace Project
             databaseScriptsBucket.GrantRead(databaseDropAllLambda);
             databaseScriptsBucket.GrantRead(getEmployeeByName);
             databaseScriptsBucket.GrantRead(search);
+            databaseScriptsBucket.GrantRead(getEmployeeID);
 
 
 
@@ -210,6 +229,14 @@ namespace Project
             //adding getByName.sql for lambda
             search.AddEnvironment("OBJECT_KEY", "searchTemp.sql");
             search.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+
+            getEmployeeID.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            getEmployeeID.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            getEmployeeID.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            //adding getByName.sql for lambda
+            getEmployeeID.AddEnvironment("OBJECT_KEY", "getEmployeeID.sql");
+            getEmployeeID.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());

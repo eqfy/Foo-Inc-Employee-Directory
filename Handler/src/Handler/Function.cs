@@ -353,5 +353,84 @@ namespace Handler
 
             return response;
         }
+
+        public  APIGatewayProxyResponse getEmployeeID(APIGatewayProxyRequest request, ILambdaContext context)
+        {
+            
+            var employeeID = request.QueryStringParameters["EmployeeNumber"];  
+            LambdaLogger.Log("ID: " + employeeID);
+
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+
+
+            //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+
+            //Get the sql script from the bucket
+            var script = getS3FileSync(bucketName, objectKey);
+        
+            
+            //Read the sql from the file
+            StreamReader readers3 = new StreamReader(script.ResponseStream);
+            String sql = readers3.ReadToEnd();
+            LambdaLogger.Log("sql: " + sql);
+           
+
+            using var cmd = new NpgsqlCommand(sql,con);
+            cmd.Parameters.AddWithValue("p1", employeeID);
+
+            //Run the sql command
+            var reader = cmd.ExecuteReader();
+    
+            string output = string.Empty;
+            List<Employee> employees = new List<Employee>();
+
+            while(reader.Read()) {
+                Employee e = new Employee();
+                e.firstName = reader[0].ToString();
+                e.lastName = reader[1].ToString();
+                e.photoUrl = reader[2].ToString();
+                e.physicalLocation = reader[3].ToString();
+                e.division = reader[4].ToString();
+                e.companyName = reader[5].ToString();
+                e.title = reader[6].ToString();
+                e.hireDate = reader[7].ToString();
+                e.terminationDate = reader[8].ToString();
+                e.supervisorEmployeeNumber = reader[9].ToString();
+                e.yearsPriorExperience = reader[10].ToString();
+                e.email = reader[11].ToString();
+                e.workPhone = reader[12].ToString();
+                e.workCell = reader[13].ToString();
+                e.isContractor = reader[14].ToString();
+                e.employeeNumber = reader[15].ToString();
+                e.employmentType = reader[16].ToString();
+                e.skills = reader[17].ToString();
+                e.OfficeLocation = reader[18].ToString();
+                employees.Add(e);
+            }
+
+            reader.Close();
+            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+        
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = output,
+                //Body = myDbItems.ToString(),
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" } 
+                }
+            };
+
+            return response;
+        }
     }
 }
