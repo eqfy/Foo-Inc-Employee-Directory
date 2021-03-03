@@ -3,9 +3,9 @@ using System.Collections;
 public class Employee
 {
   public string employeeNumber;
-  public string companyCode;
-  public string officeCode;
-  public string groupCode;
+  // public string companyCode;
+  // public string officeCode;
+  // public string groupCode;
   public string lastName;
   public string firstName;
   public string employmentType;

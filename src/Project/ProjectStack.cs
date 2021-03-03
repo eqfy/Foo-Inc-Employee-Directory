@@ -133,10 +133,21 @@ namespace Project
 
 
             //search Enpoint
-
-            
- 
-
+            lambda.Function search = new lambda.Function(this,"search", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::search",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource searchResource = api.Root.AddResource("searchResource");
+            apiGateway.LambdaIntegration searchIntegration =  new apiGateway.LambdaIntegration(search);
+            apiGateway.Method searchMethod =  searchResource.AddMethod("GET", searchIntegration);
 
             
             lambda.Function databaseInitLambda = new lambda.Function(this,"databaseInit", new lambda.FunctionProps{
@@ -170,6 +181,8 @@ namespace Project
             databaseScriptsBucket.GrantRead(databaseInitLambda);
             databaseScriptsBucket.GrantRead(databaseDropAllLambda);
             databaseScriptsBucket.GrantRead(getEmployeeByName);
+            databaseScriptsBucket.GrantRead(search);
+
 
 
             s3dep.ISource[] temp = {s3dep.Source.Asset("./Database")};
@@ -190,6 +203,13 @@ namespace Project
             //adding getByName.sql for lambda
             getEmployeeByName.AddEnvironment("OBJECT_KEY", "getByName.sql");
             getEmployeeByName.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+            search.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            search.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            search.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            //adding getByName.sql for lambda
+            search.AddEnvironment("OBJECT_KEY", "searchTemp.sql");
+            search.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());

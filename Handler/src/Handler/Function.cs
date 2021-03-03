@@ -127,9 +127,9 @@ namespace Handler
             while(reader.Read()) {
                 Employee e = new Employee();
                 e.employeeNumber = reader[0].ToString();
-                e.companyCode = reader[1].ToString();
-                e.officeCode = reader[2].ToString();
-                e.groupCode = reader[3].ToString();
+                // e.companyCode = reader[1].ToString();
+                // e.officeCode = reader[2].ToString();
+                // e.groupCode = reader[3].ToString();
                 e.lastName = reader[4].ToString();
                 e.firstName = reader[5].ToString();
                 e.employmentType = reader[6].ToString();
@@ -270,7 +270,7 @@ namespace Handler
             return response;
         }
         
-        public  APIGatewayProxyResponse Search(APIGatewayProxyRequest request, ILambdaContext context)
+        public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
             var firstName = request.QueryStringParameters["FirstName"];
@@ -313,22 +313,22 @@ namespace Handler
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
                 e.photoUrl = reader[2].ToString();
-                e.skills = reader[3].ToString();
-                e.physicalLocation = reader[4].ToString();
-                e.division = reader[5].ToString();
-                e.companyName = reader[6].ToString();
-                e.OfficeLocation = reader[7].ToString();
-                e.title = reader[8].ToString();
-                e.hireDate = reader[9].ToString();
-                e.terminationDate = reader[10].ToString();
-                e.supervisorEmployeeNumber = reader[11].ToString();
-                e.yearsPriorExperience = reader[12].ToString();
-                e.email = reader[13].ToString();
-                e.workPhone = reader[14].ToString();
-                e.workCell = reader[15].ToString();
-                e.isContractor = reader[16].ToString();
-                e.employeeNumber = reader[17].ToString();
-                e.employmentType = reader[18].ToString();
+                e.physicalLocation = reader[3].ToString();
+                e.division = reader[4].ToString();
+                e.companyName = reader[5].ToString();
+                e.title = reader[6].ToString();
+                e.hireDate = reader[7].ToString();
+                e.terminationDate = reader[8].ToString();
+                e.supervisorEmployeeNumber = reader[9].ToString();
+                e.yearsPriorExperience = reader[10].ToString();
+                e.email = reader[11].ToString();
+                e.workPhone = reader[12].ToString();
+                e.workCell = reader[13].ToString();
+                e.isContractor = reader[14].ToString();
+                e.employeeNumber = reader[15].ToString();
+                e.employmentType = reader[16].ToString();
+                e.skills = reader[17].ToString();
+                e.OfficeLocation = reader[18].ToString();
                 employees.Add(e);
             }
 
