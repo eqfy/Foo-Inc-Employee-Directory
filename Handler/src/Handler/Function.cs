@@ -186,7 +186,7 @@ namespace Handler
                 Skill s = new Skill();
                 s.skillLabel = readerSkill[0].ToString();
                 s.categoryLabel = readerSkill[1].ToString();
-                LambdaLogger.Log("Skill: " + s.skillLabel);
+                LambdaLogger.Log("Skill: " + s.skillLabel + "\n");
                 skills.Add(s);
             }
 
@@ -201,9 +201,11 @@ namespace Handler
             List<string> locs = new List<string>();
 
             while (readerLocation.Read()) {
-              LambdaLogger.Log("Location" + readerLocation[0] + "\n");
+              LambdaLogger.Log("Location: " + readerLocation[0] + "\n");
               locs.Add(readerLocation[0].ToString());
             }
+
+            filters.locations = locs;
 
             readerLocation.Close();
 
