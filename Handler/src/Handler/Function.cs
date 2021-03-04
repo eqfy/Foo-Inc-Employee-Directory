@@ -167,8 +167,8 @@ namespace Handler
 
         public  APIGatewayProxyResponse GetOrgChart(APIGatewayProxyRequest request, ILambdaContext context) {
             string workerID = string.Empty;
-            if (request.MultiValueQueryStringParameters.ContainsKey("Skills")) {
-                  skills = (List<string>)request.MultiValueQueryStringParameters["Skills"];
+            if (request.MultiValueQueryStringParameters.ContainsKey("WorkerID")) {
+                workerID = (List<string>)request.MultiValueQueryStringParameters["WorkerID"];
             }
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
@@ -188,51 +188,89 @@ namespace Handler
             // Get focusedWorker
             String sqlFocused = sql + " WHERE \"EmployeeNumber\" = :p"
 
-            using var cmdFocused = new NpgsqlCommand(sqlSelf, con);
+            using var cmdFocused = new NpgsqlCommand(sqlFocused, con);
+            cmd.Parameters.AddWithValue("p", workerID);
             var readerFocused = cmdFocused.ExecuteReader();
 
             string output = string.Empty;
             string supervisorID = string.Empty;
             OrgChart orgChart = new OrgChart();
+            Employee focusedWorker = new Employee();
 
             while(reader.Read()) {
                 LambdaLogger.Log("Reading self: \n");
-                Employee e = new Employee();
-                e.firstName = reader[0].ToString();
-                e.lastName = reader[1].ToString();
-                e.photoUrl = reader[2].ToString();
-                e.physicalLocation = reader[3].ToString();
-                e.division = reader[4].ToString();
-                e.companyName = reader[5].ToString();
-                e.title = reader[6].ToString();
-                e.hireDate = reader[7].ToString();
-                e.terminationDate = reader[8].ToString();
-                e.supervisorEmployeeNumber = reader[9].ToString();
-                e.yearsPriorExperience = reader[10].ToString();
-                e.email = reader[11].ToString();
-                e.workPhone = reader[12].ToString();
-                e.workCell = reader[13].ToString();
-                e.isContractor = reader[14].ToString();
-                e.employeeNumber = reader[15].ToString();
-                e.employmentType = reader[16].ToString();
-                e.skills = reader[17].ToString();
-                e.OfficeLocation = reader[18].ToString();
+                focusedWorker.firstName = reader[0].ToString();
+                focusedWorker.lastName = reader[1].ToString();
+                focusedWorker.photoUrl = reader[2].ToString();
+                focusedWorker.physicalLocation = reader[3].ToString();
+                focusedWorker.division = reader[4].ToString();
+                focusedWorker.companyName = reader[5].ToString();
+                focusedWorker.title = reader[6].ToString();
+                focusedWorker.hireDate = reader[7].ToString();
+                focusedWorker.terminationDate = reader[8].ToString();
+                focusedWorker.supervisorEmployeeNumber = reader[9].ToString();
+                focusedWorker.yearsPriorExperience = reader[10].ToString();
+                focusedWorker.email = reader[11].ToString();
+                focusedWorker.workPhone = reader[12].ToString();
+                focusedWorker.workCell = reader[13].ToString();
+                focusedWorker.isContractor = reader[14].ToString();
+                focusedWorker.employeeNumber = reader[15].ToString();
+                focusedWorker.employmentType = reader[16].ToString();
+                focusedWorker.skills = reader[17].ToString();
+                focusedWorker.OfficeLocation = reader[18].ToString();
                 supervisorID = e.supervisorEmployeeNumber;
-                orgChart.focusedWorked = e;
             }
 
+            orgChart.focusedWorker = focusedWorker;
             readerFocused.Close();
             LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
             LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
             
             // Get supervisor
-            String sqlSupervisor = sql + " WHERE \"SupervisorEmployeeNumber\" = :p"
+            String sqlSupervisor = sql + " WHERE \"EmployeeNumber\" = :p"
 
             using var cmdSupervisor = new NpgsqlCommand(sqlSupervisor, con);
+            cmdSupervisor.Parameters.AddWithValue("p", supervisorID);
             var readerSupervisor = cmdSupervisor.ExecuteReader();
 
-            while(reader.Read()) {
+            Employee supervisor = new Employee();
+
+            while(readerSupervisor.Read()) {
                 LambdaLogger.Log("Reading supervisor: \n");
+                supervisor.firstName = reader[0].ToString();
+                supervisor.lastName = reader[1].ToString();
+                supervisor.photoUrl = reader[2].ToString();
+                supervisor.physicalLocation = reader[3].ToString();
+                supervisor.division = reader[4].ToString();
+                supervisor.companyName = reader[5].ToString();
+                supervisor.title = reader[6].ToString();
+                supervisor.hireDate = reader[7].ToString();
+                supervisor.terminationDate = reader[8].ToString();
+                supervisor.supervisorEmployeeNumber = reader[9].ToString();
+                supervisor.yearsPriorExperience = reader[10].ToString();
+                supervisor.email = reader[11].ToString();
+                supervisor.workPhone = reader[12].ToString();
+                supervisor.workCell = reader[13].ToString();
+                supervisor.isContractor = reader[14].ToString();
+                supervisor.employeeNumber = reader[15].ToString();
+                supervisor.employmentType = reader[16].ToString();
+                supervisor.skills = reader[17].ToString();
+                supervisor.OfficeLocation = reader[18].ToString();
+            }
+
+            orgChart.supervisor = supervisor;
+            readerSupervisor.Close();
+
+            // Get colleagues
+            String sqlColleagues = sql + " WHERE \"SupervisorEmployeeNumber\" = :p"
+
+            using var cmdColleagues = new NpgsqlCommand(sqlColleagues, con);
+            cmdColleagues.Parameters.AddWithValue("p", supervisorID);
+            var readerColleagues = cmdColleagues.ExecuteReader();
+            List<Employee> colleagues = new List<Employee>();
+
+            while(readerColleagues.Read()) {
+                LambdaLogger.Log("Reading colleagues: \n");
                 Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
@@ -253,12 +291,48 @@ namespace Handler
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
                 e.OfficeLocation = reader[18].ToString();
-                orgChart.focusedWorked = e;
+                colleages.Add(e);
             }
 
-            readerFocused.Close();
-            LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
-            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
+            readerColleagues.Close();
+
+            // Get subordinates
+            String sqlSubordinates = sql + " WHERE \"SupervisorEmployeeNumber\" = :p"
+
+            using var cmdSubordinates = new NpgsqlCommand(sqlSubordinates, con);
+            cmdSubordinates.Parameters.AddWithValue("p", workerID);
+            var readerSubordinates = cmdSubordinates.ExecuteReader();
+            List<Employee> subs = new List<Employee>();
+
+            while(readerColleagues.Read()) {
+                LambdaLogger.Log("Reading subordinates: \n");
+                Employee e = new Employee();
+                e.firstName = reader[0].ToString();
+                e.lastName = reader[1].ToString();
+                e.photoUrl = reader[2].ToString();
+                e.physicalLocation = reader[3].ToString();
+                e.division = reader[4].ToString();
+                e.companyName = reader[5].ToString();
+                e.title = reader[6].ToString();
+                e.hireDate = reader[7].ToString();
+                e.terminationDate = reader[8].ToString();
+                e.supervisorEmployeeNumber = reader[9].ToString();
+                e.yearsPriorExperience = reader[10].ToString();
+                e.email = reader[11].ToString();
+                e.workPhone = reader[12].ToString();
+                e.workCell = reader[13].ToString();
+                e.isContractor = reader[14].ToString();
+                e.employeeNumber = reader[15].ToString();
+                e.employmentType = reader[16].ToString();
+                e.skills = reader[17].ToString();
+                e.OfficeLocation = reader[18].ToString();
+                subs.Add(e);
+            }
+
+            orgChart.subordinates = subs;
+            readerSubordinates.Close();
+
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(orgChart); 
 
             var response = new APIGatewayProxyResponse
             {
