@@ -189,10 +189,10 @@ namespace Handler
             var reader = cmd.ExecuteReader();
 
             string output = string.Empty;
-            List<Employee> employees = new List<Employee>();
+            List<Employee> selfAndSupervisor = new List<Employee>();
 
             while(reader.Read()) {
-                LambdaLogger.Log("Hey"+ reader[0].ToString());
+                LambdaLogger.Log("Reading employees... \n");
                 Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
@@ -213,7 +213,7 @@ namespace Handler
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
                 e.OfficeLocation = reader[18].ToString();
-                employees.Add(e);
+                selfAndSupervisor.Add(e);
             }
 
             reader.Close();

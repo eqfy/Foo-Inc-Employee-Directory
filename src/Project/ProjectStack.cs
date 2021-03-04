@@ -199,6 +199,8 @@ namespace Project
             getOrgChart.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getOrgChart.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getOrgChart.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            getOrgChart.AddEnvironment("OBJECT_KEY", "orgChartEmployee.sql"); // TODO : Change to search SQL query
+            getOrgChart.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
