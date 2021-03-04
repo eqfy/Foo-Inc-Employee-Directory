@@ -184,13 +184,16 @@ namespace Handler
 
             StreamReader readers3 = new StreamReader(script.ResponseStream);
             String sql = readers3.ReadToEnd();
+
+            // Get focusedWorker
             String sqlFocused = sql + " WHERE \"EmployeeNumber\" = :p"
 
             using var cmdFocused = new NpgsqlCommand(sqlSelf, con);
-            var reader = cmdFocused.ExecuteReader();
+            var readerFocused = cmdFocused.ExecuteReader();
 
             string output = string.Empty;
-            List<Employee> selfAndSupervisor = new List<Employee>();
+            string supervisorID = string.Empty;
+            OrgChart orgChart = new OrgChart();
 
             while(reader.Read()) {
                 LambdaLogger.Log("Reading self: \n");
@@ -214,13 +217,48 @@ namespace Handler
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
                 e.OfficeLocation = reader[18].ToString();
-                selfAndSupervisor.Add(e);
+                supervisorID = e.supervisorEmployeeNumber;
+                orgChart.focusedWorked = e;
             }
 
-            reader.Close();
+            readerFocused.Close();
             LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
             LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
-            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            
+            // Get supervisor
+            String sqlSupervisor = sql + " WHERE \"SupervisorEmployeeNumber\" = :p"
+
+            using var cmdSupervisor = new NpgsqlCommand(sqlSupervisor, con);
+            var readerSupervisor = cmdSupervisor.ExecuteReader();
+
+            while(reader.Read()) {
+                LambdaLogger.Log("Reading supervisor: \n");
+                Employee e = new Employee();
+                e.firstName = reader[0].ToString();
+                e.lastName = reader[1].ToString();
+                e.photoUrl = reader[2].ToString();
+                e.physicalLocation = reader[3].ToString();
+                e.division = reader[4].ToString();
+                e.companyName = reader[5].ToString();
+                e.title = reader[6].ToString();
+                e.hireDate = reader[7].ToString();
+                e.terminationDate = reader[8].ToString();
+                e.supervisorEmployeeNumber = reader[9].ToString();
+                e.yearsPriorExperience = reader[10].ToString();
+                e.email = reader[11].ToString();
+                e.workPhone = reader[12].ToString();
+                e.workCell = reader[13].ToString();
+                e.isContractor = reader[14].ToString();
+                e.employeeNumber = reader[15].ToString();
+                e.employmentType = reader[16].ToString();
+                e.skills = reader[17].ToString();
+                e.OfficeLocation = reader[18].ToString();
+                orgChart.focusedWorked = e;
+            }
+
+            readerFocused.Close();
+            LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
+            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
 
             var response = new APIGatewayProxyResponse
             {
