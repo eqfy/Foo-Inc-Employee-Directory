@@ -187,7 +187,6 @@ namespace Handler
             }
 
             filters.skills = skills;
-
             readerSkill.Close();
 
             var sqlLocation = "SELECT \"Label\" FROM \"LocationPhysical\"";
@@ -203,6 +202,20 @@ namespace Handler
 
             filters.locations = locs;
             readerLocation.Close();
+
+            var sqlTitle = "SELECT DISTINCT \"Employee\".\"Title\" FROM \"Employee\"";
+            using var cmdTitle = new NpgsqlCommand(sqlTitle, con);
+
+            var readerTitle = cmdTitle.ExecuteReader();
+            List<string> titles = new List<string>();
+
+            while (readerTitle.Read()) {
+              LambdaLogger.Log("Title: " + readerTitle[0] + "\n");
+              titles.Add(readerTitle[0].ToString());
+            }
+
+            filters.titles = titles;
+            readerTitle.Close();
 
             string output = Newtonsoft.Json.JsonConvert.SerializeObject(filters); 
 
