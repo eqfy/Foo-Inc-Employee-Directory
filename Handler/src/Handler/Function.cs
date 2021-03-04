@@ -177,22 +177,23 @@ namespace Handler
             var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
             var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
 
-            LambdaLogger.Log("bucketName: " + bucketName);
-            LambdaLogger.Log("objectKey: " + objectKey);
+            LambdaLogger.Log("BUCKET_NAME: " + bucketName);
+            LambdaLogger.Log("OBJECT_KEY: " + objectKey);
 
             var script = getS3FileSync(bucketName, objectKey);
 
             StreamReader readers3 = new StreamReader(script.ResponseStream);
             String sql = readers3.ReadToEnd();
+            String sqlFocused = sql + " WHERE \"EmployeeNumber\" = :p"
 
-            using var cmd = new NpgsqlCommand(sql, con);
-            var reader = cmd.ExecuteReader();
+            using var cmdFocused = new NpgsqlCommand(sqlSelf, con);
+            var reader = cmdFocused.ExecuteReader();
 
             string output = string.Empty;
             List<Employee> selfAndSupervisor = new List<Employee>();
 
             while(reader.Read()) {
-                LambdaLogger.Log("Reading employees... \n");
+                LambdaLogger.Log("Reading self: \n");
                 Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
