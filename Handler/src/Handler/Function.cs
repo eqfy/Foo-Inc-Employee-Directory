@@ -186,7 +186,7 @@ namespace Handler
             String sql = readers3.ReadToEnd();
 
             // Get focusedWorker
-            String sqlFocused = sql + " WHERE \"EmployeeNumber\" = :p"
+            String sqlFocused = sql + " WHERE \"EmployeeNumber\" = :p";
 
             using var cmdFocused = new NpgsqlCommand(sqlFocused, con);
             cmd.Parameters.AddWithValue("p", workerID);
@@ -227,7 +227,7 @@ namespace Handler
             LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
             
             // Get supervisor
-            String sqlSupervisor = sql + " WHERE \"EmployeeNumber\" = :p"
+            String sqlSupervisor = sql + " WHERE \"EmployeeNumber\" = :p";
 
             using var cmdSupervisor = new NpgsqlCommand(sqlSupervisor, con);
             cmdSupervisor.Parameters.AddWithValue("p", supervisorID);
@@ -262,7 +262,7 @@ namespace Handler
             readerSupervisor.Close();
 
             // Get colleagues
-            String sqlColleagues = sql + " WHERE \"SupervisorEmployeeNumber\" = :p"
+            String sqlColleagues = sql + " WHERE \"SupervisorEmployeeNumber\" = :p";
 
             using var cmdColleagues = new NpgsqlCommand(sqlColleagues, con);
             cmdColleagues.Parameters.AddWithValue("p", supervisorID);
@@ -297,7 +297,7 @@ namespace Handler
             readerColleagues.Close();
 
             // Get subordinates
-            String sqlSubordinates = sql + " WHERE \"SupervisorEmployeeNumber\" = :p"
+            String sqlSubordinates = sql + " WHERE \"SupervisorEmployeeNumber\" = :p";
 
             using var cmdSubordinates = new NpgsqlCommand(sqlSubordinates, con);
             cmdSubordinates.Parameters.AddWithValue("p", workerID);
