@@ -171,7 +171,7 @@ namespace Handler
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
-            var sqlSkill = "WITH category AS (SELECT \"SkillCategory\".\"Label\", \"SkillCategory\".\"SkillCategoryId\" FROM \"SkillCategory\") SELECT \"Skill\".\"Label\", category.\"Label\" FROM \"Skill\" LEFT JOIN category ON \"Skill\".\"SkillCategoryId\" = category.\"SkillCategoryId\"";
+            var sqlSkill = "WITH category AS (SELECT \"SkillCategory\".\"Label\", \"SkillCategory\".\"SkillCategoryId\" FROM \"SkillCategory\") SELECT \"Skill\".\"Label\", category.\"Label\" FROM \"Skill\" JOIN category ON \"Skill\".\"SkillCategoryId\" = category.\"SkillCategoryId\"";
             using var cmdSkill = new NpgsqlCommand(sqlSkill, con);
 
             var readerSkill = cmdSkill.ExecuteReader();
