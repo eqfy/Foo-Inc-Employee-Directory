@@ -131,7 +131,7 @@ namespace Project
             apiGateway.LambdaIntegration getEmployeeByNameIntegration =  new apiGateway.LambdaIntegration(getEmployeeByName);
             apiGateway.Method getEmployeeByNameMethod =  employeeByNameResource.AddMethod("GET", getEmployeeIntegration);
  
-            lambda.Function getOrgChart = new lambda.Function(this,"getEmployeeByName", new lambda.FunctionProps{
+            lambda.Function getOrgChart = new lambda.Function(this,"getOrgChart", new lambda.FunctionProps{
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
                 Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
                 Handler = "Handler::Handler.Function::GetOrgChart",
@@ -178,6 +178,7 @@ namespace Project
             });
             databaseScriptsBucket.GrantRead(databaseInitLambda);
             databaseScriptsBucket.GrantRead(databaseDropAllLambda);
+            databaseScriptsBucket.GrantRead(getOrgChart);
 
 
             s3dep.ISource[] temp = {s3dep.Source.Asset("./Database")};
