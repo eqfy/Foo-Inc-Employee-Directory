@@ -165,6 +165,16 @@ namespace Handler
             return response;
         }
 
+        public  APIGatewayProxyResponse GetOrgChart(APIGatewayProxyRequest request, ILambdaContext context) {
+            string workerID = string.Empty;
+            if (request.MultiValueQueryStringParameters.ContainsKey("Skills")) {
+                  skills = (List<string>)request.MultiValueQueryStringParameters["Skills"];
+            }
+
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+        }
+
 
         private GetObjectResponse getS3FileSync(string bucketName, string objectKey){
             //TODO get the region from an environment variable or something else
