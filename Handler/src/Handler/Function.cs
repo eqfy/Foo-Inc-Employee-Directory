@@ -269,15 +269,115 @@ namespace Handler
 
             return response;
         }
+
+
+        private String createSkillFilter(List<string> skills, ref int parameterCounter){
+            //TODO fill in
+            
+            String skillFilter = "";
+            
+            for (int i = 0; i < skills.Count; i++ ){
+                //  if (i == skills.Count){
+                //     sillFilter += "ed.\"Skills\" = :p"+parameterCounter;
+                // }else {
+                    skillFilter += " es.\"skills\" LIKE :p"+parameterCounter +  "AND";
+                    parameterCounter++;
+                //}
+                //es.skills LIKE '%Accounting:::Transaction Processing%' AND es.skills LIKE '%Accounting:::Reconciling%' 
+            }
+            return skillFilter;
+        }
+
+        private string createLocationsFilter(List<string> locations, ref int parameterCounter){
+            string locationFilter = " ed.\"location\" IN ( ";
+            for(int i = 0; i < locations.Count; i++){
+                if(i > 0){
+                    locationFilter += " , ";
+                }
+                locationFilter += ":p"+parameterCounter++;
+            }
+
+            locationFilter += ") AND";
+            return locationFilter;
+        }
+
+        private string createTitlesFilter(List<string> titles, ref int parameterCounter){
+            string titleFilter = " ed.\"Title\" IN ( ";
+            for(int i = 0; i < titles.Count; i++){
+                if(i > 0){
+                    titleFilter += " , ";
+                }
+                titleFilter += ":p"+parameterCounter++;
+            }
+
+            titleFilter += ") AND";
+            return titleFilter;
+        }
+        
+         private string createYearsPriorFilter(ref int parameterCounter){
+            string yearsPriorFilter = "";
+            
+            yearsPriorFilter = " ed.\"YearsPriorExperience\" > :p" + parameterCounter++;
+
+            yearsPriorFilter += " AND";
+            return yearsPriorFilter;
+        }
         
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var firstName = request.QueryStringParameters["FirstName"];
-            var lastName = request.QueryStringParameters["LastName"];  
-            LambdaLogger.Log("FirstName: " + firstName);
-            LambdaLogger.Log("FirstName: " + lastName);
+            // var firstName = request.QueryStringParameters["FirstName"];
+            // var lastName = request.QueryStringParameters["LastName"];  
+            // LambdaLogger.Log("FirstName: " + firstName);
+            // LambdaLogger.Log("FirstName: " + lastName);
+            int parameterCounter = 0;
 
+            //Hopefully it will be able to turn everything into arrays
+
+            // List<Employee> 
+            List<string> skills = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("Skills")){
+                skills = (List<string>)request.MultiValueQueryStringParameters["Skills"];
+            }
+            List<string> locations = new List<string>();
+            if (request.MultiValueQueryStringParameters.ContainsKey("LocationPhysical")){
+                locations = (List<string>)request.MultiValueQueryStringParameters["LocationPhysical"];
+            }
+            List<string> titles = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("Title")){
+                titles = (List<string>)request.MultiValueQueryStringParameters["Title"];
+            }
+            
+            //Note if they change the slide bar to allow for partial years change this to a float
+            List<string> yearsExperience = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("YearsPriorExperience")){
+                yearsExperience = (List<string>)request.MultiValueQueryStringParameters["YearsPriorExperience"];
+            }
+
+            string skillFilter="";
+            if(skills.Count > 0){
+                skillFilter = createSkillFilter(skills,ref parameterCounter);
+            }
+
+            string locationsFilter="";
+            if(locations.Count > 0){
+                locationsFilter = createLocationsFilter(locations,ref parameterCounter);
+            }
+
+            string titlesFilter="";
+            if(titles.Count > 0){
+                titlesFilter = createTitlesFilter(titles,ref parameterCounter);
+            }
+
+            string yearsPriorFilter="";
+            if(yearsExperience.Count > 0){
+                yearsPriorFilter = createYearsPriorFilter(ref parameterCounter);
+            }
+
+
+            
+            
+            
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
@@ -295,20 +395,58 @@ namespace Handler
             //Read the sql from the file
             StreamReader readers3 = new StreamReader(script.ResponseStream);
             String sql = readers3.ReadToEnd();
+
+            //TODO add all the different filter strings here
+            if(skillFilter.Length > 0 || locationsFilter.Length > 0 || titlesFilter.Length > 0 || yearsPriorFilter.Length > 0){
+                sql += " WHERE ";
+            }
+
+            sql += skillFilter;
+            sql += locationsFilter;
+            sql += titlesFilter; 
+            sql += yearsPriorFilter;
+            //TODO add the rest of the filters here
+
+            //Remove the last 'AND' from the sql string
+            sql = sql.Remove(sql.Length - 3);
+
+
+
+
             LambdaLogger.Log("sql: " + sql);
            
 
             using var cmd = new NpgsqlCommand(sql,con);
-            cmd.Parameters.AddWithValue("p1", firstName);
-            cmd.Parameters.AddWithValue("p2", lastName);
+
+            int currentParameterCounter = 0;
+            //Add the bind variables
+            foreach(string skill in skills){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + "%"+skill+"%");
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+skill+"%");
+            }
+            foreach(string location in locations){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + location);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, location);
+            }
+            foreach(string title in titles){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + title);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, title);
+            }
+            foreach(string yearsPrior in yearsExperience){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + yearsPrior);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, float.Parse(yearsPrior));
+            }
+            //cmd.Parameters.AddWithValue("p1", firstName);
+            //cmd.Parameters.AddWithValue("p2", lastName);
 
             //Run the sql command
             var reader = cmd.ExecuteReader();
     
             string output = string.Empty;
             List<Employee> employees = new List<Employee>();
-
+            //LambdaLogger.Log("Hey1"+ reader.Read().ToString());
             while(reader.Read()) {
+                LambdaLogger.Log("Hey"+ reader[0].ToString());
                 Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();

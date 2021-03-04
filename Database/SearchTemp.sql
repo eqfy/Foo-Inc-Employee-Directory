@@ -64,5 +64,3 @@ FROM
     ed
     LEFT JOIN es ON ed."EmployeeNumber" = es."EmployeeNumber"
     LEFT JOIN ol on ed."EmployeeNumber" = ol."EmployeeNumber"
-WHERE
-    ed."FirstName" = :p1 AND ed."LastName" = :p2
