@@ -126,25 +126,28 @@ namespace Handler
 
             while(reader.Read()) {
                 Employee e = new Employee();
-                e.employeeNumber = reader[0].ToString();
                 // e.companyCode = reader[1].ToString();
                 // e.officeCode = reader[2].ToString();
                 // e.groupCode = reader[3].ToString();
-                e.lastName = reader[4].ToString();
-                e.firstName = reader[5].ToString();
-                e.employmentType = reader[6].ToString();
-                e.title = reader[7].ToString();
-                e.hireDate = reader[8].ToString();
-                e.terminationDate = reader[9].ToString();
-                e.supervisorEmployeeNumber = reader[10].ToString();
-                e.yearsPriorExperience = reader[11].ToString();
-                e.email = reader[12].ToString();
-                e.workPhone = reader[13].ToString();
-                e.workCell = reader[14].ToString();
-                e.physicalLocation = reader[15].ToString();
-                e.photoUrl = reader[16].ToString();
-                e.isContractor = reader[17].ToString();
-                e.skills = reader[18].ToString();
+                e.firstName = reader[0].ToString();
+                e.lastName = reader[1].ToString();
+                e.photoUrl = reader[2].ToString();
+                e.physicalLocation = reader[3].ToString();
+                e.division = reader[4].ToString();
+                e.companyName = reader[5].ToString();
+                e.title = reader[6].ToString();
+                e.hireDate = reader[7].ToString();
+                e.terminationDate = reader[8].ToString();
+                e.supervisorEmployeeNumber = reader[9].ToString();
+                e.yearsPriorExperience = reader[10].ToString();
+                e.email = reader[11].ToString();
+                e.workPhone = reader[12].ToString();
+                e.workCell = reader[13].ToString();
+                e.isContractor = reader[14].ToString();
+                e.employeeNumber = reader[15].ToString();
+                e.employmentType = reader[16].ToString();
+                e.skills = reader[17].ToString();
+                e.OfficeLocation = reader[18].ToString();
                 employees.Add(e);
             }
 
@@ -314,7 +317,7 @@ namespace Handler
             return titleFilter;
         }
         
-         private string createYearsPriorFilter(ref int parameterCounter){
+        private string createYearsPriorFilter(ref int parameterCounter){
             string yearsPriorFilter = "";
             
             yearsPriorFilter = " ed.\"YearsPriorExperience\" > :p" + parameterCounter++;
@@ -322,6 +325,88 @@ namespace Handler
             yearsPriorFilter += " AND";
             return yearsPriorFilter;
         }
+
+        private string createDivisionsFilter(List<string> divisions, ref int parameterCounter){
+            string divisionFilter = " ed.\"division\" IN ( ";
+            for(int i = 0; i < divisions.Count; i++){
+                if(i > 0){
+                    divisionFilter += " , ";
+                }
+                divisionFilter += ":p"+parameterCounter++;
+            }
+
+            divisionFilter += ") AND";
+            return divisionFilter;
+        }
+
+        private string createCompanyNamesFilter(List<string> companynames, ref int parameterCounter){
+            string companynameFilter = " ed.\"companyname\" IN ( ";
+            for(int i = 0; i < companynames.Count; i++){
+                if(i > 0){
+                    companynameFilter += " , ";
+                }
+                companynameFilter += ":p"+parameterCounter++;
+            }
+
+            companynameFilter += ") AND";
+            return companynameFilter;
+        }
+
+        private string createFirstNamesFilter(List<string> firstnames, ref int parameterCounter){
+            string firstnameFilter = " ed.\"FirstName\" IN ( ";
+            for(int i = 0; i < firstnames.Count; i++){
+                if(i > 0){
+                    firstnameFilter += " , ";
+                }
+                firstnameFilter += ":p"+parameterCounter++;
+            }
+
+            firstnameFilter += ") AND";
+            return firstnameFilter;
+        }
+
+        private string createLastNamesFilter(List<string> lastnames, ref int parameterCounter){
+            string lastnameFilter = " ed.\"LastName\" IN ( ";
+            for(int i = 0; i < lastnames.Count; i++){
+                if(i > 0){
+                    lastnameFilter += " , ";
+                }
+                lastnameFilter += ":p"+parameterCounter++;
+            }
+
+            lastnameFilter += ") AND";
+            return lastnameFilter;
+        }
+
+        private string createEmploymentTypesFilter(List<string> employementTypes, ref int parameterCounter){
+            string employmentTypesFilter = " ed.\"EmploymentType\" IN ( ";
+            for(int i = 0; i < employementTypes.Count; i++){
+                if(i > 0){
+                    employmentTypesFilter += " , ";
+                }
+                employmentTypesFilter += ":p"+parameterCounter++;
+            }
+
+            employmentTypesFilter += ") AND";
+            return employmentTypesFilter;
+        }
+
+        private string createOfficeLocationsFilter(List<string> officeLocations, ref int parameterCounter){
+            string officeLocationsFilter = " ol.\"officelocations\" IN ( ";
+            for(int i = 0; i < officeLocations.Count; i++){
+                if(i > 0){
+                    officeLocationsFilter += " , ";
+                }
+                officeLocationsFilter += ":p"+parameterCounter++;
+            }
+
+            officeLocationsFilter += ") AND";
+            return officeLocationsFilter;
+        }
+
+
+
+
         
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
         {
@@ -354,6 +439,31 @@ namespace Handler
                 yearsExperience = (List<string>)request.MultiValueQueryStringParameters["YearsPriorExperience"];
             }
 
+            List<string> divisions = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("division")){
+                divisions = (List<string>)request.MultiValueQueryStringParameters["division"];
+            }
+            List<string> companynames = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("companyname")){
+                companynames = (List<string>)request.MultiValueQueryStringParameters["companyname"];
+            }
+            List<string> firstnames = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("FirstName")){
+                firstnames = (List<string>)request.MultiValueQueryStringParameters["FirstName"];
+            }
+            List<string> lastnames = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("LastName")){
+                lastnames = (List<string>)request.MultiValueQueryStringParameters["LastName"];
+            }
+            List<string> employementTypes = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("EmploymentType")){
+                employementTypes = (List<string>)request.MultiValueQueryStringParameters["EmploymentType"];
+            }
+            List<string> officeLocations = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("officelocations")){
+                officeLocations = (List<string>)request.MultiValueQueryStringParameters["officelocations"];
+            }
+
             string skillFilter="";
             if(skills.Count > 0){
                 skillFilter = createSkillFilter(skills,ref parameterCounter);
@@ -374,7 +484,36 @@ namespace Handler
                 yearsPriorFilter = createYearsPriorFilter(ref parameterCounter);
             }
 
+            string divisionsFilter ="";
+            if(divisions.Count > 0){
+                divisionsFilter = createDivisionsFilter(divisions, ref parameterCounter);
+            }
 
+            string companyNamesFilter ="";
+            if(companynames.Count > 0){
+                companyNamesFilter = createCompanyNamesFilter(companynames, ref parameterCounter);
+            }
+
+            string firstNamesFilter ="";
+            if(firstnames.Count > 0){
+                firstNamesFilter = createFirstNamesFilter(firstnames, ref parameterCounter);
+            }
+
+            string lastNamesFilter ="";
+            if(lastnames.Count > 0){
+                lastNamesFilter = createLastNamesFilter(lastnames, ref parameterCounter);
+            }
+
+            string employmentTypesFilter ="";
+            if(employementTypes.Count > 0){
+                employmentTypesFilter = createEmploymentTypesFilter(employementTypes, ref parameterCounter);
+            }
+
+            string officeLocationsFilter ="";
+            if(officeLocations.Count > 0){
+                officeLocationsFilter = createOfficeLocationsFilter(officeLocations, ref parameterCounter);
+            }
+            
             
             
             
@@ -397,7 +536,8 @@ namespace Handler
             String sql = readers3.ReadToEnd();
 
             //TODO add all the different filter strings here
-            if(skillFilter.Length > 0 || locationsFilter.Length > 0 || titlesFilter.Length > 0 || yearsPriorFilter.Length > 0){
+            if(skillFilter.Length > 0 || locationsFilter.Length > 0 || titlesFilter.Length > 0 || yearsPriorFilter.Length > 0 || divisionsFilter.Length >0 
+            || companyNamesFilter.Length >0 || firstNamesFilter.Length >0 || lastNamesFilter.Length >0 || employmentTypesFilter.Length >0 || officeLocationsFilter.Length>0){
                 sql += " WHERE ";
             }
 
@@ -405,6 +545,12 @@ namespace Handler
             sql += locationsFilter;
             sql += titlesFilter; 
             sql += yearsPriorFilter;
+            sql += divisionsFilter;
+            sql += companyNamesFilter;
+            sql += firstNamesFilter;
+            sql += lastNamesFilter;
+            sql += employmentTypesFilter;
+            sql += officeLocationsFilter;
             //TODO add the rest of the filters here
 
             //Remove the last 'AND' from the sql string
@@ -436,8 +582,43 @@ namespace Handler
                 LambdaLogger.Log("p"+currentParameterCounter + " : " + yearsPrior);
                 cmd.Parameters.AddWithValue("p"+currentParameterCounter++, float.Parse(yearsPrior));
             }
+
+            foreach(string division in divisions){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + division);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, division);
+            }
+
+            foreach(string companyname in companynames){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + companyname);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, companyname);
+            }
+
+            foreach(string firstname in firstnames){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + firstname);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, firstname);
+            }
+
+            foreach(string lastname in lastnames){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + lastname);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, lastname);
+            }
+
+            foreach(string employementType in employementTypes){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + employementType);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, employementType);
+            }
+
+            foreach(string officeLocation in officeLocations){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + officeLocation);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, officeLocation);
+            }
+            
             //cmd.Parameters.AddWithValue("p1", firstName);
             //cmd.Parameters.AddWithValue("p2", lastName);
+
+            //TODO: is contractor, hiredate, termination date
+
+            //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
 
             //Run the sql command
             var reader = cmd.ExecuteReader();
