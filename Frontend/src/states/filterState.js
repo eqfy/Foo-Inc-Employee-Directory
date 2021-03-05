@@ -9,6 +9,9 @@ export const defaultFilterState = {
     allId: [],
     categoryById: {},
     locationAllId: [],
+    titleAllId: [],
+    departmentAllId: [],
+    companyAllId: [],
 };
 
 export const mockFilterState = {

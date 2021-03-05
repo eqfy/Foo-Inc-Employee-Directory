@@ -32,6 +32,36 @@ export default function appStateReducer(state = defaultAppState, action) {
                 ...state,
                 profileShowPrevNext: action.payload.profileShowPrevNext,
             };
+        case "SET_SKILLS":
+            return {
+                ...state,
+                skills: action.payload,
+            };
+        case "SET_LOCATIONS":
+            return {
+                ...state,
+                locations: action.payload,
+            };
+        case "SET_TITLES":
+            return {
+                ...state,
+                titles: action.payload,
+            };
+        case "SET_DEPARTMENTS":
+            return {
+                ...state,
+                departments: action.payload,
+            };
+        case "SET_COMPANIES":
+            return {
+                ...state,
+                companies: action.payload,
+            };
+        case "SET_EXPERIENCE":
+            return {
+                ...state,
+                yearsPriorExperience: action.payload,
+            };
         default:
             return state;
     }
