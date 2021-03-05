@@ -185,9 +185,12 @@ function ApplyFilterCategorizedCheckboxGroup(props) {
     );
 }
 
-const mapStateToProps = () => {
+const mapStateToProps = (state) => {
     // TODO get the current filter info from the state
-    return {};
+    return {
+        filters: state.filters,
+        appliedFilters: state.searchPageState.appliedFilters,
+    };
 };
 
 const mapDispatchToProps = (dispatch) => ({

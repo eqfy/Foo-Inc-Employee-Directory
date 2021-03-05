@@ -1,11 +1,11 @@
 import { getFilterAPI } from "api/filter";
 
-export const setFilters = () => (dispatch) => {
+export const loadFiltersAction = () => (dispatch) => {
     getFilterAPI()
         .then((response) => {
             console.log(response);
             dispatch({
-                type: "SET_FILTER_ACTION",
+                type: "LOAD_FILTERS",
                 payload: response,
             });
         })
