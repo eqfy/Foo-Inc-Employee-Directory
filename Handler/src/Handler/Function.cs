@@ -200,7 +200,7 @@ namespace Handler
             string output = string.Empty;
             string supervisorID = string.Empty;
             OrgChart orgChart = new OrgChart();
-            EmployeeTest focusedWorker = new EmployeeTest();
+            Employee focusedWorker = new Employee();
 
             while(readerFocused.Read()) {
                 LambdaLogger.Log("Reading self: \n");
@@ -236,7 +236,7 @@ namespace Handler
             cmdSupervisor.Parameters.AddWithValue("p", supervisorID);
             var readerSupervisor = cmdSupervisor.ExecuteReader();
 
-            EmployeeTest supervisor = new EmployeeTest();
+            Employee supervisor = new Employee();
 
             while(readerSupervisor.Read()) {
                 LambdaLogger.Log("Reading supervisor: \n");
@@ -271,11 +271,11 @@ namespace Handler
             cmdColleagues.Parameters.AddWithValue("p1", supervisorID);
             cmdColleagues.Parameters.AddWithValue("p2", workerID);
             var readerColleagues = cmdColleagues.ExecuteReader();
-            List<EmployeeTest> colleagues = new List<EmployeeTest>();
+            List<Employee> colleagues = new List<Employee>();
 
             while(readerColleagues.Read()) {
                 LambdaLogger.Log("Reading colleagues: \n");
-                EmployeeTest e = new EmployeeTest();
+                Employee e = new Employee();
                 e.firstName = readerColleagues[0].ToString();
                 e.lastName = readerColleagues[1].ToString();
                 e.photoUrl = readerColleagues[2].ToString();
@@ -307,11 +307,11 @@ namespace Handler
             using var cmdSubordinates = new NpgsqlCommand(sqlSubordinates, con);
             cmdSubordinates.Parameters.AddWithValue("p", workerID);
             var readerSubordinates = cmdSubordinates.ExecuteReader();
-            List<EmployeeTest> subs = new List<EmployeeTest>();
+            List<Employee> subs = new List<Employee>();
 
             while(readerSubordinates.Read()) {
                 LambdaLogger.Log("Reading subordinates: \n");
-                EmployeeTest e = new EmployeeTest();
+                Employee e = new Employee();
                 e.firstName = readerSubordinates[0].ToString();
                 e.lastName = readerSubordinates[1].ToString();
                 e.photoUrl = readerSubordinates[2].ToString();
