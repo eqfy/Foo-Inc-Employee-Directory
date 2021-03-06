@@ -131,7 +131,7 @@ namespace Handler
                 // e.groupCode = reader[3].ToString();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
-                e.photoUrl = reader[2].ToString();
+                e.image = reader[2].ToString();
                 e.physicalLocation = reader[3].ToString();
                 e.division = reader[4].ToString();
                 e.companyName = reader[5].ToString();
@@ -143,7 +143,7 @@ namespace Handler
                 e.email = reader[11].ToString();
                 e.workPhone = reader[12].ToString();
                 e.workCell = reader[13].ToString();
-                e.isContractor = reader[14].ToString();
+                e.isContractor = System.Convert.ToBoolean(reader[14].ToString());
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
@@ -206,7 +206,7 @@ namespace Handler
                 LambdaLogger.Log("Reading self: \n");
                 focusedWorker.firstName = readerFocused[0].ToString();
                 focusedWorker.lastName = readerFocused[1].ToString();
-                focusedWorker.photoUrl = readerFocused[2].ToString();
+                focusedWorker.image = readerFocused[2].ToString();
                 focusedWorker.physicalLocation = readerFocused[3].ToString();
                 focusedWorker.division = readerFocused[4].ToString();
                 focusedWorker.companyName = readerFocused[5].ToString();
@@ -218,7 +218,7 @@ namespace Handler
                 focusedWorker.email = readerFocused[11].ToString();
                 focusedWorker.workPhone = readerFocused[12].ToString();
                 focusedWorker.workCell = readerFocused[13].ToString();
-                focusedWorker.isContractor = readerFocused[14].ToString();
+                focusedWorker.isContractor = System.Convert.ToBoolean(readerFocused[14].ToString());
                 focusedWorker.employeeNumber = readerFocused[15].ToString();
                 focusedWorker.employmentType = readerFocused[16].ToString();
                 focusedWorker.skills = readerFocused[17].ToString();
@@ -242,7 +242,7 @@ namespace Handler
                 LambdaLogger.Log("Reading supervisor: \n");
                 supervisor.firstName = readerSupervisor[0].ToString();
                 supervisor.lastName = readerSupervisor[1].ToString();
-                supervisor.photoUrl = readerSupervisor[2].ToString();
+                supervisor.image = readerSupervisor[2].ToString();
                 supervisor.physicalLocation = readerSupervisor[3].ToString();
                 supervisor.division = readerSupervisor[4].ToString();
                 supervisor.companyName = readerSupervisor[5].ToString();
@@ -254,7 +254,7 @@ namespace Handler
                 supervisor.email = readerSupervisor[11].ToString();
                 supervisor.workPhone = readerSupervisor[12].ToString();
                 supervisor.workCell = readerSupervisor[13].ToString();
-                supervisor.isContractor = readerSupervisor[14].ToString();
+                supervisor.isContractor = System.Convert.ToBoolean(readerSupervisor[14].ToString());
                 supervisor.employeeNumber = readerSupervisor[15].ToString();
                 supervisor.employmentType = readerSupervisor[16].ToString();
                 supervisor.skills = readerSupervisor[17].ToString();
@@ -278,7 +278,7 @@ namespace Handler
                 Employee e = new Employee();
                 e.firstName = readerColleagues[0].ToString();
                 e.lastName = readerColleagues[1].ToString();
-                e.photoUrl = readerColleagues[2].ToString();
+                e.image = readerColleagues[2].ToString();
                 e.physicalLocation = readerColleagues[3].ToString();
                 e.division = readerColleagues[4].ToString();
                 e.companyName = readerColleagues[5].ToString();
@@ -290,7 +290,7 @@ namespace Handler
                 e.email = readerColleagues[11].ToString();
                 e.workPhone = readerColleagues[12].ToString();
                 e.workCell = readerColleagues[13].ToString();
-                e.isContractor = readerColleagues[14].ToString();
+                e.isContractor = System.Convert.ToBoolean(readerColleagues[14].ToString());
                 e.employeeNumber = readerColleagues[15].ToString();
                 e.employmentType = readerColleagues[16].ToString();
                 e.skills = readerColleagues[17].ToString();
@@ -314,7 +314,7 @@ namespace Handler
                 Employee e = new Employee();
                 e.firstName = readerSubordinates[0].ToString();
                 e.lastName = readerSubordinates[1].ToString();
-                e.photoUrl = readerSubordinates[2].ToString();
+                e.image = readerSubordinates[2].ToString();
                 e.physicalLocation = readerSubordinates[3].ToString();
                 e.division = readerSubordinates[4].ToString();
                 e.companyName = readerSubordinates[5].ToString();
@@ -326,7 +326,7 @@ namespace Handler
                 e.email = readerSubordinates[11].ToString();
                 e.workPhone = readerSubordinates[12].ToString();
                 e.workCell = readerSubordinates[13].ToString();
-                e.isContractor = readerSubordinates[14].ToString();
+                e.isContractor = System.Convert.ToBoolean(readerSubordinates[14].ToString());
                 e.employeeNumber = readerSubordinates[15].ToString();
                 e.employmentType = readerSubordinates[16].ToString();
                 e.skills = readerSubordinates[17].ToString();
@@ -819,7 +819,7 @@ namespace Handler
                 Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
-                e.photoUrl = reader[2].ToString();
+                e.image = reader[2].ToString();
                 e.physicalLocation = reader[3].ToString();
                 e.division = reader[4].ToString();
                 e.companyName = reader[5].ToString();
@@ -831,7 +831,7 @@ namespace Handler
                 e.email = reader[11].ToString();
                 e.workPhone = reader[12].ToString();
                 e.workCell = reader[13].ToString();
-                e.isContractor = reader[14].ToString();
+                e.isContractor = System.Convert.ToBoolean(reader[14].ToString());
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
@@ -900,7 +900,7 @@ namespace Handler
                 Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
-                e.photoUrl = reader[2].ToString();
+                e.image = reader[2].ToString();
                 e.physicalLocation = reader[3].ToString();
                 e.division = reader[4].ToString();
                 e.companyName = reader[5].ToString();
@@ -912,7 +912,7 @@ namespace Handler
                 e.email = reader[11].ToString();
                 e.workPhone = reader[12].ToString();
                 e.workCell = reader[13].ToString();
-                e.isContractor = reader[14].ToString();
+                e.isContractor = System.Convert.ToBoolean(reader[14].ToString());
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
