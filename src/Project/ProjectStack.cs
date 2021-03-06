@@ -145,7 +145,7 @@ namespace Project
                 SecurityGroups = new[] {securityGroup}  
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
             });
-            apiGateway.Resource searchResource = api.Root.AddResource("searchResource");
+            apiGateway.Resource searchResource = api.Root.AddResource("search");
             apiGateway.LambdaIntegration searchIntegration =  new apiGateway.LambdaIntegration(search);
             apiGateway.Method searchMethod =  searchResource.AddMethod("GET", searchIntegration);
 

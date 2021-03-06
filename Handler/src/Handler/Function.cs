@@ -283,7 +283,7 @@ namespace Handler
                 //  if (i == skills.Count){
                 //     sillFilter += "ed.\"Skills\" = :p"+parameterCounter;
                 // }else {
-                    skillFilter += " es.\"skills\" LIKE :p"+parameterCounter +  "AND";
+                    skillFilter += " es.\"skills\" LIKE :p"+parameterCounter +  " AND";
                     parameterCounter++;
                 //}
                 //es.skills LIKE '%Accounting:::Transaction Processing%' AND es.skills LIKE '%Accounting:::Reconciling%' 
@@ -392,16 +392,17 @@ namespace Handler
         }
 
         private string createOfficeLocationsFilter(List<string> officeLocations, ref int parameterCounter){
-            string officeLocationsFilter = " ol.\"officelocations\" IN ( ";
+            string officeLocationsFilter = "";
             for(int i = 0; i < officeLocations.Count; i++){
-                if(i > 0){
-                    officeLocationsFilter += " , ";
-                }
-                officeLocationsFilter += ":p"+parameterCounter++;
+                officeLocationsFilter += " ol.\"officelocations\" LIKE :p"+parameterCounter +  " AND";
+                parameterCounter++;
             }
-
-            officeLocationsFilter += ") AND";
             return officeLocationsFilter;
+        }
+
+        private string createIsContractorLocationsFilter(ref int parameterCounter){
+            string isContractorFilter = " ed.\"isContractor\" = :p" + parameterCounter++ + " AND";
+            return isContractorFilter;
         }
 
 
@@ -416,7 +417,6 @@ namespace Handler
             // LambdaLogger.Log("FirstName: " + firstName);
             // LambdaLogger.Log("FirstName: " + lastName);
             int parameterCounter = 0;
-
             //Hopefully it will be able to turn everything into arrays
 
             // List<Employee> 
@@ -462,6 +462,10 @@ namespace Handler
             List<string> officeLocations = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("officelocations")){
                 officeLocations = (List<string>)request.MultiValueQueryStringParameters["officelocations"];
+            }
+            List<string> isContractor = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("isContractor")){
+                isContractor = (List<string>)request.MultiValueQueryStringParameters["isContractor"];
             }
 
             string skillFilter="";
@@ -514,6 +518,10 @@ namespace Handler
                 officeLocationsFilter = createOfficeLocationsFilter(officeLocations, ref parameterCounter);
             }
             
+            string isContractorFilter ="";
+            if(isContractor.Count > 0){
+                isContractorFilter = createIsContractorLocationsFilter(ref parameterCounter);
+            }
             
             
             
@@ -537,7 +545,8 @@ namespace Handler
 
             //TODO add all the different filter strings here
             if(skillFilter.Length > 0 || locationsFilter.Length > 0 || titlesFilter.Length > 0 || yearsPriorFilter.Length > 0 || divisionsFilter.Length >0 
-            || companyNamesFilter.Length >0 || firstNamesFilter.Length >0 || lastNamesFilter.Length >0 || employmentTypesFilter.Length >0 || officeLocationsFilter.Length>0){
+            || companyNamesFilter.Length >0 || firstNamesFilter.Length >0 || lastNamesFilter.Length >0 || employmentTypesFilter.Length >0 || 
+            officeLocationsFilter.Length>0 || isContractorFilter.Length>0){
                 sql += " WHERE ";
             }
 
@@ -551,6 +560,7 @@ namespace Handler
             sql += lastNamesFilter;
             sql += employmentTypesFilter;
             sql += officeLocationsFilter;
+            sql += isContractorFilter;
             //TODO add the rest of the filters here
 
             //Remove the last 'AND' from the sql string
@@ -610,7 +620,18 @@ namespace Handler
 
             foreach(string officeLocation in officeLocations){
                 LambdaLogger.Log("p"+currentParameterCounter + " : " + officeLocation);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, officeLocation);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+officeLocation+"%");
+            }
+            //TODO Make it not case sensitive!
+            foreach(string contractor in isContractor){
+                bool isCon;
+                if(contractor == "FALSE"){
+                    isCon = false;
+                }else{
+                    isCon = true;
+                }
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + isCon);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, isCon);
             }
             
             //cmd.Parameters.AddWithValue("p1", firstName);
