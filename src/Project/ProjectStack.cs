@@ -236,22 +236,19 @@ namespace Project
             getEmployeeByName.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getEmployeeByName.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getEmployeeByName.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-            //adding getByName.sql for lambda
             getEmployeeByName.AddEnvironment("OBJECT_KEY", "getByName.sql");
             getEmployeeByName.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             search.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             search.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             search.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-            //adding getByName.sql for lambda
-            search.AddEnvironment("OBJECT_KEY", "searchTemp.sql");
+            search.AddEnvironment("OBJECT_KEY", "SearchTemp.sql");
             search.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
 
             getEmployeeID.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getEmployeeID.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getEmployeeID.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-            //adding getByName.sql for lambda
             getEmployeeID.AddEnvironment("OBJECT_KEY", "getEmployeeID.sql");
             getEmployeeID.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
