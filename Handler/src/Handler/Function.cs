@@ -593,12 +593,7 @@ namespace Handler
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            // var firstName = request.QueryStringParameters["FirstName"];
-            // var lastName = request.QueryStringParameters["LastName"];  
-            // LambdaLogger.Log("FirstName: " + firstName);
-            // LambdaLogger.Log("FirstName: " + lastName);
             int parameterCounter = 0;
-            //Hopefully it will be able to turn everything into arrays
 
             // List<Employee> 
             List<string> skills = new List<string>();
@@ -614,7 +609,7 @@ namespace Handler
                 titles = (List<string>)request.MultiValueQueryStringParameters["Title"];
             }
             
-            //Note if they change the slide bar to allow for partial years change this to a float
+            // Note: if they change the slide bar to allow for partial years change this to a float
             List<string> yearsExperience = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("YearsPriorExperience")){
                 yearsExperience = (List<string>)request.MultiValueQueryStringParameters["YearsPriorExperience"];
@@ -746,13 +741,8 @@ namespace Handler
 
             //Remove the last 'AND' from the sql string
             sql = sql.Remove(sql.Length - 3);
-
-
-
-
             LambdaLogger.Log("sql: " + sql);
            
-
             using var cmd = new NpgsqlCommand(sql,con);
 
             int currentParameterCounter = 0;
@@ -814,12 +804,8 @@ namespace Handler
                 LambdaLogger.Log("p"+currentParameterCounter + " : " + isCon);
                 cmd.Parameters.AddWithValue("p"+currentParameterCounter++, isCon);
             }
-            
-            //cmd.Parameters.AddWithValue("p1", firstName);
-            //cmd.Parameters.AddWithValue("p2", lastName);
 
             //TODO: is contractor, hiredate, termination date
-
             //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
 
             //Run the sql command
