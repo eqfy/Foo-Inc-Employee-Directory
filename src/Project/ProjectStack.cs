@@ -129,7 +129,7 @@ namespace Project
             });
             apiGateway.Resource employeeByNameResource = api.Root.AddResource("employeeByName");
             apiGateway.LambdaIntegration getEmployeeByNameIntegration =  new apiGateway.LambdaIntegration(getEmployeeByName);
-            apiGateway.Method getEmployeeByNameMethod =  employeeByNameResource.AddMethod("GET", getEmployeeIntegration);
+            apiGateway.Method getEmployeeByNameMethod =  employeeByNameResource.AddMethod("GET", getEmployeeByNameIntegration);
  
             lambda.Function getAllFilters = new lambda.Function(this,"getAllFilters", new lambda.FunctionProps{
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
@@ -146,6 +146,59 @@ namespace Project
             apiGateway.Resource getAllFiltersResource = api.Root.AddResource("getAllFilters");
             apiGateway.LambdaIntegration getAllFiltersIntegration =  new apiGateway.LambdaIntegration(getAllFilters);
             apiGateway.Method getAllFiltersMethod =  getAllFiltersResource.AddMethod("GET", getAllFiltersIntegration);
+
+            lambda.Function getOrgChart = new lambda.Function(this,"getOrgChart", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::GetOrgChart",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            
+            apiGateway.Resource orgChartResource = api.Root.AddResource("orgChart");
+            apiGateway.LambdaIntegration getOrgChartIntegration =  new apiGateway.LambdaIntegration(getOrgChart);
+            apiGateway.Method getOrgChartMethod =  orgChartResource.AddMethod("GET", getOrgChartIntegration);
+
+
+            //search Enpoint
+            lambda.Function search = new lambda.Function(this,"search", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::search",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource searchResource = api.Root.AddResource("search");
+            apiGateway.LambdaIntegration searchIntegration =  new apiGateway.LambdaIntegration(search);
+            apiGateway.Method searchMethod =  searchResource.AddMethod("GET", searchIntegration);
+
+            //getEmployeeID Enpoint
+            lambda.Function getEmployeeID = new lambda.Function(this,"getEmployeeID", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::getEmployeeID",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource getEmployeeIDResource = api.Root.AddResource("getEmployeeIDResource");
+            apiGateway.LambdaIntegration getEmployeeIDIntegration =  new apiGateway.LambdaIntegration(getEmployeeID);
+            apiGateway.Method getEmployeeIDMethod =  getEmployeeIDResource.AddMethod("GET", getEmployeeIDIntegration);
+
 
             
             lambda.Function databaseInitLambda = new lambda.Function(this,"databaseInit", new lambda.FunctionProps{
@@ -178,6 +231,11 @@ namespace Project
             });
             databaseScriptsBucket.GrantRead(databaseInitLambda);
             databaseScriptsBucket.GrantRead(databaseDropAllLambda);
+            databaseScriptsBucket.GrantRead(getOrgChart);
+            databaseScriptsBucket.GrantRead(getEmployeeByName);
+            databaseScriptsBucket.GrantRead(search);
+            databaseScriptsBucket.GrantRead(getEmployeeID);
+
 
 
             s3dep.ISource[] temp = {s3dep.Source.Asset("./Database")};
@@ -195,6 +253,27 @@ namespace Project
             getEmployeeByName.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getEmployeeByName.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getEmployeeByName.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            getEmployeeByName.AddEnvironment("OBJECT_KEY", "getByName.sql");
+            getEmployeeByName.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+            search.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            search.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            search.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            search.AddEnvironment("OBJECT_KEY", "SearchTemp.sql");
+            search.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+
+            getEmployeeID.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            getEmployeeID.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            getEmployeeID.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            getEmployeeID.AddEnvironment("OBJECT_KEY", "getEmployeeID.sql");
+            getEmployeeID.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+            getOrgChart.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            getOrgChart.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            getOrgChart.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            getOrgChart.AddEnvironment("OBJECT_KEY", "orgChartEmployee.sql");
+            getOrgChart.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             getAllFilters.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getAllFilters.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
