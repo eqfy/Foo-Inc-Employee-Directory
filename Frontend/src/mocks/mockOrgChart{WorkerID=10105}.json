@@ -1,0 +1,48 @@
+{
+  "focusedWorker": "10105",
+  "supervisor": {
+    "employeeNumber": "10005",
+    "lastName": "Conner",
+    "firstName": "Connie",
+    "employmentType": "Salary",
+    "division": "Human Resources",
+    "companyName": "Acme Seeds Inc.",
+    "OfficeLocation": "Corporate ||| Vancouver",
+    "title": "Manager-HR/Accounting",
+    "hireDate": "5/28/1997 12:00:00 AM",
+    "terminationDate": "",
+    "supervisorEmployeeNumber": "10002",
+    "yearsPriorExperience": "3.2",
+    "email": "connerc@acme.ca",
+    "workPhone": "604-123-4567",
+    "workCell": "604-123-7654",
+    "physicalLocation": "Vancouver",
+    "image": "some-url/connerc.jpg",
+    "isContractor": false,
+    "skills": ""
+  },
+  "colleagues": [
+    {
+      "employeeNumber": "10106",
+      "lastName": "Employee06",
+      "firstName": "Name",
+      "employmentType": "Salary",
+      "division": "Human Resources",
+      "companyName": "Acme Seeds Inc.",
+      "OfficeLocation": "Corporate ||| Vancouver",
+      "title": "Some \"Title\"",
+      "hireDate": "1/1/2020 12:00:00 AM",
+      "terminationDate": "",
+      "supervisorEmployeeNumber": "10005",
+      "yearsPriorExperience": "0.0",
+      "email": "something@acme.ca",
+      "workPhone": "604-555-5555",
+      "workCell": "604-555-5555",
+      "physicalLocation": "Vancouver",
+      "image": "some-url/photo_default.jpg",
+      "isContractor": false,
+      "skills": ""
+    }
+  ],
+  "subordinates": []
+}

@@ -200,7 +200,7 @@ namespace Handler
             string output = string.Empty;
             string supervisorID = string.Empty;
             OrgChart orgChart = new OrgChart();
-            Employee focusedWorker = new Employee();
+            string focusedWorker = string.Empty;
             bool toggleIsEmpty = true;
 
             while(readerFocused.Read()) {
@@ -208,26 +208,8 @@ namespace Handler
                   toggleIsEmpty = false;
                 }
                 LambdaLogger.Log("Reading self: \n");
-                focusedWorker.firstName = readerFocused[0].ToString();
-                focusedWorker.lastName = readerFocused[1].ToString();
-                focusedWorker.image = readerFocused[2].ToString();
-                focusedWorker.physicalLocation = readerFocused[3].ToString();
-                focusedWorker.division = readerFocused[4].ToString();
-                focusedWorker.companyName = readerFocused[5].ToString();
-                focusedWorker.title = readerFocused[6].ToString();
-                focusedWorker.hireDate = readerFocused[7].ToString();
-                focusedWorker.terminationDate = readerFocused[8].ToString();
-                focusedWorker.supervisorEmployeeNumber = readerFocused[9].ToString();
-                focusedWorker.yearsPriorExperience = readerFocused[10].ToString();
-                focusedWorker.email = readerFocused[11].ToString();
-                focusedWorker.workPhone = readerFocused[12].ToString();
-                focusedWorker.workCell = readerFocused[13].ToString();
-                focusedWorker.isContractor = System.Convert.ToBoolean(readerFocused[14].ToString());
-                focusedWorker.employeeNumber = readerFocused[15].ToString();
-                focusedWorker.employmentType = readerFocused[16].ToString();
-                focusedWorker.skills = readerFocused[17].ToString();
-                focusedWorker.OfficeLocation = readerFocused[18].ToString();
-                supervisorID = focusedWorker.supervisorEmployeeNumber;
+                focusedWorker = readerFocused[15].ToString();
+                supervisorID = readerFocused[9].ToString();
             }
 
             if (toggleIsEmpty) {
