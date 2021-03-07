@@ -639,6 +639,34 @@ namespace Handler
             filters.titles = titles;
             readerTitle.Close();
 
+            var sqlDept = "SELECT \"Label\" FROM \"LocationGroup\"";
+            using var cmdDept = new NpgsqlCommand(sqlDept, con);
+
+            var readerDept = cmdDept.ExecuteReader();
+            List<string> depts = new List<string>();
+
+            while (readerDept.Read()) {
+              LambdaLogger.Log("Dept: " + readerDept[0] + "\n");
+              depts.Add(readerDept[0].ToString());
+            }
+
+            filters.departments = depts;
+            readerDept.Close();
+
+            var sqlCoy = "SELECT \"Label\" FROM \"LocationCompany\"";
+            using var cmdCoy = new NpgsqlCommand(sqlCoy, con);
+
+            var readerCoy = cmdCoy.ExecuteReader();
+            List<string> coys = new List<string>();
+
+            while (readerCoy.Read()) {
+              LambdaLogger.Log("Coy: " + readerCoy[0] + "\n");
+              coys.Add(readerCoy[0].ToString());
+            }
+
+            filters.companies = coys;
+            readerCoy.Close();
+
             string output = Newtonsoft.Json.JsonConvert.SerializeObject(filters); 
 
             var response = new APIGatewayProxyResponse
