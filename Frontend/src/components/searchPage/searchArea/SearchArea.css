@@ -19,18 +19,35 @@
     margin-bottom: 2px;
 }
 
-.apply-filter .filter-form {
-    align-items: center;
-    justify-content: center;
+.apply-filter .filter-list {
+    max-height: 165px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    overflow: auto;
 }
 
-.apply-filter .filter-searchbar {
-    display: flex;
-    justify-content: center;
+.apply-filter .expand-icon {
+    color: rgba(0, 0, 0, 0.54);
 }
 
-.apply-filter .filter-checkboxes {
-    margin-left: 0;
+.apply-filter .categorized-filter-list {
+    max-height: 300px;
+    overflow: auto;
+}
+
+.apply-filter .filter-list-button {
+    padding-left: 6px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.apply-filter .filter-list-icon {
+    min-width: 36px;
+}
+
+.apply-filter .filter-checkbox-text span {
+    font-size: 15px;
+    font-weight: 500;
 }
 
 .apply-filter .expand-more {
@@ -40,18 +57,14 @@
 .apply-filter .category {
     display: flex;
     justify-content: space-between;
-    padding-left: 0;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-left: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
-.apply-filter .category-text {
+.apply-filter .category-text span {
     color: #1c83fb;
     font-size: 16px;
     font-weight: 700;
     text-transform: none;
-}
-
-.apply-filter .category-icon {
-    color: rgba(0, 0, 0, 0.54);
 }
