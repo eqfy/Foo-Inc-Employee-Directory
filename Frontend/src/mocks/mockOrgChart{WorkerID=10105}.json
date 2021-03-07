@@ -23,6 +23,27 @@
   },
   "colleagues": [
     {
+      "employeeNumber": "10105",
+      "lastName": "Employee05",
+      "firstName": "Name",
+      "employmentType": "Salary",
+      "division": "Accounting",
+      "companyName": "Acme Seeds Inc.",
+      "OfficeLocation": "Corporate ||| Vancouver",
+      "title": "Some \"Title\"",
+      "hireDate": "1/1/2020 12:00:00 AM",
+      "terminationDate": "",
+      "supervisorEmployeeNumber": "10005",
+      "yearsPriorExperience": "0.0",
+      "email": "something@acme.ca",
+      "workPhone": "604-555-5555",
+      "workCell": "604-555-5555",
+      "physicalLocation": "Vancouver",
+      "image": "some-url/photo_default.jpg",
+      "isContractor": false,
+      "skills": "Accounting:::Transaction Processing||| Accounting:::Reconciling||| Accounting:::Auditing||| Management:::Budgeting"
+    },
+    {
       "employeeNumber": "10106",
       "lastName": "Employee06",
       "firstName": "Name",

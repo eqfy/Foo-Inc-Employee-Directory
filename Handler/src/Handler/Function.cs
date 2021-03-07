@@ -266,11 +266,10 @@ namespace Handler
             readerSupervisor.Close();
 
             // Get colleagues
-            String sqlColleagues = sql + " WHERE ed.\"SupervisorEmployeeNumber\" = :p1 AND ed.\"EmployeeNumber\" != :p2 ORDER BY ed.\"EmployeeNumber\"";
+            String sqlColleagues = sql + " WHERE ed.\"SupervisorEmployeeNumber\" = :p ORDER BY ed.\"EmployeeNumber\"";
 
             using var cmdColleagues = new NpgsqlCommand(sqlColleagues, con);
-            cmdColleagues.Parameters.AddWithValue("p1", supervisorID);
-            cmdColleagues.Parameters.AddWithValue("p2", workerID);
+            cmdColleagues.Parameters.AddWithValue("p", supervisorID);
             var readerColleagues = cmdColleagues.ExecuteReader();
             List<Employee> colleagues = new List<Employee>();
 
