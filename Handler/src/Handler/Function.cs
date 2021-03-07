@@ -587,7 +587,101 @@ namespace Handler
         }
 
 
+        public APIGatewayProxyResponse GetAllFilters(APIGatewayProxyRequest request, ILambdaContext context)
+        {
+            LambdaLogger.Log(GetRDSConnectionString());
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
 
+            var sqlSkill = "WITH category AS (SELECT \"SkillCategory\".\"Label\", \"SkillCategory\".\"SkillCategoryId\" FROM \"SkillCategory\") SELECT \"Skill\".\"Label\", category.\"Label\" FROM \"Skill\" JOIN category ON \"Skill\".\"SkillCategoryId\" = category.\"SkillCategoryId\"";
+            using var cmdSkill = new NpgsqlCommand(sqlSkill, con);
+
+            var readerSkill = cmdSkill.ExecuteReader();
+            Filters filters = new Filters();
+            List<Skill> skills = new List<Skill>();
+
+            while(readerSkill.Read()){
+                Skill s = new Skill();
+                s.skillLabel = readerSkill[0].ToString();
+                s.categoryLabel = readerSkill[1].ToString();
+                LambdaLogger.Log("Skill: " + s.skillLabel + "\n");
+                skills.Add(s);
+            }
+
+            filters.skills = skills;
+            readerSkill.Close();
+
+            var sqlLocation = "SELECT \"Label\" FROM \"LocationPhysical\"";
+            using var cmdLocation = new NpgsqlCommand(sqlLocation, con);
+
+            var readerLocation = cmdLocation.ExecuteReader();
+            List<string> locs = new List<string>();
+
+            while (readerLocation.Read()) {
+              LambdaLogger.Log("Location: " + readerLocation[0] + "\n");
+              locs.Add(readerLocation[0].ToString());
+            }
+
+            filters.locations = locs;
+            readerLocation.Close();
+
+            var sqlTitle = "SELECT DISTINCT \"Employee\".\"Title\" FROM \"Employee\"";
+            using var cmdTitle = new NpgsqlCommand(sqlTitle, con);
+
+            var readerTitle = cmdTitle.ExecuteReader();
+            List<string> titles = new List<string>();
+
+            while (readerTitle.Read()) {
+              LambdaLogger.Log("Title: " + readerTitle[0] + "\n");
+              titles.Add(readerTitle[0].ToString());
+            }
+
+            filters.titles = titles;
+            readerTitle.Close();
+
+            var sqlDept = "SELECT \"Label\" FROM \"LocationGroup\"";
+            using var cmdDept = new NpgsqlCommand(sqlDept, con);
+
+            var readerDept = cmdDept.ExecuteReader();
+            List<string> depts = new List<string>();
+
+            while (readerDept.Read()) {
+              LambdaLogger.Log("Dept: " + readerDept[0] + "\n");
+              depts.Add(readerDept[0].ToString());
+            }
+
+            filters.departments = depts;
+            readerDept.Close();
+
+            var sqlCoy = "SELECT \"Label\" FROM \"LocationCompany\"";
+            using var cmdCoy = new NpgsqlCommand(sqlCoy, con);
+
+            var readerCoy = cmdCoy.ExecuteReader();
+            List<string> coys = new List<string>();
+
+            while (readerCoy.Read()) {
+              LambdaLogger.Log("Coy: " + readerCoy[0] + "\n");
+              coys.Add(readerCoy[0].ToString());
+            }
+
+            filters.companies = coys;
+            readerCoy.Close();
+
+            string output = Newtonsoft.Json.JsonConvert.SerializeObject(filters); 
+
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = output,
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" } 
+                }
+            };
+
+            return response;
+        }
 
         
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
