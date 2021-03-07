@@ -130,6 +130,22 @@ namespace Project
             apiGateway.Resource employeeByNameResource = api.Root.AddResource("employeeByName");
             apiGateway.LambdaIntegration getEmployeeByNameIntegration =  new apiGateway.LambdaIntegration(getEmployeeByName);
             apiGateway.Method getEmployeeByNameMethod =  employeeByNameResource.AddMethod("GET", getEmployeeByNameIntegration);
+ 
+            lambda.Function getOrgChart = new lambda.Function(this,"getOrgChart", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::GetOrgChart",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource orgChartResource = api.Root.AddResource("orgChart");
+            apiGateway.LambdaIntegration getOrgChartIntegration =  new apiGateway.LambdaIntegration(getOrgChart);
+            apiGateway.Method getOrgChartMethod =  orgChartResource.AddMethod("GET", getOrgChartIntegration);
 
 
             //search Enpoint
@@ -198,6 +214,7 @@ namespace Project
             });
             databaseScriptsBucket.GrantRead(databaseInitLambda);
             databaseScriptsBucket.GrantRead(databaseDropAllLambda);
+            databaseScriptsBucket.GrantRead(getOrgChart);
             databaseScriptsBucket.GrantRead(getEmployeeByName);
             databaseScriptsBucket.GrantRead(search);
             databaseScriptsBucket.GrantRead(getEmployeeID);
@@ -219,24 +236,27 @@ namespace Project
             getEmployeeByName.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getEmployeeByName.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getEmployeeByName.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-            //adding getByName.sql for lambda
             getEmployeeByName.AddEnvironment("OBJECT_KEY", "getByName.sql");
             getEmployeeByName.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             search.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             search.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             search.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-            //adding getByName.sql for lambda
-            search.AddEnvironment("OBJECT_KEY", "searchTemp.sql");
+            search.AddEnvironment("OBJECT_KEY", "SearchTemp.sql");
             search.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
 
             getEmployeeID.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getEmployeeID.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getEmployeeID.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-            //adding getByName.sql for lambda
             getEmployeeID.AddEnvironment("OBJECT_KEY", "getEmployeeID.sql");
             getEmployeeID.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+            getOrgChart.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            getOrgChart.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            getOrgChart.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            getOrgChart.AddEnvironment("OBJECT_KEY", "orgChartEmployee.sql");
+            getOrgChart.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());

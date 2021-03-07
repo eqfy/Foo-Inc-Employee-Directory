@@ -21,7 +21,7 @@ public class Employee
   public string workPhone;
   public string workCell;
   public string physicalLocation;
-  public string photoUrl;
-  public string isContractor;
+  public string image;
+  public bool isContractor;
   public string skills;
 }
