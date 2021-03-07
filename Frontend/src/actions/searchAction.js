@@ -1,7 +1,8 @@
-import { searchAPI } from "../api/search";
+import { parseFullName } from "parse-full-name";
+import { searchWorker, searchWorkerByName } from "../api/search";
 
 export const searchAction = (searchProps) => (dispatch) => {
-    searchAPI(searchProps)
+    searchWorker(searchProps)
         .then((response) => {
             console.log(response);
             dispatch({
@@ -14,6 +15,22 @@ export const searchAction = (searchProps) => (dispatch) => {
         });
 };
 
+export const searchByNameAction = (payload) => (dispatch, getState) => {
+    // We don't store the name in our redux store, (all name searches are one-time)
+    const parsedName = parseFullName(payload);
+    payload = {
+        firstName: parsedName.first,
+        lastName: parsedName.last,
+    };
+    console.log("Search By Name Action dispatched.\nPayload: %o", payload);
+    searchWorkerByName(payload).then((response) => {
+        dispatch({
+            type: "ADD_WORKER",
+            payload: response,
+        });
+    });
+};
+
 export const searchByExperienceAction = (payload) => (dispatch, getState) => {
     dispatch(setExperienceAction(payload));
     payload = createSearchPayload(getState());
@@ -23,7 +40,7 @@ export const searchByExperienceAction = (payload) => (dispatch, getState) => {
         payload
     );
 
-    searchAPI(payload)
+    searchWorker(payload)
         .then((response) => {
             dispatch({
                 type: "ADD_WORKER",
