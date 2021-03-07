@@ -1,9 +1,8 @@
-import { getFilterAPI } from "api/filter";
+import { getAllFilters } from "api/filter";
 
 export const loadFiltersAction = () => (dispatch) => {
-    getFilterAPI()
+    getAllFilters()
         .then((response) => {
-            console.log(response);
             dispatch({
                 type: "LOAD_FILTERS",
                 payload: response,

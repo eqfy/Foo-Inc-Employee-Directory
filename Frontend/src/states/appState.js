@@ -10,7 +10,7 @@ export const defaultAppState = {
     currWorkerId: "",
     focusedWorkerId: "",
     profileShowPrevNext: false,
-    skills: [],
+    skills: {},
     locations: [],
     titles: [],
     departments: [],
