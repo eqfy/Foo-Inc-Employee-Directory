@@ -77,7 +77,9 @@ namespace Handler
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" } 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
                 }
             };
 
@@ -166,7 +168,9 @@ namespace Handler
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" } 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
                 }
             };
 
@@ -347,7 +351,9 @@ namespace Handler
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" } 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
                 }
             };
 
@@ -408,7 +414,9 @@ namespace Handler
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" } 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
                 }
             };
 
@@ -447,7 +455,9 @@ namespace Handler
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" } 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
                 }
             };
 
@@ -935,7 +945,9 @@ namespace Handler
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" } 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
                 }
             };
 

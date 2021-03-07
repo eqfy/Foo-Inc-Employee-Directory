@@ -12,12 +12,12 @@ import {getFilterAPI} from "../api/filter.js"
 export function SearchPageContainer(props) {
     React.useEffect(() => {
         // TODO get the current user's stored filters
-        async function getAPI() {
-            let response = await getFilterAPI()
-            response = await response.json()
-            console.log(response)
-        }
-        getAPI()
+        // async function getAPI() {
+        //     let response = await getFilterAPI()
+        //     response = await response.json()
+        //     console.log(response)
+        // }
+        // getAPI()
     });
 
     return (

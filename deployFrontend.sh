@@ -4,5 +4,5 @@ yarn install
 yarn build
 cd ..
 echo "***Deploying frontend***"
-cdk deploy FrontendStack
+cdk deploy FrontendStack --require-approval never
 echo "Done"
