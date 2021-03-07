@@ -9,12 +9,13 @@ import { coordinatedDebounce } from "../helpers";
 let experienceFilterTimer = {};
 
 function ExperienceSlider(props) {
-    const [value, setValue] = React.useState(0);
+    const { searchByExperienceAction, yearsPriorExperience } = props;
+    const [value, setValue] = React.useState(yearsPriorExperience);
 
     const handleSliderChange = (_event, newValue) => {
         setValue(newValue);
         coordinatedDebounce(
-            props.searchByExperienceAction,
+            searchByExperienceAction,
             experienceFilterTimer
         )(newValue);
     };
@@ -22,7 +23,7 @@ function ExperienceSlider(props) {
     const handleInputChange = (event) => {
         const targetValue = event.target.value;
         coordinatedDebounce(
-            props.searchByExperienceAction,
+            searchByExperienceAction,
             experienceFilterTimer
         )(targetValue);
     };
@@ -31,13 +32,13 @@ function ExperienceSlider(props) {
         if (value < 0) {
             setValue(0);
             coordinatedDebounce(
-                props.searchByExperienceAction,
+                searchByExperienceAction,
                 experienceFilterTimer
             )(0);
         } else if (value > MAX_WORK_EXPERIENCE) {
             setValue(MAX_WORK_EXPERIENCE);
             coordinatedDebounce(
-                props.searchByExperienceAction,
+                searchByExperienceAction,
                 experienceFilterTimer
             )(MAX_WORK_EXPERIENCE);
         }
@@ -87,8 +88,11 @@ function ExperienceSlider(props) {
 }
 
 const mapStateToProps = (state) => {
+    const {
+        appState: { yearsPriorExperience = 0 },
+    } = state;
     return {
-        experienceFilter: state.searchPageState.experienceFilter,
+        yearsPriorExperience,
     };
 };
 

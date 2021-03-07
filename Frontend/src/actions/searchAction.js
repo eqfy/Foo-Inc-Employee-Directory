@@ -56,10 +56,7 @@ export const searchByExperienceAction = (payload) => (dispatch, getState) => {
 };
 
 export const setExperienceAction = (payload) => (dispatch) => {
-    console.log(
-        "Search By Experience Action dispatched.\nPayload: %d",
-        payload
-    );
+    console.log("Set Experience Action dispatched.\nPayload: %d", payload);
 
     dispatch({
         type: "SET_EXPERIENCE",
