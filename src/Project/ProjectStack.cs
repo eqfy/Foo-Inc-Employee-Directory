@@ -109,7 +109,17 @@ namespace Project
             });
 
             //APIGateway
-            apiGateway.RestApi api = new apiGateway.RestApi(this, "Project-api", null);
+            string[] cors_headers = {"Content-Type","X-Amz-Date,Authorization","X-Api-Key","X-Amz-Security-Token"};
+ 
+            apiGateway.RestApi api = new apiGateway.RestApi(this, "Project-api", new apiGateway.RestApiProps{
+                DefaultCorsPreflightOptions = new apiGateway.CorsOptions{
+                    AllowOrigins = apiGateway.Cors.ALL_ORIGINS,
+                    AllowHeaders = cors_headers,
+                    AllowMethods = apiGateway.Cors.ALL_METHODS
+                }
+            });
+            
+
             apiGateway.Resource employeeResource = api.Root.AddResource("employee");
 
             apiGateway.LambdaIntegration getEmployeeIntegration =  new apiGateway.LambdaIntegration(getEmployees);

@@ -1,4 +1,7 @@
+import { API } from "aws-amplify";
 export async function getFilterAPI() {
-    // return API.get("GetFilters", "filter");
-    return null;
+    const myInit = {
+        queryStringParameters: {LocationPhysical: 'Vancouver',},
+    };
+    return API.get("search", "search", myInit);
 }
