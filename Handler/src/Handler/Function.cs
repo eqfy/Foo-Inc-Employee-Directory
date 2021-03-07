@@ -201,8 +201,12 @@ namespace Handler
             string supervisorID = string.Empty;
             OrgChart orgChart = new OrgChart();
             Employee focusedWorker = new Employee();
+            bool toggleIsEmpty = true;
 
             while(readerFocused.Read()) {
+                if (toggleIsEmpty == true) {
+                  toggleIsEmpty = false;
+                }
                 LambdaLogger.Log("Reading self: \n");
                 focusedWorker.firstName = readerFocused[0].ToString();
                 focusedWorker.lastName = readerFocused[1].ToString();
@@ -226,8 +230,14 @@ namespace Handler
                 supervisorID = focusedWorker.supervisorEmployeeNumber;
             }
 
-            orgChart.focusedWorker = focusedWorker;
+            if (toggleIsEmpty) {
+              orgChart.focusedWorker = null;
+            } else {
+              orgChart.focusedWorker = focusedWorker;
+            }
+            
             readerFocused.Close();
+            toggleIsEmpty = true;
 
             // Get supervisor
             String sqlSupervisor = sql + " WHERE ed.\"EmployeeNumber\" = :p";
@@ -237,8 +247,12 @@ namespace Handler
             var readerSupervisor = cmdSupervisor.ExecuteReader();
 
             Employee supervisor = new Employee();
+            
 
             while(readerSupervisor.Read()) {
+                if (toggleIsEmpty == true) {
+                  toggleIsEmpty = false;
+                }
                 LambdaLogger.Log("Reading supervisor: \n");
                 supervisor.firstName = readerSupervisor[0].ToString();
                 supervisor.lastName = readerSupervisor[1].ToString();
@@ -261,11 +275,16 @@ namespace Handler
                 supervisor.OfficeLocation = readerSupervisor[18].ToString();
             }
 
-            orgChart.supervisor = supervisor;
+            if (toggleIsEmpty) {
+              orgChart.supervisor = null;
+            } else {
+              orgChart.supervisor = supervisor;
+            }
+            
             readerSupervisor.Close();
 
             // Get colleagues
-            String sqlColleagues = sql + " WHERE ed.\"SupervisorEmployeeNumber\" = :p1 AND ed.\"EmployeeNumber\" != :p2";
+            String sqlColleagues = sql + " WHERE ed.\"SupervisorEmployeeNumber\" = :p1 AND ed.\"EmployeeNumber\" != :p2 ORDER BY ed.\"EmployeeNumber\"";
 
             using var cmdColleagues = new NpgsqlCommand(sqlColleagues, con);
             cmdColleagues.Parameters.AddWithValue("p1", supervisorID);
@@ -302,7 +321,7 @@ namespace Handler
             readerColleagues.Close();
 
             // Get subordinates
-            String sqlSubordinates = sql + " WHERE ed.\"SupervisorEmployeeNumber\" = :p";
+            String sqlSubordinates = sql + " WHERE ed.\"SupervisorEmployeeNumber\" = :p ORDER BY ed.\"EmployeeNumber\"";
 
             using var cmdSubordinates = new NpgsqlCommand(sqlSubordinates, con);
             cmdSubordinates.Parameters.AddWithValue("p", workerID);
