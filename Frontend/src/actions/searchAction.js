@@ -16,7 +16,7 @@ export const searchAction = (searchProps) => (dispatch) => {
 
 export const searchByExperienceAction = (payload) => (dispatch, getState) => {
     dispatch(setExperienceAction(payload));
-    payload = createSearchPayload(getState().appState);
+    payload = createSearchPayload(getState());
 
     console.log(
         "Search By Experience Action dispatched.\nPayload: %o",
@@ -51,18 +51,27 @@ export const setExperienceAction = (payload) => (dispatch) => {
 };
 
 const createSearchPayload = (state) => {
+    // FIXME this is not complete!  Fix this once search endpoint is merged in.
     const {
-        locations,
-        titles,
-        departments,
-        companies,
-        yearsPriorExperience,
+        appState: {
+            skills,
+            locations,
+            titles,
+            departments,
+            companies,
+            yearsPriorExperience,
+        },
+        searchPageState: { pageNumber, sortKey, isAscending },
     } = state;
     return {
+        skills,
         locations,
         titles,
         departments,
         companies,
         yearsPriorExperience,
+        pageNumber,
+        sortKey,
+        isAscending,
     };
 };
