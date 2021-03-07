@@ -1,9 +1,6 @@
 import { Grid, Slider, Input } from "@material-ui/core";
 import { Work } from "@material-ui/icons";
-import {
-    searchByExperienceAction,
-    setExperienceAction,
-} from "actions/searchAction";
+import { searchByExperienceAction } from "actions/searchAction";
 import { MAX_WORK_EXPERIENCE } from "components/common/constants";
 import React from "react";
 import { connect } from "react-redux";
@@ -97,7 +94,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
     searchByExperienceAction: (value) =>
-        dispatch(searchByExperienceAction(...value)),
+        dispatch(searchByExperienceAction(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExperienceSlider);

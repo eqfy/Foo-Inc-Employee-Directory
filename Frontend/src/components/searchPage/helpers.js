@@ -9,6 +9,6 @@ export const coordinatedDebounce = (
 ) => {
     return function () {
         clearTimeout(timer["TimerID"]);
-        timer["TimerID"] = setTimeout(func, delay, arguments);
+        timer["TimerID"] = setTimeout(func, delay, ...arguments);
     };
 };
