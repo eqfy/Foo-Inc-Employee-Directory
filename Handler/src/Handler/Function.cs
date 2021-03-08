@@ -400,10 +400,13 @@ namespace Handler
             String sql = reader.ReadToEnd();
             
             //Create the database sql command
+
+            LambdaLogger.Log("sql: " + sql);
             using var cmd = new NpgsqlCommand(sql, con);
 
             //Execute the init sql
             cmd.ExecuteNonQuery();
+            
             
             //TODO close connection?
 
@@ -440,8 +443,11 @@ namespace Handler
             StreamReader reader = new StreamReader(script.ResponseStream);
             String sql = reader.ReadToEnd();
 
+            LambdaLogger.Log("sql: " + sql);
             //Create the database sql command
             using var cmd = new NpgsqlCommand(sql, con);
+
+            
 
             //Execute the drop all sql 
             cmd.ExecuteNonQuery();
@@ -1036,6 +1042,81 @@ namespace Handler
                 StatusCode = 200,
                 Body = output,
                 //Body = myDbItems.ToString(),
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
+                }
+            };
+
+            return response;
+        }
+
+        public  APIGatewayProxyResponse addContractor(APIGatewayProxyRequest request, ILambdaContext context){
+            string requestBody = request.Body;
+            Newtonsoft.Json.Linq.JObject body = Newtonsoft.Json.Linq.JObject.Parse(requestBody);
+        
+            //Employee newContractor = new Employee();
+
+            //newContractor.firstName = body["firstName"].Value<string>();
+            //LambdaLogger.Log("first name : " + newContractor.firstName);
+
+            //Create the connection to the database
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+
+
+            //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+
+            //Get the sql script from the bucket
+            var script = getS3FileSync(bucketName, objectKey);
+        
+            
+            //Read the sql from the file
+            StreamReader readers3 = new StreamReader(script.ResponseStream);
+            String sql = readers3.ReadToEnd();
+
+            LambdaLogger.Log("sql: " + sql);
+
+            using var cmd = new NpgsqlCommand(sql,con);
+
+            //Add the bind variables
+            
+            cmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p1",body["OfficeCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p2",body["GroupCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p3",body["FirstName"].Value<string>());
+            cmd.Parameters.AddWithValue("p4",body["LastName"].Value<string>());
+            cmd.Parameters.AddWithValue("p5",body["EmploymentType"].Value<string>());
+            cmd.Parameters.AddWithValue("p6",body["Title"].Value<string>());
+            cmd.Parameters.AddWithValue("p7",body["HireDate"].Value<string>());
+            /*if(body["TerminationDate"].Value<string>() == "NULL"){
+                cmd.Parameters.AddWithValue("p8",DBNull.value);
+            }else{
+                cmd.Parameters.AddWithValue("p8",body["TerminationDate"].Value<string>());
+            }*/
+            cmd.Parameters.AddWithValue("p8",((object)body["TerminationDate"].Value<string>() ?? DBNull.Value));
+            cmd.Parameters.AddWithValue("p9",body["SupervisorEmployeeNumber"].Value<string>());
+            cmd.Parameters.AddWithValue("p10",body["YearsPriorExperience"].Value<string>());
+            cmd.Parameters.AddWithValue("p11",body["Email"].Value<string>());
+            cmd.Parameters.AddWithValue("p12",body["WorkPhone"].Value<string>());
+            cmd.Parameters.AddWithValue("p13",body["WorkCell"].Value<string>());
+            cmd.Parameters.AddWithValue("p14",body["PhysicalLocationId"].Value<string>());
+            cmd.Parameters.AddWithValue("p15",body["PhotoUrl"].Value<string>());
+
+            cmd.ExecuteNonQuery();
+            //TODO check that the query didn't fail
+
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = "New slave added!",
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 

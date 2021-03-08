@@ -79,6 +79,8 @@ CREATE TABLE "Employee" (
     "isContractor" boolean NOT NULL DEFAULT false
 );
 
+CREATE SEQUENCE "public".contractorseq;
+
 CREATE TABLE "EmployeeSkills" (
     "EmployeeNumber" varchar(10) NOT NULL,
     "SkillCategoryId" varchar(32) NOT NULL,
