@@ -22,6 +22,7 @@ function ExperienceSlider(props) {
 
     const handleInputChange = (event) => {
         const targetValue = event.target.value;
+        setValue(targetValue);
         coordinatedDebounce(
             searchByExperienceAction,
             experienceFilterTimer
