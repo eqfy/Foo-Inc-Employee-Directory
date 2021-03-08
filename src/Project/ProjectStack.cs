@@ -285,9 +285,9 @@ namespace Project
                 Value = database.DbInstanceEndpointAddress
             });
             
-            //CfnOutput output = new CfnOutput(this, "endpoint output", new CfnOutputProps{
-            //    Value = api.Url, ExportName = "gateWayURL"
-            //});
+            CfnOutput output = new CfnOutput(this, "endpoint", new CfnOutputProps{
+               Value = api.Url, ExportName = "gateWayURL"
+            });
         }
     }
 }
