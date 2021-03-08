@@ -41,6 +41,16 @@ function ApplyFilterArea() {
                 isCategorized={false}
             />
             <ApplyFilterWidget
+                type="company"
+                dataLabel="company"
+                isCategorized={false}
+            />
+            <ApplyFilterWidget
+                type="department"
+                dataLabel="department"
+                isCategorized={false}
+            />
+            <ApplyFilterWidget
                 type="skill"
                 dataLabel="skill"
                 isCategorized={true}

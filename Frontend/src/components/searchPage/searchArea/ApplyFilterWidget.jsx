@@ -1,4 +1,10 @@
+import {
+    setCategorizedFilterAction,
+    setFilterAction,
+} from "actions/filterAction";
+import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { connect } from "react-redux";
+import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 const React = require("react");
 const {
@@ -16,17 +22,36 @@ const {
 } = require("@material-ui/core");
 const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 
+const ApplyFilterTimer = {};
+
 function ApplyFilterWidget(props) {
-    const { filterData, filterState, type, dataLabel, isCategorized } = props;
+    const {
+        filterData,
+        filterState,
+        type,
+        dataLabel,
+        isCategorized,
+        setFilterAction,
+        setCategorizedFilterAction,
+        searchWithAppliedFilterAction,
+    } = props;
     const filters = filterData[`${type}AllId`];
-    console.log(filters);
-    console.log(filterState);
+    const appliedFilters = filterState[`${type}State`];
     const handleTextChange = () => {
-        // TODO For predictive search, we want to set the filterNum to max when we have typed at least 2 letters
-        // searchFilterAction();
+        // TODO For predictive search
     };
+
+    const handleCheckboxChange = (name, category = "") => {
+        if (category.length > 0) {
+            setCategorizedFilterAction(name, category, type);
+        } else {
+            setFilterAction(name, type);
+        }
+        coordinatedDebounce(searchWithAppliedFilterAction, ApplyFilterTimer)();
+    };
+
     const textFieldLabel = `Filter by ${dataLabel}`;
-    const formLabel = `Select one or more ${dataLabel}s displayed below`;
+    const formLabel = `Type in a ${dataLabel} or select one from below`;
 
     return (
         <div className="filter-form">
@@ -37,16 +62,29 @@ function ApplyFilterWidget(props) {
                 onChange={handleTextChange}
             />
             <StyledFormLabel>{formLabel}</StyledFormLabel>
-            <ApplyFilterCheckboxGroup
-                filters={filters}
-                isCategorized={isCategorized}
-            />
+            <CollapsableFilterBox>
+                {!isCategorized ? (
+                    <CheckboxList
+                        filters={filters}
+                        appliedFilters={appliedFilters}
+                        type={type}
+                        handleCheckboxChange={handleCheckboxChange}
+                    />
+                ) : (
+                    <CategorizedCheckboxList
+                        categorizedFilters={filters}
+                        appliedFilters={appliedFilters}
+                        type={type}
+                        handleCheckboxChange={handleCheckboxChange}
+                    />
+                )}
+            </CollapsableFilterBox>
         </div>
     );
 }
 
-function ApplyFilterCheckboxGroup(props) {
-    const { filters, isCategorized } = props;
+function CollapsableFilterBox(props) {
+    const { children } = props;
 
     const [expandMore, setExpandMore] = React.useState(true);
     const handleExpandMoreClick = () => {
@@ -56,11 +94,7 @@ function ApplyFilterCheckboxGroup(props) {
     return (
         <FormGroup>
             <Collapse in={!expandMore} timeout="auto" unmountOnExit>
-                {!isCategorized ? (
-                    <CheckboxList options={filters} />
-                ) : (
-                    <CategorizedCheckboxList categorizedOptions={filters} />
-                )}
+                {children}
             </Collapse>
             <Button
                 type="submit"
@@ -74,115 +108,89 @@ function ApplyFilterCheckboxGroup(props) {
     );
 }
 
+function CollapsableCategoryBox(props) {
+    const { children, label } = props;
+
+    const [expandMore, setExpandMore] = React.useState(true);
+    const handleExpandMoreClick = () => {
+        setExpandMore(!expandMore);
+    };
+
+    return (
+        <>
+            <ListItem
+                button
+                className="category"
+                onClick={handleExpandMoreClick}
+            >
+                <ListItemText primary={label} className="category-text" />
+
+                {expandMore ? (
+                    <ExpandMore className="expand-icon" />
+                ) : (
+                    <ExpandLess className="expand-icon" />
+                )}
+            </ListItem>
+            <Collapse in={!expandMore} timeout="auto" unmountOnExit>
+                {children}
+            </Collapse>
+        </>
+    );
+}
+
 function CategorizedCheckboxList(props) {
-    let { categories } = props;
-
-    // TODO convert categorizedOptions into the following const and React states
-
-    categories = {
-        Accounting: ["Auditing", "Reconciling", "Transaction Processing"],
-        Agriculture: ["Fertilizing", "Harvesting", "Soil Preparation"],
-        "Empty Category": [],
-    };
-
-    const [categoryExpandMore, setCategoryExpandMore] = React.useState({
-        Accounting: true,
-        Agriculture: true,
-        "Empty Category": true,
-    });
-
-    const handleCategoryExpandMoreClick = (name) => {
-        setCategoryExpandMore({
-            ...categoryExpandMore,
-            [name]: !categoryExpandMore[name],
-        });
-    };
-
+    let { categorizedFilters, appliedFilters, handleCheckboxChange } = props;
     return (
         <List
             dense
             aria-label="filter list"
             className="categorized-filter-list"
         >
-            {Object.entries(categoryExpandMore).map(
-                ([name, categoryExpandMore]) => (
-                    <div>
-                        <ListItem
-                            button
-                            onClick={() => {
-                                handleCategoryExpandMoreClick(name);
-                            }}
-                            className="category"
-                        >
-                            <ListItemText
-                                primary={name}
-                                className="category-text category-text category-text"
-                            />
-                            {!categoryExpandMore ? (
-                                <ExpandMore className="expand-icon" />
-                            ) : (
-                                <ExpandLess className="expand-icon" />
-                            )}
-                        </ListItem>
-                        <Collapse
-                            in={categoryExpandMore}
-                            timeout="auto"
-                            unmountOnExit
-                        >
-                            <CheckboxList
-                                category={name}
-                                options={categories[name]}
-                            />
-                        </Collapse>
-                    </div>
-                )
-            )}
+            {Object.entries(categorizedFilters).map(([category, filters]) => (
+                <CollapsableCategoryBox label={category} key={category}>
+                    <CheckboxList
+                        category={category}
+                        filters={filters}
+                        appliedFilters={appliedFilters[`${category}`] || []}
+                        handleCheckboxChange={handleCheckboxChange}
+                    />
+                </CollapsableCategoryBox>
+            ))}
         </List>
     );
 }
 
 function CheckboxList(props) {
-    const { options, category = "" } = props;
-
-    const [checkboxes, setCheckboxes] = React.useState(
-        options.reduce((acc, curr) => {
-            acc[curr] = false;
-            return acc;
-        }, {})
-    );
-
-    const handleCheckboxChange = (name, isChecked) => {
-        // TODO selectFilterAction()
-        // Use category to create more specific payloads
-
-        setCheckboxes({
-            ...checkboxes,
-            [name]: !isChecked,
-        });
-    };
+    const {
+        filters,
+        appliedFilters,
+        category = "",
+        handleCheckboxChange,
+    } = props;
 
     return (
         <List dense aria-label="filter list" className="filter-list">
-            {Object.entries(checkboxes).map(([name, isChecked], index) => {
+            {filters.map((filterName, index) => {
                 return (
                     <ListItem
                         button
                         className="filter-list-button"
                         onClick={() => {
-                            handleCheckboxChange(name, isChecked);
+                            handleCheckboxChange(filterName, category);
                         }}
+                        key={index}
                     >
                         <ListItemIcon className="filter-list-icon">
                             <StyledCheckbox
                                 edge="start"
-                                checked={isChecked}
+                                checked={appliedFilters.includes(filterName)}
                                 tabIndex={-1}
                                 disableRipple
                                 inputProps={{ "aria-labelledby": "" }}
                             />
                         </ListItemIcon>
                         <ListItemText
-                            primary={name}
+                            primary={filterName}
                             className="filter-checkbox-text"
                         />
                     </ListItem>
@@ -196,27 +204,32 @@ const mapStateToProps = (state) => {
     const {
         filters,
         appState: {
-            skills = [],
-            locations = [],
-            titles = [],
-            departments = [],
-            companies = [],
+            skillState = [],
+            locationState = [],
+            titleState = [],
+            departmentState = [],
+            companyState = [],
         },
     } = state;
     return {
         filterData: filters,
         filterState: {
-            skills,
-            locations,
-            titles,
-            departments,
-            companies,
+            skillState,
+            locationState,
+            titleState,
+            departmentState,
+            companyState,
         },
     };
 };
 
-const mapDispatchToProps = () => ({
-    // TODO dispatches searchFilterAction
+const mapDispatchToProps = (dispatch) => ({
+    setFilterAction: (filterId, filterType) =>
+        dispatch(setFilterAction(filterId, filterType)),
+    setCategorizedFilterAction: (filterId, category, filterType) =>
+        dispatch(setCategorizedFilterAction(filterId, category, filterType)),
+    searchWithAppliedFilterAction: () =>
+        dispatch(searchWithAppliedFilterAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApplyFilterWidget);

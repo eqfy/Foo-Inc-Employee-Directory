@@ -3,4 +3,6 @@ export const defualtSearchPageState = {
     pageNumber: 1,
     isAscending: false,
     sortKey: "",
+    searchForContractor: true,
+    searchForEmployee: true,
 };

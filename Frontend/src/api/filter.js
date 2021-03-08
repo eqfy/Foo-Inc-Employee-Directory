@@ -5,7 +5,8 @@ export async function getAllFilters() {
     const { companies, departments, locations, titles, skills } = mockFilters;
 
     const parsedSkills = skills.reduce((acc, { skillLabel, categoryLabel }) => {
-        const skillId = `${categoryLabel}:::${skillLabel}`;
+        // const skillId = `${categoryLabel}:::${skillLabel}`;
+        const skillId = skillLabel;
         acc[categoryLabel] = !acc[categoryLabel]
             ? [skillId]
             : acc[categoryLabel].concat(skillId);

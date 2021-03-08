@@ -55,6 +55,28 @@ export const searchByExperienceAction = (payload) => (dispatch, getState) => {
         });
 };
 
+export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
+    const payload = createSearchPayload(getState());
+    console.log(
+        "Search With Applied Filters Action dispatched.\nPayload: %o",
+        payload
+    );
+    console.log(payload);
+    searchWorker(payload)
+        .then((response) => {
+            dispatch({
+                type: "ADD_WORKER",
+                payload: response,
+            });
+        })
+        .catch((error) => {
+            console.error(
+                "Search endpoint failed (experience filter).\nErr:",
+                error
+            );
+        });
+};
+
 export const setExperienceAction = (payload) => (dispatch) => {
     console.log("Set Experience Action dispatched.\nPayload: %d", payload);
 
@@ -68,24 +90,32 @@ const createSearchPayload = (state) => {
     // FIXME this is not complete!  Fix this once search endpoint is merged in.
     const {
         appState: {
-            skills,
-            locations,
-            titles,
-            departments,
-            companies,
+            skillState,
+            locationState,
+            titleState,
+            departmentState,
+            companyState,
             yearsPriorExperience,
         },
-        searchPageState: { pageNumber, sortKey, isAscending },
+        searchPageState: {
+            pageNumber,
+            sortKey,
+            isAscending,
+            searchForEmployee,
+            searchForContractor,
+        },
     } = state;
     return {
-        skills,
-        locations,
-        titles,
-        departments,
-        companies,
+        skills: skillState,
+        locations: locationState,
+        titles: titleState,
+        departments: departmentState,
+        companies: companyState,
         yearsPriorExperience,
         pageNumber,
         sortKey,
         isAscending,
+        searchForEmployee,
+        searchForContractor,
     };
 };
