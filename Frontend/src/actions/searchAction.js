@@ -4,7 +4,6 @@ import { searchWorker, searchWorkerByName } from "../api/search";
 export const searchAction = (searchProps) => (dispatch) => {
     searchWorker(searchProps)
         .then((response) => {
-            console.log(response);
             dispatch({
                 type: "ADD_WORKER",
                 payload: "employee data that satisfy filter",
@@ -61,7 +60,6 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
         "Search With Applied Filters Action dispatched.\nPayload: %o",
         payload
     );
-    console.log(payload);
     searchWorker(payload)
         .then((response) => {
             dispatch({

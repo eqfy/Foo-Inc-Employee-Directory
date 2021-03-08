@@ -30,31 +30,11 @@ function ApplyFilterArea() {
         <div className="apply-filter">
             <div className="heading">Apply filters</div>
             <ExperienceSlider />
-            <ApplyFilterWidget
-                type="location"
-                dataLabel="location"
-                isCategorized={false}
-            />
-            <ApplyFilterWidget
-                type="title"
-                dataLabel="title"
-                isCategorized={false}
-            />
-            <ApplyFilterWidget
-                type="company"
-                dataLabel="company"
-                isCategorized={false}
-            />
-            <ApplyFilterWidget
-                type="department"
-                dataLabel="department"
-                isCategorized={false}
-            />
-            <ApplyFilterWidget
-                type="skill"
-                dataLabel="skill"
-                isCategorized={true}
-            />
+            <ApplyFilterWidget type="location" isCategorized={false} />
+            <ApplyFilterWidget type="title" isCategorized={false} />
+            <ApplyFilterWidget type="company" isCategorized={false} />
+            <ApplyFilterWidget type="department" isCategorized={false} />
+            <ApplyFilterWidget type="skill" isCategorized={true} />
         </div>
     );
 }

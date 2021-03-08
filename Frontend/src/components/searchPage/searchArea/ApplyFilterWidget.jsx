@@ -29,7 +29,6 @@ function ApplyFilterWidget(props) {
         filterData,
         filterState,
         type,
-        dataLabel,
         isCategorized,
         setFilterAction,
         setCategorizedFilterAction,
@@ -50,8 +49,8 @@ function ApplyFilterWidget(props) {
         coordinatedDebounce(searchWithAppliedFilterAction, ApplyFilterTimer)();
     };
 
-    const textFieldLabel = `Filter by ${dataLabel}`;
-    const formLabel = `Type in a ${dataLabel} or select one from below`;
+    const textFieldLabel = `Filter by ${type}`;
+    const formLabel = `Type in a ${type} or select one from below`;
 
     return (
         <div className="filter-form">
