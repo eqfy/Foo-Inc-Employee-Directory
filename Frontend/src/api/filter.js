@@ -1,4 +1,5 @@
 import mockFilters from "../mocks/filters.json";
+import { API } from "aws-amplify";
 
 export async function getAllFilters() {
     // TODO Change this to an actual API call
@@ -23,4 +24,11 @@ export async function getAllFilters() {
         titleAllId: titles,
         skillAllId: parsedSkills,
     };
+}
+
+export async function getFilterAPI() {
+    const myInit = {
+        queryStringParameters: { LocationPhysical: "Vancouver" },
+    };
+    return API.get("ae-api", "search", myInit);
 }

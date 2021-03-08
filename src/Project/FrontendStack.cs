@@ -16,7 +16,8 @@ namespace Project
             Bucket websiteBucket = new Bucket(this, "webbsiteBucket", new BucketProps{
                 Versioned = true,
                 PublicReadAccess = true,
-                WebsiteIndexDocument = "index.html"
+                WebsiteIndexDocument = "index.html",
+                WebsiteErrorDocument = "index.html",
             });
 
             s3dep.ISource[] temp = {s3dep.Source.Asset("./FrontEnd/build")};

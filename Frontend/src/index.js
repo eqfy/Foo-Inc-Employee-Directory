@@ -12,7 +12,7 @@ Amplify.configure({
     API: {
         endpoints: [
             {
-                name: "search",
+                name: "ae-api",
                 endpoint: config.apiGateway.URL,
                 region: config.apiGateway.REGION,
             },
