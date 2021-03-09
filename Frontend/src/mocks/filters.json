@@ -80,19 +80,15 @@
     "Manager-Marketing"
   ],
   "departments": [
-    "Administration",
-    "Marketing",
-    "Sales",
     "Accounting",
-    "Human Resources",
-    "Administration",
-    "Marketing",
-    "Sales",
-    "Service",
-    "Administration",
     "Marketing & Sales",
+    "Marketing",
+    "Operations",
+    "Administration",
     "Distribution",
-    "Operations"
+    "Human Resources",
+    "Service",
+    "Sales"
   ],
   "companies": [
     "Acme Seeds Inc.",
