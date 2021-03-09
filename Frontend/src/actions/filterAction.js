@@ -47,3 +47,10 @@ export const setCategorizedFilterAction = (filterId, category, type) => (
         payload: categoryState,
     });
 };
+
+export const setExperienceAction = (payload) => (dispatch) => {
+    dispatch({
+        type: "SET_EXPERIENCE",
+        payload: payload,
+    });
+};
