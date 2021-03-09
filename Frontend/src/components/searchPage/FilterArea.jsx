@@ -1,50 +1,65 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import CustomCheckBox from "../common/CustomCheckbox";
-import Dropdown from "../common/Dropdown"
-import Chip from '@material-ui/core/Chip';
-
+import Dropdown from "../common/Dropdown";
+import Chip from "@material-ui/core/Chip";
 
 export default function FilterArea() {
-const classes = useStyles();
-// TODO: Fetch from redux store
-const [chipData, setChipData] = React.useState([
-    { key: 0, label: 'BC', type: 'location' },
-    { key: 1, label: 'Programming', type: 'skill' },
-    { key: 2, label: 'Program Management', type: 'skill' },
-    { key: 3, label: 'Capital', type: 'skill' },
-    { key: 4, label: 'Programming', type: 'skill' },
-    { key: 5, label: 'Vancouver', type: 'location' },
-    { key: 6, label: 'Water Waste Management', type: 'skill' },
-  ]);
+    const classes = useStyles();
+    // TODO: Fetch from redux store
+    const [chipData, setChipData] = React.useState([
+        { key: 0, label: "BC", type: "location" },
+        { key: 1, label: "Programming", type: "skill" },
+        { key: 2, label: "Program Management", type: "skill" },
+        { key: 3, label: "Capital", type: "skill" },
+        { key: 4, label: "Programming", type: "skill" },
+        { key: 5, label: "Vancouver", type: "location" },
+        { key: 6, label: "Water Waste Management", type: "skill" },
+    ]);
 
-  const handleDelete = (chipToDelete) => () => {
-    // TODO: Update redux store
-    setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
-  };
-
-  return (
-    <div className={classes.filterArea}>
-      <div className={classes.sortingArea}>
-     <Dropdown values={["all", "employees","contractors"]} label="show"/>
-     <Dropdown values={["none", "name", "title"]} label="sort by"/>
-     <CustomCheckBox name="sortAsc" label="Ascending"/>
-      </div>
-      <div className={classes.skillsBox}>
-      {chipData.map((data) => {
-        return (
-          <li key={data.key} className={classes.chipItem}>
-            <Chip
-              label={data.label}
-              onDelete={handleDelete(data)}
-              className={classes.chip}
-              style={{background: data.type === 'location'? '#00D1FF': '#FF9900'}}
-            />
-          </li>
+    const handleDelete = (chipToDelete) => () => {
+        // TODO: Update redux store
+        setChipData((chips) =>
+            chips.filter((chip) => chip.key !== chipToDelete.key)
         );
-      })}</div>
-    </div>
-  );
+    };
+
+    return (
+        <div className={classes.filterArea}>
+            <div className={classes.sortingArea}>
+                <Dropdown
+                    values={["all", "employees", "contractors"]}
+                    label="show"
+                    defaultValue="all"
+                />
+                <Dropdown
+                    values={["none", "name", "title"]}
+                    label="sort by"
+                    defaultValue="none"
+                />
+                <CustomCheckBox name="sortAsc" label="Ascending" />
+            </div>
+            <div className={classes.skillsBox}>
+                {chipData.map((data) => {
+                    return (
+                        <li key={data.key} className={classes.chipItem}>
+                            <Chip
+                                label={data.label}
+                                onDelete={handleDelete(data)}
+                                className={classes.chip}
+                                style={{
+                                    background:
+                                        data.type === "location"
+                                            ? "#00D1FF"
+                                            : "#FF9900",
+                                }}
+                            />
+                        </li>
+                    );
+                })}
+            </div>
+        </div>
+    );
 }
 
 const useStyles = makeStyles(() => ({
@@ -52,7 +67,7 @@ const useStyles = makeStyles(() => ({
         maxWidth: "90%",
         marginLeft: "auto",
         marginRight: "auto",
-        marginBottom: "30px"
+        marginBottom: "30px",
     },
     skillsBox: {
         marginTop: "20px",
@@ -62,17 +77,17 @@ const useStyles = makeStyles(() => ({
         display: "flex",
         minHeight: "42px",
         justifyContent: "left",
-        flexWrap: 'wrap',
-      },
+        flexWrap: "wrap",
+    },
     sortingArea: {
         display: "flex",
         marginTop: 0,
     },
     chipItem: {
-        listStyle: "none"
+        listStyle: "none",
     },
     chip: {
         margin: "5px",
         fontSize: "1rem",
-    }
-  }));
+    },
+}));
