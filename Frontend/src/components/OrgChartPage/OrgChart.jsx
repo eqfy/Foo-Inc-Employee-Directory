@@ -77,8 +77,8 @@ const useStyles = makeStyles({
     },
 });
 
-let toggleHideTop;
-let toggleHideBottom;
+let setHideTop;
+let setHideBottom;
 let orgChartHideTop = false;
 let orgChartHideBottom = false;
 
@@ -104,7 +104,7 @@ function OrgChartNode(props) {
         if (titleText.clientWidth < titleText.scrollWidth) {
             titleText.classList.add("card-text-too-long");
         }
-    }, []);
+    }, [data.id]);
 
     const card = (
         <Card
@@ -113,7 +113,11 @@ function OrgChartNode(props) {
                 data.isContractor ? "contractor" : ""
             }`}
             classes={{ root: classes.card }}
-            onClick={() => setOrgChartForId(data.id)}
+            onClick={() => {
+                setOrgChartForId(data.id);
+                setHideTop(false);
+                setHideBottom(false);
+            }}
         >
             <CardMedia
                 image={"./../sample.png"}
@@ -146,7 +150,7 @@ function OrgChartNode(props) {
                         orgChartHideTop ? "arrow-up" : "arrow-down"
                     }`}
                     onClick={() => {
-                        toggleHideTop();
+                        setHideTop(!orgChartHideTop);
                     }}
                 >
                     <PlayCircleFilledWhiteIcon />
@@ -157,7 +161,7 @@ function OrgChartNode(props) {
                         orgChartHideBottom ? "arrow-down" : "arrow-up"
                     }`}
                     onClick={() => {
-                        toggleHideBottom();
+                        setHideBottom(!orgChartHideBottom);
                     }}
                 >
                     <PlayCircleFilledWhiteIcon />
@@ -172,22 +176,22 @@ function OrgChartNode(props) {
 function OrgChart(props) {
     const classes = useStyles();
 
-    const [hideTop, setHideTop] = React.useState(false);
-    const [hideBottom, setHideBottom] = React.useState(false);
+    const [hideTop, reactSetHideTop] = React.useState(false);
+    const [hideBottom, reactSetHideBottom] = React.useState(false);
 
-    toggleHideTop = () => {
-        orgChartHideTop = !hideTop;
-        setHideTop(orgChartHideTop);
+    setHideTop = (hide) => {
+        orgChartHideTop = hide;
+        reactSetHideTop(orgChartHideTop);
     };
 
-    toggleHideTop = toggleHideTop.bind(this);
+    setHideTop = setHideTop.bind(this);
 
-    toggleHideBottom = () => {
-        orgChartHideBottom = !hideBottom;
-        setHideBottom(orgChartHideBottom);
+    setHideBottom = (hide) => {
+        orgChartHideBottom = hide;
+        reactSetHideBottom(orgChartHideBottom);
     };
 
-    toggleHideBottom = toggleHideBottom.bind(this);
+    setHideBottom = setHideBottom.bind(this);
     setOrgChartForId = props.setOrgChart.bind(this);
 
     useEffect(() => {
@@ -281,7 +285,6 @@ const mapStateToProps = (state) => {
 
     // loaded and valid id
     if (state.appState.ready && Object.keys(state.orgChartState).length > 0) {
-        console.log('orgChartState is', state.orgChartState);
         const orgChartState = state.orgChartState;
         const workers = state.workers;
         const focusedWorkerId = state.appState.focusedWorkerId;

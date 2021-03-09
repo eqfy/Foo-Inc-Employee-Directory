@@ -24,7 +24,6 @@ export const setOrgChart = (workerId) => (dispatch) => {
 
     getOrgChartAPI(workerId)
         .then((response) => {
-            console.log(response);
 
             // if employee id is invalid
             if (response.focusedWorker !== null) {

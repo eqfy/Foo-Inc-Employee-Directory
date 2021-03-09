@@ -5,7 +5,6 @@ import mockOrgChart420 from "../mocks/mockOrgChart{WorkerID=420}.json";
 export async function getOrgChartAPI(workerId) {
     // TODO: remove waiting 5s for demo, and dummy mocks
     await wait(1000);
-    console.log("Waited 1s");
     if (workerId === '10005') {
         return mockOrgChart10005;
     } else if (workerId === '10105') {

@@ -1,5 +1,4 @@
 import { defaultAppState } from "states/appState";
-import { mergeIds } from "./helpers";
 
 export default function appStateReducer(state = defaultAppState, action) {
     switch (action.type) {
