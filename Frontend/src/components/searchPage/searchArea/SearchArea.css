@@ -16,7 +16,7 @@
 }
 
 .apply-filter .filter-widgets {
-    max-height: calc(100vh - 250px);
+    max-height: calc(100vh - 255px);
     overflow-y: auto;
     overflow-x: hidden;
 }
