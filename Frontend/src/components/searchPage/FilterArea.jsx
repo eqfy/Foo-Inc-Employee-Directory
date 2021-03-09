@@ -3,8 +3,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import CustomCheckBox from "../common/CustomCheckbox";
 import Dropdown from "../common/Dropdown";
 import Chip from "@material-ui/core/Chip";
+import { connect } from "react-redux";
+import { setFilterAction } from "actions/filterAction";
 
-export default function FilterArea() {
+function FilterArea() {
     const classes = useStyles();
     // TODO: Fetch from redux store
     const [chipData, setChipData] = React.useState([
@@ -61,6 +63,46 @@ export default function FilterArea() {
         </div>
     );
 }
+
+const mapStateToProps = (state) => {
+    const {
+        searchPageState: {
+            isAscending,
+            sortKey,
+            searchForContractor,
+            searchForEmployee,
+        },
+        appState: {
+            skillState = [],
+            locationState = [],
+            titleState = [],
+            departmentState = [],
+            companyState = [],
+        },
+    } = state;
+    return {
+        areaState: {
+            isAscending,
+            sortKey,
+            searchForContractor,
+            searchForEmployee,
+        },
+        filterState: {
+            skillState,
+            locationState,
+            titleState,
+            departmentState,
+            companyState,
+        },
+    };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+    setFilterAction: (filterType, filterId, category) =>
+        dispatch(setFilterAction(filterType, filterId, category)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(FilterArea);
 
 const useStyles = makeStyles(() => ({
     filterArea: {

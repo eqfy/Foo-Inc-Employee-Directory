@@ -1,7 +1,4 @@
-import {
-    setCategorizedFilterAction,
-    setFilterAction,
-} from "actions/filterAction";
+import { setFilterAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
@@ -31,7 +28,6 @@ function ApplyFilterWidget(props) {
         type,
         isCategorized,
         setFilterAction,
-        setCategorizedFilterAction,
         searchWithAppliedFilterAction,
     } = props;
     const filters = filterData[`${type}AllId`];
@@ -41,11 +37,7 @@ function ApplyFilterWidget(props) {
     };
 
     const handleCheckboxChange = (name, category = "") => {
-        if (category.length > 0) {
-            setCategorizedFilterAction(name, category, type);
-        } else {
-            setFilterAction(name, type);
-        }
+        setFilterAction(type, name, category);
         coordinatedDebounce(searchWithAppliedFilterAction, ApplyFilterTimer)();
     };
 
@@ -223,10 +215,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    setFilterAction: (filterId, filterType) =>
-        dispatch(setFilterAction(filterId, filterType)),
-    setCategorizedFilterAction: (filterId, category, filterType) =>
-        dispatch(setCategorizedFilterAction(filterId, category, filterType)),
+    setFilterAction: (filterType, filterId, category) =>
+        dispatch(setFilterAction(filterType, filterId, category)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
 });
