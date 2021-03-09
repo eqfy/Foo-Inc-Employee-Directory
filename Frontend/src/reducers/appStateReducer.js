@@ -1,4 +1,5 @@
 import { defaultAppState } from "states/appState";
+import { mergeIds } from "./helpers";
 
 export default function appStateReducer(state = defaultAppState, action) {
     switch (action.type) {
@@ -31,6 +32,36 @@ export default function appStateReducer(state = defaultAppState, action) {
             return {
                 ...state,
                 profileShowPrevNext: action.payload.profileShowPrevNext,
+            };
+        case "SET_SKILL":
+            return {
+                ...state,
+                skillState: action.payload,
+            };
+        case "SET_LOCATION":
+            return {
+                ...state,
+                locationState: action.payload,
+            };
+        case "SET_TITLE":
+            return {
+                ...state,
+                titleState: action.payload,
+            };
+        case "SET_DEPARTMENT":
+            return {
+                ...state,
+                departmentState: action.payload,
+            };
+        case "SET_COMPANY":
+            return {
+                ...state,
+                companyState: action.payload,
+            };
+        case "SET_EXPERIENCE":
+            return {
+                ...state,
+                yearsPriorExperience: action.payload,
             };
         default:
             return state;

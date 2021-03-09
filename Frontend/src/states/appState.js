@@ -10,4 +10,10 @@ export const defaultAppState = {
     currWorkerId: "",
     focusedWorkerId: "",
     profileShowPrevNext: false,
+    skillState: {},
+    locationState: [],
+    titleState: [],
+    departmentState: [],
+    companyState: [],
+    yearsPriorExperience: 0,
 };

@@ -1,27 +1,47 @@
 import { Grid, Slider, Input } from "@material-ui/core";
 import { Work } from "@material-ui/icons";
+import { searchByExperienceAction } from "actions/searchAction";
+import { MAX_WORK_EXPERIENCE } from "components/common/constants";
 import React from "react";
 import { connect } from "react-redux";
+import { coordinatedDebounce } from "../helpers";
+
+let experienceFilterTimer = {};
 
 function ExperienceSlider(props) {
-    const MAX_YEARS = 30;
-    const [value, setValue] = React.useState(10);
+    const { searchByExperienceAction, yearsPriorExperience } = props;
+    const [value, setValue] = React.useState(yearsPriorExperience);
 
-    const handleSliderChange = (event, newValue) => {
-        // TODO searchFilterAction()
+    const handleSliderChange = (_event, newValue) => {
         setValue(newValue);
+        coordinatedDebounce(
+            searchByExperienceAction,
+            experienceFilterTimer
+        )(newValue);
     };
 
     const handleInputChange = (event) => {
-        // TODO searchFilterAction()
-        setValue(event.target.value === "" ? null : Number(event.target.value));
+        const targetValue = event.target.value;
+        setValue(targetValue);
+        coordinatedDebounce(
+            searchByExperienceAction,
+            experienceFilterTimer
+        )(targetValue);
     };
 
     const handleBlur = () => {
         if (value < 0) {
             setValue(0);
-        } else if (value > 40) {
-            setValue(40);
+            coordinatedDebounce(
+                searchByExperienceAction,
+                experienceFilterTimer
+            )(0);
+        } else if (value > MAX_WORK_EXPERIENCE) {
+            setValue(MAX_WORK_EXPERIENCE);
+            coordinatedDebounce(
+                searchByExperienceAction,
+                experienceFilterTimer
+            )(MAX_WORK_EXPERIENCE);
         }
     };
 
@@ -40,7 +60,7 @@ function ExperienceSlider(props) {
                     value={typeof value === "number" ? value : 0}
                     onChange={handleSliderChange}
                     aria-labelledby="input-slider"
-                    max={MAX_YEARS}
+                    max={MAX_WORK_EXPERIENCE}
                     style={{ color: "#1c83fb" }}
                 />
             </Grid>
@@ -54,7 +74,7 @@ function ExperienceSlider(props) {
                     inputProps={{
                         step: 1,
                         min: 0,
-                        max: MAX_YEARS,
+                        max: MAX_WORK_EXPERIENCE,
                         type: "number",
                         "aria-labelledby": "input-slider",
                         style: {
@@ -68,13 +88,18 @@ function ExperienceSlider(props) {
     );
 }
 
-const mapStateToProps = () => {
-    // TODO get the year work experience filter info from the state
-    return {};
+const mapStateToProps = (state) => {
+    const {
+        appState: { yearsPriorExperience = 0 },
+    } = state;
+    return {
+        yearsPriorExperience,
+    };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    // TODO dispatches searchFilterAction
+    searchByExperienceAction: (value) =>
+        dispatch(searchByExperienceAction(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExperienceSlider);

@@ -1,8 +1,9 @@
 import { defaultFilterState } from "states/filterState";
+import { mergeIds } from "./helpers";
 
 export default function filterReducer(state = defaultFilterState, action) {
     switch (action.type) {
-        case "SET_FILTERS":
+        case "LOAD_FILTERS":
             return {
                 ...state,
                 ...action.payload,
@@ -18,21 +19,21 @@ export default function filterReducer(state = defaultFilterState, action) {
                         action.payload.categoryById
                     ),
                 },
-                locationAllId: [...state.location, ...action.payload.location],
-                titleAllId: [...state.title, ...action.payload.title],
+                locationAllId: [
+                    ...state.locationAllId,
+                    ...action.payload.locationAllId,
+                ],
+                titleAllId: [...state.titleAllId, ...action.payload.titleAllId],
+                departmentAllId: [
+                    ...state.departmentAllId,
+                    ...action.payload.departmentAllId,
+                ],
+                companyAllId: [
+                    ...state.companyAllId,
+                    ...action.payload.companyAllId,
+                ],
             };
         default:
             return state;
     }
 }
-
-const mergeIds = (orig, other) => {
-    for (const [key, value] of Object.entries(other)) {
-        if (!orig[key]) {
-            orig[key] = value;
-        } else {
-            orig[key] = orig[key].concat(value);
-        }
-    }
-    return orig;
-};

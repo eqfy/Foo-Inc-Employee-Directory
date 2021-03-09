@@ -11,7 +11,7 @@ export default function workerReducer(state = defaultWorkerState, action) {
             return {
                 ...state,
                 byId: { ...state.byId, ...action.payload.byId },
-                allId: state.allId.concat(action.payload.allID),
+                allId: state.allId.concat(action.payload.allId),
             };
         default:
             return state;
