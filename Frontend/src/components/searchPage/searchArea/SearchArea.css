@@ -7,7 +7,7 @@
 }
 
 .apply-filter .heading {
-    padding: 12px 0 12px 16px;
+    padding: 10px 0 10px 16px;
     margin: 4px 0 10px 0;
     background-color: #1c83fb;
     color: white;
@@ -15,24 +15,23 @@
     font-weight: 700;
 }
 
+.apply-filter .filter-widgets {
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .apply-filter .experience-slider {
     margin-bottom: 2px;
 }
 
 .apply-filter .filter-list {
-    max-height: 165px;
     padding-top: 4px;
     padding-bottom: 4px;
-    overflow: auto;
 }
 
 .apply-filter .expand-icon {
     color: rgba(0, 0, 0, 0.54);
-}
-
-.apply-filter .categorized-filter-list {
-    max-height: 300px;
-    overflow: auto;
 }
 
 .apply-filter .filter-list-button {

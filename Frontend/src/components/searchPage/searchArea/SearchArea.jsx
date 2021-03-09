@@ -29,12 +29,14 @@ function ApplyFilterArea() {
     return (
         <div className="apply-filter">
             <div className="heading">Apply filters</div>
-            <ExperienceSlider />
-            <ApplyFilterWidget type="location" isCategorized={false} />
-            <ApplyFilterWidget type="title" isCategorized={false} />
-            <ApplyFilterWidget type="company" isCategorized={false} />
-            <ApplyFilterWidget type="department" isCategorized={false} />
-            <ApplyFilterWidget type="skill" isCategorized={true} />
+            <div className="filter-widgets">
+                <ExperienceSlider />
+                <ApplyFilterWidget type="location" isCategorized={false} />
+                <ApplyFilterWidget type="title" isCategorized={false} />
+                <ApplyFilterWidget type="company" isCategorized={false} />
+                <ApplyFilterWidget type="department" isCategorized={false} />
+                <ApplyFilterWidget type="skill" isCategorized={true} />
+            </div>
         </div>
     );
 }
