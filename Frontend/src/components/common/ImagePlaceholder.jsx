@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function ImagePlaceholder(props) {
-    console.log(props.image);
     return (
         // <svg width="162" height="173" viewBox="0 0 162 173" fill="none">
         //     <rect width="162" height="173" fill="url(#pattern0)" />

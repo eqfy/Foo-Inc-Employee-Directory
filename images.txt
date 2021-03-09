@@ -34,4 +34,3 @@ https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330112.jpeg
 https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330123.jpeg
 https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg
 https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg
-https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/10001.jpeg
