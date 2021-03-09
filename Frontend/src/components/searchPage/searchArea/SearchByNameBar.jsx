@@ -1,16 +1,24 @@
 import { Button, Grid, styled, TextField } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
+import { searchByNameAction } from "actions/searchAction";
 import React from "react";
 import { connect } from "react-redux";
+import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 
-function SearchByNameBar() {
-    const handleTextChange = () => {
-        // searchNameAction();
+let searchByNameTimer = {};
+
+function SearchByNameBar(props) {
+    const { searchByNameAction } = props;
+    const [name, setName] = React.useState("");
+    const handleTextChange = (event) => {
+        const enteredName = event.target.value;
+        setName(enteredName);
+        coordinatedDebounce(searchByNameAction, searchByNameTimer)(enteredName);
     };
 
     const handleSearchBtnClick = () => {
-        // searchNameAction();
+        searchByNameAction(name);
     };
 
     return (
@@ -45,11 +53,11 @@ const StyledButton = styled(Button)({
     color: "white",
     "&:hover": {
         backgroundColor: "#00569C",
-    }
+    },
 });
 
-const mapDispatchToProps = () => ({
-    // TODO dispatches searchNameAction
+const mapDispatchToProps = (dispatch) => ({
+    searchByNameAction: (name) => dispatch(searchByNameAction(name)),
 });
 
 export default connect(null, mapDispatchToProps)(SearchByNameBar);

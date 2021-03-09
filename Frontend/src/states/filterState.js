@@ -7,8 +7,11 @@ import {
 export const defaultFilterState = {
     byId: {},
     allId: [],
-    categoryById: {},
+    skillAllId: {},
     locationAllId: [],
+    titleAllId: [],
+    departmentAllId: [],
+    companyAllId: [],
 };
 
 export const mockFilterState = {

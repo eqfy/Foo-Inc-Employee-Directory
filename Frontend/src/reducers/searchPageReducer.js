@@ -10,16 +10,6 @@ export default function searchPageReducer(
                 ...state,
                 ...action.payload,
             };
-        case "SET_APPLIED_FILTERS":
-            return {
-                ...state,
-                appliedFilters: action.payload.appliedFilters,
-            };
-        case "SET_EXPERIENCE_FILTER":
-            return {
-                ...state,
-                experienceFilter: action.payload.experienceFilter,
-            };
         case "SET_SEARCH_RESULT_ORDER":
             return {
                 ...state,

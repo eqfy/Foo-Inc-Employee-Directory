@@ -179,6 +179,7 @@ namespace Handler
 
         public  APIGatewayProxyResponse GetOrgChart(APIGatewayProxyRequest request, ILambdaContext context) {
             string workerID = request.QueryStringParameters["WorkerID"];
+            string CeoID = "10001";
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
@@ -261,7 +262,7 @@ namespace Handler
                 supervisor.OfficeLocation = readerSupervisor[18].ToString();
             }
 
-            if (toggleIsEmpty) {
+            if (toggleIsEmpty || workerID == CeoID) {
               orgChart.supervisor = null;
             } else {
               orgChart.supervisor = supervisor;
@@ -276,6 +277,7 @@ namespace Handler
             cmdColleagues.Parameters.AddWithValue("p", supervisorID);
             var readerColleagues = cmdColleagues.ExecuteReader();
             List<Employee> colleagues = new List<Employee>();
+            List<Employee> ceo = new List<Employee>();
 
             while(readerColleagues.Read()) {
                 LambdaLogger.Log("Reading colleagues: \n");
@@ -298,11 +300,20 @@ namespace Handler
                 e.employeeNumber = readerColleagues[15].ToString();
                 e.employmentType = readerColleagues[16].ToString();
                 e.skills = readerColleagues[17].ToString();
-                e.OfficeLocation = readerColleagues[18].ToString();
-                colleagues.Add(e);
+                e.OfficeLocation = readerColleagues[18].ToString(); 
+                if (e.employeeNumber == CeoID) {
+                  ceo.Add(e);
+                } else {
+                  colleagues.Add(e);
+                }
             }
 
-            orgChart.colleagues = colleagues;
+            if (workerID == CeoID) {
+              orgChart.colleagues = ceo;
+            } else {
+              orgChart.colleagues = colleagues;
+            }
+            
             readerColleagues.Close();
 
             // Get subordinates
@@ -335,7 +346,9 @@ namespace Handler
                 e.employmentType = readerSubordinates[16].ToString();
                 e.skills = readerSubordinates[17].ToString();
                 e.OfficeLocation = readerSubordinates[18].ToString();
-                subs.Add(e);
+                if (e.employeeNumber != CeoID) {
+                  subs.Add(e);
+                }
             }
 
             orgChart.subordinates = subs;
