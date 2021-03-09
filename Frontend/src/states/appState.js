@@ -10,4 +10,5 @@ export const defaultAppState = {
     currWorkerId: "",
     focusedWorkerId: "",
     profileShowPrevNext: false,
+    ready: false,
 };

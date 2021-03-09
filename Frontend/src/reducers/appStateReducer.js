@@ -32,6 +32,11 @@ export default function appStateReducer(state = defaultAppState, action) {
                 ...state,
                 profileShowPrevNext: action.payload.profileShowPrevNext,
             };
+        case "SET_READY":
+            return {
+                ...state,
+                ready: action.payload.ready,
+            };
         default:
             return state;
     }
