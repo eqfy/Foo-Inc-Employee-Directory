@@ -662,7 +662,7 @@ namespace Handler
             filters.titles = titles;
             readerTitle.Close();
 
-            var sqlDept = "SELECT \"Label\" FROM \"LocationGroup\"";
+            var sqlDept = "SELECT DISTINCT \"Label\" FROM \"LocationGroup\"";
             using var cmdDept = new NpgsqlCommand(sqlDept, con);
 
             var readerDept = cmdDept.ExecuteReader();
