@@ -48,3 +48,29 @@ export const setFilterAction = (type, filterId, category = "") => (
         payload: payload,
     });
 };
+
+export const setWorkerTypeAction = (searchForEmployee, searchForContractor) => (
+    dispatch
+) => {
+    dispatch({
+        type: "SET_WORKER_TYPE_FILTER",
+        payload: {
+            searchForEmployee,
+            searchForContractor,
+        },
+    });
+};
+
+export const setSortKeyAction = (sortKey) => (dispatch) => {
+    dispatch({
+        type: "SET_SORT_KEY",
+        payload: sortKey,
+    });
+};
+
+export const setSortOrderAction = (sortOrder) => (dispatch) => {
+    dispatch({
+        type: "SET_SORT_ORDER",
+        payload: sortOrder,
+    });
+};

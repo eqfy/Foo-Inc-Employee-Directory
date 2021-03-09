@@ -23,12 +23,17 @@ export default function searchPageReducer(
         case "SET_SORT_ORDER":
             return {
                 ...state,
-                isAscending: action.payload.isAscending,
+                isAscending: action.payload,
             };
         case "SET_SORT_KEY":
             return {
                 ...state,
-                sortKey: action.payload.sortKey,
+                sortKey: action.payload,
+            };
+        case "SET_WORKER_TYPE_FILTER":
+            return {
+                ...state,
+                ...action.payload,
             };
         default:
             return state;

@@ -7,13 +7,10 @@ import Select from "@material-ui/core/Select";
 
 export default function Dropdown(props) {
     const classes = useStyles();
-    const { values, currValue, defaultValue } = props;
+    const { values, currValue, defaultValue, handleChange } = props;
 
     const capitalize = (str) => {
         return str.toLowerCase().charAt(0).toUpperCase() + str.slice(1);
-    };
-    const handleChange = (event) => {
-        // emit selected value / update redux store
     };
 
     return (
