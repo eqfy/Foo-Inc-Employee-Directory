@@ -1,5 +1,6 @@
 import { setFilterAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
+import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
@@ -19,8 +20,6 @@ const {
 } = require("@material-ui/core");
 const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 
-const ApplyFilterTimer = {};
-
 function ApplyFilterWidget(props) {
     const {
         filterData,
@@ -38,7 +37,10 @@ function ApplyFilterWidget(props) {
 
     const handleCheckboxChange = (name, category = "") => {
         setFilterAction(type, name, category);
-        coordinatedDebounce(searchWithAppliedFilterAction, ApplyFilterTimer)();
+        coordinatedDebounce(
+            searchWithAppliedFilterAction,
+            SearchWithFilterTimer
+        )();
     };
 
     const textFieldLabel = `Filter by ${type}`;

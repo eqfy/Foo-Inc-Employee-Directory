@@ -12,6 +12,7 @@ import {
 } from "actions/filterAction";
 import { coordinatedDebounce } from "./helpers";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
+import { SearchWithFilterTimer } from "components/SearchPageContainer";
 
 const chipColors = {
     location: "#00D1FF",
@@ -95,7 +96,10 @@ function FilterArea(props) {
             chipToDelete.label,
             chipToDelete.category
         );
-        coordinatedDebounce(searchWithAppliedFilterAction, {})();
+        coordinatedDebounce(
+            searchWithAppliedFilterAction,
+            SearchWithFilterTimer
+        )();
     };
 
     const createChipLabel = (chipData) =>

@@ -2,11 +2,10 @@ import { Grid, Slider, Input } from "@material-ui/core";
 import { Work } from "@material-ui/icons";
 import { searchByExperienceAction } from "actions/searchAction";
 import { MAX_WORK_EXPERIENCE } from "components/common/constants";
+import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import React from "react";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
-
-let experienceFilterTimer = {};
 
 function ExperienceSlider(props) {
     const { searchByExperienceAction, yearsPriorExperience } = props;
@@ -16,7 +15,7 @@ function ExperienceSlider(props) {
         setValue(newValue);
         coordinatedDebounce(
             searchByExperienceAction,
-            experienceFilterTimer
+            SearchWithFilterTimer
         )(newValue);
     };
 
@@ -25,7 +24,7 @@ function ExperienceSlider(props) {
         setValue(targetValue);
         coordinatedDebounce(
             searchByExperienceAction,
-            experienceFilterTimer
+            SearchWithFilterTimer
         )(targetValue);
     };
 
@@ -34,13 +33,13 @@ function ExperienceSlider(props) {
             setValue(0);
             coordinatedDebounce(
                 searchByExperienceAction,
-                experienceFilterTimer
+                SearchWithFilterTimer
             )(0);
         } else if (value > MAX_WORK_EXPERIENCE) {
             setValue(MAX_WORK_EXPERIENCE);
             coordinatedDebounce(
                 searchByExperienceAction,
-                experienceFilterTimer
+                SearchWithFilterTimer
             )(MAX_WORK_EXPERIENCE);
         }
     };
