@@ -1,5 +1,6 @@
 import { parseFullName } from "parse-full-name";
 import { searchWorker, searchWorkerByName } from "../api/search";
+import { setExperienceAction } from "./filterAction";
 
 export const searchAction = (searchProps) => (dispatch) => {
     searchWorker(searchProps)
@@ -32,26 +33,7 @@ export const searchByNameAction = (payload) => (dispatch, getState) => {
 
 export const searchByExperienceAction = (payload) => (dispatch, getState) => {
     dispatch(setExperienceAction(payload));
-    payload = createSearchPayload(getState());
-
-    console.log(
-        "Search By Experience Action dispatched.\nPayload: %o",
-        payload
-    );
-
-    searchWorker(payload)
-        .then((response) => {
-            dispatch({
-                type: "ADD_WORKER",
-                payload: response,
-            });
-        })
-        .catch((error) => {
-            console.error(
-                "Search endpoint failed (experience filter).\nErr:",
-                error
-            );
-        });
+    dispatch(searchWithAppliedFilterAction());
 };
 
 export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
@@ -73,15 +55,6 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
                 error
             );
         });
-};
-
-export const setExperienceAction = (payload) => (dispatch) => {
-    console.log("Set Experience Action dispatched.\nPayload: %d", payload);
-
-    dispatch({
-        type: "SET_EXPERIENCE",
-        payload: payload,
-    });
 };
 
 const createSearchPayload = (state) => {

@@ -74,3 +74,10 @@ export const setSortOrderAction = (sortOrder) => (dispatch) => {
         payload: sortOrder,
     });
 };
+
+export const setExperienceAction = (payload) => (dispatch) => {
+    dispatch({
+        type: "SET_EXPERIENCE",
+        payload: payload,
+    });
+};

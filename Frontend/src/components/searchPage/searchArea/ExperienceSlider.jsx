@@ -8,10 +8,19 @@ import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 
 function ExperienceSlider(props) {
-    const { searchByExperienceAction, yearsPriorExperience } = props;
+    const { yearsPriorExperience, searchByExperienceAction } = props;
     const [value, setValue] = React.useState(yearsPriorExperience);
 
-    const handleSliderChange = (_event, newValue) => {
+    const setAndDispatchValue = (targetValue) => {
+        if (isNaN(targetValue)) {
+            return;
+        }
+        let newValue = targetValue;
+        if (targetValue < 0) {
+            newValue = 0;
+        } else if (targetValue > MAX_WORK_EXPERIENCE) {
+            newValue = MAX_WORK_EXPERIENCE;
+        }
         setValue(newValue);
         coordinatedDebounce(
             searchByExperienceAction,
@@ -19,29 +28,17 @@ function ExperienceSlider(props) {
         )(newValue);
     };
 
+    const handleSliderChange = (_event, newValue) => {
+        setAndDispatchValue(newValue);
+    };
+
     const handleInputChange = (event) => {
         const targetValue = event.target.value;
-        setValue(targetValue);
-        coordinatedDebounce(
-            searchByExperienceAction,
-            SearchWithFilterTimer
-        )(targetValue);
+        setValue(isNaN(targetValue) ? targetValue : parseInt(targetValue));
     };
 
     const handleBlur = () => {
-        if (value < 0) {
-            setValue(0);
-            coordinatedDebounce(
-                searchByExperienceAction,
-                SearchWithFilterTimer
-            )(0);
-        } else if (value > MAX_WORK_EXPERIENCE) {
-            setValue(MAX_WORK_EXPERIENCE);
-            coordinatedDebounce(
-                searchByExperienceAction,
-                SearchWithFilterTimer
-            )(MAX_WORK_EXPERIENCE);
-        }
+        setAndDispatchValue(value);
     };
 
     return (
