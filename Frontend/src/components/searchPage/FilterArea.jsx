@@ -10,13 +10,15 @@ import {
     setSortOrderAction,
     setWorkerTypeAction,
 } from "actions/filterAction";
+import { coordinatedDebounce } from "./helpers";
+import { searchWithAppliedFilterAction } from "actions/searchAction";
 
 const chipColors = {
-    location: "",
-    title: "",
-    company: "",
-    department: "",
-    skill: "",
+    location: "#00D1FF",
+    title: "#FF9900",
+    company: "#A4DA65",
+    department: "#A5BDE5",
+    skill: "#D877CF",
 };
 
 function FilterArea(props) {
@@ -34,34 +36,42 @@ function FilterArea(props) {
             departmentState,
             companyState,
         },
+        setFilterAction,
         setWorkerTypeAction,
         setSortKeyAction,
         setSortOrderAction,
+        searchWithAppliedFilterAction,
     } = props;
     const classes = useStyles();
-    // const [chipData, setChipData] = React.useState([
-    //     { key: 0, label: "BC", type: "location" },
-    //     { key: 1, label: "Programming", type: "skill" },
-    //     { key: 2, label: "Program Management", type: "skill" },
-    //     { key: 3, label: "Capital", type: "skill" },
-    //     { key: 4, label: "Programming", type: "skill" },
-    //     { key: 5, label: "Vancouver", type: "location" },
-    //     { key: 6, label: "Water Waste Management", type: "skill" },
-    // ]);
-    // const [chipData, setChipData] = React.useState([]);
+    const createChipDataList = (filterState = [], type = "") => {
+        return filterState.map((filter) => ({ label: filter, type: type }));
+    };
+    const createCatagorizedChipDataList = (
+        categorizedFilterState,
+        type = ""
+    ) => {
+        return Object.entries(categorizedFilterState).reduce(
+            (acc, [category, skills = []]) => {
+                skills.forEach((skill) => {
+                    acc = acc.concat({
+                        label: skill,
+                        type: type,
+                        category: category,
+                    });
+                });
+                return acc;
+            },
+            []
+        );
+    };
+
     const chipData = [
-        ...locationState,
-        ...titleState,
-        ...companyState,
-        ...departmentState,
-        ...Object.entries(skillState).reduce((acc, [category, skills = []]) => {
-            skills.forEach((skill) => {
-                acc = acc.concat(skill + " (" + category + ")");
-            });
-            return acc;
-        }, []),
+        ...createChipDataList(locationState, "location"),
+        ...createChipDataList(titleState, "title"),
+        ...createChipDataList(companyState, "company"),
+        ...createChipDataList(departmentState, "department"),
+        ...createCatagorizedChipDataList(skillState, "skill"),
     ];
-    console.log(chipData);
 
     const handleWorkerTypeChange = (event) => {
         const targetValue = event.target.value;
@@ -80,11 +90,23 @@ function FilterArea(props) {
     };
 
     const handleDelete = (chipToDelete) => () => {
-        // TODO: Update redux store
-        // setChipData((chips) =>
-        //     chips.filter((chip) => chip.key !== chipToDelete.key)
-        // );
+        setFilterAction(
+            chipToDelete.type,
+            chipToDelete.label,
+            chipToDelete.category
+        );
+        coordinatedDebounce(searchWithAppliedFilterAction, {})();
     };
+
+    const createChipLabel = (chipData) =>
+        chipData.category && chipData.category.length > 0 ? (
+            <>
+                {chipData.label}
+                <i>{" (" + chipData.category + ")"}</i>
+            </>
+        ) : (
+            chipData.label
+        );
 
     return (
         <div className={classes.filterArea}>
@@ -114,23 +136,26 @@ function FilterArea(props) {
                 />
             </div>
             <div className={classes.skillsBox}>
-                {chipData.map((data) => {
-                    return (
-                        <li key={data.key} className={classes.chipItem}>
-                            <Chip
-                                label={data}
-                                onDelete={handleDelete(data)}
-                                className={classes.chip}
-                                style={{
-                                    background:
-                                        data.type === "location"
-                                            ? "#00D1FF"
-                                            : "#FF9900",
-                                }}
-                            />
-                        </li>
-                    );
-                })}
+                {chipData.length > 0 ? (
+                    chipData.map((data) => {
+                        return (
+                            <li key={data.key} className={classes.chipItem}>
+                                <Chip
+                                    label={createChipLabel(data)}
+                                    onDelete={handleDelete(data)}
+                                    className={classes.chip}
+                                    style={{
+                                        background: chipColors[data.type],
+                                    }}
+                                />
+                            </li>
+                        );
+                    })
+                ) : (
+                    <div className={classes.emptyText}>
+                        {"No filters applied!"}
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -184,6 +209,8 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(setWorkerTypeAction(searchForEmployee, searchForContractor)),
     setSortKeyAction: (sortKey) => dispatch(setSortKeyAction(sortKey)),
     setSortOrderAction: (sortOrder) => dispatch(setSortOrderAction(sortOrder)),
+    searchWithAppliedFilterAction: () =>
+        dispatch(searchWithAppliedFilterAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FilterArea);
@@ -215,5 +242,12 @@ const useStyles = makeStyles(() => ({
     chip: {
         margin: "5px",
         fontSize: "1rem",
+    },
+    emptyText: {
+        display: "flex",
+        justifyContent: "center",
+        alignSelf: "center",
+        width: "100%",
+        color: "rgba(0, 0, 0, 0.54)",
     },
 }));
