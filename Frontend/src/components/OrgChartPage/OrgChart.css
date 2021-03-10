@@ -53,6 +53,7 @@
     align-items: center;
     height: calc(100vh - 270px);
     margin: 0;
+    overflow: hidden;
 }
 
 .orgchart {
@@ -71,12 +72,14 @@
 .orgchart > ul > li > ul li > .oc-node::before {
     background-color: black;
     height: 40px;
+    width: 2px;
     top: -36px;
 }
 
 .orgchart ul li .oc-node:not(:only-child)::after {
     background-color: black;
-    height: 40px;
+    width: 2px;
+    height: 40px; 
     bottom: -36px;
 }
 
@@ -84,4 +87,71 @@
 .orgchart > ul > li > ul li::after {
     border-color: black;
     top: -36px;
+}
+
+.card-name-extension, .card-title-extension {
+    position: absolute;
+    visibility: hidden;
+    /* box-shadow: 0 0 50px 0 rgba(0,0,0,0.3); */
+    background-color: #fff;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 30;
+}
+
+.card-name-extension {
+    top: 36px;
+}
+
+.card-title-extension {
+    top: calc(36px + 24px);
+}
+
+.card-text-too-long:hover + .card-name-extension, .card-text-too-long:hover + .card-title-extension {
+    visibility: visible;
+    opacity: 1;
+  }
+
+.node-expander-top, .node-expander-bottom {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    left: 0;
+    right: 0;
+    width: 24px;
+    z-index: 20;
+}
+
+.node-expander-top svg, .node-expander-bottom svg {
+    background-color: white;
+    width: 24px;
+    height: 24px;
+    color: #1c83fb;
+    transition: color .2s;
+}
+
+.node-expander-top svg:hover, .node-expander-bottom svg:hover {
+    color: #00569c;
+}
+
+
+.arrow-down svg {
+    transform: rotate(90deg);
+}
+
+.arrow-up svg {
+    transform: rotate(-90deg);
+}
+
+.node-expander-top:hover, .node-expander-bottom:hover {
+    cursor: pointer;
+}
+
+.node-expander-top {
+    top: -28px;
+}
+
+.node-expander-bottom {
+    bottom: -31px;
 }

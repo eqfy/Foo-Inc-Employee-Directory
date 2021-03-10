@@ -11,9 +11,18 @@ export default function workerReducer(state = defaultWorkerState, action) {
             return {
                 ...state,
                 byId: { ...state.byId, ...action.payload.byId },
-                allId: state.allId.concat(action.payload.allId),
+                allId: mergeList(state.allId, action.payload.allId),
             };
         default:
             return state;
     }
 }
+
+const mergeList = (list1, list2) => {
+    list1.forEach(ele1 => {
+        if (!list2.includes(ele1)) {
+            list2.push(ele1);
+        }
+    });
+    return list2;
+};
