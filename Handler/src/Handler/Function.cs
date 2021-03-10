@@ -601,7 +601,29 @@ namespace Handler
             string isContractorFilter = " ed.\"isContractor\" = :p" + parameterCounter++ + " AND";
             return isContractorFilter;
         }
+        
+         // order by number, offset, and fecth functions
+        
+        //TODO make this not case sensitive and give errors when using something like blah 
+        private string createOrderByFilter(string order,ref int parameterCounter){
+            string orderByFilter ="";
+            if(order == "FirstName"){
+                orderByFilter = " ORDER BY \"FirstName\"";
+            }else if(order == "Title"){
+                orderByFilter = " ORDER BY \"Title\"";
+            }
+            return orderByFilter;
+        }
+        
+        private string createOffsetFilter(ref int parameterCounter){
+            string offsetFilter = " OFFSET :p"+parameterCounter++;
+            return offsetFilter;
+        }
 
+        private string createFetchFilter(ref int parameterCounter){
+            string fetchFilter = " FETCH NEXT :p"+parameterCounter++ + " ROWS ONLY";
+            return fetchFilter;
+        }
 
         public APIGatewayProxyResponse GetAllFilters(APIGatewayProxyRequest request, ILambdaContext context)
         {
@@ -753,6 +775,18 @@ namespace Handler
             if(request.MultiValueQueryStringParameters.ContainsKey("isContractor")){
                 isContractor = (List<string>)request.MultiValueQueryStringParameters["isContractor"];
             }
+            List<string> orderBys = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("orderBy")){
+                orderBys = (List<string>)request.MultiValueQueryStringParameters["orderBy"];
+            }
+            List<string> offsets = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("offset")){
+                offsets = (List<string>)request.MultiValueQueryStringParameters["offset"];
+            }
+            List<string> fetchs = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("fetch")){
+                fetchs = (List<string>)request.MultiValueQueryStringParameters["fetch"];
+            }
 
             string skillFilter="";
             if(skills.Count > 0){
@@ -809,8 +843,20 @@ namespace Handler
                 isContractorFilter = createIsContractorLocationsFilter(ref parameterCounter);
             }
             
+            string orderByFilter ="";
+            if(orderBys.Count > 0){
+                orderByFilter = createOrderByFilter(orderBys[0],ref parameterCounter);
+            }
             
-            
+            string offsetFilter ="";
+            if(offsets.Count > 0){
+                offsetFilter = createOffsetFilter(ref parameterCounter);
+            }
+
+            string fetchFilter ="";
+            if(fetchs.Count > 0){
+                fetchFilter = createFetchFilter(ref parameterCounter);
+            }
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
@@ -834,23 +880,32 @@ namespace Handler
             || companyNamesFilter.Length >0 || firstNamesFilter.Length >0 || lastNamesFilter.Length >0 || employmentTypesFilter.Length >0 || 
             officeLocationsFilter.Length>0 || isContractorFilter.Length>0){
                 sql += " WHERE ";
+
+                sql += skillFilter;
+                sql += locationsFilter;
+                sql += titlesFilter; 
+                sql += yearsPriorFilter;
+                sql += divisionsFilter;
+                sql += companyNamesFilter;
+                sql += firstNamesFilter;
+                sql += lastNamesFilter;
+                sql += employmentTypesFilter;
+                sql += officeLocationsFilter;
+                sql += isContractorFilter;
+                //TODO add the rest of the filters here
+
+                //Remove the last 'AND' from the sql string
+                sql = sql.Remove(sql.Length - 3);
             }
-
-            sql += skillFilter;
-            sql += locationsFilter;
-            sql += titlesFilter; 
-            sql += yearsPriorFilter;
-            sql += divisionsFilter;
-            sql += companyNamesFilter;
-            sql += firstNamesFilter;
-            sql += lastNamesFilter;
-            sql += employmentTypesFilter;
-            sql += officeLocationsFilter;
-            sql += isContractorFilter;
-            //TODO add the rest of the filters here
-
-            //Remove the last 'AND' from the sql string
-            sql = sql.Remove(sql.Length - 3);
+            
+            //Add the order by, filter, and offset TODO do it! and TODO potentially order on multiple
+            sql += orderByFilter;
+            //Only add the fetch and offset filters if there is an orderBy
+            if(orderBys.Count > 0){
+                sql += offsetFilter;
+                sql += fetchFilter;
+            }
+            
             LambdaLogger.Log("sql: " + sql);
            
             using var cmd = new NpgsqlCommand(sql,con);
@@ -913,6 +968,21 @@ namespace Handler
                 }
                 LambdaLogger.Log("p"+currentParameterCounter + " : " + isCon);
                 cmd.Parameters.AddWithValue("p"+currentParameterCounter++, isCon);
+            }
+
+            foreach(string order in orderBys){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + order);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, order);
+            }
+
+            foreach(string offset in offsets){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + offset);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(offset));
+            }
+
+            foreach(string fetch in fetchs){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + fetch);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
             }
 
             //TODO: is contractor, hiredate, termination date
