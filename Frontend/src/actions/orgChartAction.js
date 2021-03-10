@@ -39,11 +39,11 @@ export const setOrgChart = (workerId) => (dispatch) => {
                     orgChartState["supervisor"] = undefined;
                 }
     
-                orgChartState["peers"] = [];
+                orgChartState["colleagues"] = [];
                 response.colleagues.forEach(colleague => {
                     workersById[colleague.employeeNumber] = colleague;
                     workersAllId.push(colleague.employeeNumber);
-                    orgChartState["peers"].push(colleague.employeeNumber);
+                    orgChartState["colleagues"].push(colleague.employeeNumber);
                 });
     
                 orgChartState["subordinates"] = [];
@@ -77,6 +77,6 @@ export const setOrgChart = (workerId) => (dispatch) => {
             });
         })
         .catch((error) => {
-            console.error("Filter endpoint failed.\nErr:", error);
+            console.error("Org chart endpoint failed.\nErr:", error);
         });
 };

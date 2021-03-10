@@ -297,7 +297,6 @@ const mapStateToProps = (state) => {
                 title: worker.title,
                 isCurrent: workerId === focusedWorkerId,
                 isContractor: worker.isContractor,
-                // TODO: update image source after s3 setup
                 image: worker.image,
             };
         };
@@ -326,19 +325,19 @@ const mapStateToProps = (state) => {
             const supervisorNode = convertWorkerToNode(
                 orgChartState.supervisor
             );
-            const peerNodes = orgChartState.peers.reduce(listNodeReducer, []);
+            const colleagueNodes = orgChartState.colleagues.reduce(listNodeReducer, []);
             const subordinateNodes = orgChartState.subordinates.reduce(
                 listNodeReducer,
                 []
             );
 
             dataSetDefault = supervisorNode;
-            dataSetDefault.children = peerNodes;
+            dataSetDefault.children = colleagueNodes;
             dataSetHideBottom = copy(dataSetDefault);
 
-            for (const peer of dataSetDefault.children) {
-                if (peer.id === focusedWorkerId) {
-                    peer.children = subordinateNodes;
+            for (const colleague of dataSetDefault.children) {
+                if (colleague.id === focusedWorkerId) {
+                    colleague.children = subordinateNodes;
                     break;
                 }
             }
