@@ -30,11 +30,6 @@ export default function searchPageReducer(
                 ...state,
                 sortKey: action.payload,
             };
-        case "SET_WORKER_TYPE_FILTER":
-            return {
-                ...state,
-                ...action.payload,
-            };
         default:
             return state;
     }

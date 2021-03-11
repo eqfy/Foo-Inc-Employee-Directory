@@ -1,4 +1,6 @@
 import { getAllFilters } from "api/filter";
+import { WorkerTypeEnum } from "states/appState";
+import { SortKeyEnum } from "states/searchPageState";
 
 export const loadFiltersAction = () => (dispatch) => {
     getAllFilters()
@@ -24,23 +26,11 @@ export const setFilterAction = (type, filterId, category = "") => (
     if (isCategorized) {
         const categoryState = appState[`${type}State`];
         const filterState = categoryState[category] || [];
-        const currIndex = filterState.indexOf(filterId);
-        if (currIndex === -1) {
-            filterState.push(filterId);
-        } else {
-            filterState.splice(currIndex, 1);
-        }
-        categoryState[category] = filterState;
+        categoryState[category] = toggleFilter(filterId, filterState);
         payload = categoryState;
     } else {
         const filterState = appState[`${type}State`];
-        const currIndex = filterState.indexOf(filterId);
-        if (currIndex === -1) {
-            filterState.push(filterId);
-        } else {
-            filterState.splice(currIndex, 1);
-        }
-        payload = filterState;
+        payload = toggleFilter(filterId, filterState);
     }
 
     dispatch({
@@ -49,19 +39,16 @@ export const setFilterAction = (type, filterId, category = "") => (
     });
 };
 
-export const setWorkerTypeAction = (searchForEmployee, searchForContractor) => (
+export const setWorkerTypeAction = (shownWorkerType = WorkerTypeEnum.ALL) => (
     dispatch
 ) => {
     dispatch({
         type: "SET_WORKER_TYPE_FILTER",
-        payload: {
-            searchForEmployee,
-            searchForContractor,
-        },
+        payload: shownWorkerType,
     });
 };
 
-export const setSortKeyAction = (sortKey) => (dispatch) => {
+export const setSortKeyAction = (sortKey = SortKeyEnum.NONE) => (dispatch) => {
     dispatch({
         type: "SET_SORT_KEY",
         payload: sortKey,
@@ -80,4 +67,14 @@ export const setExperienceAction = (payload) => (dispatch) => {
         type: "SET_EXPERIENCE",
         payload: payload,
     });
+};
+
+const toggleFilter = (filterId = "", filterState = []) => {
+    const currIndex = filterState.indexOf(filterId);
+    if (currIndex === -1) {
+        filterState.push(filterId);
+    } else {
+        filterState.splice(currIndex, 1);
+    }
+    return filterState;
 };

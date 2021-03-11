@@ -13,6 +13,8 @@ import {
 import { coordinatedDebounce } from "./helpers";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
+import { WorkerTypeEnum } from "states/appState";
+import { SortKeyEnum } from "states/searchPageState";
 
 const chipColors = {
     location: "#00D1FF",
@@ -24,18 +26,14 @@ const chipColors = {
 
 function FilterArea(props) {
     const {
-        areaState: {
-            isAscending,
-            sortKey,
-            searchForEmployee,
-            searchForContractor,
-        },
+        areaState: { isAscending, sortKey },
         filterState: {
             skillState,
             locationState,
             titleState,
             departmentState,
             companyState,
+            shownWorkerType,
         },
         setFilterAction,
         setWorkerTypeAction,
@@ -75,11 +73,7 @@ function FilterArea(props) {
     ];
 
     const handleWorkerTypeChange = (event) => {
-        const targetValue = event.target.value;
-        setWorkerTypeAction(
-            targetValue === "all" || targetValue === "employees",
-            targetValue === "all" || targetValue === "contractors"
-        );
+        setWorkerTypeAction(event.target.value);
     };
 
     const handleSortKeyChange = (event) => {
@@ -116,20 +110,15 @@ function FilterArea(props) {
         <div className={classes.filterArea}>
             <div className={classes.sortingArea}>
                 <Dropdown
-                    values={["all", "employees", "contractors"]}
+                    values={Object.values(WorkerTypeEnum)}
                     label="show"
-                    currValue={getWorkerType(
-                        searchForEmployee,
-                        searchForContractor
-                    )}
-                    defaultValue="all"
+                    currValue={shownWorkerType}
                     handleChange={handleWorkerTypeChange}
                 />
                 <Dropdown
-                    values={["none", "name", "title"]}
+                    values={Object.values(SortKeyEnum)}
                     label="sort by"
                     currValue={sortKey}
-                    defaultValue="none"
                     handleChange={handleSortKeyChange}
                 />
                 <CustomCheckBox
@@ -165,36 +154,22 @@ function FilterArea(props) {
     );
 }
 
-const getWorkerType = (searchForEmployee, searchForContractor) => {
-    return searchForEmployee && !searchForContractor
-        ? "employees"
-        : !searchForEmployee && searchForContractor
-        ? "contractors"
-        : "all";
-};
-
 const mapStateToProps = (state) => {
     const {
-        searchPageState: {
-            isAscending,
-            sortKey,
-            searchForEmployee,
-            searchForContractor,
-        },
+        searchPageState: { isAscending, sortKey },
         appState: {
             skillState = [],
             locationState = [],
             titleState = [],
             departmentState = [],
             companyState = [],
+            shownWorkerType,
         },
     } = state;
     return {
         areaState: {
             isAscending,
             sortKey,
-            searchForEmployee,
-            searchForContractor,
         },
         filterState: {
             skillState,
@@ -202,6 +177,7 @@ const mapStateToProps = (state) => {
             titleState,
             departmentState,
             companyState,
+            shownWorkerType,
         },
     };
 };
@@ -209,8 +185,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
     setFilterAction: (filterType, filterId, category) =>
         dispatch(setFilterAction(filterType, filterId, category)),
-    setWorkerTypeAction: (searchForEmployee, searchForContractor) =>
-        dispatch(setWorkerTypeAction(searchForEmployee, searchForContractor)),
+    setWorkerTypeAction: (workerTypeFilter) =>
+        dispatch(setWorkerTypeAction(workerTypeFilter)),
     setSortKeyAction: (sortKey) => dispatch(setSortKeyAction(sortKey)),
     setSortOrderAction: (sortOrder) => dispatch(setSortOrderAction(sortOrder)),
     searchWithAppliedFilterAction: () =>

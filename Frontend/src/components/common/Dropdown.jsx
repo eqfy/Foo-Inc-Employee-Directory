@@ -7,7 +7,7 @@ import Select from "@material-ui/core/Select";
 
 export default function Dropdown(props) {
     const classes = useStyles();
-    const { values, currValue, defaultValue, handleChange } = props;
+    const { values, currValue, handleChange } = props;
 
     const capitalize = (str) => {
         return str.toLowerCase().charAt(0).toUpperCase() + str.slice(1);
@@ -27,7 +27,7 @@ export default function Dropdown(props) {
                     labelId="select-label"
                     onChange={handleChange}
                     label={capitalize(props.label)}
-                    value={currValue || defaultValue}
+                    value={currValue}
                 >
                     {values.map((value) => {
                         return (
