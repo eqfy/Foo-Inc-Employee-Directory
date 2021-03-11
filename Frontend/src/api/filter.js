@@ -1,8 +1,7 @@
 import mockFilters from "../mocks/filters.json";
 import { API } from "aws-amplify";
 
-export async function getAllFilters() {
-    // TODO Change this to an actual API call
+export async function getAllFiltersMock() {
     const { companies, departments, locations, titles, skills } = mockFilters;
 
     const parsedSkills = skills.reduce((acc, { skillLabel, categoryLabel }) => {
@@ -24,6 +23,29 @@ export async function getAllFilters() {
         titleAllId: titles,
         skillAllId: parsedSkills,
     };
+}
+
+export async function getAllFilters() {
+    const myInit = {};
+    return API.get("ae-api", "getAllFilters", myInit).then((response) => {
+        const { companies, departments, locations, titles, skills } = response;
+        const parsedSkills = skills.reduce(
+            (acc, { skillLabel, categoryLabel }) => {
+                acc[categoryLabel] = !acc[categoryLabel]
+                    ? [skillLabel]
+                    : acc[categoryLabel].concat(skillLabel);
+                return acc;
+            },
+            {}
+        );
+        return {
+            companyAllId: companies,
+            departmentAllId: departments,
+            locationAllId: locations,
+            titleAllId: titles,
+            skillAllId: parsedSkills,
+        };
+    });
 }
 
 export async function getFilterAPI() {
