@@ -1,8 +1,12 @@
+export const SortKeyEnum = {
+    NONE: "none",
+    NAME: "name",
+    TITLE: "title",
+};
+
 export const defualtSearchPageState = {
     resultOrder: [],
     pageNumber: 1,
     isAscending: false,
-    sortKey: "",
-    searchForContractor: true,
-    searchForEmployee: true,
+    sortKey: SortKeyEnum.NONE,
 };

@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 
-let searchByNameTimer = {};
+const SearchByNameTimer = {};
 
 function SearchByNameBar(props) {
     const { searchByNameAction } = props;
@@ -14,7 +14,7 @@ function SearchByNameBar(props) {
     const handleTextChange = (event) => {
         const enteredName = event.target.value;
         setName(enteredName);
-        coordinatedDebounce(searchByNameAction, searchByNameTimer)(enteredName);
+        coordinatedDebounce(searchByNameAction, SearchByNameTimer)(enteredName);
     };
 
     const handleSearchBtnClick = () => {
