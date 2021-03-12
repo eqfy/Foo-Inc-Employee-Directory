@@ -1159,6 +1159,7 @@ namespace Handler
 
             
             //----Run the SQL to find the PhysicalLocation code of the input----
+            
             var locationCodeScript = getS3FileSync(bucketName, "locationCode.sql");
 
             //Read the sql from the file
@@ -1170,14 +1171,31 @@ namespace Handler
             using var locationCodeCmd = new NpgsqlCommand(locationCodeSQL,con);
 
             //Add the bind variable
-            locationCodeCmd.Parameters.AddWithValue("p0",body["PhysicalLocationId"].Value<string>());
-            LambdaLogger.Log("p0: " + body["PhysicalLocationId"].Value<string>());
-
-            var LocationCodereader = locationCodeCmd.ExecuteReader();
-            
-            LocationCodereader.Read();
-            string physicalLocationId = LocationCodereader[0].ToString();
-            LocationCodereader.Close();
+            locationCodeCmd.Parameters.AddWithValue("p0",body["PhysicalLocation"].Value<string>());
+            LambdaLogger.Log("p0: " + body["PhysicalLocation"].Value<string>());
+            string physicalLocationId = "";
+            try{
+                var LocationCodereader = locationCodeCmd.ExecuteReader();
+                
+                
+                LocationCodereader.Read();
+                physicalLocationId = LocationCodereader[0].ToString();
+                LocationCodereader.Close();
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Invalid physical location: " + body["PhysicalLocation"].Value<string>(),
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
 
 
             //----Run the SQL to find the Company code of the input----
@@ -1196,11 +1214,29 @@ namespace Handler
 
             LambdaLogger.Log("p0: " + body["CompanyCode"].Value<string>());
 
-            var ComapanyCodereader = companyCodeCmd.ExecuteReader();
-            
-            ComapanyCodereader.Read();
-            string companyCodeId = ComapanyCodereader[0].ToString();
-            ComapanyCodereader.Close();
+            string companyCodeId ="";
+
+            try{
+                var ComapanyCodereader = companyCodeCmd.ExecuteReader();
+                
+                ComapanyCodereader.Read();
+                companyCodeId = ComapanyCodereader[0].ToString();
+                ComapanyCodereader.Close();
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Invalid Company Code: " + body["CompanyCode"].Value<string>() ,
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
 
             
 
@@ -1222,14 +1258,28 @@ namespace Handler
             LambdaLogger.Log("p0: " + body["OfficeCode"].Value<string>());
             LambdaLogger.Log("p1: " + companyCodeId);
 
-
-
-            var OfficeCodereader = officeCodeCmd.ExecuteReader();
-            
-            OfficeCodereader.Read();
-            string officeCodeId = OfficeCodereader[0].ToString();
-            OfficeCodereader.Close();
-
+            string officeCodeId = "";
+            try{
+                var OfficeCodereader = officeCodeCmd.ExecuteReader();
+                
+                OfficeCodereader.Read();
+                officeCodeId = OfficeCodereader[0].ToString();
+                OfficeCodereader.Close();
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Invalid Office Code: " + body["OfficeCode"].Value<string>() ,
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
             
             
 
@@ -1253,14 +1303,30 @@ namespace Handler
             LambdaLogger.Log("p1: " + companyCodeId);
             LambdaLogger.Log("p2: " + officeCodeId);
 
-            var groupCodereader = groupCodeCmd.ExecuteReader();
-            
-            groupCodereader.Read();
-            string groupCodeId = groupCodereader[0].ToString();
-            groupCodereader.Close();
+            string groupCodeId = "";
+            try{
+                var groupCodereader = groupCodeCmd.ExecuteReader();
+                
+                groupCodereader.Read();
+                groupCodeId = groupCodereader[0].ToString();
+                groupCodereader.Close();
 
-            LambdaLogger.Log("groupCodeId: " + officeCodeId);
-
+                LambdaLogger.Log("groupCodeId: " + officeCodeId);
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Invaild Group Code: " + body["GroupCode"].Value<string>(),
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
             
 
 
@@ -1278,49 +1344,57 @@ namespace Handler
 
             //Add the bind variables
             
-            //cmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
             cmd.Parameters.AddWithValue("p0",companyCodeId);
-            //cmd.Parameters.AddWithValue("p1",body["OfficeCode"].Value<string>());
             cmd.Parameters.AddWithValue("p1",officeCodeId);
-            //cmd.Parameters.AddWithValue("p2",body["GroupCode"].Value<string>());
             cmd.Parameters.AddWithValue("p2",groupCodeId);
             cmd.Parameters.AddWithValue("p3",body["FirstName"].Value<string>());
             cmd.Parameters.AddWithValue("p4",body["LastName"].Value<string>());
             cmd.Parameters.AddWithValue("p5",body["EmploymentType"].Value<string>());
             cmd.Parameters.AddWithValue("p6",body["Title"].Value<string>());
             cmd.Parameters.AddWithValue("p7",body["HireDate"].Value<string>());
-            /*if(body["TerminationDate"].Value<string>() == "NULL"){
-                cmd.Parameters.AddWithValue("p8",DBNull.value);
-            }else{
-                cmd.Parameters.AddWithValue("p8",body["TerminationDate"].Value<string>());
-            }*/
             cmd.Parameters.AddWithValue("p8",((object)body["TerminationDate"].Value<string>() ?? DBNull.Value));
             cmd.Parameters.AddWithValue("p9",body["SupervisorEmployeeNumber"].Value<string>());
             cmd.Parameters.AddWithValue("p10",body["YearsPriorExperience"].Value<string>());
             cmd.Parameters.AddWithValue("p11",body["Email"].Value<string>());
             cmd.Parameters.AddWithValue("p12",body["WorkPhone"].Value<string>());
             cmd.Parameters.AddWithValue("p13",body["WorkCell"].Value<string>());
-            //cmd.Parameters.AddWithValue("p14",body["PhysicalLocationId"].Value<string>());
             cmd.Parameters.AddWithValue("p14",physicalLocationId);
             cmd.Parameters.AddWithValue("p15",body["PhotoUrl"].Value<string>());
 
-            cmd.ExecuteNonQuery();
-            //TODO check that the query didn't fail
+            try{
+                cmd.ExecuteNonQuery();
+                //TODO check that the query didn't fail
 
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = 200,
-                Body = "New slave added!",
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },  
-                }
-            };
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 200,
+                    Body = "New slave added!",
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
 
-            return response;
+                return response;
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "New slave not added!",
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
+            
         }
     }
 }

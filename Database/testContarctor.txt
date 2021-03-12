@@ -13,6 +13,6 @@
     "Email":"slave2@gmail.com",
     "WorkPhone":"1-800-555-6666",
     "WorkCell":"604-555-6666",
-    "PhysicalLocationId":"Vancouver",
+    "PhysicalLocation":"Vancouver",
     "PhotoUrl":"someurl"
 }
