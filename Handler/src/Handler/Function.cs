@@ -1157,6 +1157,113 @@ namespace Handler
             LambdaLogger.Log("bucketName: " + bucketName);
             LambdaLogger.Log("objectKey: " + objectKey);
 
+            
+            //----Run the SQL to find the PhysicalLocation code of the input----
+            var locationCodeScript = getS3FileSync(bucketName, "locationCode.sql");
+
+            //Read the sql from the file
+            StreamReader readers3LocationCode = new StreamReader(locationCodeScript.ResponseStream);
+            String locationCodeSQL = readers3LocationCode.ReadToEnd();
+
+            LambdaLogger.Log("locationCodeSQL: " + locationCodeSQL);
+
+            using var locationCodeCmd = new NpgsqlCommand(locationCodeSQL,con);
+
+            //Add the bind variable
+            locationCodeCmd.Parameters.AddWithValue("p0",body["PhysicalLocationId"].Value<string>());
+            LambdaLogger.Log("p0: " + body["PhysicalLocationId"].Value<string>());
+
+            var LocationCodereader = locationCodeCmd.ExecuteReader();
+            
+            LocationCodereader.Read();
+            string physicalLocationId = LocationCodereader[0].ToString();
+            LocationCodereader.Close();
+
+
+            //----Run the SQL to find the Company code of the input----
+            var companyCodeScript = getS3FileSync(bucketName, "companyCode.sql");
+
+            //Read the sql from the file
+            StreamReader readers3CompanyCode = new StreamReader(companyCodeScript.ResponseStream);
+            String comapanyCodeSQL = readers3CompanyCode.ReadToEnd();
+
+            LambdaLogger.Log("comapanyCodeSQL: " + comapanyCodeSQL);
+
+            using var companyCodeCmd = new NpgsqlCommand(comapanyCodeSQL,con);
+
+            //Add the bind variable
+            companyCodeCmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
+
+            LambdaLogger.Log("p0: " + body["CompanyCode"].Value<string>());
+
+            var ComapanyCodereader = companyCodeCmd.ExecuteReader();
+            
+            ComapanyCodereader.Read();
+            string companyCodeId = ComapanyCodereader[0].ToString();
+            ComapanyCodereader.Close();
+
+            
+
+            //----Run the SQL to find the Office code of the input----
+            var officeCodeScript = getS3FileSync(bucketName, "officeCode.sql");
+
+            //Read the sql from the file
+            StreamReader readers3OfficeCode = new StreamReader(officeCodeScript.ResponseStream);
+            String officeCodeSQL = readers3OfficeCode.ReadToEnd();
+
+            LambdaLogger.Log("officeCodeSQL: " + officeCodeSQL);
+
+            using var officeCodeCmd = new NpgsqlCommand(officeCodeSQL,con);
+
+            //Add the bind variable
+            officeCodeCmd.Parameters.AddWithValue("p0",body["OfficeCode"].Value<string>());
+            officeCodeCmd.Parameters.AddWithValue("p1",companyCodeId);
+
+            LambdaLogger.Log("p0: " + body["OfficeCode"].Value<string>());
+            LambdaLogger.Log("p1: " + companyCodeId);
+
+
+
+            var OfficeCodereader = officeCodeCmd.ExecuteReader();
+            
+            OfficeCodereader.Read();
+            string officeCodeId = OfficeCodereader[0].ToString();
+            OfficeCodereader.Close();
+
+            
+            
+
+            //----Run the SQL to find the Group code of the input----
+            var groupCodeScript = getS3FileSync(bucketName, "groupCode.sql");
+
+            //Read the sql from the file
+            StreamReader readers3GroupCode = new StreamReader(groupCodeScript.ResponseStream);
+            String groupCodeSQL = readers3GroupCode.ReadToEnd();
+
+            LambdaLogger.Log("groupCodeSQL: " + groupCodeSQL);
+
+            using var groupCodeCmd = new NpgsqlCommand(groupCodeSQL,con);
+
+            //Add the bind variable
+            groupCodeCmd.Parameters.AddWithValue("p0",body["GroupCode"].Value<string>());
+            groupCodeCmd.Parameters.AddWithValue("p1",companyCodeId);
+            groupCodeCmd.Parameters.AddWithValue("p2",officeCodeId);
+
+            LambdaLogger.Log("p0: " + body["GroupCode"].Value<string>());
+            LambdaLogger.Log("p1: " + companyCodeId);
+            LambdaLogger.Log("p2: " + officeCodeId);
+
+            var groupCodereader = groupCodeCmd.ExecuteReader();
+            
+            groupCodereader.Read();
+            string groupCodeId = groupCodereader[0].ToString();
+            groupCodereader.Close();
+
+            LambdaLogger.Log("groupCodeId: " + officeCodeId);
+
+            
+
+
             //Get the sql script from the bucket
             var script = getS3FileSync(bucketName, objectKey);
         
@@ -1171,9 +1278,12 @@ namespace Handler
 
             //Add the bind variables
             
-            cmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
-            cmd.Parameters.AddWithValue("p1",body["OfficeCode"].Value<string>());
-            cmd.Parameters.AddWithValue("p2",body["GroupCode"].Value<string>());
+            //cmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p0",companyCodeId);
+            //cmd.Parameters.AddWithValue("p1",body["OfficeCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p1",officeCodeId);
+            //cmd.Parameters.AddWithValue("p2",body["GroupCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p2",groupCodeId);
             cmd.Parameters.AddWithValue("p3",body["FirstName"].Value<string>());
             cmd.Parameters.AddWithValue("p4",body["LastName"].Value<string>());
             cmd.Parameters.AddWithValue("p5",body["EmploymentType"].Value<string>());
@@ -1190,7 +1300,8 @@ namespace Handler
             cmd.Parameters.AddWithValue("p11",body["Email"].Value<string>());
             cmd.Parameters.AddWithValue("p12",body["WorkPhone"].Value<string>());
             cmd.Parameters.AddWithValue("p13",body["WorkCell"].Value<string>());
-            cmd.Parameters.AddWithValue("p14",body["PhysicalLocationId"].Value<string>());
+            //cmd.Parameters.AddWithValue("p14",body["PhysicalLocationId"].Value<string>());
+            cmd.Parameters.AddWithValue("p14",physicalLocationId);
             cmd.Parameters.AddWithValue("p15",body["PhotoUrl"].Value<string>());
 
             cmd.ExecuteNonQuery();

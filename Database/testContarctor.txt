@@ -1,0 +1,18 @@
+{
+    "CompanyCode":"Acme Seeds Inc.",
+    "OfficeCode":"Corporate",
+    "GroupCode":"Marketing",
+    "FirstName": "foo",
+    "LastName": "fum",
+    "EmploymentType" : "hourly",
+    "Title":"slave1",
+    "HireDate":"2021-01-02",
+    "TerminationDate": null,
+    "SupervisorEmployeeNumber":"10001",
+    "YearsPriorExperience":5,
+    "Email":"slave2@gmail.com",
+    "WorkPhone":"1-800-555-6666",
+    "WorkCell":"604-555-6666",
+    "PhysicalLocationId":"Vancouver",
+    "PhotoUrl":"someurl"
+}
