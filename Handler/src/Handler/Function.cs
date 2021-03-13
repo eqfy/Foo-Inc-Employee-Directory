@@ -149,7 +149,7 @@ namespace Handler
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
-                e.OfficeLocation = reader[18].ToString();
+                e.officeLocation = reader[18].ToString();
                 employees.Add(e);
             }
 
@@ -259,7 +259,7 @@ namespace Handler
                 supervisor.employeeNumber = readerSupervisor[15].ToString();
                 supervisor.employmentType = readerSupervisor[16].ToString();
                 supervisor.skills = readerSupervisor[17].ToString();
-                supervisor.OfficeLocation = readerSupervisor[18].ToString();
+                supervisor.officeLocation = readerSupervisor[18].ToString();
             }
 
             if (toggleIsEmpty || workerID == CeoID) {
@@ -300,7 +300,7 @@ namespace Handler
                 e.employeeNumber = readerColleagues[15].ToString();
                 e.employmentType = readerColleagues[16].ToString();
                 e.skills = readerColleagues[17].ToString();
-                e.OfficeLocation = readerColleagues[18].ToString(); 
+                e.officeLocation = readerColleagues[18].ToString(); 
                 if (e.employeeNumber == CeoID) {
                   ceo.Add(e);
                 } else {
@@ -345,7 +345,7 @@ namespace Handler
                 e.employeeNumber = readerSubordinates[15].ToString();
                 e.employmentType = readerSubordinates[16].ToString();
                 e.skills = readerSubordinates[17].ToString();
-                e.OfficeLocation = readerSubordinates[18].ToString();
+                e.officeLocation = readerSubordinates[18].ToString();
                 if (e.employeeNumber != CeoID) {
                   subs.Add(e);
                 }
@@ -734,7 +734,7 @@ namespace Handler
             return response;
         }
 
-        
+        //ADD ACSEN AND DEC OPTION AND LAST NAME 
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
@@ -742,22 +742,22 @@ namespace Handler
 
             // List<Employee> 
             List<string> skills = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("Skills")){
-                skills = (List<string>)request.MultiValueQueryStringParameters["Skills"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
+                skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
             }
             List<string> locations = new List<string>();
-            if (request.MultiValueQueryStringParameters.ContainsKey("LocationPhysical")){
-                locations = (List<string>)request.MultiValueQueryStringParameters["LocationPhysical"];
+            if (request.MultiValueQueryStringParameters.ContainsKey("locationPhysical")){
+                locations = (List<string>)request.MultiValueQueryStringParameters["locationPhysical"];
             }
             List<string> titles = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("Title")){
-                titles = (List<string>)request.MultiValueQueryStringParameters["Title"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("title")){
+                titles = (List<string>)request.MultiValueQueryStringParameters["title"];
             }
             
             // Note: if they change the slide bar to allow for partial years change this to a float
             List<string> yearsExperience = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("YearsPriorExperience")){
-                yearsExperience = (List<string>)request.MultiValueQueryStringParameters["YearsPriorExperience"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("yearsPriorExperience")){
+                yearsExperience = (List<string>)request.MultiValueQueryStringParameters["yearsPriorExperience"];
             }
 
             List<string> divisions = new List<string>();
@@ -765,24 +765,24 @@ namespace Handler
                 divisions = (List<string>)request.MultiValueQueryStringParameters["division"];
             }
             List<string> companynames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("companyname")){
+            if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
                 companynames = (List<string>)request.MultiValueQueryStringParameters["companyname"];
             }
             List<string> firstnames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("FirstName")){
-                firstnames = (List<string>)request.MultiValueQueryStringParameters["FirstName"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("firstName")){
+                firstnames = (List<string>)request.MultiValueQueryStringParameters["firstName"];
             }
             List<string> lastnames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("LastName")){
-                lastnames = (List<string>)request.MultiValueQueryStringParameters["LastName"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("lastName")){
+                lastnames = (List<string>)request.MultiValueQueryStringParameters["lastName"];
             }
             List<string> employementTypes = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("EmploymentType")){
-                employementTypes = (List<string>)request.MultiValueQueryStringParameters["EmploymentType"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("employmentType")){
+                employementTypes = (List<string>)request.MultiValueQueryStringParameters["employmentType"];
             }
             List<string> officeLocations = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("officelocations")){
-                officeLocations = (List<string>)request.MultiValueQueryStringParameters["officelocations"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("officeLocations")){
+                officeLocations = (List<string>)request.MultiValueQueryStringParameters["officeLocations"];
             }
             List<string> isContractor = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("isContractor")){
@@ -1028,7 +1028,7 @@ namespace Handler
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
-                e.OfficeLocation = reader[18].ToString();
+                e.officeLocation = reader[18].ToString();
                 employees.Add(e);
             }
 
@@ -1111,7 +1111,7 @@ namespace Handler
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
-                e.OfficeLocation = reader[18].ToString();
+                e.officeLocation = reader[18].ToString();
                 employees.Add(e);
             }
 
