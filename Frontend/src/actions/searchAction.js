@@ -61,6 +61,15 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
         });
 };
 
+export const setPageAction = (payload) => async (dispatch) => {
+    await dispatch({
+        type: "SET_SEARCH_PAGE_NUMBER",
+        payload: {
+            pageNumber: payload,
+        },
+    });
+};
+
 const createSearchPayload = (state) => {
     // FIXME this is not complete!  Fix this once search endpoint is merged in.
     const {
