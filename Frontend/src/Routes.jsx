@@ -15,11 +15,11 @@ export default function Routes() {
                 <Header activeTabIndex={0} />
                 <SearchPageContainer />
             </Route>
-            <Route path={`${PagePathEnum.PROFILE}/:employeeId`}>
+            <Route path={`${PagePathEnum.PROFILE}/:workerId`}>
                 <Header activeTabIndex={1} />
                 <ProfilePageContainer />
             </Route>
-            <Route path={`${PagePathEnum.ORGCHART}/:employeeId`}>
+            <Route path={`${PagePathEnum.ORGCHART}/:workerId`}>
                 <Header activeTabIndex={2} />
                 <OrgChartPageContainer />
             </Route>

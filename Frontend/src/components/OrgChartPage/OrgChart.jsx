@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
 import { connect } from "react-redux";
-import { withRouter, useHistory, useLocation } from "react-router";
+import { withRouter, useHistory, useParams } from "react-router";
 import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
@@ -171,7 +171,7 @@ function OrgChart(props) {
     const [hideTop, reactSetHideTop] = React.useState(false);
     const [hideBottom, reactSetHideBottom] = React.useState(false);
 
-    const location = useLocation();
+    const params = useParams();
 
     setHideTop = (hide) => {
         orgChartHideTop = hide;
@@ -189,9 +189,8 @@ function OrgChart(props) {
     setOrgChartForId = props.setOrgChart.bind(this);
 
     useEffect(() => {
-        // if path is /orgchart/1000, substring(10) gives 1000, aka the worker id
-        props.setOrgChart(location.pathname.substring(10));
-    }, [location]);
+        props.setOrgChart(params.workerId);
+    }, [params]);
 
     let dataSet;
 

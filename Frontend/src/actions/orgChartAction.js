@@ -68,14 +68,6 @@ export const setOrgChart = (workerId) => (dispatch) => {
                         orgChartState: orgChartState
                     },
                 });
-                // if id invalid
-            } else {
-                dispatch({
-                    type: "SET_FOCUSED_WORKERID",
-                    payload: {
-                        focusedWorkerId: "",
-                    }
-                });
             }
 
             dispatch({
