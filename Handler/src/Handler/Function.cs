@@ -618,14 +618,31 @@ namespace Handler
          // order by number, offset, and fecth functions
         
         //TODO make this not case sensitive and give errors when using something like blah 
-        private string createOrderByFilter(string order,ref int parameterCounter){
+        private string createOrderByFilter(string order){
             string orderByFilter ="";
-            if(order == "FirstName"){
+            if(order == "firstName"){
                 orderByFilter = " ORDER BY \"FirstName\"";
-            }else if(order == "Title"){
+            } else if(order == "lastName"){
+                orderByFilter = " ORDER BY \"LastName\"";
+
+            }else if(order == "title"){
                 orderByFilter = " ORDER BY \"Title\"";
             }
+            //throw expection TODO
             return orderByFilter;
+        }
+        
+        private string createOrderDirFilter(string orderDir){
+            string orderDirFilter = "";
+
+            if(orderDir == "ASC"){
+                orderDirFilter = " ASC";
+            } else if(orderDir == "DESC"){
+                orderDirFilter = " DESC";
+
+            }
+            //throw expection TODO
+            return orderDirFilter;
         }
         
         private string createOffsetFilter(ref int parameterCounter){
@@ -800,6 +817,10 @@ namespace Handler
             if(request.MultiValueQueryStringParameters.ContainsKey("fetch")){
                 fetchs = (List<string>)request.MultiValueQueryStringParameters["fetch"];
             }
+            List<string> orderDir = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("orderDir")){
+                orderDir = (List<string>)request.MultiValueQueryStringParameters["orderDir"];
+            }
 
             string skillFilter="";
             if(skills.Count > 0){
@@ -858,7 +879,11 @@ namespace Handler
             
             string orderByFilter ="";
             if(orderBys.Count > 0){
-                orderByFilter = createOrderByFilter(orderBys[0],ref parameterCounter);
+                orderByFilter = createOrderByFilter(orderBys[0]);
+            }
+            string orderDirFilter ="";
+            if(orderDir.Count > 0){
+                orderDirFilter = createOrderDirFilter(orderDir[0]);
             }
             
             string offsetFilter ="";
@@ -870,6 +895,7 @@ namespace Handler
             if(fetchs.Count > 0){
                 fetchFilter = createFetchFilter(ref parameterCounter);
             }
+
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
@@ -915,6 +941,7 @@ namespace Handler
             sql += orderByFilter;
             //Only add the fetch and offset filters if there is an orderBy
             if(orderBys.Count > 0){
+                sql += orderDirFilter;
                 sql += offsetFilter;
                 sql += fetchFilter;
             }
@@ -981,11 +1008,6 @@ namespace Handler
                 }
                 LambdaLogger.Log("p"+currentParameterCounter + " : " + isCon);
                 cmd.Parameters.AddWithValue("p"+currentParameterCounter++, isCon);
-            }
-
-            foreach(string order in orderBys){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + order);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, order);
             }
 
             foreach(string offset in offsets){
