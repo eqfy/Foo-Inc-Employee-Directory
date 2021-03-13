@@ -15,13 +15,6 @@ export const setOrgChart = (workerId) => (dispatch) => {
         },
     });
 
-    dispatch({
-        type: "SET_FOCUSED_WORKERID",
-        payload: {
-            focusedWorkerId: workerId,
-        }
-    });
-
     getOrgChartAPI(workerId)
         .then((response) => {
 
@@ -52,6 +45,14 @@ export const setOrgChart = (workerId) => (dispatch) => {
                     workersAllId.push(subordinate.employeeNumber);
                     orgChartState["subordinates"].push(subordinate.employeeNumber);
                 });
+
+
+                dispatch({
+                    type: "SET_FOCUSED_WORKERID",
+                    payload: {
+                    focusedWorkerId: workerId,
+                    }
+                });
     
                 dispatch({
                     type: "ADD_WORKERS",
@@ -66,6 +67,14 @@ export const setOrgChart = (workerId) => (dispatch) => {
                     payload: {
                         orgChartState: orgChartState
                     },
+                });
+                // if id invalid
+            } else {
+                dispatch({
+                    type: "SET_FOCUSED_WORKERID",
+                    payload: {
+                        focusedWorkerId: "",
+                    }
                 });
             }
 
