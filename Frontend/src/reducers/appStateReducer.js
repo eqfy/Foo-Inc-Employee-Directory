@@ -1,4 +1,4 @@
-import { defaultAppState } from "states/appState";
+import { defaultAppState, WorkerTypeEnum } from "states/appState";
 
 export default function appStateReducer(state = defaultAppState, action) {
     switch (action.type) {
@@ -71,6 +71,24 @@ export default function appStateReducer(state = defaultAppState, action) {
             return {
                 ...state,
                 shownWorkerType: action.payload,
+            };
+        case "SET_NAME":
+            return {
+                ...state,
+                firstName: action.payload.firstName,
+                lastName: action.payload.lastName,
+            };
+        case "CLEAR_APPLIED_FILTERS":
+            // this resets all filters except name, orderBy, orderDir
+            return {
+                ...state,
+                skillState: {},
+                locationState: [],
+                titleState: [],
+                departmentState: [],
+                companyState: [],
+                yearsPriorExperience: 0,
+                shownWorkerType: WorkerTypeEnum.ALL,
             };
         default:
             return state;

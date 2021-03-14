@@ -22,6 +22,8 @@ export const defaultAppState = {
     titleState: [],
     departmentState: [],
     companyState: [],
+    firstName: "",
+    lastName: "",
     yearsPriorExperience: 0,
     shownWorkerType: WorkerTypeEnum.ALL,
 };

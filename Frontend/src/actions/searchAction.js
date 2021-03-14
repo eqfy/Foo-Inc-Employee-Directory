@@ -1,27 +1,23 @@
 import { parseFullName } from "parse-full-name";
+import { WorkerTypeEnum } from "states/appState";
 import { searchWorker, searchWorkerByName } from "../api/search";
-import { setExperienceAction } from "./filterAction";
-
-export const searchAction = (searchProps) => (dispatch) => {
-    searchWorker(searchProps)
-        .then((response) => {
-            dispatch({
-                type: "ADD_WORKER",
-                payload: "employee data that satisfy filter",
-            });
-        })
-        .catch((error) => {
-            console.error("Search endpoint failed.\nErr:", error);
-        });
-};
+import {
+    clearAppliedFilters,
+    setExperienceAction,
+    setNameAction,
+} from "./filterAction";
 
 export const searchByNameAction = (payload) => (dispatch, getState) => {
-    // We don't store the name in our redux store, (all name searches are one-time)
+    // If we do a search by name, we delete all applied filters first and then do a search by name
+    // After getting the names, we do another searchWithAppliedFilter once user clicks on a name
     const parsedName = parseFullName(payload);
     payload = {
         firstName: parsedName.first,
         lastName: parsedName.last,
     };
+    clearAppliedFilters();
+    setNameAction(payload);
+
     console.log("Search By Name Action dispatched.\nPayload: %o", payload);
     searchWorkerByName(payload)
         .then((response) => {
@@ -33,11 +29,6 @@ export const searchByNameAction = (payload) => (dispatch, getState) => {
         .catch((error) => {
             console.error("Search endpoint failed (by name).\nErr:", error);
         });
-};
-
-export const searchByExperienceAction = (payload) => (dispatch, getState) => {
-    dispatch(setExperienceAction(payload));
-    dispatch(searchWithAppliedFilterAction());
 };
 
 export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
@@ -61,8 +52,12 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
         });
 };
 
+export const searchByExperienceAction = (payload) => (dispatch, getState) => {
+    dispatch(setExperienceAction(payload));
+    dispatch(searchWithAppliedFilterAction());
+};
+
 const createSearchPayload = (state) => {
-    // FIXME this is not complete!  Fix this once search endpoint is merged in.
     const {
         appState: {
             skillState,

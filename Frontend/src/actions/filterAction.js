@@ -62,10 +62,23 @@ export const setSortOrderAction = (sortOrder) => (dispatch) => {
     });
 };
 
-export const setExperienceAction = (payload) => (dispatch) => {
+export const setExperienceAction = (workerExperience) => (dispatch) => {
     dispatch({
         type: "SET_EXPERIENCE",
-        payload: payload,
+        payload: workerExperience,
+    });
+};
+
+export const setNameAction = (workerName) => (dispatch) => {
+    dispatch({
+        type: "SET_NAME",
+        payload: workerName,
+    });
+};
+
+export const clearAppliedFilters = () => (dispatch) => {
+    dispatch({
+        type: "CLEAR_APPLIED_FILTERS",
     });
 };
 
