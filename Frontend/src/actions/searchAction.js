@@ -60,26 +60,36 @@ export const searchByExperienceAction = (payload) => (dispatch, getState) => {
 const createSearchPayload = (state) => {
     const {
         appState: {
-            skillState,
-            locationState,
-            titleState,
-            departmentState,
-            companyState,
-            yearsPriorExperience,
-            shownWorkerType,
+            skillState = {},
+            locationState = [],
+            titleState = [],
+            departmentState = [],
+            companyState = [],
+            yearsPriorExperience = 0,
+            firstName = "",
+            lastName = "",
+            shownWorkerType = WorkerTypeEnum.ALL,
         },
         searchPageState: { pageNumber, sortKey, isAscending },
     } = state;
     return {
-        skills: skillState,
-        locations: locationState,
-        titles: titleState,
-        departments: departmentState,
-        companies: companyState,
-        yearsPriorExperience,
-        pageNumber,
-        sortKey,
-        isAscending,
-        shownWorkerType,
+        skills: Object.entries(skillState).map(
+            ([category, skill]) => category + ":::" + skill
+        ),
+        locationPhysical: locationState,
+        title: titleState,
+        yearsPriorExperience: yearsPriorExperience,
+        division: departmentState,
+        companyname: companyState,
+        firstName: firstName,
+        lastName: lastName,
+        employmentType: {},
+        isContractor:
+            shownWorkerType === WorkerTypeEnum.ALL ||
+            shownWorkerType === WorkerTypeEnum.CONTRACTOR,
+        offset: pageNumber * 6,
+        fetch: 6,
+        orderBy: sortKey,
+        orderDir: isAscending ? "ASC" : "DESC",
     };
 };
