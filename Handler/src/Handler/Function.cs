@@ -89,10 +89,10 @@ namespace Handler
         public  APIGatewayProxyResponse GetByName(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var firstName = request.QueryStringParameters["FirstName"];
-            var lastName = request.QueryStringParameters["LastName"];  
+            var firstName = request.QueryStringParameters["firstName"];
+            var lastName = request.QueryStringParameters["lastName"];  
             LambdaLogger.Log("FirstName: " + firstName);
-            LambdaLogger.Log("FirstName: " + lastName);
+            LambdaLogger.Log("lasttName: " + lastName);
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
@@ -661,6 +661,8 @@ namespace Handler
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
+
+            //TODO SQL in file maybe
             var sqlSkill = "WITH category AS (SELECT \"SkillCategory\".\"Label\", \"SkillCategory\".\"SkillCategoryId\" FROM \"SkillCategory\") SELECT \"Skill\".\"Label\", category.\"Label\" FROM \"Skill\" JOIN category ON \"Skill\".\"SkillCategoryId\" = category.\"SkillCategoryId\"";
             using var cmdSkill = new NpgsqlCommand(sqlSkill, con);
 
@@ -1158,6 +1160,92 @@ namespace Handler
 
             return response;
         }
+        
+        private void insertSkills(string skills, string employeeNumber){
+            //TODO fill in
+            //Management:::Planning
+            // SELECT sc."SkillCategoryId", s."SkillId" FROM "SkillCategory" sc, "Skill" s WHERE sc."SkillCategoryId" = s."SkillCategoryId" AND sc."Label" = :p0 AND s."Label" = :p1
+
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+            
+            string[] skillList = skills.Split("|||");
+
+            LambdaLogger.Log("skillsList: " + skillList[0].ToString());
+
+            
+            //----Run the SQL to find the PhysicalLocation code of the input----
+
+            var idsScript = getS3FileSync(bucketName, "findSkillsIds.sql");
+            
+            var insertScript = getS3FileSync(bucketName, "insertContractorSkills.sql");
+
+            //Read the get ids sql from the file
+            StreamReader readers3ids = new StreamReader(idsScript.ResponseStream);
+            string idsSQL = readers3ids.ReadToEnd();
+
+            LambdaLogger.Log("idsSQL: " + idsSQL);
+
+            //Read the insert sql from the file
+            StreamReader readers3insert = new StreamReader(insertScript.ResponseStream);
+            string insertSQL = readers3insert.ReadToEnd();
+
+            LambdaLogger.Log("insertSQL: " + insertSQL);
+
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+
+            
+            
+            foreach (var skill in skillList ){
+                //Parse into the two strings
+                string[] skillStrings= skill.Split(":::");
+                string skillCategory = skillStrings[0];
+                string skillLabel = skillStrings[1];
+
+                LambdaLogger.Log("skill Category: " + skillCategory);
+                LambdaLogger.Log("skill Label " + skillLabel);
+                
+
+                //Call sql to get the ids
+
+                //LambdaLogger.Log("groupCodeSQL: " + groupCodeSQL);
+
+                using var idsCmd = new NpgsqlCommand(idsSQL,con);
+
+                //Add the bind variable
+                idsCmd.Parameters.AddWithValue("p0",skillCategory);
+                idsCmd.Parameters.AddWithValue("p1",skillLabel);
+
+                var readerID = idsCmd.ExecuteReader();
+                readerID.Read();
+                string categoryId = readerID[0].ToString();
+                string skillId = readerID[1].ToString();
+                readerID.Close();
+
+
+                LambdaLogger.Log("categoryID " + categoryId);
+                LambdaLogger.Log("skillId " + skillId);
+                
+
+                //Insert the skills into the EmployeeSkills table
+                using var insertSkillCmd = new NpgsqlCommand(insertSQL,con);
+
+                //Add the bind variable
+                insertSkillCmd.Parameters.AddWithValue("p0",employeeNumber);
+                insertSkillCmd.Parameters.AddWithValue("p1",categoryId);
+                insertSkillCmd.Parameters.AddWithValue("p2",skillId);
+
+                insertSkillCmd.ExecuteNonQuery();
+                //call the sql to insert the pair into the employeeSkillsTable
+                //skillFilter =  ;
+                //}
+                //es.skills LIKE '%Accounting:::Transaction Processing%' AND es.skills LIKE '%Accounting:::Reconciling%' 
+            }
+        }
+
 
         public  APIGatewayProxyResponse addContractor(APIGatewayProxyRequest request, ILambdaContext context){
             string requestBody = request.Body;
@@ -1186,7 +1274,7 @@ namespace Handler
 
             //Read the sql from the file
             StreamReader readers3LocationCode = new StreamReader(locationCodeScript.ResponseStream);
-            String locationCodeSQL = readers3LocationCode.ReadToEnd();
+            string locationCodeSQL = readers3LocationCode.ReadToEnd();
 
             LambdaLogger.Log("locationCodeSQL: " + locationCodeSQL);
 
@@ -1383,9 +1471,22 @@ namespace Handler
             cmd.Parameters.AddWithValue("p14",physicalLocationId);
             cmd.Parameters.AddWithValue("p15",body["PhotoUrl"].Value<string>());
 
-            try{
-                cmd.ExecuteNonQuery();
-                //TODO check that the query didn't fail
+            //try{
+                var contractorReader = cmd.ExecuteReader();
+                contractorReader.Read();
+                string addedContractorEmployeeNumber = contractorReader[0].ToString();
+                LambdaLogger.Log("added contracotr id: " + addedContractorEmployeeNumber);
+
+                contractorReader.Close();
+
+                // List<string> skills = new List<string>();
+                // if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
+                //     skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
+                // }
+
+
+                //insert the contractors skills into the database
+                insertSkills(body["skills"].Value<string>(),addedContractorEmployeeNumber);
 
                 var response = new APIGatewayProxyResponse
                 {
@@ -1401,21 +1502,21 @@ namespace Handler
                 };
 
                 return response;
-            }
-            catch(System.Exception){
-                return new APIGatewayProxyResponse
-                {
-                    StatusCode = 404,
-                    Body = "New slave not added!",
-                    Headers = new Dictionary<string, string>
-                    { 
-                        { "Content-Type", "application/json" }, 
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" },  
-                    }
-                };
-            }
+            // }
+            // catch(System.Exception){
+            //     return new APIGatewayProxyResponse
+            //     {
+            //         StatusCode = 404,
+            //         Body = "New slave not added!",
+            //         Headers = new Dictionary<string, string>
+            //         { 
+            //             { "Content-Type", "application/json" }, 
+            //             { "Access-Control-Allow-Origin", "*" },
+            //             { "Access-Control-Allow-Methods", "*" },
+            //             { "Access-Control-Allow-Headers", "*" },  
+            //         }
+            //     };
+            // }
             
         }
     }

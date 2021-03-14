@@ -14,5 +14,6 @@
     "WorkPhone":"1-800-555-6666",
     "WorkCell":"604-555-6666",
     "PhysicalLocation":"Vancouver",
-    "PhotoUrl":"someurl"
+    "PhotoUrl":"someurl",
+    "skills": "Accounting:::Transaction Processing||| Accounting:::Reconciling||| Accounting:::Auditing||| Management:::Budgeting"
 }
