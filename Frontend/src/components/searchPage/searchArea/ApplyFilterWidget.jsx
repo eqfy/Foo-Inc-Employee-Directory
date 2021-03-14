@@ -55,9 +55,13 @@ function ApplyFilterWidget(props) {
         if (Array.isArray(displayedFilters) && displayedFilters.length === 1) {
             handleCheckboxChange(displayedFilters[0]);
         } else {
-            const filterValues = Object.values(displayedFilters);
-            if (filterValues.length === 1 && filterValues[0].length === 1) {
-                handleCheckboxChange(displayedFilters[0]);
+            const filterEntries = Object.entries(displayedFilters);
+            if (filterEntries.length === 1) {
+                const filterNames = filterEntries[0][1];
+                const filterCategory = filterEntries[0][0];
+                if (filterNames.length === 1) {
+                    handleCheckboxChange(filterNames[0], filterCategory);
+                }
             }
         }
     };
