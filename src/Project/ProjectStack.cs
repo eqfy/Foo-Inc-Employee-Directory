@@ -167,7 +167,6 @@ namespace Project
                 CognitoIdentityProviders = providers
             });
 
-            apiGateway.co
             apiGateway.CfnAuthorizer cognitoAuthorizer = new apiGateway.CfnAuthorizer(this, "cognitoAuthorizer", new apiGateway.CfnAuthorizerProps
             {
                 RestApiId = api.RestApiId,
@@ -186,6 +185,7 @@ namespace Project
                 // Could not add it as it wants an Authorizer type not a CfnAuthorize lol, We may have to implement the Authorizer Interface
                 // Authorizer = cognitoAuthorizer
             };
+            // TODO Link Authorizer to MethodOptions and add to specific method
 
             apiGateway.Method getEmployeeMethod = employeeResource.AddMethod("GET", getEmployeeIntegration);
        
