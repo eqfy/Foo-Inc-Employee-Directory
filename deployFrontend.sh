@@ -1,5 +1,5 @@
 cd Frontend
-echo "***Bulding frontend***"
+echo "***Building frontend***"
 yarn install
 yarn build
 cd ..

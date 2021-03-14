@@ -176,17 +176,18 @@ namespace Project
                 ProviderArns = new[] { user_pool.UserPoolArn }
             }
             );
-
-            apiGateway.Resource employeeResource = api.Root.AddResource("employee");
-            apiGateway.LambdaIntegration getEmployeeIntegration = new apiGateway.LambdaIntegration(getEmployees);
             apiGateway.MethodOptions methodOptions = new apiGateway.MethodOptions
             {
                 AuthorizationType = apiGateway.AuthorizationType.CUSTOM,
-                // Could not add it as it wants an Authorizer type not a CfnAuthorize lol, We may have to implement the Authorizer Interface
+                // Could not add the cognitoAuthorizer as it wants an Authorizer type not a CfnAuthorize LOL, We may have to implement the Authorizer Interface 
+                // or update our cdk apigateay version to get the lib
                 // Authorizer = cognitoAuthorizer
             };
             // TODO Link Authorizer to MethodOptions and add to specific method
 
+
+            apiGateway.Resource employeeResource = api.Root.AddResource("employee");
+            apiGateway.LambdaIntegration getEmployeeIntegration = new apiGateway.LambdaIntegration(getEmployees);
             apiGateway.Method getEmployeeMethod = employeeResource.AddMethod("GET", getEmployeeIntegration);
        
             lambda.Function getEmployeeByName = new lambda.Function(this, "getEmployeeByName", new lambda.FunctionProps
@@ -261,9 +262,25 @@ namespace Project
             apiGateway.LambdaIntegration searchIntegration = new apiGateway.LambdaIntegration(search);
             apiGateway.Method searchMethod = searchResource.AddMethod("GET", searchIntegration);
 
-            //getEmployeeID Enpoint
-            lambda.Function getEmployeeID = new lambda.Function(this, "getEmployeeID", new lambda.FunctionProps
-            {
+            //Add Contractor Enpoint
+            lambda.Function addContractor = new lambda.Function(this,"addContractor", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::addContractor",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource addContractorResource = api.Root.AddResource("addContractor");
+            apiGateway.LambdaIntegration addContractorIntegration =  new apiGateway.LambdaIntegration(addContractor);
+            apiGateway.Method addContractorMethod =  addContractorResource.AddMethod("PUT", addContractorIntegration);
+
+            //getEmployeeID Endpoint
+            lambda.Function getEmployeeID = new lambda.Function(this,"getEmployeeID", new lambda.FunctionProps{
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
                 Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
                 Handler = "Handler::Handler.Function::getEmployeeID",
@@ -373,6 +390,7 @@ namespace Project
             databaseScriptsBucket.GrantRead(getEmployeeByName);
             databaseScriptsBucket.GrantRead(search);
             databaseScriptsBucket.GrantRead(getEmployeeID);
+            databaseScriptsBucket.GrantRead(addContractor);
 
 
 
@@ -407,6 +425,12 @@ namespace Project
             getEmployeeID.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
             getEmployeeID.AddEnvironment("OBJECT_KEY", "getEmployeeID.sql");
             getEmployeeID.AddEnvironment("BUCKET_NAME", databaseScriptsBucket.BucketName);
+
+            addContractor.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            addContractor.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            addContractor.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            addContractor.AddEnvironment("OBJECT_KEY", "addContarctor.sql");
+            addContractor.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             getOrgChart.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getOrgChart.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());

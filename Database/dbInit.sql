@@ -78,6 +78,7 @@ CREATE TABLE "Employee" (
     "PhotoUrl" varchar(255),
     "isContractor" boolean NOT NULL DEFAULT false
 );
+CREATE SEQUENCE "public".contractorseq;
 
 CREATE TABLE "EmployeeSkills" (
     "EmployeeNumber" varchar(10) NOT NULL,

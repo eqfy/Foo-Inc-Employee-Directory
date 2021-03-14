@@ -1,8 +1,9 @@
 import { Grid, styled } from "@material-ui/core";
 import React from "react";
-import ApplyFilterArea from "./ApplyFilterArea";
 import SearchByNameBar from "./SearchByNameBar";
 import "./SearchArea.css";
+import ExperienceSlider from "./ExperienceSlider";
+import ApplyFilterWidget from "./ApplyFilterWidget";
 
 function SearchArea() {
     return (
@@ -21,6 +22,22 @@ function SearchArea() {
                 <ApplyFilterArea />
             </StyledSearchAreaGridItem>
         </Grid>
+    );
+}
+
+function ApplyFilterArea() {
+    return (
+        <div className="apply-filter">
+            <div className="heading">Apply filters</div>
+            <div className="filter-widgets">
+                <ExperienceSlider />
+                <ApplyFilterWidget type="location" isCategorized={false} />
+                <ApplyFilterWidget type="title" isCategorized={false} />
+                <ApplyFilterWidget type="company" isCategorized={false} />
+                <ApplyFilterWidget type="department" isCategorized={false} />
+                <ApplyFilterWidget type="skill" isCategorized={true} />
+            </div>
+        </div>
     );
 }
 

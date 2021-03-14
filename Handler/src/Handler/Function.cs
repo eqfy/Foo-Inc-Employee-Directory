@@ -179,6 +179,7 @@ namespace Handler
 
         public  APIGatewayProxyResponse GetOrgChart(APIGatewayProxyRequest request, ILambdaContext context) {
             string workerID = request.QueryStringParameters["WorkerID"];
+            string CeoID = "10001";
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
@@ -261,7 +262,7 @@ namespace Handler
                 supervisor.OfficeLocation = readerSupervisor[18].ToString();
             }
 
-            if (toggleIsEmpty) {
+            if (toggleIsEmpty || workerID == CeoID) {
               orgChart.supervisor = null;
             } else {
               orgChart.supervisor = supervisor;
@@ -276,6 +277,7 @@ namespace Handler
             cmdColleagues.Parameters.AddWithValue("p", supervisorID);
             var readerColleagues = cmdColleagues.ExecuteReader();
             List<Employee> colleagues = new List<Employee>();
+            List<Employee> ceo = new List<Employee>();
 
             while(readerColleagues.Read()) {
                 LambdaLogger.Log("Reading colleagues: \n");
@@ -298,11 +300,20 @@ namespace Handler
                 e.employeeNumber = readerColleagues[15].ToString();
                 e.employmentType = readerColleagues[16].ToString();
                 e.skills = readerColleagues[17].ToString();
-                e.OfficeLocation = readerColleagues[18].ToString();
-                colleagues.Add(e);
+                e.OfficeLocation = readerColleagues[18].ToString(); 
+                if (e.employeeNumber == CeoID) {
+                  ceo.Add(e);
+                } else {
+                  colleagues.Add(e);
+                }
             }
 
-            orgChart.colleagues = colleagues;
+            if (workerID == CeoID) {
+              orgChart.colleagues = ceo;
+            } else {
+              orgChart.colleagues = colleagues;
+            }
+            
             readerColleagues.Close();
 
             // Get subordinates
@@ -335,7 +346,9 @@ namespace Handler
                 e.employmentType = readerSubordinates[16].ToString();
                 e.skills = readerSubordinates[17].ToString();
                 e.OfficeLocation = readerSubordinates[18].ToString();
-                subs.Add(e);
+                if (e.employeeNumber != CeoID) {
+                  subs.Add(e);
+                }
             }
 
             orgChart.subordinates = subs;
@@ -400,10 +413,13 @@ namespace Handler
             String sql = reader.ReadToEnd();
             
             //Create the database sql command
+
+            LambdaLogger.Log("sql: " + sql);
             using var cmd = new NpgsqlCommand(sql, con);
 
             //Execute the init sql
             cmd.ExecuteNonQuery();
+            
             
             //TODO close connection?
 
@@ -440,8 +456,11 @@ namespace Handler
             StreamReader reader = new StreamReader(script.ResponseStream);
             String sql = reader.ReadToEnd();
 
+            LambdaLogger.Log("sql: " + sql);
             //Create the database sql command
             using var cmd = new NpgsqlCommand(sql, con);
+
+            
 
             //Execute the drop all sql 
             cmd.ExecuteNonQuery();
@@ -595,7 +614,29 @@ namespace Handler
             string isContractorFilter = " ed.\"isContractor\" = :p" + parameterCounter++ + " AND";
             return isContractorFilter;
         }
+        
+         // order by number, offset, and fecth functions
+        
+        //TODO make this not case sensitive and give errors when using something like blah 
+        private string createOrderByFilter(string order,ref int parameterCounter){
+            string orderByFilter ="";
+            if(order == "FirstName"){
+                orderByFilter = " ORDER BY \"FirstName\"";
+            }else if(order == "Title"){
+                orderByFilter = " ORDER BY \"Title\"";
+            }
+            return orderByFilter;
+        }
+        
+        private string createOffsetFilter(ref int parameterCounter){
+            string offsetFilter = " OFFSET :p"+parameterCounter++;
+            return offsetFilter;
+        }
 
+        private string createFetchFilter(ref int parameterCounter){
+            string fetchFilter = " FETCH NEXT :p"+parameterCounter++ + " ROWS ONLY";
+            return fetchFilter;
+        }
 
         public APIGatewayProxyResponse GetAllFilters(APIGatewayProxyRequest request, ILambdaContext context)
         {
@@ -649,7 +690,7 @@ namespace Handler
             filters.titles = titles;
             readerTitle.Close();
 
-            var sqlDept = "SELECT \"Label\" FROM \"LocationGroup\"";
+            var sqlDept = "SELECT DISTINCT \"Label\" FROM \"LocationGroup\"";
             using var cmdDept = new NpgsqlCommand(sqlDept, con);
 
             var readerDept = cmdDept.ExecuteReader();
@@ -747,6 +788,18 @@ namespace Handler
             if(request.MultiValueQueryStringParameters.ContainsKey("isContractor")){
                 isContractor = (List<string>)request.MultiValueQueryStringParameters["isContractor"];
             }
+            List<string> orderBys = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("orderBy")){
+                orderBys = (List<string>)request.MultiValueQueryStringParameters["orderBy"];
+            }
+            List<string> offsets = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("offset")){
+                offsets = (List<string>)request.MultiValueQueryStringParameters["offset"];
+            }
+            List<string> fetchs = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("fetch")){
+                fetchs = (List<string>)request.MultiValueQueryStringParameters["fetch"];
+            }
 
             string skillFilter="";
             if(skills.Count > 0){
@@ -803,8 +856,20 @@ namespace Handler
                 isContractorFilter = createIsContractorLocationsFilter(ref parameterCounter);
             }
             
+            string orderByFilter ="";
+            if(orderBys.Count > 0){
+                orderByFilter = createOrderByFilter(orderBys[0],ref parameterCounter);
+            }
             
-            
+            string offsetFilter ="";
+            if(offsets.Count > 0){
+                offsetFilter = createOffsetFilter(ref parameterCounter);
+            }
+
+            string fetchFilter ="";
+            if(fetchs.Count > 0){
+                fetchFilter = createFetchFilter(ref parameterCounter);
+            }
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
@@ -828,23 +893,32 @@ namespace Handler
             || companyNamesFilter.Length >0 || firstNamesFilter.Length >0 || lastNamesFilter.Length >0 || employmentTypesFilter.Length >0 || 
             officeLocationsFilter.Length>0 || isContractorFilter.Length>0){
                 sql += " WHERE ";
+
+                sql += skillFilter;
+                sql += locationsFilter;
+                sql += titlesFilter; 
+                sql += yearsPriorFilter;
+                sql += divisionsFilter;
+                sql += companyNamesFilter;
+                sql += firstNamesFilter;
+                sql += lastNamesFilter;
+                sql += employmentTypesFilter;
+                sql += officeLocationsFilter;
+                sql += isContractorFilter;
+                //TODO add the rest of the filters here
+
+                //Remove the last 'AND' from the sql string
+                sql = sql.Remove(sql.Length - 3);
             }
-
-            sql += skillFilter;
-            sql += locationsFilter;
-            sql += titlesFilter; 
-            sql += yearsPriorFilter;
-            sql += divisionsFilter;
-            sql += companyNamesFilter;
-            sql += firstNamesFilter;
-            sql += lastNamesFilter;
-            sql += employmentTypesFilter;
-            sql += officeLocationsFilter;
-            sql += isContractorFilter;
-            //TODO add the rest of the filters here
-
-            //Remove the last 'AND' from the sql string
-            sql = sql.Remove(sql.Length - 3);
+            
+            //Add the order by, filter, and offset TODO do it! and TODO potentially order on multiple
+            sql += orderByFilter;
+            //Only add the fetch and offset filters if there is an orderBy
+            if(orderBys.Count > 0){
+                sql += offsetFilter;
+                sql += fetchFilter;
+            }
+            
             LambdaLogger.Log("sql: " + sql);
            
             using var cmd = new NpgsqlCommand(sql,con);
@@ -907,6 +981,21 @@ namespace Handler
                 }
                 LambdaLogger.Log("p"+currentParameterCounter + " : " + isCon);
                 cmd.Parameters.AddWithValue("p"+currentParameterCounter++, isCon);
+            }
+
+            foreach(string order in orderBys){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + order);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, order);
+            }
+
+            foreach(string offset in offsets){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + offset);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(offset));
+            }
+
+            foreach(string fetch in fetchs){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + fetch);
+                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
             }
 
             //TODO: is contractor, hiredate, termination date
@@ -1036,6 +1125,81 @@ namespace Handler
                 StatusCode = 200,
                 Body = output,
                 //Body = myDbItems.ToString(),
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
+                }
+            };
+
+            return response;
+        }
+
+        public  APIGatewayProxyResponse addContractor(APIGatewayProxyRequest request, ILambdaContext context){
+            string requestBody = request.Body;
+            Newtonsoft.Json.Linq.JObject body = Newtonsoft.Json.Linq.JObject.Parse(requestBody);
+        
+            //Employee newContractor = new Employee();
+
+            //newContractor.firstName = body["firstName"].Value<string>();
+            //LambdaLogger.Log("first name : " + newContractor.firstName);
+
+            //Create the connection to the database
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+
+
+            //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+
+            //Get the sql script from the bucket
+            var script = getS3FileSync(bucketName, objectKey);
+        
+            
+            //Read the sql from the file
+            StreamReader readers3 = new StreamReader(script.ResponseStream);
+            String sql = readers3.ReadToEnd();
+
+            LambdaLogger.Log("sql: " + sql);
+
+            using var cmd = new NpgsqlCommand(sql,con);
+
+            //Add the bind variables
+            
+            cmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p1",body["OfficeCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p2",body["GroupCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p3",body["FirstName"].Value<string>());
+            cmd.Parameters.AddWithValue("p4",body["LastName"].Value<string>());
+            cmd.Parameters.AddWithValue("p5",body["EmploymentType"].Value<string>());
+            cmd.Parameters.AddWithValue("p6",body["Title"].Value<string>());
+            cmd.Parameters.AddWithValue("p7",body["HireDate"].Value<string>());
+            /*if(body["TerminationDate"].Value<string>() == "NULL"){
+                cmd.Parameters.AddWithValue("p8",DBNull.value);
+            }else{
+                cmd.Parameters.AddWithValue("p8",body["TerminationDate"].Value<string>());
+            }*/
+            cmd.Parameters.AddWithValue("p8",((object)body["TerminationDate"].Value<string>() ?? DBNull.Value));
+            cmd.Parameters.AddWithValue("p9",body["SupervisorEmployeeNumber"].Value<string>());
+            cmd.Parameters.AddWithValue("p10",body["YearsPriorExperience"].Value<string>());
+            cmd.Parameters.AddWithValue("p11",body["Email"].Value<string>());
+            cmd.Parameters.AddWithValue("p12",body["WorkPhone"].Value<string>());
+            cmd.Parameters.AddWithValue("p13",body["WorkCell"].Value<string>());
+            cmd.Parameters.AddWithValue("p14",body["PhysicalLocationId"].Value<string>());
+            cmd.Parameters.AddWithValue("p15",body["PhotoUrl"].Value<string>());
+
+            cmd.ExecuteNonQuery();
+            //TODO check that the query didn't fail
+
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = "New slave added!",
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
