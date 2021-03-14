@@ -7,18 +7,20 @@ import SearchArea from "./searchPage/searchArea/SearchArea";
 import FilterArea from "./searchPage/FilterArea";
 import { Grid, styled } from "@material-ui/core";
 import { SEARCH_AREA_WIDTH } from "./common/constants";
-import {getFilterAPI} from "../api/filter.js"
+import { getFilterAPI } from "../api/filter.js";
+
+export const SearchWithFilterTimer = {};
 
 export function SearchPageContainer(props) {
     React.useEffect(() => {
         // TODO get the current user's stored filters
         // Test call, remove when making actual call
         async function getAPI() {
-            let response = await getFilterAPI()
-            console.log(response)
+            let response = await getFilterAPI();
+            console.log(response);
         }
         getAPI()
-    });
+    }, []);
 
     return (
         // TODO: Refactor so this container div doesn't need to be added for every page container

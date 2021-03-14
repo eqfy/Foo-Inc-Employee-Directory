@@ -1,33 +1,29 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button, makeStyles } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
+const useStyles = makeStyles({
+    label: {
+        textTransform: 'none',
+    },
+});
+
 function LinkButton(props) {
+    const classes = useStyles();
     return (
-        <StyledButton
+        <Button
             disabled={!!props.disabled}
-            // TODO: Find a nicer way to pass styles to this button
-            // @ts-ignore
-            styles={props.styles}
+            classes={{ ...classes, ...props.classes }}
         >
             <StyledLink className="flex" to={props.to}>
                 {props.children}
             </StyledLink>
-        </StyledButton>
+        </Button>
     );
 }
 
 export default LinkButton;
-
-const StyledButton = styled(Button)`
-    && {
-        text-transform: none;
-        ${(props) =>
-            // @ts-ignore
-            props.styles}
-    }
-`;
 
 const StyledLink = styled(Link)`
     && {

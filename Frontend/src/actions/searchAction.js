@@ -23,12 +23,16 @@ export const searchByNameAction = (payload) => (dispatch, getState) => {
         lastName: parsedName.last,
     };
     console.log("Search By Name Action dispatched.\nPayload: %o", payload);
-    searchWorkerByName(payload).then((response) => {
-        dispatch({
-            type: "ADD_WORKER",
-            payload: response,
+    searchWorkerByName(payload)
+        .then((response) => {
+            dispatch({
+                type: "ADD_WORKER",
+                payload: response,
+            });
+        })
+        .catch((error) => {
+            console.error("Search endpoint failed (by name).\nErr:", error);
         });
-    });
 };
 
 export const searchByExperienceAction = (payload) => (dispatch, getState) => {
@@ -57,6 +61,15 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
         });
 };
 
+export const setPageAction = (payload) => (dispatch) => {
+    dispatch({
+        type: "SET_SEARCH_PAGE_NUMBER",
+        payload: {
+            pageNumber: payload,
+        },
+    });
+};
+
 const createSearchPayload = (state) => {
     // FIXME this is not complete!  Fix this once search endpoint is merged in.
     const {
@@ -67,14 +80,9 @@ const createSearchPayload = (state) => {
             departmentState,
             companyState,
             yearsPriorExperience,
+            shownWorkerType,
         },
-        searchPageState: {
-            pageNumber,
-            sortKey,
-            isAscending,
-            searchForEmployee,
-            searchForContractor,
-        },
+        searchPageState: { pageNumber, sortKey, isAscending },
     } = state;
     return {
         skills: skillState,
@@ -86,7 +94,6 @@ const createSearchPayload = (state) => {
         pageNumber,
         sortKey,
         isAscending,
-        searchForEmployee,
-        searchForContractor,
+        shownWorkerType,
     };
 };

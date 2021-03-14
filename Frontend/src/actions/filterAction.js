@@ -1,4 +1,6 @@
 import { getAllFilters } from "api/filter";
+import { WorkerTypeEnum } from "states/appState";
+import { SortKeyEnum } from "states/searchPageState";
 
 export const loadFiltersAction = () => (dispatch) => {
     getAllFilters()
@@ -13,38 +15,50 @@ export const loadFiltersAction = () => (dispatch) => {
         });
 };
 
-export const setFilterAction = (filterId, type) => (dispatch, getState) => {
-    const { appState } = getState();
-    const filterState = appState[`${type}State`];
-    const currIndex = filterState.indexOf(filterId);
-    if (currIndex === -1) {
-        filterState.push(filterId);
-    } else {
-        filterState.splice(currIndex, 1);
-    }
-    dispatch({
-        type: `SET_${type.toUpperCase()}`,
-        payload: filterState,
-    });
-};
-
-export const setCategorizedFilterAction = (filterId, category, type) => (
+export const setFilterAction = (type, filterId, category = "") => (
     dispatch,
     getState
 ) => {
     const { appState } = getState();
-    const categoryState = appState[`${type}State`];
-    const filterState = categoryState[category] || [];
-    const currIndex = filterState.indexOf(filterId);
-    if (currIndex === -1) {
-        filterState.push(filterId);
+    const isCategorized = category.length > 0;
+    let payload;
+
+    if (isCategorized) {
+        const categoryState = appState[`${type}State`];
+        const filterState = categoryState[category] || [];
+        categoryState[category] = toggleFilter(filterId, filterState);
+        payload = categoryState;
     } else {
-        filterState.splice(currIndex, 1);
+        const filterState = appState[`${type}State`];
+        payload = toggleFilter(filterId, filterState);
     }
-    categoryState[category] = filterState;
+
     dispatch({
         type: `SET_${type.toUpperCase()}`,
-        payload: categoryState,
+        payload: payload,
+    });
+};
+
+export const setWorkerTypeAction = (shownWorkerType = WorkerTypeEnum.ALL) => (
+    dispatch
+) => {
+    dispatch({
+        type: "SET_WORKER_TYPE_FILTER",
+        payload: shownWorkerType,
+    });
+};
+
+export const setSortKeyAction = (sortKey = SortKeyEnum.NONE) => (dispatch) => {
+    dispatch({
+        type: "SET_SORT_KEY",
+        payload: sortKey,
+    });
+};
+
+export const setSortOrderAction = (sortOrder) => (dispatch) => {
+    dispatch({
+        type: "SET_SORT_ORDER",
+        payload: sortOrder,
     });
 };
 
@@ -53,4 +67,14 @@ export const setExperienceAction = (payload) => (dispatch) => {
         type: "SET_EXPERIENCE",
         payload: payload,
     });
+};
+
+const toggleFilter = (filterId = "", filterState = []) => {
+    const currIndex = filterState.indexOf(filterId);
+    if (currIndex === -1) {
+        filterState.push(filterId);
+    } else {
+        filterState.splice(currIndex, 1);
+    }
+    return filterState;
 };

@@ -67,6 +67,11 @@ export default function appStateReducer(state = defaultAppState, action) {
                 ...state,
                 yearsPriorExperience: action.payload,
             };
+        case "SET_WORKER_TYPE_FILTER":
+            return {
+                ...state,
+                shownWorkerType: action.payload,
+            };
         default:
             return state;
     }

@@ -3,17 +3,32 @@ import { ArrowLeft, ArrowRight } from "@material-ui/icons";
 import styled from "styled-components";
 import LinkButton from "components/common/LinkButton";
 import "components/common/Common.css";
+import { PagePathEnum } from 'components/common/constants';
+import { makeStyles } from '@material-ui/core';
+import { connect } from 'react-redux';
 
-const previousButton = (index, employees) => {
+const usePrevStyles = makeStyles({
+    root: {
+        paddingLeft: 0
+    }
+});
+
+const useNextStyles = makeStyles({
+    root: {
+        paddingRight: 0
+    }
+});
+
+const previousButton = (index, classes, resultOrder) => {
     let prevEmployeeId;
-    if (employees && index > 0) {
-        prevEmployeeId = employees[index - 1].employeeId;
+    if (resultOrder.length && index > 0) {
+        prevEmployeeId = resultOrder[index - 1];
     }
 
     return (
         <LinkButton
-            styles="padding-left: 0;"
-            to={`/profile/${prevEmployeeId}`}
+            classes={classes}
+            to={`${PagePathEnum.PROFILE}/${prevEmployeeId}`}
             disabled={!prevEmployeeId}
         >
             <ArrowLeft />
@@ -22,16 +37,16 @@ const previousButton = (index, employees) => {
     );
 };
 
-const nextButton = (index, employees) => {
+const nextButton = (index, classes, resultOrder) => {
     let nextEmployeeId;
-    if (employees && index + 1 < employees.length) {
-        nextEmployeeId = employees[index + 1].employeeId;
+    if (index < resultOrder.length) {
+        nextEmployeeId = resultOrder[index + 1];
     }
 
     return (
         <LinkButton
-            styles="padding-right: 0;"
-            to={`/profile/${nextEmployeeId}`}
+            classes={classes}
+            to={`${PagePathEnum.PROFILE}/${nextEmployeeId}`}
             disabled={!nextEmployeeId}
         >
             Next
@@ -41,18 +56,28 @@ const nextButton = (index, employees) => {
 };
 
 function PrevNextButtons(props) {
-    const { index, employees } = props;
+    const { resultOrder, focusedWorkerId } = props;
+    const classesPrev = usePrevStyles();
+    const classesNext = useNextStyles();
+
+    const index = resultOrder.findIndex((workerId) => workerId === focusedWorkerId);
 
     return (
         <Container className="flex">
-            {previousButton(index, employees)}
+            {previousButton(index, classesPrev, resultOrder)}
             <Separator />
-            {nextButton(index, employees)}
+            {nextButton(index, classesNext, resultOrder)}
         </Container>
     );
 }
 
-export default PrevNextButtons;
+const mapStateToProps = (state) => ({
+    focusedWorkerId: state.appState.focusedWorkerId,
+    resultOrder: state.searchPageState.resultOrder,
+});
+
+
+export default connect(mapStateToProps)(PrevNextButtons);
 
 const Container = styled.div`
     height: 30px;

@@ -1,8 +1,6 @@
-import {
-    setCategorizedFilterAction,
-    setFilterAction,
-} from "actions/filterAction";
+import { setFilterAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
+import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
@@ -22,8 +20,6 @@ const {
 } = require("@material-ui/core");
 const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 
-const ApplyFilterTimer = {};
-
 function ApplyFilterWidget(props) {
     const {
         filterData,
@@ -31,7 +27,6 @@ function ApplyFilterWidget(props) {
         type,
         isCategorized,
         setFilterAction,
-        setCategorizedFilterAction,
         searchWithAppliedFilterAction,
     } = props;
     const filters = filterData[`${type}AllId`];
@@ -41,12 +36,11 @@ function ApplyFilterWidget(props) {
     };
 
     const handleCheckboxChange = (name, category = "") => {
-        if (category.length > 0) {
-            setCategorizedFilterAction(name, category, type);
-        } else {
-            setFilterAction(name, type);
-        }
-        coordinatedDebounce(searchWithAppliedFilterAction, ApplyFilterTimer)();
+        setFilterAction(type, name, category);
+        coordinatedDebounce(
+            searchWithAppliedFilterAction,
+            SearchWithFilterTimer
+        )();
     };
 
     const textFieldLabel = `Filter by ${type}`;
@@ -223,10 +217,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    setFilterAction: (filterId, filterType) =>
-        dispatch(setFilterAction(filterId, filterType)),
-    setCategorizedFilterAction: (filterId, category, filterType) =>
-        dispatch(setCategorizedFilterAction(filterId, category, filterType)),
+    setFilterAction: (filterType, filterId, category) =>
+        dispatch(setFilterAction(filterType, filterId, category)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
 });

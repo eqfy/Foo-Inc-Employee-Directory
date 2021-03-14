@@ -6,25 +6,26 @@ import OrgChartPageContainer from "./components/OrgChartPageContainer";
 import ProfilePageContainer from "./components/ProfilePageContainer";
 import SearchPageContainer from "./components/SearchPageContainer";
 import Header from "./components/Header";
+import { PagePathEnum } from 'components/common/constants';
 
 export default function Routes() {
     return (
         <Switch>
-            <Route exact path="/search">
+            <Route exact path={PagePathEnum.SEARCH}>
                 <Header activeTabIndex={0} />
                 <SearchPageContainer />
             </Route>
-            <Route path="/profile/:employeeId">
+            <Route path={`${PagePathEnum.PROFILE}/:workerId`}>
                 <Header activeTabIndex={1} />
                 <ProfilePageContainer />
             </Route>
-            <Route path="/orgchart/:employeeId">
+            <Route path={`${PagePathEnum.ORGCHART}/:workerId`}>
                 <Header activeTabIndex={2} />
                 <OrgChartPageContainer />
             </Route>
             <Route path="/">
                 <Header activeTabIndex={0} />
-                <Redirect to="/search" />
+                <Redirect to={PagePathEnum.SEARCH} />
             </Route>
             <Route>
                 <Header />
