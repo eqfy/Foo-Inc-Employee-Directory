@@ -2,7 +2,6 @@ import { setFilterAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { matchSorter } from "match-sorter";
-import { useEffect } from "react";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
@@ -36,17 +35,17 @@ function ApplyFilterWidget(props) {
     const filters = filterData[`${type}AllId`];
     const appliedFilters = filterState[`${type}State`];
     const [displayedFilters, setDisplayedFilters] = React.useState(filters);
-    useEffect(() => {
+    React.useEffect(() => {
         setDisplayedFilters(filters);
     }, [filters]);
 
     const handleTextChange = (event) => {
         const userInput = event.target.value;
-        coordinatedDebounce(
-            predictiveFilterSearch,
-            FilterTextTimer,
-            250
-        )(filters, userInput);
+        coordinatedDebounce(predictiveFilterSearch, FilterTextTimer, 300)(
+            filters,
+            userInput,
+            setDisplayedFilters
+        );
     };
 
     const handleTextKeyPress = (event) => {
@@ -61,46 +60,6 @@ function ApplyFilterWidget(props) {
                 handleCheckboxChange(displayedFilters[0]);
             }
         }
-    };
-
-    const predictiveFilterSearch = (filters, userInput) => {
-        let matchedResult;
-        if (isCategorized) {
-            // Formatting of filters to work with matchSorter
-            const filterObjects = Object.entries(filters).reduce(
-                (acc, [category, filterOptions = []]) => {
-                    filterOptions.forEach((filterOption) => {
-                        acc = acc.concat({
-                            category: category,
-                            filter: filterOption,
-                        });
-                    });
-                    return acc;
-                },
-                []
-            );
-            const matchedFilterObjects = matchSorter(filterObjects, userInput, {
-                keys: ["filter", "category"],
-            });
-            matchedResult = matchedFilterObjects.reduce(
-                (acc, categorizedFilter) => {
-                    if (!acc[categorizedFilter.category]) {
-                        acc[categorizedFilter.category] = [
-                            categorizedFilter.filter,
-                        ];
-                    } else {
-                        acc[categorizedFilter.category] = acc[
-                            categorizedFilter.category
-                        ].concat(categorizedFilter.filter);
-                    }
-                    return acc;
-                },
-                []
-            );
-        } else {
-            matchedResult = matchSorter(filters, userInput);
-        }
-        setDisplayedFilters(matchedResult);
     };
 
     const handleCheckboxChange = (name, category = "") => {
@@ -293,6 +252,46 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApplyFilterWidget);
+
+const predictiveFilterSearch = (filters, userInput, setDisplayedFilters) => {
+    let matchedResult;
+    if (Array.isArray(filters)) {
+        matchedResult = matchSorter(filters, userInput);
+    } else {
+        // Formatting of filters to work with matchSorter
+        const filterObjects = Object.entries(filters).reduce(
+            (acc, [category, filterOptions = []]) => {
+                filterOptions.forEach((filterOption) => {
+                    acc = acc.concat({
+                        category: category,
+                        filter: filterOption,
+                    });
+                });
+                return acc;
+            },
+            []
+        );
+        const matchedFilterObjects = matchSorter(filterObjects, userInput, {
+            keys: ["filter", "category"],
+        });
+        matchedResult = matchedFilterObjects.reduce(
+            (acc, categorizedFilter) => {
+                if (!acc[categorizedFilter.category]) {
+                    acc[categorizedFilter.category] = [
+                        categorizedFilter.filter,
+                    ];
+                } else {
+                    acc[categorizedFilter.category] = acc[
+                        categorizedFilter.category
+                    ].concat(categorizedFilter.filter);
+                }
+                return acc;
+            },
+            []
+        );
+    }
+    setDisplayedFilters(matchedResult);
+};
 
 const StyledTextField = styled(TextField)({
     alignSelf: "center",
