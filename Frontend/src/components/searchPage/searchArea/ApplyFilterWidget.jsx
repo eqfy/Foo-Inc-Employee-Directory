@@ -49,6 +49,20 @@ function ApplyFilterWidget(props) {
         )(filters, userInput);
     };
 
+    const handleTextKeyPress = (event) => {
+        if (event.key !== "Enter") {
+            return;
+        }
+        if (Array.isArray(displayedFilters) && displayedFilters.length === 1) {
+            handleCheckboxChange(displayedFilters[0]);
+        } else {
+            const filterValues = Object.values(displayedFilters);
+            if (filterValues.length === 1 && filterValues[0].length === 1) {
+                handleCheckboxChange(displayedFilters[0]);
+            }
+        }
+    };
+
     const predictiveFilterSearch = (filters, userInput) => {
         let matchedResult;
         if (isCategorized) {
@@ -107,6 +121,7 @@ function ApplyFilterWidget(props) {
                 size="small"
                 variant="outlined"
                 onChange={handleTextChange}
+                onKeyPress={handleTextKeyPress}
             />
             <StyledFormLabel>{formLabel}</StyledFormLabel>
             <CollapsableFilterBox>
