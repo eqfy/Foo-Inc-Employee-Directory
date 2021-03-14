@@ -1,6 +1,6 @@
 [
     {
-        "employeeId": "10001",
+        "employeeId": "0330024",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "01",
@@ -16,11 +16,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/acmes.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330024.jpeg",
         "skills": null
     },
     {
-        "employeeId": "10002",
+        "employeeId": "0330125",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "01",
@@ -36,11 +36,11 @@
         "workPhone": "604-123-5678",
         "workCell": "604-123-8765",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/johnsonj.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg",
         "skills": null
     },
     {
-        "employeeId": "10003",
+        "employeeId": "0330124",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "02",
@@ -56,11 +56,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/sampsons.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg",
         "skills": null
     },
     {
-        "employeeId": "10004",
+        "employeeId": "0330123",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "03",
@@ -76,11 +76,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/dasilvag.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330123.jpeg",
         "skills": null
     },
     {
-        "employeeId": "10005",
+        "employeeId": "0330112",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "05",
@@ -96,11 +96,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/connerc.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330112.jpeg",
         "skills": null
     },
     {
-        "employeeId": "20006",
+        "employeeId": "0330112",
         "companycode": "02",
         "officecode": "01",
         "groupcode": "02",
@@ -116,7 +116,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/broadfootb.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330112.jpeg",
         "skills": null
     },
     {

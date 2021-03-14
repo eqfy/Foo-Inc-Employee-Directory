@@ -26,7 +26,7 @@ export default function EmployeeCard(props) {
                             <StyledOrgChartIcon />
                         </Link>
                     </PositionDiv>
-                    <ImagePlaceholder />
+                    <ImagePlaceholder image={employee.image} />
                     <Typography
                         variant="body1"
                         color="textPrimary"
