@@ -124,13 +124,65 @@ namespace Project
                     AllowOrigins = apiGateway.Cors.ALL_ORIGINS,
                     AllowHeaders = cors_headers,
                     AllowMethods = apiGateway.Cors.ALL_METHODS
+                },
+
+            });
+
+            cognito.UserPool user_pool = new cognito.UserPool(this, "Foo-user-pool", new cognito.UserPoolProps
+            {
+                UserPoolName = "Foo-userpool",
+                SignInAliases = new cognito.SignInAliases
+                {
+                    Email = true,
+                    Phone = true
+                },
+            });
+
+            cognito.UserPoolClient user_pool_client = new cognito.UserPoolClient(this, "Foo-user-pool-client", new cognito.UserPoolClientProps
+            {
+                UserPoolClientName = "Foo-client",
+                UserPool = user_pool,
+                AuthFlows = new cognito.AuthFlow
+                {
+                    AdminUserPassword = true,
+                    Custom = true,
+                    UserSrp = true,
                 }
+            });
+            var providers = new List<cognito.CfnIdentityPool.CognitoIdentityProviderProperty>();
+            // TODO figure what this should be set to : ServerSideTokenCheck 
+            cognito.CfnIdentityPool.CognitoIdentityProviderProperty provider = new cognito.CfnIdentityPool.CognitoIdentityProviderProperty
+            {
+                ClientId = user_pool_client.UserPoolClientId,
+                ProviderName = user_pool.UserPoolProviderName
+            };
+            providers.Add(provider);
+            
+            cognito.CfnIdentityPool identity_pool = new cognito.CfnIdentityPool(this, "Foo-identity-pool", new cognito.CfnIdentityPoolProps
+            {
+                AllowUnauthenticatedIdentities = false,
+                IdentityPoolName = "Foo-identity-pool",
+                CognitoIdentityProviders = providers
             });
 
 
-            apiGateway.Resource employeeResource = api.Root.AddResource("employee");
 
+            // apiGateway.Authorizer cognitoAuthorizer = new apiGateway.CfnAuthorizer(
+            //     scope = this,id = "cognitoAuthorizer", new apiGateway.CfnAuthorizerProps{
+            //         RestApiId = api.RestApiId,
+            //         Name="CognitoAuth",
+            //         Type="COGNITO_USER_POOLS",
+            //         IdentitySource="method.request.header.Authorization",
+            //         ProviderArns= 
+            //     }
+            // );
+
+            apiGateway.Resource employeeResource = api.Root.AddResource("employee");
             apiGateway.LambdaIntegration getEmployeeIntegration = new apiGateway.LambdaIntegration(getEmployees);
+            // apiGateway.MethodOptions methodOptions = new apiGateway.MethodOptions{
+            //     AuthorizationType = apiGateway.AuthorizationType.CUSTOM,
+            //     Authorizer = cognitoAuthorizer
+            // };
             apiGateway.Method getEmployeeMethod = employeeResource.AddMethod("GET", getEmployeeIntegration);
 
             lambda.Function getEmployeeByName = new lambda.Function(this, "getEmployeeByName", new lambda.FunctionProps
@@ -160,7 +212,8 @@ namespace Project
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
                 //SecurityGroups = new[] {SG}
-                SecurityGroups = new[] { securityGroup }
+                SecurityGroups = new[]
+                 { securityGroup }
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
             });
             apiGateway.Resource getAllFiltersResource = api.Root.AddResource("getAllFilters");
@@ -216,12 +269,12 @@ namespace Project
                 Timeout = Duration.Seconds(60),
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[] { securityGroup }
+
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
             });
             apiGateway.Resource getEmployeeIDResource = api.Root.AddResource("getEmployeeIDResource");
             apiGateway.LambdaIntegration getEmployeeIDIntegration = new apiGateway.LambdaIntegration(getEmployeeID);
             apiGateway.Method getEmployeeIDMethod = getEmployeeIDResource.AddMethod("GET", getEmployeeIDIntegration);
-
 
 
             lambda.Function databaseInitLambda = new lambda.Function(this, "databaseInit", new lambda.FunctionProps
@@ -248,45 +301,6 @@ namespace Project
                 SecurityGroups = new[] { securityGroup }
             });
 
-
-            cognito.UserPool user_pool = new cognito.UserPool(this, "Foo-user-pool", new cognito.UserPoolProps
-            {
-                UserPoolName = "Foo-userpool",
-                SignInAliases = new cognito.SignInAliases
-                {
-                    Email = true,
-                    Phone = true
-                },
-            });
-
-            cognito.UserPoolClient user_pool_client = new cognito.UserPoolClient(this, "Foo-user-pool-client", new cognito.UserPoolClientProps
-            {
-                UserPoolClientName = "Foo-client",
-                UserPool = user_pool,
-                AuthFlows = new cognito.AuthFlow
-                {
-                    AdminUserPassword = true,
-                    Custom = true,
-                    UserSrp = true,
-                }
-            });
-
-            var providers = new List<cognito.CfnIdentityPool.CognitoIdentityProviderProperty>();
-            // TODO figure what this should be set to : ServerSideTokenCheck 
-            cognito.CfnIdentityPool.CognitoIdentityProviderProperty provider = new cognito.CfnIdentityPool.CognitoIdentityProviderProperty
-            {
-                ClientId = user_pool_client.UserPoolClientId,
-                ProviderName = user_pool.UserPoolProviderName
-            };
-            providers.Add(provider);
-
-            cognito.CfnIdentityPool identity_pool = new cognito.CfnIdentityPool(this, "Foo-identity-pool", new cognito.CfnIdentityPoolProps
-            {
-                AllowUnauthenticatedIdentities = false,
-                IdentityPoolName = "Foo-identity-pool",
-                CognitoIdentityProviders = providers
-            });
-
             // Iam Role for Identity pool
             var string_equals_cond = new Dictionary<string, string>();
             string_equals_cond.Add("cognito-identity.amazonaws.com:aud", identity_pool.Ref);
@@ -297,7 +311,11 @@ namespace Project
                 {"StringEquals", string_equals_cond},
                 {"ForAnyValue:StringLike", string_like_cond}
             };
-            iam.Role role = new iam.Role(this, "cognito-auth-role", new iam.RoleProps
+            iam.Role authenticated_role = new iam.Role(this, "cognito-auth-role", new iam.RoleProps
+            {
+                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", conditions, "sts:AssumeRoleWithWebIdentity")
+            });
+            iam.Role unauthenticated_role = new iam.Role(this, "cognito-unauth-role", new iam.RoleProps
             {
                 AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", conditions, "sts:AssumeRoleWithWebIdentity")
             });
@@ -311,13 +329,12 @@ namespace Project
 
             var gateway = "arn:aws:execute-api:YOUR_API_GATEWAY_REGION:*:/*/*/*";
             gateway.Insert(45, api.RestApiRootResourceId);
-            var url = api.Url;
-            Console.WriteLine("---------------ID-------------------", url);
-            Console.WriteLine("---------------ID-------------------", api.RestApiName);
-            Console.WriteLine("-----------GATEWAY STRING -----------: " + gateway); 
+            Console.WriteLine("---------------ID-------------------", api);
+            Console.WriteLine("---------------ID-------------------", api.Reference);
+            Console.WriteLine("-----------GATEWAY STRING -----------: " + gateway);
             iam.PolicyStatement api_policy = new iam.PolicyStatement(new iam.PolicyStatementProps
             {
-                Resources = new[] { gateway },
+                Resources = new[] { "*" },
                 Actions = new[] { "execute-api:Invoke" },
                 Effect = iam.Effect.ALLOW
             });
@@ -330,24 +347,21 @@ namespace Project
             });
 
 
-            role.AddToPolicy(cognito_policy);
-            role.AddToPolicy(api_policy);
-            role.AddToPolicy(s3_policy);
+            authenticated_role.AddToPolicy(cognito_policy);
+            authenticated_role.AddToPolicy(api_policy);
+            authenticated_role.AddToPolicy(s3_policy);
+            unauthenticated_role.AddToPolicy(cognito_policy);
 
+            Dictionary<String, Object> roles = new Dictionary<string, object>{
+                {"unauthenticated", unauthenticated_role.RoleArn},
+                {"authenticated", authenticated_role.RoleArn}
+            };
+            cognito.CfnIdentityPoolRoleAttachment auth_role_attachment = new cognito.CfnIdentityPoolRoleAttachment(this, "auth_rol", new cognito.CfnIdentityPoolRoleAttachmentProps
+            {
+                IdentityPoolId = identity_pool.Ref,
+                Roles = roles
+            });
 
-            new CfnOutput(this, "UserPoolId", new CfnOutputProps
-            {
-                Value = user_pool.UserPoolId
-            });
-            new CfnOutput(this, "UserPoolClientId", new CfnOutputProps
-            {
-                Value = user_pool_client.UserPoolClientId
-            });
-
-            new CfnOutput(this, "IdentityPoolId", new CfnOutputProps
-            {
-                Value = identity_pool.Ref
-            });
             //S3 Bucket to hold all Database scripts
             Bucket databaseScriptsBucket = new Bucket(this, "databaseScriptsBucket", new BucketProps
             {
@@ -427,6 +441,20 @@ namespace Project
             {
                 Value = api.Url,
                 ExportName = "gateWayURL"
+            });
+
+            new CfnOutput(this, "UserPoolId", new CfnOutputProps
+            {
+                Value = user_pool.UserPoolId
+            });
+            new CfnOutput(this, "UserPoolClientId", new CfnOutputProps
+            {
+                Value = user_pool_client.UserPoolClientId
+            });
+
+            new CfnOutput(this, "IdentityPoolId", new CfnOutputProps
+            {
+                Value = identity_pool.Ref
             });
         }
     }
