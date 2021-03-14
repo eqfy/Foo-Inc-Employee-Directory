@@ -35,6 +35,8 @@ function Header(props) {
             setCurrentTabIndex(1);
         } else if (pathname.startsWith(PagePathEnum.ORGCHART)) {
             setCurrentTabIndex(2);
+        } else if (pathname.startsWith(PagePathEnum.UPDATE)) {
+            setCurrentTabIndex(3);
         }
     }, [pathname]);
 
@@ -69,12 +71,12 @@ function Header(props) {
                             component={Link}
                             to={`${PagePathEnum.ORGCHART}/10001`}
                         />
-                        {/* <Tab
-                            label="Dashboard (redux demo)"
+                        <Tab
+                            label="Update Note"
                             classes={{ root: classes.tab }}
                             component={Link}
-                            to="/"
-                        /> */}
+                            to="/update"
+                        />
                     </Tabs>
                 </Toolbar>
             </AppBar>

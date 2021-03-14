@@ -5,6 +5,7 @@ import NotFound from "./components/NotFound";
 import OrgChartPageContainer from "./components/OrgChartPageContainer";
 import ProfilePageContainer from "./components/ProfilePageContainer";
 import SearchPageContainer from "./components/SearchPageContainer";
+import UpdatePageContainer from "./components/UpdatePageContainer";
 import Header from "./components/Header";
 import { PagePathEnum } from 'components/common/constants';
 
@@ -22,6 +23,10 @@ export default function Routes() {
             <Route path={`${PagePathEnum.ORGCHART}/:workerId`}>
                 <Header activeTabIndex={2} />
                 <OrgChartPageContainer />
+            </Route>
+            <Route path="/update">
+                <Header activeTabIndex={3} />
+                <UpdatePageContainer />
             </Route>
             <Route path="/">
                 <Header activeTabIndex={0} />
