@@ -167,8 +167,7 @@ namespace Project
                 CognitoIdentityProviders = providers
             });
 
-            
-
+            apiGateway.co
             apiGateway.CfnAuthorizer cognitoAuthorizer = new apiGateway.CfnAuthorizer(this, "cognitoAuthorizer", new apiGateway.CfnAuthorizerProps
             {
                 RestApiId = api.RestApiId,
@@ -332,11 +331,6 @@ namespace Project
                 Effect = iam.Effect.ALLOW
             });
 
-            var gateway = "arn:aws:execute-api:YOUR_API_GATEWAY_REGION:*:/*/*/*";
-            gateway.Insert(45, api.RestApiRootResourceId);
-            Console.WriteLine("---------------ID-------------------", api);
-            Console.WriteLine("---------------ID-------------------", api.Reference);
-            Console.WriteLine("-----------GATEWAY STRING -----------: " + gateway);
             iam.PolicyStatement api_policy = new iam.PolicyStatement(new iam.PolicyStatementProps
             {
                 Resources = new[] { "*" },
