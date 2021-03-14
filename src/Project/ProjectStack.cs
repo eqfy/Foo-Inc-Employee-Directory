@@ -10,9 +10,11 @@ using Amazon.CDK.AWS.SecretsManager;
 using System.Collections.Generic;
 using iam = Amazon.CDK.AWS.IAM;
 using System;
+
 namespace Project
 {
     public class ProjectStack : Stack
+
     {
         internal ProjectStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
         {
@@ -157,7 +159,7 @@ namespace Project
                 ProviderName = user_pool.UserPoolProviderName
             };
             providers.Add(provider);
-            
+
             cognito.CfnIdentityPool identity_pool = new cognito.CfnIdentityPool(this, "Foo-identity-pool", new cognito.CfnIdentityPoolProps
             {
                 AllowUnauthenticatedIdentities = false,
@@ -165,26 +167,29 @@ namespace Project
                 CognitoIdentityProviders = providers
             });
 
+            
 
-
-            // apiGateway.Authorizer cognitoAuthorizer = new apiGateway.CfnAuthorizer(
-            //     scope = this,id = "cognitoAuthorizer", new apiGateway.CfnAuthorizerProps{
-            //         RestApiId = api.RestApiId,
-            //         Name="CognitoAuth",
-            //         Type="COGNITO_USER_POOLS",
-            //         IdentitySource="method.request.header.Authorization",
-            //         ProviderArns= 
-            //     }
-            // );
+            apiGateway.CfnAuthorizer cognitoAuthorizer = new apiGateway.CfnAuthorizer(this, "cognitoAuthorizer", new apiGateway.CfnAuthorizerProps
+            {
+                RestApiId = api.RestApiId,
+                Name = "CognitoAuth",
+                Type = "COGNITO_USER_POOLS",
+                IdentitySource = "method.request.header.Authorization",
+                ProviderArns = new[] { user_pool.UserPoolArn }
+            }
+            );
 
             apiGateway.Resource employeeResource = api.Root.AddResource("employee");
             apiGateway.LambdaIntegration getEmployeeIntegration = new apiGateway.LambdaIntegration(getEmployees);
-            // apiGateway.MethodOptions methodOptions = new apiGateway.MethodOptions{
-            //     AuthorizationType = apiGateway.AuthorizationType.CUSTOM,
-            //     Authorizer = cognitoAuthorizer
-            // };
-            apiGateway.Method getEmployeeMethod = employeeResource.AddMethod("GET", getEmployeeIntegration);
+            apiGateway.MethodOptions methodOptions = new apiGateway.MethodOptions
+            {
+                AuthorizationType = apiGateway.AuthorizationType.CUSTOM,
+                // Could not add it as it wants an Authorizer type not a CfnAuthorize lol, We may have to implement the Authorizer Interface
+                // Authorizer = cognitoAuthorizer
+            };
 
+            apiGateway.Method getEmployeeMethod = employeeResource.AddMethod("GET", getEmployeeIntegration);
+       
             lambda.Function getEmployeeByName = new lambda.Function(this, "getEmployeeByName", new lambda.FunctionProps
             {
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
@@ -458,4 +463,20 @@ namespace Project
             });
         }
     }
+
+    // public class cognitoAuth : apiGateway.IAuthorizer
+    // {
+
+    //     //public AuthorizationType AuthorizationType {get;set;}
+    //     public string AuthorizerID { get; set; }
+
+    //     public string AuthorizerId => throw new NotImplementedException();
+
+    //     public cognitoAuth(AuthorizationType auth_type, string auth_id)
+    //     {
+    //         //this.AuthorizationType = auth_type;
+    //         this.AuthorizerID = auth_id;
+    //     }
+    // }
 }
+
