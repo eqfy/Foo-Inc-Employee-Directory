@@ -177,6 +177,86 @@ namespace Handler
             return response;
         }
 
+        public  APIGatewayProxyResponse predictiveSearch(APIGatewayProxyRequest request, ILambdaContext context)
+        {
+            
+            var firstNamePrefix = request.QueryStringParameters["firstName"];
+            var lastNamePrefix = request.QueryStringParameters["lastName"];
+            LambdaLogger.Log("firstName: " + firstNamePrefix);
+            LambdaLogger.Log("lastName: " + lastNamePrefix);
+
+            var appendSql = string.Empty;
+            
+            LambdaLogger.Log(GetRDSConnectionString());
+            //Open the connection to the postgres database
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+            
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+
+            //Get the sql script from the bucket
+            var script = getS3FileSync(bucketName, objectKey);
+        
+            
+            //Read the sql from the file
+            StreamReader readers3 = new StreamReader(script.ResponseStream);
+            String sql = readers3.ReadToEnd();
+
+            if (firstNamePrefix != string.Empty && lastNamePrefix != string.Empty) {
+                sql += " WHERE \"FirstName\" LIKE :p1 AND \"LastName\" LIKE :p2 LIMIT 20";
+                LambdaLogger.Log("----------------IF----------------");
+            } else {
+                sql += " WHERE (\"FirstName\" LIKE :p1 AND \"LastName\" LIKE :p2) OR (\"FirstName\" LIKE :p2 AND \"LastName\" LIKE :p1) LIMIT 20";
+                LambdaLogger.Log("----------------ELSE----------------");
+            }
+
+            LambdaLogger.Log("sql: " + sql);
+
+            using var cmd = new NpgsqlCommand(sql,con);
+            cmd.Parameters.AddWithValue("p1", firstNamePrefix+"%");
+            cmd.Parameters.AddWithValue("p2", lastNamePrefix+"%");
+
+            //Run the sql command
+            var reader = cmd.ExecuteReader();
+    
+            string output = string.Empty;
+            List<PredictiveSearchEmployee> predEmployees = new List<PredictiveSearchEmployee>();
+
+            while(reader.Read()) {
+                PredictiveSearchEmployee e = new PredictiveSearchEmployee();
+                
+                e.firstName = reader[0].ToString();
+                e.lastName = reader[1].ToString();
+                e.imageURL = reader[2].ToString();
+                e.employeeNumber = reader[3].ToString();
+
+                predEmployees.Add(e);
+            }
+
+            reader.Close();
+
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(predEmployees);
+            LambdaLogger.Log("----------------BODY----------------------: " + output);
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = output,
+                //Body = myDbItems.ToString(),
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
+                }
+            };
+
+            return response;
+        }
+
         public  APIGatewayProxyResponse GetOrgChart(APIGatewayProxyRequest request, ILambdaContext context) {
             string workerID = request.QueryStringParameters["WorkerID"];
             string CeoID = "10001";
