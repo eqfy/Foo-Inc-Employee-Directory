@@ -8,13 +8,16 @@ import {
     CircularProgress,
 } from "@material-ui/core";
 import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
+import { Autocomplete } from "@material-ui/lab";
 import { connect } from "react-redux";
 import { withRouter, useHistory, useParams } from "react-router";
 import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
 import { setOrgChart } from "../../actions/orgChartAction";
-import { PagePathEnum } from 'components/common/constants';
+import { getPredictiveSearchAPI } from "../../api/predictiveSearchAPI";
+import { PagePathEnum } from "components/common/constants";
+import { parseFullName } from "parse-full-name";
 
 const useStyles = makeStyles({
     searchRect: {
@@ -66,12 +69,69 @@ const useStyles = makeStyles({
     },
 });
 
+// counter for timeout in case of input change
+let searchBarCounter = 0;
+
+function OrgChartSearchBar(props) {
+    const history = useHistory();
+    const classes = useStyles();
+    const [options, setOptions] = React.useState([]);
+    const [inputValue, setInputValue] = React.useState("");
+
+    React.useEffect(() => {
+        searchBarCounter++;
+        const currCounter = searchBarCounter;
+        setTimeout(function() {
+            // make API call only if no change has been applied to input and input min-length = 2
+            if (searchBarCounter === currCounter && inputValue.length >= 2) {
+                const parsedName = parseFullName(inputValue);
+                getPredictiveSearchAPI(parsedName.first, parsedName.last).then((response) => {
+                    // update options only if no change has been applied to input
+                    if (searchBarCounter === currCounter) {
+                        setOptions(response);
+                    }
+                });
+            }
+        }, 2000);
+    }, [inputValue]);
+
+    return (
+        <Autocomplete 
+            options={options}
+            getOptionLabel={(option) => inputValue}
+            openOnFocus={true}
+            freeSolo={true}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Search by name"
+                    classes={{ root: classes.searchRect }}
+                    size="small"
+                />
+            )}
+            renderOption={(option) => 
+                <div className={"orgchart-search-dropdown-entry"} onClick={() => {
+                    console.log('1');
+                    history.push(`${PagePathEnum.ORGCHART}/` + option.workerId);
+                }}>
+                    <img src="./../sample.png"/>
+                    <Typography noWrap>
+                        {`${option.firstName} ${option.lastName}`}
+                    </Typography>
+                </div>
+            }
+            onInputChange= {(event, value, reason) => {
+                setInputValue(value);
+            }}
+        />
+    );
+}
+
 let setHideTop;
 let setHideBottom;
 let orgChartHideTop = false;
 let orgChartHideBottom = false;
-
-let setOrgChartForId;
 
 function OrgChartNode(props) {
     const classes = useStyles();
@@ -186,10 +246,9 @@ function OrgChart(props) {
     };
 
     setHideBottom = setHideBottom.bind(this);
-    setOrgChartForId = props.setOrgChart.bind(this);
 
     useEffect(() => {
-        props.setOrgChart(params.workerId);
+        props.setOrgChart(params["workerId"]);
     }, [params]);
 
     let dataSet;
@@ -216,14 +275,13 @@ function OrgChart(props) {
                 classes={{ root: classes.loading }}
             />
         </div>
-    ) : (
-        props.dataSetDefault === undefined ? 
+    ) : props.dataSetDefault === undefined ? (
         // invalid state
         <div className={"orgchart-container"}>
-            Sorry, there is no employee or contractor with matching id. 
-        </div> : 
+            Sorry, there is no employee or contractor with matching id.
+        </div>
+    ) : (
         // chart state
-        (
         <OrganizationChart
             datasource={dataSet}
             collapsible={false}
@@ -233,19 +291,14 @@ function OrgChart(props) {
             zoomoutLimit={0.4}
             NodeTemplate={OrgChartNode}
         />
-    ));
+    );
 
     return (
         <div>
             <div id="searchLegendArea">
-                <form id="searchArea">
-                    <TextField
-                        label="Search by name"
-                        variant="outlined"
-                        classes={{ root: classes.searchRect }}
-                        size="small"
-                    />
-                </form>
+                <div id="searchArea">
+                    <OrgChartSearchBar />
+                </div>
                 <ul id="legend">
                     <li>LEGEND</li>
                     <li>
@@ -310,7 +363,10 @@ const mapStateToProps = (state) => {
             const supervisorNode = convertWorkerToNode(
                 orgChartState.supervisor
             );
-            const colleagueNodes = orgChartState.colleagues.reduce(listNodeReducer, []);
+            const colleagueNodes = orgChartState.colleagues.reduce(
+                listNodeReducer,
+                []
+            );
             const subordinateNodes = orgChartState.subordinates.reduce(
                 listNodeReducer,
                 []
