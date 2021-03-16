@@ -23,6 +23,7 @@ export function NewContractorsContainer() {
     // TODO: 4. Validate input fields
     // TODO: 5. Update snackbar on success/failed 
     // TODO: 6. Cognito
+    // TODO: 7: Predictive search for supervisor
     const config = {
         bucketName: "ae-directory",
         dirName: "images",
