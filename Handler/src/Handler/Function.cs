@@ -180,8 +180,8 @@ namespace Handler
         public  APIGatewayProxyResponse predictiveSearch(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var firstNamePrefix = request.QueryStringParameters["firstName"];
-            var lastNamePrefix = request.QueryStringParameters["lastName"];
+            var firstNamePrefix = request.QueryStringParameters["firstName"].ToLower();
+            var lastNamePrefix = request.QueryStringParameters["lastName"].ToLower();
             LambdaLogger.Log("firstName: " + firstNamePrefix);
             LambdaLogger.Log("lastName: " + lastNamePrefix);
 
@@ -206,10 +206,10 @@ namespace Handler
             String sql = readers3.ReadToEnd();
 
             if (firstNamePrefix != string.Empty && lastNamePrefix != string.Empty) {
-                sql += " WHERE \"FirstName\" LIKE :p1 AND \"LastName\" LIKE :p2 LIMIT 20";
+                sql += " WHERE LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2 LIMIT 20";
                 LambdaLogger.Log("----------------IF----------------");
             } else {
-                sql += " WHERE (\"FirstName\" LIKE :p1 AND \"LastName\" LIKE :p2) OR (\"FirstName\" LIKE :p2 AND \"LastName\" LIKE :p1) LIMIT 20";
+                sql += " WHERE (LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2) OR (LOWER(\"FirstName\") LIKE :p2 AND LOWER(\"LastName\") LIKE :p1) LIMIT 20";
                 LambdaLogger.Log("----------------ELSE----------------");
             }
 
