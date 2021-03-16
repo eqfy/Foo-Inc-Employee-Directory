@@ -1141,7 +1141,11 @@ namespace Handler
 
             reader.Close();
             LambdaLogger.Log("employeeNumber ==: " + e.employeeNumber + "\n");
-            output = Newtonsoft.Json.JsonConvert.SerializeObject(e); 
+            if(e.employeeNumber !=null){ 
+                output = Newtonsoft.Json.JsonConvert.SerializeObject(e);
+            }else{
+                output = Newtonsoft.Json.JsonConvert.SerializeObject(null);
+            }
             //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
         
             var response = new APIGatewayProxyResponse
