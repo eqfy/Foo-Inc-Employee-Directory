@@ -1083,7 +1083,7 @@ namespace Handler
         public  APIGatewayProxyResponse getEmployeeID(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var employeeID = request.QueryStringParameters["EmployeeNumber"];  
+            var employeeID = request.QueryStringParameters["employeeNumber"];  
             LambdaLogger.Log("ID: " + employeeID);
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
@@ -1113,10 +1113,10 @@ namespace Handler
             var reader = cmd.ExecuteReader();
     
             string output = string.Empty;
-            List<Employee> employees = new List<Employee>();
+            //List<Employee> employees = new List<Employee>();
+            Employee e = new Employee();
 
             while(reader.Read()) {
-                Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
                 e.image = reader[2].ToString();
@@ -1136,12 +1136,12 @@ namespace Handler
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
                 e.officeLocation = reader[18].ToString();
-                employees.Add(e);
+                //employees.Add(e);
             }
 
             reader.Close();
-            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
-            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            LambdaLogger.Log("employeeNumber ==: " + e.employeeNumber + "\n");
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(e); 
             //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
         
             var response = new APIGatewayProxyResponse
