@@ -11,6 +11,16 @@ const config = {
         REGION: "us-west-2",
         URL: data.ProjectStack.endpoint,
     },
+    cognito: {
+        REGION: "us-west-2",
+        USER_POOL_ID: data.ProjectStack.UserPoolId,
+        APP_CLIENT_ID: data.ProjectStack.UserPoolClientId,
+        IDENTITY_POOL_ID: data.ProjectStack.IdentityPoolId
+    },
+    s3: {
+        REGION: "us-west-2",
+        BUCKET: "ae-images-foo-inc"
+    }
 };
 
 export default config;
