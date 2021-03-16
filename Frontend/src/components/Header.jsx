@@ -69,6 +69,12 @@ function Header(props) {
                             component={Link}
                             to={`${PagePathEnum.ORGCHART}/10001`}
                         />
+                        <Tab
+                            label="Add Contractor"
+                            classes={{ root: classes.tab }}
+                            component={Link}
+                            to={`${PagePathEnum.NEWCONTRACTOR}`}
+                        />
                         {/* <Tab
                             label="Dashboard (redux demo)"
                             classes={{ root: classes.tab }}
