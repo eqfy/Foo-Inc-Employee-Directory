@@ -1,0 +1,1 @@
+SELECT "Employee"."FirstName", "Employee"."LastName", "Employee"."PhotoUrl", "Employee"."EmployeeNumber" FROM "Employee"
