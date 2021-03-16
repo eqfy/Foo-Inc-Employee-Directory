@@ -1,26 +1,32 @@
-import { Card, CardContent, Typography } from "@material-ui/core";
+import { Card, CardContent, makeStyles, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import ImagePlaceholder from "./ImagePlaceholder";
 import styled from "styled-components";
 import OrgChartIcon from "./OrgChartIcon";
 import "../common/Common.css";
 import React from "react";
+import { PagePathEnum } from './constants';
+
+const useStyles = makeStyles({
+    centered: {
+        margin: "auto",
+    }
+});
 
 export default function EmployeeCard(props) {
-    const { employee, centered } = props;
+    const { employee } = props;
+    const classes = useStyles();
+
     return (
-        <StyledCard
-            // @ts-ignore
-            centered={centered}
-        >
-            <Link to={`/profile/${employee.employeeId}`}>
+        <StyledCard className={classes.centered}>
+            <Link to={`${PagePathEnum.PROFILE}/${employee.employeeId}`}>
                 <EmployeeCardContent>
                     <PositionDiv>
-                        <Link to={`/orgchart/${employee.employeeId}`}>
+                        <Link to={`${PagePathEnum.ORGCHART}/${employee.employeeId}`}>
                             <StyledOrgChartIcon />
                         </Link>
                     </PositionDiv>
-                    <ImagePlaceholder />
+                    <ImagePlaceholder image={employee.image} />
                     <Typography
                         variant="body1"
                         color="textPrimary"
@@ -44,7 +50,6 @@ const StyledCard = styled(Card)`
     }
     width: 250px;
     height: 275px;
-    ${(props /* @ts-ignore */) => props.centered && "margin: auto;"}
 `;
 
 const EmployeeCardContent = styled(CardContent)`

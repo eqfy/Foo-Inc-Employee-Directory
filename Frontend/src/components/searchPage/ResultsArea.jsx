@@ -2,43 +2,67 @@ import React from "react";
 import EmployeeCard from "../common/EmployeeCard";
 import { Pagination } from "@material-ui/lab";
 import styled from "styled-components";
-import data from "../../mocks/mockEmployees.json";
+import { useHistory, useLocation } from "react-router";
 import "../common/Common.css";
+import { setPageAction } from 'actions/searchAction';
+import { connect } from 'react-redux';
 
 const entriesPerPage = 6;
 
-const getEmployee = (index) => {
-    if (index < data.length) {
-        return (
-            <div className="card-grid-col">
-                <EmployeeCard employee={data[index]} />
-            </div>
-        );
-    }
-};
-
 function ResultsArea(props) {
-    const [page, setPage] = React.useState(1);
-    const handleChange = (event, value) => {
-        setPage(value);
+    const history = useHistory();
+    const location = useLocation();
+    const {
+        pageNumber,
+        updatePage,
+        resultOrder,
+        workers: { byId },
+    } = props;
+
+    const handleChange = (_event, value) => {
+        let params = new URLSearchParams(location.search);
+        params.set("page", value);
+        history.push({ search: params.toString() });
+    }
+
+    React.useEffect(() => {
+        let params = new URLSearchParams(location.search);
+        const page = Number(params.get("page"));
+
+        // Sync Redux with URL page param
+        if (page && page !== pageNumber) {
+            updatePage(page);
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location]);
+
+    const getEmployee = (index) => {
+        if (index < resultOrder.length) {
+            return (
+                <div className="card-grid-col">
+                    <EmployeeCard employee={byId[resultOrder[index]]} />
+                </div>
+            );
+        }
     };
 
+    const offset = (pageNumber - 1) * entriesPerPage;
     return (
         <>
             <div className="card-grid">
-                {getEmployee((page - 1) * entriesPerPage + 0)}
-                {getEmployee((page - 1) * entriesPerPage + 1)}
-                {getEmployee((page - 1) * entriesPerPage + 2)}
+                {getEmployee(offset + 0)}
+                {getEmployee(offset + 1)}
+                {getEmployee(offset + 2)}
             </div>
             <div className="card-grid">
-                {getEmployee((page - 1) * entriesPerPage + 3)}
-                {getEmployee((page - 1) * entriesPerPage + 4)}
-                {getEmployee((page - 1) * entriesPerPage + 5)}
+                {getEmployee(offset + 3)}
+                {getEmployee(offset + 4)}
+                {getEmployee(offset + 5)}
             </div>
-            {/* TODO: track the page in the URL */}
             <StyledPagination
-                count={Math.max(Math.ceil(data.length / 6), 1)}
-                page={page}
+                count={Math.max(Math.ceil(resultOrder.length / 6), 1)}
+                page={pageNumber}
                 onChange={handleChange}
             />
         </>
@@ -51,4 +75,15 @@ const StyledPagination = styled(Pagination)`
     }
 `;
 
-export default ResultsArea;
+const mapStateToProps = (state) => ({
+    workers: state.workers,
+    resultOrder: state.searchPageState.resultOrder,
+    pageNumber: state.searchPageState.pageNumber,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    updatePage: (value) =>
+        dispatch(setPageAction(value)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);

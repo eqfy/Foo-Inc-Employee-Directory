@@ -11,7 +11,7 @@ public class Employee
   public string employmentType;
   public string division;
   public string companyName;
-  public string OfficeLocation;
+  public string officeLocation;
   public string title;
   public string hireDate;
   public string terminationDate;

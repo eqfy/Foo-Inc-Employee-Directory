@@ -1,6 +1,5 @@
 import {
     TextField,
-    Button,
     makeStyles,
     Card,
     CardMedia,
@@ -10,26 +9,16 @@ import {
 } from "@material-ui/core";
 import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
 import { connect } from "react-redux";
-import { withRouter } from "react-router";
+import { withRouter, useHistory, useParams } from "react-router";
 import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
 import { setOrgChart } from "../../actions/orgChartAction";
+import { PagePathEnum } from 'components/common/constants';
 
 const useStyles = makeStyles({
     searchRect: {
         minWidth: 300,
-    },
-    searchButton: {
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingTop: 5,
-        paddingbottom: 5,
-        backgroundColor: "#1c83fb",
-        color: "#FFFFFF",
-        "&:hover": {
-            backgroundColor: "#00569C",
-        },
     },
     card: {
         borderRadius: 20,
@@ -86,6 +75,7 @@ let setOrgChartForId;
 
 function OrgChartNode(props) {
     const classes = useStyles();
+    const history = useHistory();
 
     const data = props.nodeData;
 
@@ -114,9 +104,11 @@ function OrgChartNode(props) {
             }`}
             classes={{ root: classes.card }}
             onClick={() => {
-                setOrgChartForId(data.id);
                 setHideTop(false);
                 setHideBottom(false);
+                if (!data.isCurrent) {
+                    history.push(`${PagePathEnum.ORGCHART}/` + data.id);
+                }
             }}
         >
             <CardMedia
@@ -179,6 +171,8 @@ function OrgChart(props) {
     const [hideTop, reactSetHideTop] = React.useState(false);
     const [hideBottom, reactSetHideBottom] = React.useState(false);
 
+    const params = useParams();
+
     setHideTop = (hide) => {
         orgChartHideTop = hide;
         reactSetHideTop(orgChartHideTop);
@@ -195,10 +189,8 @@ function OrgChart(props) {
     setOrgChartForId = props.setOrgChart.bind(this);
 
     useEffect(() => {
-        if (!props.ready) {
-            props.setOrgChart('10005');
-        }
-    }, []);
+        props.setOrgChart(params.workerId);
+    }, [params]);
 
     let dataSet;
 
@@ -253,13 +245,6 @@ function OrgChart(props) {
                         classes={{ root: classes.searchRect }}
                         size="small"
                     />
-                    <Button
-                        variant="contained"
-                        classes={{ root: classes.searchButton }}
-                        size="small"
-                    >
-                        Search
-                    </Button>
                 </form>
                 <ul id="legend">
                     <li>LEGEND</li>
@@ -354,6 +339,7 @@ const mapStateToProps = (state) => {
         dataSetHideTop: dataSetHideTop,
         dataSetHideBottom: dataSetHideBottom,
         dataSetMinimum: dataSetMinimum,
+        focusedWorkerId: state.appState.focusedWorkerId,
         ready: state.appState.ready,
     };
 };

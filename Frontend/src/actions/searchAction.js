@@ -57,6 +57,15 @@ export const searchByExperienceAction = (payload) => (dispatch, getState) => {
     dispatch(searchWithAppliedFilterAction());
 };
 
+export const setPageAction = (payload) => (dispatch) => {
+    dispatch({
+        type: "SET_SEARCH_PAGE_NUMBER",
+        payload: {
+            pageNumber: payload,
+        },
+    });
+};
+
 const createSearchPayload = (state) => {
     const {
         appState: {
