@@ -237,12 +237,11 @@ namespace Handler
             reader.Close();
 
             output = Newtonsoft.Json.JsonConvert.SerializeObject(predEmployees);
-            LambdaLogger.Log("----------------BODY----------------------: " + output);
+
             var response = new APIGatewayProxyResponse
             {
                 StatusCode = 200,
                 Body = output,
-                //Body = myDbItems.ToString(),
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
