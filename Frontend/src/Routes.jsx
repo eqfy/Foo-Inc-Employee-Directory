@@ -7,7 +7,8 @@ import ProfilePageContainer from "./components/ProfilePageContainer";
 import SearchPageContainer from "./components/SearchPageContainer";
 import UpdatePageContainer from "./components/UpdatePageContainer";
 import Header from "./components/Header";
-import { PagePathEnum } from 'components/common/constants';
+import { PagePathEnum } from "components/common/constants";
+import { NewContractorsContainer } from "components/NewContractorsContainer";
 
 export default function Routes() {
     return (
@@ -24,8 +25,12 @@ export default function Routes() {
                 <Header activeTabIndex={2} />
                 <OrgChartPageContainer />
             </Route>
-            <Route path="/update">
+            <Route path={`${PagePathEnum.NEWCONTRACTOR}`}>
                 <Header activeTabIndex={3} />
+                <NewContractorsContainer />
+            </Route>
+            <Route path={`${PagePathEnum.UPDATE}`}>
+                <Header activeTabIndex={4} />
                 <UpdatePageContainer />
             </Route>
             <Route path="/">

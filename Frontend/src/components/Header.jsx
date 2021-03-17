@@ -35,8 +35,10 @@ function Header(props) {
             setCurrentTabIndex(1);
         } else if (pathname.startsWith(PagePathEnum.ORGCHART)) {
             setCurrentTabIndex(2);
-        } else if (pathname.startsWith(PagePathEnum.UPDATE)) {
+        } else if (pathname.startsWith(PagePathEnum.NEWCONTRACTOR)) {
             setCurrentTabIndex(3);
+        } else if (pathname.startsWith(PagePathEnum.UPDATE)) {
+            setCurrentTabIndex(4);
         }
     }, [pathname]);
 
@@ -72,10 +74,16 @@ function Header(props) {
                             to={`${PagePathEnum.ORGCHART}/10001`}
                         />
                         <Tab
+                            label="Add Contractor"
+                            classes={{ root: classes.tab }}
+                            component={Link}
+                            to={`${PagePathEnum.NEWCONTRACTOR}`}
+                        />
+                        <Tab
                             label="Update Note"
                             classes={{ root: classes.tab }}
                             component={Link}
-                            to="/update"
+                            to={`${PagePathEnum.UPDATE}`}
                         />
                     </Tabs>
                 </Toolbar>
