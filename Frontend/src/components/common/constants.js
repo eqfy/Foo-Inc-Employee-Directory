@@ -7,4 +7,5 @@ export const PagePathEnum = {
   SEARCH: "/search",
   PROFILE: "/profile",
   ORGCHART: "/orgchart",
+  NEWCONTRACTOR: "/addContractor",
 }

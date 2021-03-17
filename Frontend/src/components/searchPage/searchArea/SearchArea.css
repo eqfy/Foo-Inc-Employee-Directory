@@ -7,18 +7,20 @@
 }
 
 .apply-filter .heading {
-    padding: 10px 0 10px 16px;
+    padding: 11px 0 11px 16px;
     margin: 4px 0 10px 0;
     background-color: #1c83fb;
     color: white;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
 }
 
 .apply-filter .filter-widgets {
-    max-height: calc(100vh - 255px);
+    max-height: calc(100vh - 260px);
+    min-height: 570px;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-right: 10px;
 }
 
 .apply-filter .experience-slider {

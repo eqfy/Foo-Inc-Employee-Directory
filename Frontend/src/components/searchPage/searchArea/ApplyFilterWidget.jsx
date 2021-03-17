@@ -1,6 +1,7 @@
 import { setFilterAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
+import { matchSorter } from "match-sorter";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
@@ -20,6 +21,8 @@ const {
 } = require("@material-ui/core");
 const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 
+const FilterTextTimer = {};
+
 function ApplyFilterWidget(props) {
     const {
         filterData,
@@ -31,8 +34,36 @@ function ApplyFilterWidget(props) {
     } = props;
     const filters = filterData[`${type}AllId`];
     const appliedFilters = filterState[`${type}State`];
-    const handleTextChange = () => {
-        // TODO For predictive search
+    const [displayedFilters, setDisplayedFilters] = React.useState(filters);
+    React.useEffect(() => {
+        setDisplayedFilters(filters);
+    }, [filters]);
+
+    const handleTextChange = (event) => {
+        const userInput = event.target.value;
+        coordinatedDebounce(predictiveFilterSearch, FilterTextTimer, 300)(
+            filters,
+            userInput,
+            setDisplayedFilters
+        );
+    };
+
+    const handleTextKeyPress = (event) => {
+        if (event.key !== "Enter") {
+            return;
+        }
+        if (Array.isArray(displayedFilters) && displayedFilters.length === 1) {
+            handleCheckboxChange(displayedFilters[0]);
+        } else {
+            const filterEntries = Object.entries(displayedFilters);
+            if (filterEntries.length === 1) {
+                const filterNames = filterEntries[0][1];
+                const filterCategory = filterEntries[0][0];
+                if (filterNames.length === 1) {
+                    handleCheckboxChange(filterNames[0], filterCategory);
+                }
+            }
+        }
     };
 
     const handleCheckboxChange = (name, category = "") => {
@@ -53,19 +84,20 @@ function ApplyFilterWidget(props) {
                 size="small"
                 variant="outlined"
                 onChange={handleTextChange}
+                onKeyPress={handleTextKeyPress}
             />
             <StyledFormLabel>{formLabel}</StyledFormLabel>
             <CollapsableFilterBox>
                 {!isCategorized ? (
                     <CheckboxList
-                        filters={filters}
+                        filters={displayedFilters}
                         appliedFilters={appliedFilters}
                         type={type}
                         handleCheckboxChange={handleCheckboxChange}
                     />
                 ) : (
                     <CategorizedCheckboxList
-                        categorizedFilters={filters}
+                        categorizedFilters={displayedFilters}
                         appliedFilters={appliedFilters}
                         type={type}
                         handleCheckboxChange={handleCheckboxChange}
@@ -224,6 +256,46 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ApplyFilterWidget);
+
+const predictiveFilterSearch = (filters, userInput, setDisplayedFilters) => {
+    let matchedResult;
+    if (Array.isArray(filters)) {
+        matchedResult = matchSorter(filters, userInput);
+    } else {
+        // Formatting of filters to work with matchSorter
+        const filterObjects = Object.entries(filters).reduce(
+            (acc, [category, filterOptions = []]) => {
+                filterOptions.forEach((filterOption) => {
+                    acc = acc.concat({
+                        category: category,
+                        filter: filterOption,
+                    });
+                });
+                return acc;
+            },
+            []
+        );
+        const matchedFilterObjects = matchSorter(filterObjects, userInput, {
+            keys: ["filter", "category"],
+        });
+        matchedResult = matchedFilterObjects.reduce(
+            (acc, categorizedFilter) => {
+                if (!acc[categorizedFilter.category]) {
+                    acc[categorizedFilter.category] = [
+                        categorizedFilter.filter,
+                    ];
+                } else {
+                    acc[categorizedFilter.category] = acc[
+                        categorizedFilter.category
+                    ].concat(categorizedFilter.filter);
+                }
+                return acc;
+            },
+            []
+        );
+    }
+    setDisplayedFilters(matchedResult);
+};
 
 const StyledTextField = styled(TextField)({
     alignSelf: "center",
