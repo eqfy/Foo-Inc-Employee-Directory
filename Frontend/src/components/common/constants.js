@@ -8,4 +8,6 @@ export const PagePathEnum = {
   PROFILE: "/profile",
   ORGCHART: "/orgchart",
   NEWCONTRACTOR: "/addContractor",
+    // TODO: remove after update
+    UPDATE: "/update",
 }
