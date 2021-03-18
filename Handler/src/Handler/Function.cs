@@ -1160,7 +1160,7 @@ namespace Handler
         public  APIGatewayProxyResponse getEmployeeID(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var employeeID = request.QueryStringParameters["EmployeeNumber"];  
+            var employeeID = request.QueryStringParameters["employeeNumber"];  
             LambdaLogger.Log("ID: " + employeeID);
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
@@ -1190,10 +1190,10 @@ namespace Handler
             var reader = cmd.ExecuteReader();
     
             string output = string.Empty;
-            List<Employee> employees = new List<Employee>();
+            //List<Employee> employees = new List<Employee>();
+            Employee e = new Employee();
 
             while(reader.Read()) {
-                Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
                 e.image = reader[2].ToString();
@@ -1213,12 +1213,16 @@ namespace Handler
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
                 e.officeLocation = reader[18].ToString();
-                employees.Add(e);
+                //employees.Add(e);
             }
 
             reader.Close();
-            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
-            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            LambdaLogger.Log("employeeNumber ==: " + e.employeeNumber + "\n");
+            if(e.employeeNumber !=null){ 
+                output = Newtonsoft.Json.JsonConvert.SerializeObject(e);
+            }else{
+                output = Newtonsoft.Json.JsonConvert.SerializeObject(null);
+            }
             //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
         
             var response = new APIGatewayProxyResponse
@@ -1253,7 +1257,7 @@ namespace Handler
             LambdaLogger.Log("skillsList: " + skillList[0].ToString());
 
             
-            //----Run the SQL to find the PhysicalLocation code of the input----
+            //----Run the SQL in code for the input----
 
             var idsScript = getS3FileSync(bucketName, "findSkillsIds.sql");
             
@@ -1271,12 +1275,16 @@ namespace Handler
 
             LambdaLogger.Log("insertSQL: " + insertSQL);
 
-            using var con = new NpgsqlConnection(GetRDSConnectionString());
-            con.Open();
+            
+
+           
 
             
             
             foreach (var skill in skillList ){
+                
+                using var con = new NpgsqlConnection(GetRDSConnectionString());
+                con.Open();
                 //Parse into the two strings
                 string[] skillStrings= skill.Split(":::");
                 string skillCategory = skillStrings[0];
@@ -1290,17 +1298,68 @@ namespace Handler
 
                 //LambdaLogger.Log("groupCodeSQL: " + groupCodeSQL);
 
+                
+
+                // string sql1 = "SELECT sc.\"SkillCategoryId\", s.\"SkillId\" FROM \"SkillCategory\" sc, \"Skill\" s WHERE sc.\"SkillCategoryId\" = s.\"SkillCategoryId\" AND sc.\"Label\" = \"" + skillCategory + "\""  +  "AND s.\"Label\" = \"" + skillLabel + "\"";
+
+                // LambdaLogger.Log("SQL STATEMENT " + sql1);
+
+                
+
+                // using (var cmd = new NpgsqlCommand(sql1, con))
+                // using (var reader = cmd.ExecuteReader()) { 
+                //     while (readerID.Read()){
+                //         categoryId = readerID.GetString(readerID.GetOrdinal("SkillCategoryId");
+                //         skillId = readerID.GetString(readerID.GetOrdinal("SkillId"));
+                //     }
+                // }
+
+
+                string categoryId ="";
+                string skillId="";
                 using var idsCmd = new NpgsqlCommand(idsSQL,con);
+
+                LambdaLogger.Log("idsSQL " + idsSQL);
 
                 //Add the bind variable
                 idsCmd.Parameters.AddWithValue("p0",skillCategory);
                 idsCmd.Parameters.AddWithValue("p1",skillLabel);
+                
+                LambdaLogger.Log("HELOO EXCECUTE ---------");
+                using var readerID = idsCmd.ExecuteReader();
 
-                var readerID = idsCmd.ExecuteReader();
-                readerID.Read();
-                string categoryId = readerID[0].ToString();
-                string skillId = readerID[1].ToString();
+                LambdaLogger.Log("BYE EXCECUTE -----------");
+
+
+
+                //LambdaLogger.Log("Reader closed? ---------" + readerID.IsClosed); 
+                LambdaLogger.Log("Reader Rows ---------" + readerID.HasRows);
+                //LambdaLogger.Log("Reader column count ---------" + readerID.FieldCount);
+
+                while (readerID.Read()){
+                    LambdaLogger.Log("HELOO WHILE ---------" );
+                    categoryId = readerID[0].ToString();
+                   
+                    skillId = readerID[1].ToString();
+                
+                }
+                LambdaLogger.Log("BYE WHILE ---------" );
+        
+                // readerID.Read();
+                // LambdaLogger.Log("BYE READ -----");
+                // if (readerID[0] == null){
+                //     LambdaLogger.Log("NULL READER[0] -----");
+                // }else{
+                //     LambdaLogger.Log("NOT NULL READER[0] -----");
+                //}
+                // string categoryId = readerID[0].ToString();
+                // string skillId = readerID[1].ToString();
+                // LambdaLogger.Log("HELOO CLOSE -----");
+                // LambdaLogger.Log("Reader next HI ? ---------"); 
+                // readerID.NextResult();
+                // readerID.Dispose();
                 readerID.Close();
+                LambdaLogger.Log("Reader next HI ? ---------"); 
 
 
                 LambdaLogger.Log("categoryID " + categoryId);
@@ -1316,10 +1375,15 @@ namespace Handler
                 insertSkillCmd.Parameters.AddWithValue("p2",skillId);
 
                 insertSkillCmd.ExecuteNonQuery();
+
+                
                 //call the sql to insert the pair into the employeeSkillsTable
                 //skillFilter =  ;
                 //}
                 //es.skills LIKE '%Accounting:::Transaction Processing%' AND es.skills LIKE '%Accounting:::Reconciling%' 
+                
+                con.Dispose();
+                con.Close();
             }
         }
 
