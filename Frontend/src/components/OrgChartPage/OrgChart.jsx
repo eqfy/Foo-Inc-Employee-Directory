@@ -14,7 +14,8 @@ import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
 import { setOrgChart } from "../../actions/orgChartAction";
-import { PagePathEnum } from 'components/common/constants';
+import { PagePathEnum } from "components/common/constants";
+import WorkerNotFound from "components/common/WorkerNotFound";
 
 const useStyles = makeStyles({
     searchRect: {
@@ -217,14 +218,13 @@ function OrgChart(props) {
                 classes={{ root: classes.loading }}
             />
         </div>
-    ) : (
-        props.dataSetDefault === undefined ? 
+    ) : props.dataSetDefault === undefined ? (
         // invalid state
         <div className={"orgchart-container"}>
-            Sorry, there is no employee or contractor with matching id. 
-        </div> : 
+            <WorkerNotFound />
+        </div>
+    ) : (
         // chart state
-        (
         <OrganizationChart
             datasource={dataSet}
             collapsible={false}
@@ -234,7 +234,7 @@ function OrgChart(props) {
             zoomoutLimit={0.4}
             NodeTemplate={OrgChartNode}
         />
-    ));
+    );
 
     return (
         <div>
@@ -311,7 +311,10 @@ const mapStateToProps = (state) => {
             const supervisorNode = convertWorkerToNode(
                 orgChartState.supervisor
             );
-            const colleagueNodes = orgChartState.colleagues.reduce(listNodeReducer, []);
+            const colleagueNodes = orgChartState.colleagues.reduce(
+                listNodeReducer,
+                []
+            );
             const subordinateNodes = orgChartState.subordinates.reduce(
                 listNodeReducer,
                 []

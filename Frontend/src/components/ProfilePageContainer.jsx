@@ -2,15 +2,15 @@ import React from "react";
 import { connect } from "react-redux";
 import { useParams } from "react-router";
 import { CircularProgress, makeStyles } from "@material-ui/core";
-import { PageContainer } from "./common/PageContainer";
+import { CenteredPageContainer, PageContainer } from "./common/PageContainer";
 import CoreInfoArea from "./profilePage/CoreInfoArea";
 import SkillsArea from "./profilePage/SkillsArea";
 import PrevNextButtons from "./profilePage/PrevNextButtons";
 import SearchButton from "./profilePage/SearchButton";
 import styled from "styled-components";
 import { setProfile } from "actions/profileAction";
-import NotFound from "./NotFound";
 import { setFocusedWorkerId } from "actions/generalAction";
+import WorkerNotFound from "./common/WorkerNotFound";
 
 const useStyles = makeStyles({
     loading: {
@@ -56,16 +56,21 @@ export function ProfilePageContainer(props) {
     } else {
         if (ready) {
             // ready but no worker: invalid id
-            return <NotFound />;
+            return (
+                <CenteredPageContainer>
+                    <WorkerNotFound />
+                </CenteredPageContainer>
+            );
         } else {
             // not ready: loading
             return (
                 <PageContainer>
-                    <LoadingContainer>
-                        <CircularProgress 
+                    <CenteredPageContainer>
+                        <CircularProgress
                             size={"100px"}
-                            classes={{ root: classes.loading }}/>
-                    </LoadingContainer>
+                            classes={{ root: classes.loading }}
+                        />
+                    </CenteredPageContainer>
                 </PageContainer>
             );
         }
@@ -90,13 +95,4 @@ export default connect(
 
 const StyledDiv = styled.div`
     margin-bottom: 25px;
-`;
-
-const LoadingContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 70px);
-    margin: 0;
-    overflow: hidden;
 `;

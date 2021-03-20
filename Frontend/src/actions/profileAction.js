@@ -4,38 +4,38 @@ export const setProfile = (workerId) => (dispatch) => {
     dispatch({
         type: "SET_READY",
         payload: {
-            ready: false
-        }
+            ready: false,
+        },
     });
 
     getProfileAPI(workerId)
         .then((response) => {
+            console.log(response);
             // if employee id is valid
             if (response !== null) {
-
                 dispatch({
                     type: "SET_FOCUSED_WORKERID",
                     payload: {
-                    focusedWorkerId: workerId,
-                    }
+                        focusedWorkerId: workerId,
+                    },
                 });
-    
+
                 const workerById = {};
-                workerById[workerId] = response[0];
+                workerById[workerId] = response;
                 dispatch({
                     type: "ADD_WORKERS",
                     payload: {
                         byId: workerById,
                         allId: [workerId],
-                    }
+                    },
                 });
             }
 
             dispatch({
                 type: "SET_READY",
                 payload: {
-                    ready: true
-                }
+                    ready: true,
+                },
             });
         })
         .catch((error) => {
