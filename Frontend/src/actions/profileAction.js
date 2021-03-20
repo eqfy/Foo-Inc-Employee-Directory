@@ -12,7 +12,6 @@ export const setProfile = (workerId) => (dispatch) => {
         .then((response) => {
             // if employee id is valid
             if (response !== null) {
-                console.log(response[0]);
 
                 dispatch({
                     type: "SET_FOCUSED_WORKERID",

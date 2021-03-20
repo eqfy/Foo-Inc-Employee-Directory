@@ -9,7 +9,7 @@ function CoreInfoArea(props) {
     const { employee } = props;
     return (
         <ContainerDiv>
-            <EmployeeCard employee={employee} centered />
+            <EmployeeCard employee={employee} linkToProfile={false} />
             <div className="heading">Core Information</div>
             <StyledTypography
                 variant="body1"

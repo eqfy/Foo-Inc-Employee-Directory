@@ -21,7 +21,7 @@ const useNextStyles = makeStyles({
 
 const previousButton = (index, classes, resultOrder) => {
     let prevEmployeeId;
-    if (resultOrder.length && index > 0) {
+    if (resultOrder.length > 0 && index > 0) {
         prevEmployeeId = resultOrder[index - 1];
     }
 
@@ -39,7 +39,7 @@ const previousButton = (index, classes, resultOrder) => {
 
 const nextButton = (index, classes, resultOrder) => {
     let nextEmployeeId;
-    if (index < resultOrder.length) {
+    if (index !== -1 && index < resultOrder.length) {
         nextEmployeeId = resultOrder[index + 1];
     }
 
@@ -60,7 +60,12 @@ function PrevNextButtons(props) {
     const classesPrev = usePrevStyles();
     const classesNext = useNextStyles();
 
-    const index = resultOrder.findIndex((workerId) => workerId === focusedWorkerId);
+    const [index, setIndex] = React.useState(-1);
+
+    React.useEffect(() => {
+        const temp = resultOrder.findIndex((workerId) => workerId === focusedWorkerId);
+        setIndex(temp);
+    }, [focusedWorkerId]);
 
     return (
         <Container className="flex">
@@ -75,7 +80,6 @@ const mapStateToProps = (state) => ({
     focusedWorkerId: state.appState.focusedWorkerId,
     resultOrder: state.searchPageState.resultOrder,
 });
-
 
 export default connect(mapStateToProps)(PrevNextButtons);
 

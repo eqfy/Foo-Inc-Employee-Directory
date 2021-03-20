@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { withRouter, useHistory, useParams } from "react-router";
+import { connect } from "react-redux";
 import React from "react";
 import { AppBar, Tabs, Tab, Toolbar, makeStyles } from "@material-ui/core";
 import logo from "./../assets/ae_logo.png";
@@ -18,6 +20,7 @@ const useStyles = makeStyles({
 });
 
 function Header(props) {
+    const { focusedWorkerId } = props;
     const [currentTabIndex, setCurrentTabIndex] = React.useState(
         props.activeTabIndex
     );
@@ -65,13 +68,13 @@ function Header(props) {
                             label="Profile View"
                             classes={{ root: classes.tab }}
                             component={Link}
-                            to={`${PagePathEnum.PROFILE}/10001`}
+                            to={`${PagePathEnum.PROFILE}/${focusedWorkerId}`}
                         />
                         <Tab
                             label="Organization Chart"
                             classes={{ root: classes.tab }}
                             component={Link}
-                            to={`${PagePathEnum.ORGCHART}/10001`}
+                            to={`${PagePathEnum.ORGCHART}/${focusedWorkerId}`}
                         />
                         <Tab
                             label="Add Contractor"
@@ -92,4 +95,12 @@ function Header(props) {
     );
 }
 
-export default Header;
+const mapStateToProps = (state) => {
+    return {
+        focusedWorkerId: state.appState.focusedWorkerId,
+    };
+};
+
+export default withRouter(
+    connect(mapStateToProps)(Header)
+);

@@ -1,15 +1,27 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { Button, Typography } from "@material-ui/core";
+import { Button, Typography, makeStyles } from "@material-ui/core";
 import "./ProfilePage.css";
 
-const parseSkills = (skills) => {
+const useStyles = makeStyles({
+    skillTitle: {
+        color: '#0663d0',
+        fontSize: '18px',
+    },
+    skillContent: {
+        fontSize: '18px',
+    }
+});
+
+const parseSkills = (skills, styles) => {
+
     if (!skills) {
         return "No skills";
     }
 
     const skillArray = skills.split(", ");
+    let counter = 0;
     return skillArray.map((fullSkill) => {
         /**
          * 2/20/21
@@ -19,12 +31,14 @@ const parseSkills = (skills) => {
          */
         const [skillCategory, skill] = fullSkill.split(": ");
         return (
-            <div>
-                <StyledSpan>
+            <div key={`skill${counter++}`}>
+                <StyledTypography display='inline' variant="body1" color="textPrimary" classes={{root: styles.skillTitle}}>
                     {skillCategory}
                     {": "}
-                </StyledSpan>
+                </StyledTypography>
+                <StyledTypography display='inline' variant="body1" color="textPrimary" classes={{root: styles.skillContent}}>
                 {skill}
+                </StyledTypography>
             </div>
         );
     });
@@ -32,6 +46,8 @@ const parseSkills = (skills) => {
 
 function SkillsArea(props) {
     const { employee } = props;
+    const styles = useStyles();
+
     return (
         <ContainerDiv>
             <StyledHeading className="heading">
@@ -41,14 +57,9 @@ function SkillsArea(props) {
                     Search with these skills
                 </SkillButton>
             </StyledHeading>
-            <StyledTypography
-                variant="body1"
-                color="textPrimary"
-                // @ts-ignore
-                component="p"
-            >
-                {parseSkills(employee.skills)}
-            </StyledTypography>
+            <StyledSkillContainer>
+                {parseSkills(employee.skills, styles)}
+            </StyledSkillContainer>
         </ContainerDiv>
     );
 }
@@ -59,14 +70,14 @@ const ContainerDiv = styled.div`
     margin-left: 30px;
 `;
 
-const StyledTypography = styled(Typography)`
+const StyledSkillContainer = styled.div`
     && {
         font-size: 18px;
         margin-left: 18px;
     }
 `;
 
-const StyledSpan = styled.span`
+const StyledTypography = styled(Typography)`
     color: #0663d0;
 `;
 

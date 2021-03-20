@@ -41,7 +41,7 @@ function ResultsArea(props) {
         if (index < resultOrder.length) {
             return (
                 <div className="card-grid-col">
-                    <EmployeeCard employee={byId[resultOrder[index]]} />
+                    <EmployeeCard employee={byId[resultOrder[index]]} linkToProfile={true} />
                 </div>
             );
         }

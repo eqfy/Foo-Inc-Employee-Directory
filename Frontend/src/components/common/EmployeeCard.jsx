@@ -13,7 +13,9 @@ const useStyles = makeStyles({
         borderRadius: 25,
         borderWidth: 4,
         borderColor: "black",
-        "&:hover": {
+        marginLeft: "auto",
+        marginRight: "auto",
+        "&.link-to-profile:hover": {
             cursor: "pointer",
             boxShadow: "0 0 3px 3px black",
         }
@@ -21,45 +23,62 @@ const useStyles = makeStyles({
     cardMedia: {
         width: 160,
         height: 160,
-        margin: "auto",
+        marginLeft: "auto",
+        marginRight: "auto",
+        marginBottom: 5,
+    },
+    cardText: {
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
     }
 });
 
 export default function EmployeeCard(props) {
-    const { employee } = props;
+    // linkToProfile: employeeCard in profile page does not need to redirect to itself
+    const { employee, linkToProfile } = props;
     const classes = useStyles();
 
-    return (
-        <Card classes={{root: classes.card }}>
-            <StyledLink to={`${PagePathEnum.PROFILE}/${employee.employeeId}`}>
-                <EmployeeCardContentContainer>
+    const employeeCardContent = 
+    (
+        <EmployeeCardContentContainer>
                     <PositionedCardContentDiv>
-                    <PositionOrgChartIconDiv>
-                        <Link to={`${PagePathEnum.ORGCHART}/${employee.employeeId}`}>
-                            <StyledOrgChartIcon />
-                        </Link>
-                    </PositionOrgChartIconDiv>
                     <CardMedia image={employee.image} classes={{ root: classes.cardMedia }} />
                     <Typography
                         variant="body1"
                         color="textPrimary"
                         component="p"
+                        classes={{ root: classes.cardText }}
                     >
                         <b>Name:</b>{" "}
                         {`${employee.firstName} ${employee.lastName}`}
-                        <br />
-                        <b>Title:</b> {employee.title}
-                        <br />
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        color="textPrimary"
+                        component="p"
+                        classes={{ root: classes.cardText }}>
+                            <b>Title:</b> {employee.title}
                     </Typography>
                     </PositionedCardContentDiv>
                 </EmployeeCardContentContainer>
-            </StyledLink>
+    );
+
+    return (
+        <Card className={linkToProfile ? "link-to-profile" : ""} classes={{root: classes.card }}>
+            <PositionOrgChartIconDiv>
+                <Link to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}>
+                    <StyledOrgChartIcon />
+                </Link>
+            </PositionOrgChartIconDiv>
+            {linkToProfile ? <StyledLink to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}>
+                {employeeCardContent}
+            </StyledLink> : employeeCardContent}
         </Card>
     );
 }
 
 const EmployeeCardContentContainer = styled(CardContent)`
-    max-width: 250px;
     height: 275px;
     width: 100%;
     border: 1px solid #000000;
@@ -76,8 +95,9 @@ const EmployeeCardContentContainer = styled(CardContent)`
 `;
 
 const PositionOrgChartIconDiv = styled.div`
-    position: relative;
-    left: calc(93% - 5px);
+    position: relative;    
+    left: 86%;
+    top: 26px;
     width: 0;
     height: 0;
 `;
@@ -95,11 +115,12 @@ const StyledOrgChartIcon = styled(OrgChartIcon)`
 `;
 
 const PositionedCardContentDiv = styled.div`
-    margin: auto;
+
 `;
 
 const StyledLink = styled(Link)`
-    &:hover {
+    &:hover, &:not(:hover) {
         text-decoration: none;
     }
+
 `;

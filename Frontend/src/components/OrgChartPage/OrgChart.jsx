@@ -71,8 +71,6 @@ let setHideBottom;
 let orgChartHideTop = false;
 let orgChartHideBottom = false;
 
-let setOrgChartForId;
-
 function OrgChartNode(props) {
     const classes = useStyles();
     const history = useHistory();
@@ -122,14 +120,18 @@ function OrgChartNode(props) {
                 >
                     {data.name}
                 </Typography>
-                <p className={"card-name-extension"}>{data.name}</p>
+                <Typography className={"card-name-extension"}>
+                    {data.name}
+                </Typography>
                 <Typography
                     classes={{ root: classes.cardText }}
                     className={`card-title-${data.id}`}
                 >
                     {data.title}
                 </Typography>
-                <p className={"card-title-extension"}>{data.title}</p>
+                <Typography className={"card-title-extension"}>
+                    {data.title}
+                </Typography>
             </CardContent>
         </Card>
     );
@@ -186,10 +188,9 @@ function OrgChart(props) {
     };
 
     setHideBottom = setHideBottom.bind(this);
-    setOrgChartForId = props.setOrgChart.bind(this);
 
     useEffect(() => {
-        props.setOrgChart(params.workerId);
+        props.setOrgChart(params["workerId"]);
     }, [params]);
 
     let dataSet;
