@@ -61,7 +61,7 @@ function ExperienceSlider(props) {
                 />
             </Grid>
             <Grid item>
-                {"> "}
+                {"≥ "}
                 <Input
                     value={value}
                     margin="dense"
