@@ -39,7 +39,7 @@ export default function EmployeeCard(props) {
                             <StyledOrgChartIcon />
                         </Link>
                     </PositionOrgChartIconDiv>
-                    <CardMedia image={employee.image} classes={{ root: classes.cardMedia }} />
+                    <CardMedia image={employee.image || "/workerPlaceholder.png"} classes={{ root: classes.cardMedia }} />
                     <Typography
                         variant="body1"
                         color="textPrimary"
