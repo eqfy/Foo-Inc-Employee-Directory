@@ -17,6 +17,8 @@ using System.Collections;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using System.Web;
+
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
@@ -87,10 +89,9 @@ namespace Handler
         }
 
         public  APIGatewayProxyResponse GetByName(APIGatewayProxyRequest request, ILambdaContext context)
-        {
-            
-            var firstName = request.QueryStringParameters["firstName"];
-            var lastName = request.QueryStringParameters["lastName"];  
+        {            
+            var firstName = HttpUtility.UrlDecode(request.QueryStringParameters["firstName"]);
+            var lastName = HttpUtility.UrlDecode(request.QueryStringParameters["lastName"]);  
             LambdaLogger.Log("FirstName: " + firstName);
             LambdaLogger.Log("lasttName: " + lastName);
 
@@ -180,8 +181,8 @@ namespace Handler
         public  APIGatewayProxyResponse predictiveSearch(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var firstNamePrefix = request.QueryStringParameters["firstName"].ToLower();
-            var lastNamePrefix = request.QueryStringParameters["lastName"].ToLower();
+            var firstNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["firstName"].ToLower());
+            var lastNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["lastName"].ToLower());
             LambdaLogger.Log("firstName: " + firstNamePrefix);
             LambdaLogger.Log("lastName: " + lastNamePrefix);
 
@@ -255,7 +256,7 @@ namespace Handler
         }
 
         public  APIGatewayProxyResponse GetOrgChart(APIGatewayProxyRequest request, ILambdaContext context) {
-            string workerID = request.QueryStringParameters["WorkerID"];
+            string workerID = HttpUtility.UrlDecode(request.QueryStringParameters["WorkerID"]);//request.QueryStringParameters["WorkerID"];
             string CeoID = "10001";
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
@@ -687,9 +688,23 @@ namespace Handler
             return officeLocationsFilter;
         }
 
-        private string createIsContractorLocationsFilter(ref int parameterCounter){
-            string isContractorFilter = " ed.\"isContractor\" = :p" + parameterCounter++ + " AND";
-            return isContractorFilter;
+        private string createShownWorkerTypeFilter(string shownWorkerType){
+            string shownWorkerTypeFilter="";
+            switch (shownWorkerType)
+            {
+                case "all":
+                    break;
+                case "contractor":
+                    shownWorkerTypeFilter = " ed.\"isContractor\" = true" + " AND";
+                    break;
+                case "employee": 
+                    shownWorkerTypeFilter = " ed.\"isContractor\" = false" + " AND";
+                    break;
+                default:
+                    break;
+            }
+            
+            return shownWorkerTypeFilter;
         }
         
          // order by number, offset, and fecth functions
@@ -840,65 +855,110 @@ namespace Handler
             List<string> skills = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
                 skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
+                for(int i = 0; i < skills.Count; i++){
+                    skills[i] = HttpUtility.UrlDecode(skills[i]);
+                }
             }
             List<string> locations = new List<string>();
             if (request.MultiValueQueryStringParameters.ContainsKey("locationPhysical")){
                 locations = (List<string>)request.MultiValueQueryStringParameters["locationPhysical"];
+                for(int i = 0; i < locations.Count; i++){
+                    locations[i] = HttpUtility.UrlDecode(locations[i]);
+                }
             }
             List<string> titles = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("title")){
                 titles = (List<string>)request.MultiValueQueryStringParameters["title"];
+                for(int i = 0; i < titles.Count; i++){
+                    titles[i] = HttpUtility.UrlDecode(titles[i]);
+                }
             }
             
             // Note: if they change the slide bar to allow for partial years change this to a float
             List<string> yearsExperience = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("yearsPriorExperience")){
                 yearsExperience = (List<string>)request.MultiValueQueryStringParameters["yearsPriorExperience"];
+                for(int i = 0; i < yearsExperience.Count; i++){
+                    yearsExperience[i] = HttpUtility.UrlDecode(yearsExperience[i]);
+                }
             }
 
             List<string> divisions = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("division")){
                 divisions = (List<string>)request.MultiValueQueryStringParameters["division"];
+                for(int i = 0; i < divisions.Count; i++){
+                    divisions[i] = HttpUtility.UrlDecode(divisions[i]);
+                }
             }
             List<string> companynames = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
                 companynames = (List<string>)request.MultiValueQueryStringParameters["companyname"];
+                for(int i = 0; i < companynames.Count; i++){
+                    companynames[i] = HttpUtility.UrlDecode(companynames[i]);
+                }
             }
             List<string> firstnames = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("firstName")){
                 firstnames = (List<string>)request.MultiValueQueryStringParameters["firstName"];
+                for(int i = 0; i < firstnames.Count; i++){
+                    firstnames[i] = HttpUtility.UrlDecode(firstnames[i]);
+                }
             }
             List<string> lastnames = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("lastName")){
                 lastnames = (List<string>)request.MultiValueQueryStringParameters["lastName"];
+                for(int i = 0; i < lastnames.Count; i++){
+                    lastnames[i] = HttpUtility.UrlDecode(lastnames[i]);
+                }
             }
             List<string> employementTypes = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("employmentType")){
                 employementTypes = (List<string>)request.MultiValueQueryStringParameters["employmentType"];
+                for(int i = 0; i < employementTypes.Count; i++){
+                    employementTypes[i] = HttpUtility.UrlDecode(employementTypes[i]);
+                }
             }
             List<string> officeLocations = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("officeLocations")){
                 officeLocations = (List<string>)request.MultiValueQueryStringParameters["officeLocations"];
+                for(int i = 0; i < officeLocations.Count; i++){
+                    officeLocations[i] = HttpUtility.UrlDecode(officeLocations[i]);
+                }
             }
-            List<string> isContractor = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("isContractor")){
-                isContractor = (List<string>)request.MultiValueQueryStringParameters["isContractor"];
+            List<string> shownWorkerType = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("shownWorkerType")){
+                shownWorkerType = (List<string>)request.MultiValueQueryStringParameters["shownWorkerType"];
+                for(int i = 0; i < shownWorkerType.Count; i++){
+                    shownWorkerType[i] = HttpUtility.UrlDecode(shownWorkerType[i]);
+                }
             }
             List<string> orderBys = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("orderBy")){
                 orderBys = (List<string>)request.MultiValueQueryStringParameters["orderBy"];
+                for(int i = 0; i < orderBys.Count; i++){
+                    orderBys[i] = HttpUtility.UrlDecode(orderBys[i]);
+                }
             }
             List<string> offsets = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("offset")){
                 offsets = (List<string>)request.MultiValueQueryStringParameters["offset"];
+                for(int i = 0; i < offsets.Count; i++){
+                    offsets[i] = HttpUtility.UrlDecode(offsets[i]);
+                }
             }
             List<string> fetchs = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("fetch")){
                 fetchs = (List<string>)request.MultiValueQueryStringParameters["fetch"];
+                for(int i = 0; i < fetchs.Count; i++){
+                    fetchs[i] = HttpUtility.UrlDecode(fetchs[i]);
+                }
             }
             List<string> orderDir = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("orderDir")){
                 orderDir = (List<string>)request.MultiValueQueryStringParameters["orderDir"];
+                for(int i = 0; i < orderDir.Count; i++){
+                    orderDir[i] = HttpUtility.UrlDecode(orderDir[i]);
+                }
             }
 
             string skillFilter="";
@@ -951,9 +1011,9 @@ namespace Handler
                 officeLocationsFilter = createOfficeLocationsFilter(officeLocations, ref parameterCounter);
             }
             
-            string isContractorFilter ="";
-            if(isContractor.Count > 0){
-                isContractorFilter = createIsContractorLocationsFilter(ref parameterCounter);
+            string shownWorkerTypeFilter ="";
+            if(shownWorkerType.Count > 0){
+                shownWorkerTypeFilter = createShownWorkerTypeFilter(shownWorkerType[0]);
             }
             
             string orderByFilter ="";
@@ -996,7 +1056,7 @@ namespace Handler
             //TODO add all the different filter strings here
             if(skillFilter.Length > 0 || locationsFilter.Length > 0 || titlesFilter.Length > 0 || yearsPriorFilter.Length > 0 || divisionsFilter.Length >0 
             || companyNamesFilter.Length >0 || firstNamesFilter.Length >0 || lastNamesFilter.Length >0 || employmentTypesFilter.Length >0 || 
-            officeLocationsFilter.Length>0 || isContractorFilter.Length>0){
+            officeLocationsFilter.Length>0 || shownWorkerTypeFilter.Length>0){
                 sql += " WHERE ";
 
                 sql += skillFilter;
@@ -1009,7 +1069,7 @@ namespace Handler
                 sql += lastNamesFilter;
                 sql += employmentTypesFilter;
                 sql += officeLocationsFilter;
-                sql += isContractorFilter;
+                sql += shownWorkerTypeFilter;
                 //TODO add the rest of the filters here
 
                 //Remove the last 'AND' from the sql string
@@ -1076,17 +1136,6 @@ namespace Handler
             foreach(string officeLocation in officeLocations){
                 LambdaLogger.Log("p"+currentParameterCounter + " : " + officeLocation);
                 cmd.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+officeLocation+"%");
-            }
-            //TODO Make it not case sensitive!
-            foreach(string contractor in isContractor){
-                bool isCon;
-                if(contractor == "FALSE"){
-                    isCon = false;
-                }else{
-                    isCon = true;
-                }
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + isCon);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, isCon);
             }
 
             foreach(string offset in offsets){
@@ -1160,7 +1209,7 @@ namespace Handler
         public  APIGatewayProxyResponse getEmployeeID(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var employeeID = request.QueryStringParameters["employeeNumber"];  
+            var employeeID = HttpUtility.UrlDecode(request.QueryStringParameters["employeeNumber"]);  
             LambdaLogger.Log("ID: " + employeeID);
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
@@ -1275,12 +1324,6 @@ namespace Handler
 
             LambdaLogger.Log("insertSQL: " + insertSQL);
 
-            
-
-           
-
-            
-            
             foreach (var skill in skillList ){
                 
                 using var con = new NpgsqlConnection(GetRDSConnectionString());
@@ -1292,27 +1335,6 @@ namespace Handler
 
                 LambdaLogger.Log("skill Category: " + skillCategory);
                 LambdaLogger.Log("skill Label " + skillLabel);
-                
-
-                //Call sql to get the ids
-
-                //LambdaLogger.Log("groupCodeSQL: " + groupCodeSQL);
-
-                
-
-                // string sql1 = "SELECT sc.\"SkillCategoryId\", s.\"SkillId\" FROM \"SkillCategory\" sc, \"Skill\" s WHERE sc.\"SkillCategoryId\" = s.\"SkillCategoryId\" AND sc.\"Label\" = \"" + skillCategory + "\""  +  "AND s.\"Label\" = \"" + skillLabel + "\"";
-
-                // LambdaLogger.Log("SQL STATEMENT " + sql1);
-
-                
-
-                // using (var cmd = new NpgsqlCommand(sql1, con))
-                // using (var reader = cmd.ExecuteReader()) { 
-                //     while (readerID.Read()){
-                //         categoryId = readerID.GetString(readerID.GetOrdinal("SkillCategoryId");
-                //         skillId = readerID.GetString(readerID.GetOrdinal("SkillId"));
-                //     }
-                // }
 
 
                 string categoryId ="";
@@ -1422,8 +1444,8 @@ namespace Handler
             using var locationCodeCmd = new NpgsqlCommand(locationCodeSQL,con);
 
             //Add the bind variable
-            locationCodeCmd.Parameters.AddWithValue("p0",body["PhysicalLocation"].Value<string>());
-            LambdaLogger.Log("p0: " + body["PhysicalLocation"].Value<string>());
+            locationCodeCmd.Parameters.AddWithValue("p0",HttpUtility.UrlDecode(body["PhysicalLocation"].Value<string>()));
+            LambdaLogger.Log("p0: " + HttpUtility.UrlDecode(body["PhysicalLocation"].Value<string>()));
             string physicalLocationId = "";
             try{
                 var LocationCodereader = locationCodeCmd.ExecuteReader();
@@ -1437,7 +1459,7 @@ namespace Handler
                 return new APIGatewayProxyResponse
                 {
                     StatusCode = 404,
-                    Body = "Invalid physical location: " + body["PhysicalLocation"].Value<string>(),
+                    Body = "Invalid physical location: " + HttpUtility.UrlDecode(body["PhysicalLocation"].Value<string>()),
                     Headers = new Dictionary<string, string>
                     { 
                         { "Content-Type", "application/json" }, 
@@ -1461,9 +1483,9 @@ namespace Handler
             using var companyCodeCmd = new NpgsqlCommand(comapanyCodeSQL,con);
 
             //Add the bind variable
-            companyCodeCmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
+            companyCodeCmd.Parameters.AddWithValue("p0",HttpUtility.UrlDecode(body["CompanyCode"].Value<string>()));
 
-            LambdaLogger.Log("p0: " + body["CompanyCode"].Value<string>());
+            LambdaLogger.Log("p0: " + HttpUtility.UrlDecode(body["CompanyCode"].Value<string>()));
 
             string companyCodeId ="";
 
@@ -1478,7 +1500,7 @@ namespace Handler
                 return new APIGatewayProxyResponse
                 {
                     StatusCode = 404,
-                    Body = "Invalid Company Code: " + body["CompanyCode"].Value<string>() ,
+                    Body = "Invalid Company Code: " + HttpUtility.UrlDecode(body["CompanyCode"].Value<string>()),
                     Headers = new Dictionary<string, string>
                     { 
                         { "Content-Type", "application/json" }, 
@@ -1503,10 +1525,10 @@ namespace Handler
             using var officeCodeCmd = new NpgsqlCommand(officeCodeSQL,con);
 
             //Add the bind variable
-            officeCodeCmd.Parameters.AddWithValue("p0",body["OfficeCode"].Value<string>());
+            officeCodeCmd.Parameters.AddWithValue("p0",HttpUtility.UrlDecode(body["OfficeCode"].Value<string>()));
             officeCodeCmd.Parameters.AddWithValue("p1",companyCodeId);
 
-            LambdaLogger.Log("p0: " + body["OfficeCode"].Value<string>());
+            LambdaLogger.Log("p0: " + HttpUtility.UrlDecode(body["OfficeCode"].Value<string>()));
             LambdaLogger.Log("p1: " + companyCodeId);
 
             string officeCodeId = "";
@@ -1521,7 +1543,7 @@ namespace Handler
                 return new APIGatewayProxyResponse
                 {
                     StatusCode = 404,
-                    Body = "Invalid Office Code: " + body["OfficeCode"].Value<string>() ,
+                    Body = "Invalid Office Code: " + HttpUtility.UrlDecode(body["OfficeCode"].Value<string>()),
                     Headers = new Dictionary<string, string>
                     { 
                         { "Content-Type", "application/json" }, 
@@ -1546,11 +1568,11 @@ namespace Handler
             using var groupCodeCmd = new NpgsqlCommand(groupCodeSQL,con);
 
             //Add the bind variable
-            groupCodeCmd.Parameters.AddWithValue("p0",body["GroupCode"].Value<string>());
+            groupCodeCmd.Parameters.AddWithValue("p0",HttpUtility.UrlDecode(body["GroupCode"].Value<string>()));
             groupCodeCmd.Parameters.AddWithValue("p1",companyCodeId);
             groupCodeCmd.Parameters.AddWithValue("p2",officeCodeId);
 
-            LambdaLogger.Log("p0: " + body["GroupCode"].Value<string>());
+            LambdaLogger.Log("p0: " + HttpUtility.UrlDecode(body["GroupCode"].Value<string>()));
             LambdaLogger.Log("p1: " + companyCodeId);
             LambdaLogger.Log("p2: " + officeCodeId);
 
@@ -1568,7 +1590,7 @@ namespace Handler
                 return new APIGatewayProxyResponse
                 {
                     StatusCode = 404,
-                    Body = "Invaild Group Code: " + body["GroupCode"].Value<string>(),
+                    Body = "Invaild Group Code: " + HttpUtility.UrlDecode(body["GroupCode"].Value<string>()),
                     Headers = new Dictionary<string, string>
                     { 
                         { "Content-Type", "application/json" }, 
@@ -1598,25 +1620,25 @@ namespace Handler
             cmd.Parameters.AddWithValue("p0",companyCodeId);
             cmd.Parameters.AddWithValue("p1",officeCodeId);
             cmd.Parameters.AddWithValue("p2",groupCodeId);
-            cmd.Parameters.AddWithValue("p3",body["FirstName"].Value<string>());
-            cmd.Parameters.AddWithValue("p4",body["LastName"].Value<string>());
-            cmd.Parameters.AddWithValue("p5",body["EmploymentType"].Value<string>());
-            cmd.Parameters.AddWithValue("p6",body["Title"].Value<string>());
-            cmd.Parameters.AddWithValue("p7",body["HireDate"].Value<string>());
+            cmd.Parameters.AddWithValue("p3",HttpUtility.UrlDecode(body["FirstName"].Value<string>()));
+            cmd.Parameters.AddWithValue("p4",HttpUtility.UrlDecode(body["LastName"].Value<string>()));
+            cmd.Parameters.AddWithValue("p5",HttpUtility.UrlDecode(body["EmploymentType"].Value<string>()));
+            cmd.Parameters.AddWithValue("p6",HttpUtility.UrlDecode(body["Title"].Value<string>()));
+            cmd.Parameters.AddWithValue("p7",HttpUtility.UrlDecode(body["HireDate"].Value<string>()));
             cmd.Parameters.AddWithValue("p8",((object)body["TerminationDate"].Value<string>() ?? DBNull.Value));
-            cmd.Parameters.AddWithValue("p9",body["SupervisorEmployeeNumber"].Value<string>());
-            cmd.Parameters.AddWithValue("p10",body["YearsPriorExperience"].Value<string>());
-            cmd.Parameters.AddWithValue("p11",body["Email"].Value<string>());
-            cmd.Parameters.AddWithValue("p12",body["WorkPhone"].Value<string>());
-            cmd.Parameters.AddWithValue("p13",body["WorkCell"].Value<string>());
+            cmd.Parameters.AddWithValue("p9",HttpUtility.UrlDecode(body["SupervisorEmployeeNumber"].Value<string>()));
+            cmd.Parameters.AddWithValue("p10",HttpUtility.UrlDecode(body["YearsPriorExperience"].Value<string>()));
+            cmd.Parameters.AddWithValue("p11",HttpUtility.UrlDecode(body["Email"].Value<string>()));
+            cmd.Parameters.AddWithValue("p12",HttpUtility.UrlDecode(body["WorkPhone"].Value<string>()));
+            cmd.Parameters.AddWithValue("p13",HttpUtility.UrlDecode(body["WorkCell"].Value<string>()));
             cmd.Parameters.AddWithValue("p14",physicalLocationId);
-            cmd.Parameters.AddWithValue("p15",body["PhotoUrl"].Value<string>());
+            cmd.Parameters.AddWithValue("p15",HttpUtility.UrlDecode(body["PhotoUrl"].Value<string>()));
 
-            //try{
+            try{
                 var contractorReader = cmd.ExecuteReader();
                 contractorReader.Read();
                 string addedContractorEmployeeNumber = contractorReader[0].ToString();
-                LambdaLogger.Log("added contracotr id: " + addedContractorEmployeeNumber);
+                LambdaLogger.Log("added contractor id: " + addedContractorEmployeeNumber);
 
                 contractorReader.Close();
 
@@ -1627,12 +1649,12 @@ namespace Handler
 
 
                 //insert the contractors skills into the database
-                insertSkills(body["skills"].Value<string>(),addedContractorEmployeeNumber);
+                insertSkills(HttpUtility.UrlDecode(body["skills"].Value<string>()),addedContractorEmployeeNumber);
 
                 var response = new APIGatewayProxyResponse
                 {
                     StatusCode = 200,
-                    Body = "New slave added!",
+                    Body = "New contractor added!",
                     Headers = new Dictionary<string, string>
                     { 
                         { "Content-Type", "application/json" }, 
@@ -1643,21 +1665,21 @@ namespace Handler
                 };
 
                 return response;
-            // }
-            // catch(System.Exception){
-            //     return new APIGatewayProxyResponse
-            //     {
-            //         StatusCode = 404,
-            //         Body = "New slave not added!",
-            //         Headers = new Dictionary<string, string>
-            //         { 
-            //             { "Content-Type", "application/json" }, 
-            //             { "Access-Control-Allow-Origin", "*" },
-            //             { "Access-Control-Allow-Methods", "*" },
-            //             { "Access-Control-Allow-Headers", "*" },  
-            //         }
-            //     };
-            // }
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "New contractor not added!",
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
             
         }
     }
