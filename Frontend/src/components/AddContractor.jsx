@@ -197,7 +197,7 @@ const handleSubmit = (event) => {
         LastName: event.target.lastName.value,
         Email: event.target.email.value,
         WorkPhone: event.target.workPhone.value,
-        CellPhone: event.target.cellPhone.value === '+1' ? '': event.target.cellPhone.value,
+        WorkCell: event.target.cellPhone.value === '+1' ? '': event.target.cellPhone.value,
         Title: event.target.title.value,
         SupervisorEmployeeNumber: "10001", // TODO: Replace with  actual supervisor employee number once we have predictive search
         HireDate: event.target.hireDate.value,
@@ -206,7 +206,7 @@ const handleSubmit = (event) => {
         GroupCode: event.target.groupType.value,
         CompanyCode: event.target.companyName.value,
         OfficeCode: event.target.officeLocation.value,
-        Skills: skills,
+        skills: skills,
         YearsPriorExperience: event.target.YPE.value,
         PhotoUrl: photoURL,
         EmploymentType: "hourly"
