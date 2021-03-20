@@ -15,5 +15,5 @@
     "WorkCell":"604-555-6666",
     "PhysicalLocation":"Vancouver",
     "PhotoUrl":"someurl",
-    "skills": "Accounting:::Transaction Processing||| Accounting:::Reconciling||| Accounting:::Auditing||| Management:::Budgeting"
+    "skills": "Accounting:::Transaction Processing|||Accounting:::Reconciling|||Accounting:::Auditing|||Management:::Budgeting"
 }
