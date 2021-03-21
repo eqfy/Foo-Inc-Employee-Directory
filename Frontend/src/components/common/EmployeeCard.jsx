@@ -93,7 +93,7 @@ export default function EmployeeCard(props) {
     const employeeCardContent = (
         <CardContent classes={{ root: classes.cardContent }}>
             <CardMedia
-                image={employee.image}
+                image={employee.image || "/workerPlaceholder.png"}
                 classes={{ root: classes.cardMedia }}
             />
             <Typography
