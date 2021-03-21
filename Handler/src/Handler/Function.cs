@@ -1047,11 +1047,15 @@ namespace Handler
 
             //Get the sql script from the bucket
             var script = getS3FileSync(bucketName, objectKey);
+            var scriptForCount = getS3FileSync(bucketName, "searchTempCount.sql");
         
             
             //Read the sql from the file
             StreamReader readers3 = new StreamReader(script.ResponseStream);
             String sql = readers3.ReadToEnd();
+            //Read SQL from file for the search count
+            StreamReader readers3Count = new StreamReader(scriptForCount.ResponseStream);
+            String sqlForCount = readers3Count.ReadToEnd();
 
             //TODO add all the different filter strings here
             if(skillFilter.Length > 0 || locationsFilter.Length > 0 || titlesFilter.Length > 0 || yearsPriorFilter.Length > 0 || divisionsFilter.Length >0 
@@ -1074,6 +1078,24 @@ namespace Handler
 
                 //Remove the last 'AND' from the sql string
                 sql = sql.Remove(sql.Length - 3);
+
+                sqlForCount += " WHERE ";
+
+                sqlForCount += skillFilter;
+                sqlForCount += locationsFilter;
+                sqlForCount += titlesFilter; 
+                sqlForCount += yearsPriorFilter;
+                sqlForCount += divisionsFilter;
+                sqlForCount += companyNamesFilter;
+                sqlForCount += firstNamesFilter;
+                sqlForCount += lastNamesFilter;
+                sqlForCount += employmentTypesFilter;
+                sqlForCount += officeLocationsFilter;
+                sqlForCount += shownWorkerTypeFilter;
+                //TODO add the rest of the filters here
+
+                //Remove the last 'AND' from the sql string
+                sqlForCount = sqlForCount.Remove(sqlForCount.Length - 3);
             }
             
             //Add the order by, filter, and offset TODO do it! and TODO potentially order on multiple
@@ -1086,6 +1108,8 @@ namespace Handler
             }
             
             LambdaLogger.Log("sql: " + sql);
+
+            LambdaLogger.Log("sqlForCount: " + sqlForCount);
            
             using var cmd = new NpgsqlCommand(sql,con);
 
@@ -1157,6 +1181,7 @@ namespace Handler
             string output = string.Empty;
             List<Employee> employees = new List<Employee>();
             //LambdaLogger.Log("Hey1"+ reader.Read().ToString());
+
             while(reader.Read()) {
                 LambdaLogger.Log("Hey"+ reader[0].ToString());
                 Employee e = new Employee();
@@ -1184,9 +1209,88 @@ namespace Handler
 
             reader.Close();
 
+
+            //Run the SQL to get the count of how many workers satisfy the query
+            using var cmd2 = new NpgsqlCommand(sqlForCount,con);
+
+            currentParameterCounter = 0;
+            //Add the bind variables
+            foreach(string skill in skills){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + "%"+skill+"%");
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+skill+"%");
+            }
+            foreach(string location in locations){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + location);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, location);
+            }
+            foreach(string title in titles){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + title);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, title);
+            }
+            foreach(string yearsPrior in yearsExperience){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + yearsPrior);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, float.Parse(yearsPrior));
+            }
+
+            foreach(string division in divisions){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + division);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, division);
+            }
+
+            foreach(string companyname in companynames){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + companyname);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, companyname);
+            }
+
+            foreach(string firstname in firstnames){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + firstname);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, firstname);
+            }
+
+            foreach(string lastname in lastnames){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + lastname);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, lastname);
+            }
+
+            foreach(string employementType in employementTypes){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + employementType);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, employementType);
+            }
+
+            foreach(string officeLocation in officeLocations){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + officeLocation);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+officeLocation+"%");
+            }
+
+            foreach(string offset in offsets){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + offset);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(offset));
+            }
+
+            foreach(string fetch in fetchs){
+                LambdaLogger.Log("p"+currentParameterCounter + " : " + fetch);
+                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
+            }
+
+            //TODO: is contractor, hiredate, termination date
+            //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
+
+            //Run the sql command
+            var reader2 = cmd2.ExecuteReader();
+            reader2.Read();
+            //Ya this is a dumb way cast please fix.
+            int count = int.Parse(reader2[0].ToString());
+
+            reader2.Close();
+
             LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
             LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
-            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            SearchResults searchResults = new SearchResults();
+            searchResults.data = employees;
+            searchResults.totalCount = count;
+
+            //output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(searchResults); 
             //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
         
             var response = new APIGatewayProxyResponse
