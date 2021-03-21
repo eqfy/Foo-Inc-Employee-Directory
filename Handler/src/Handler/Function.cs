@@ -1279,7 +1279,7 @@ namespace Handler
             var reader2 = cmd2.ExecuteReader();
             reader2.Read();
             //Ya this is a dumb way cast please fix.
-            int count = int.Parse(reader[0].ToString());
+            int count = int.Parse(reader2[0].ToString());
 
             reader2.Close();
 
