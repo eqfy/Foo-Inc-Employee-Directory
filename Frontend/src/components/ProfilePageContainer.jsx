@@ -64,14 +64,12 @@ export function ProfilePageContainer(props) {
         } else {
             // not ready: loading
             return (
-                <PageContainer>
-                    <CenteredPageContainer>
-                        <CircularProgress
-                            size={"100px"}
-                            classes={{ root: classes.loading }}
-                        />
-                    </CenteredPageContainer>
-                </PageContainer>
+                <CenteredPageContainer>
+                    <CircularProgress
+                        size={"100px"}
+                        classes={{ root: classes.loading }}
+                    />
+                </CenteredPageContainer>
             );
         }
     }

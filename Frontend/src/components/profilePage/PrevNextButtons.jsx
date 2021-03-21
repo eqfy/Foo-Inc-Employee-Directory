@@ -3,20 +3,20 @@ import { ArrowLeft, ArrowRight } from "@material-ui/icons";
 import styled from "styled-components";
 import LinkButton from "components/common/LinkButton";
 import "components/common/Common.css";
-import { PagePathEnum } from 'components/common/constants';
-import { makeStyles } from '@material-ui/core';
-import { connect } from 'react-redux';
+import { PagePathEnum } from "components/common/constants";
+import { makeStyles } from "@material-ui/core";
+import { connect } from "react-redux";
 
 const usePrevStyles = makeStyles({
     root: {
-        paddingLeft: 0
-    }
+        paddingLeft: 0,
+    },
 });
 
 const useNextStyles = makeStyles({
     root: {
-        paddingRight: 0
-    }
+        paddingRight: 0,
+    },
 });
 
 const previousButton = (index, classes, resultOrder) => {
@@ -63,7 +63,9 @@ function PrevNextButtons(props) {
     const [index, setIndex] = React.useState(-1);
 
     React.useEffect(() => {
-        const temp = resultOrder.findIndex((workerId) => workerId === focusedWorkerId);
+        const temp = resultOrder.findIndex(
+            (workerId) => workerId === focusedWorkerId
+        );
         setIndex(temp);
     }, [focusedWorkerId]);
 

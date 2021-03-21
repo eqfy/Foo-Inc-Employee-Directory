@@ -8,7 +8,7 @@ export const CenteredPageContainer = styled(PageContainer)`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 120px);
     margin: 0;
     overflow: hidden;
 `;

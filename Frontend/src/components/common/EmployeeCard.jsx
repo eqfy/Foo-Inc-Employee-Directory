@@ -9,15 +9,15 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import OrgChartIcon from "./OrgChartIcon";
 import "../common/Common.css";
-import React from "react";
+import React, { useEffect } from "react";
 import { PagePathEnum } from "./constants";
 
 const useStyles = makeStyles({
     card: {
-        width: 250,
-        height: 275,
+        width: 248,
+        height: 270,
+        borderWidth: 1,
         borderRadius: 25,
-        borderWidth: 4,
         borderColor: "black",
         marginLeft: "auto",
         marginRight: "auto",
@@ -26,17 +26,44 @@ const useStyles = makeStyles({
             boxShadow: "0 0 3px 3px black",
         },
     },
+    cardContent: {
+        overflow: "hidden",
+    },
     cardMedia: {
         width: 160,
         height: 160,
         marginLeft: "auto",
         marginRight: "auto",
+        marginTop: 10,
         marginBottom: 5,
     },
     cardText: {
+        textAlign: "center",
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "nowrap",
+        "&.card-text-too-long + p": {
+            visibility: "visible",
+            "&:hover": {
+                opacity: 1,
+            },
+        },
+    },
+    // some of the pixels are hard-coded for now
+    cardExtension: {
+        whiteSpace: "nowrap",
+        position: "absolute",
+        left: 17,
+        top: 206,
+        zIndex: 30,
+        opacity: 0,
+        transition: "opacity 0.5s ease",
+        textAlign: "center",
+        backgroundColor: "white",
+        visibility: "hidden",
+        "&:nth-child(3)": {
+            top: 182,
+        },
     },
 });
 
@@ -45,73 +72,97 @@ export default function EmployeeCard(props) {
     const { employee, linkToProfile } = props;
     const classes = useStyles();
 
-    const employeeCardContent = (
-        <EmployeeCardContentContainer>
-            <PositionedCardContentDiv>
-                <CardMedia
-                    image={employee.image}
-                    classes={{ root: classes.cardMedia }}
-                />
-                <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    component="p"
-                    classes={{ root: classes.cardText }}
-                >
-                    <b>Name:</b> {`${employee.firstName} ${employee.lastName}`}
-                </Typography>
-                <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    component="p"
-                    classes={{ root: classes.cardText }}
-                >
-                    <b>Title:</b> {employee.title}
-                </Typography>
-            </PositionedCardContentDiv>
-        </EmployeeCardContentContainer>
-    );
+    useEffect(() => {
+        const nameTextTypography = document.getElementsByClassName(
+            `card-name-${employee.employeeNumber}`
+        )[0];
 
+        if (nameTextTypography.clientWidth < nameTextTypography.scrollWidth) {
+            nameTextTypography.classList.add("card-text-too-long");
+        }
+
+        const titleTextTypography = document.getElementsByClassName(
+            `card-title-${employee.employeeNumber}`
+        )[0];
+
+        if (titleTextTypography.clientWidth < titleTextTypography.scrollWidth) {
+            titleTextTypography.classList.add("card-text-too-long");
+        }
+    }, [employee.employeeNumber]);
+
+    const employeeCardContent = (
+        <CardContent classes={{ root: classes.cardContent }}>
+            <CardMedia
+                image={employee.image}
+                classes={{ root: classes.cardMedia }}
+            />
+            <Typography
+                variant="body1"
+                color="textPrimary"
+                component="p"
+                classes={{ root: classes.cardText }}
+                className={`card-name-${employee.employeeNumber}`}
+            >
+                <b>Name: </b>
+                <span>{`${employee.firstName} ${employee.lastName}`}</span>
+            </Typography>
+            <Typography
+                variant="body1"
+                color="textPrimary"
+                component="p"
+                classes={{ root: classes.cardExtension }}
+            >
+                <b>Name: </b>
+                <span>{`${employee.firstName} ${employee.lastName}`}</span>
+            </Typography>
+            <Typography
+                variant="body1"
+                color="textPrimary"
+                component="p"
+                classes={{ root: classes.cardText }}
+                className={`card-title-${employee.employeeNumber}`}
+            >
+                <b>Title: </b>
+                <span>{employee.title}</span>
+            </Typography>
+            <Typography
+                variant="body1"
+                color="textPrimary"
+                component="p"
+                classes={{ root: classes.cardExtension }}
+            >
+                <b>Title: </b>
+                <span>{`${employee.title}`}</span>
+            </Typography>
+        </CardContent>
+    );
     return (
-        <Card
-            className={linkToProfile ? "link-to-profile" : ""}
-            classes={{ root: classes.card }}
-        >
-            <PositionOrgChartIconDiv>
-                <Link
-                    to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
-                >
-                    <StyledOrgChartIcon />
-                </Link>
-            </PositionOrgChartIconDiv>
-            {linkToProfile ? (
-                <StyledLink
-                    to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
-                >
-                    {employeeCardContent}
-                </StyledLink>
-            ) : (
-                employeeCardContent
-            )}
-        </Card>
+        <CardContainer>
+            <Card
+                className={linkToProfile ? "link-to-profile" : ""}
+                classes={{ root: classes.card }}
+                variant="outlined"
+            >
+                <PositionOrgChartIconDiv>
+                    <Link
+                        to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
+                    >
+                        <StyledOrgChartIcon />
+                    </Link>
+                </PositionOrgChartIconDiv>
+                {linkToProfile ? (
+                    <StyledLink
+                        to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
+                    >
+                        {employeeCardContent}
+                    </StyledLink>
+                ) : (
+                    <div>{employeeCardContent}</div>
+                )}
+            </Card>
+        </CardContainer>
     );
 }
-
-const EmployeeCardContentContainer = styled(CardContent)`
-    height: 275px;
-    width: 100%;
-    border: 1px solid #000000;
-    box-sizing: border-box;
-    border-radius: 25px;
-    padding: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    > * {
-        width: 100%;
-        text-align: center;
-    }
-`;
 
 const PositionOrgChartIconDiv = styled.div`
     position: relative;
@@ -133,11 +184,15 @@ const StyledOrgChartIcon = styled(OrgChartIcon)`
     }
 `;
 
-const PositionedCardContentDiv = styled.div``;
-
 const StyledLink = styled(Link)`
     &:hover,
     &:not(:hover) {
         text-decoration: none;
     }
+`;
+
+// This is to provide the absolute elements a coordination, and not hiding them
+const CardContainer = styled.div`
+    position: relative;
+    display: inline-block;
 `;
