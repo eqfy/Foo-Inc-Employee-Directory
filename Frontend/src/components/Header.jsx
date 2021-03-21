@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { withRouter, useHistory, useParams } from "react-router";
+import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import React from "react";
 import { AppBar, Tabs, Tab, Toolbar, makeStyles } from "@material-ui/core";
