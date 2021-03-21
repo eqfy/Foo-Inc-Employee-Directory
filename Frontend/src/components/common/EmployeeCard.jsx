@@ -54,7 +54,7 @@ const useStyles = makeStyles({
         whiteSpace: "nowrap",
         position: "absolute",
         left: 17,
-        top: 206,
+        bottom: 32,
         zIndex: 30,
         opacity: 0,
         transition: "opacity 0.5s ease",
@@ -62,7 +62,7 @@ const useStyles = makeStyles({
         backgroundColor: "white",
         visibility: "hidden",
         "&:nth-child(3)": {
-            top: 182,
+            bottom: 32 + 24,
         },
     },
 });

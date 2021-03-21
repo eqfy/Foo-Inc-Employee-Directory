@@ -52,9 +52,9 @@ const useStyles = makeStyles({
         paddingRight: "auto",
     },
     cardMedia: {
-        padding: 20,
-        minWidth: 50,
-        minHeight: 50,
+        minWidth: 80,
+        minHeight: 80,
+        margin: 5,
     },
     cardText: {
         textAlign: "left",
@@ -111,7 +111,7 @@ function OrgChartNode(props) {
             }}
         >
             <CardMedia
-                image={"./../sample.png"}
+                image={"/workerPlaceholder.png"}
                 classes={{ root: classes.cardMedia }}
             />
             <CardContent classes={{ root: classes.cardContent }}>
