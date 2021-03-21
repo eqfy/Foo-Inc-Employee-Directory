@@ -608,7 +608,7 @@ namespace Handler
         private string createYearsPriorFilter(ref int parameterCounter){
             string yearsPriorFilter = "";
             
-            yearsPriorFilter = " ed.\"YearsPriorExperience\" > :p" + parameterCounter++;
+            yearsPriorFilter = " ed.\"YearsPriorExperience\" >= :p" + parameterCounter++;
 
             yearsPriorFilter += " AND";
             return yearsPriorFilter;
