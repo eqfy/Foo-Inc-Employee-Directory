@@ -90,6 +90,11 @@ export default function appStateReducer(state = defaultAppState, action) {
                 yearsPriorExperience: 0,
                 shownWorkerType: WorkerTypeEnum.ALL,
             };
+        case "SET_FILTERS_CHANGED":
+            return {
+                ...state,
+                filtersChanged: action.payload,
+            };
         default:
             return state;
     }

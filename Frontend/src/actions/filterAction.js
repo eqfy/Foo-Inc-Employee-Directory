@@ -37,6 +37,7 @@ export const setFilterAction = (type, filterId, category = "") => (
         type: `SET_${type.toUpperCase()}`,
         payload: payload,
     });
+    dispatch(setFiltersChanged(true));
 };
 
 export const setWorkerTypeAction = (shownWorkerType = WorkerTypeEnum.ALL) => (
@@ -46,6 +47,7 @@ export const setWorkerTypeAction = (shownWorkerType = WorkerTypeEnum.ALL) => (
         type: "SET_WORKER_TYPE_FILTER",
         payload: shownWorkerType,
     });
+    dispatch(setFiltersChanged(true));
 };
 
 export const setSortKeyAction = (sortKey = SortKeyEnum.NONE) => (dispatch) => {
@@ -53,6 +55,7 @@ export const setSortKeyAction = (sortKey = SortKeyEnum.NONE) => (dispatch) => {
         type: "SET_SORT_KEY",
         payload: sortKey,
     });
+    dispatch(setFiltersChanged(true));
 };
 
 export const setSortOrderAction = (sortOrder) => (dispatch) => {
@@ -60,6 +63,7 @@ export const setSortOrderAction = (sortOrder) => (dispatch) => {
         type: "SET_SORT_ORDER",
         payload: sortOrder,
     });
+    dispatch(setFiltersChanged(true));
 };
 
 export const setExperienceAction = (workerExperience) => (dispatch) => {
@@ -67,6 +71,7 @@ export const setExperienceAction = (workerExperience) => (dispatch) => {
         type: "SET_EXPERIENCE",
         payload: workerExperience,
     });
+    dispatch(setFiltersChanged(true));
 };
 
 export const setNameAction = (workerName) => (dispatch) => {
@@ -74,11 +79,20 @@ export const setNameAction = (workerName) => (dispatch) => {
         type: "SET_NAME",
         payload: workerName,
     });
+    dispatch(setFiltersChanged(true));
 };
 
 export const clearAppliedFilters = () => (dispatch) => {
     dispatch({
         type: "CLEAR_APPLIED_FILTERS",
+    });
+    dispatch(setFiltersChanged(true));
+};
+
+export const setFiltersChanged = (isChanged) => (dispatch) => {
+    dispatch({
+        type: "SET_FILTERS_CHANGED",
+        payload: isChanged,
     });
 };
 

@@ -17,6 +17,7 @@ export const defaultAppState = {
     focusedWorkerId: "",
     profileShowPrevNext: false,
     ready: false,
+    filtersChanged: false,
     skillState: {},
     locationState: [],
     titleState: [],
