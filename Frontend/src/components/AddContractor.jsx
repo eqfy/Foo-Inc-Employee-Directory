@@ -17,10 +17,7 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import MuiPhoneNumber from 'material-ui-phone-number';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
 
 function AddContractor(props) {
 
@@ -32,6 +29,11 @@ function AddContractor(props) {
     
     const {companyAllId, departmentAllId, locationAllId, skillAllId} = filterData;
     
+    // TODO: Fetch from backend/redux
+    const tempLocations = ['Corporate', 'Vancouver', 'Prince George'];
+
+
+
     let skillsByCategory = [];
     for (const category in skillAllId){
         for(const skill of skillAllId[category]){
@@ -150,15 +152,15 @@ function AddContractor(props) {
     };
     
     let [photoURL, setPhotoURL] = React.useState('');
-    // TODO: 9  Page styling
     // TODO: 6. Cognito log in page, auth flow
-    // TODO: 4. Fix email validation
     // TODO: 5. Progress bar for addContractor
+    // TODO: 9  Page styling -> locations and company, btn, upload image
+    // TODO: 4. Fix email validation
     // TODO: 7: Predictive search for supervisor
     // TODO: 8: Refractor
-    // TODO: 10: Front-end/backend bug where I can only add one skill? (Index out of bounds exception)
+    // TODO: 10: Locations/Office code/group bug? (mapping?)
     // TODO: 11: Confirm with AE -> will we need to support company/groups/locations/officecodes not in db?
-    // TODO: 12: fix -> replace physical location with office location after confirmation above
+    // TODO: 12: fix -> fetch locations from backend once above is confirmed
     // TODO: 11: Confirm with AE -> will contractor's employment type always be hourly?
 
     let selectedSkills = []; // objects of selected skills
@@ -233,7 +235,6 @@ function AddContractor(props) {
             PhotoUrl: photoURL,
             EmploymentType: event.target.employmentType.value,
         }
-
         // Submit form to backend
         insertContractorAPI(details).then((response) => {
             // update snackbar success
@@ -358,19 +359,23 @@ function AddContractor(props) {
                             className= {classes.textField}
                     />
                     <br></br>
-                    <FormControl 
-                            variant="outlined" 
-                            className={classes.textField} 
-                            size="small">
-                                <InputLabel id="employment-type-label">Employment Type</InputLabel>
-                                <Select
-                                labelId="employment-type-label"
-                                label="Employment Type"
-                                >
-                                    <MenuItem value="hourly">Hourly</MenuItem>
-                                    <MenuItem value="salary">Salary</MenuItem>
-                                </Select>
-                    </FormControl>
+                    <TextField
+                            id="outlined-select-employment-type"
+                            select
+                            label="Employment type"
+                            variant="outlined"
+                            name="employmentType"
+                            className= {classes.textField}
+                            size="small"
+                            required
+                            >
+                            <MenuItem key="hourly" value="hourly">
+                                Hourly
+                            </MenuItem>
+                            <MenuItem key="salary" value="salary">
+                                Salary
+                            </MenuItem>
+                    </TextField>
                     <TextField 
                         label="Years Prior Experience"
                         name="YPE" 
@@ -476,7 +481,7 @@ function AddContractor(props) {
                         </Grid>
                         <Grid item xs={6}>
                         <Autocomplete
-                            options={locationAllId}
+                            options={tempLocations}
                             getOptionLabel={(option) => option}
                             renderInput={(params) => (
                                 <TextField 
@@ -501,6 +506,7 @@ function AddContractor(props) {
                             size="small"
                             options={skillsByCategory}
                             getOptionLabel={(option) => option.skill}
+                            getOptionSelected={(option, value) => option.skill === value.skill}
                             onChange={(event, value) => selectedSkills = value}
                             renderInput={(params) => (
                             <TextField {...params} variant="outlined" label="Skill" size="small" />
