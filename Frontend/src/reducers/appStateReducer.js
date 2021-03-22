@@ -72,6 +72,17 @@ export default function appStateReducer(state = defaultAppState, action) {
                 ...state,
                 shownWorkerType: action.payload,
             };
+        case "CLEAR_FILTERS":
+            return {
+                ...state,
+                skillState: {},
+                locationState: [],
+                titleState: [],
+                departmentState: [],
+                companyState: [],
+                yearsPriorExperience: 0,
+                shownWorkerType: "all",
+            };
         default:
             return state;
     }

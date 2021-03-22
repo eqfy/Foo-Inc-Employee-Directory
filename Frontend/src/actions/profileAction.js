@@ -42,3 +42,13 @@ export const setProfile = (workerId) => (dispatch) => {
             console.error("Profile endpoint failed.\nErr:", error);
         });
 };
+
+export const searchWithProfileSkills = (skills) => (dispatch) => {
+    dispatch({
+        type: "CLEAR_FILTERS",
+    })
+    dispatch({
+        type: "SET_SKILL",
+        payload: skills,
+    })
+}
