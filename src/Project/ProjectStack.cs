@@ -132,12 +132,7 @@ namespace Project
 
             cognito.UserPool user_pool = new cognito.UserPool(this, "Foo-user-pool", new cognito.UserPoolProps
             {
-                UserPoolName = "Foo-userpool",
-                SignInAliases = new cognito.SignInAliases
-                {
-                    Email = true,
-                    Phone = true
-                },
+                UserPoolName = "Foo-userpool"
             });
 
             cognito.UserPoolClient user_pool_client = new cognito.UserPoolClient(this, "Foo-user-pool-client", new cognito.UserPoolClientProps
