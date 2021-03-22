@@ -1,6 +1,5 @@
-import { Card, CardContent, makeStyles, Typography } from "@material-ui/core";
+import { Card, CardContent, CardMedia, makeStyles, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import ImagePlaceholder from "./ImagePlaceholder";
 import styled from "styled-components";
 import OrgChartIcon from "./OrgChartIcon";
 import "../common/Common.css";
@@ -8,7 +7,20 @@ import React from "react";
 import { PagePathEnum } from './constants';
 
 const useStyles = makeStyles({
-    centered: {
+    card: {
+        width: 250,
+        height: 275,
+        borderRadius: 25,
+        borderWidth: 4,
+        borderColor: "black",
+        "&:hover": {
+            cursor: "pointer",
+            boxShadow: "0 0 3px 3px black",
+        }
+    },
+    cardMedia: {
+        width: 160,
+        height: 160,
         margin: "auto",
     }
 });
@@ -18,15 +30,16 @@ export default function EmployeeCard(props) {
     const classes = useStyles();
 
     return (
-        <StyledCard className={classes.centered}>
-            <Link to={`${PagePathEnum.PROFILE}/${employee.employeeId}`}>
-                <EmployeeCardContent>
-                    <PositionDiv>
+        <Card classes={{root: classes.card }}>
+            <StyledLink to={`${PagePathEnum.PROFILE}/${employee.employeeId}`}>
+                <EmployeeCardContentContainer>
+                    <PositionedCardContentDiv>
+                    <PositionOrgChartIconDiv>
                         <Link to={`${PagePathEnum.ORGCHART}/${employee.employeeId}`}>
                             <StyledOrgChartIcon />
                         </Link>
-                    </PositionDiv>
-                    <ImagePlaceholder />
+                    </PositionOrgChartIconDiv>
+                    <CardMedia image={employee.image || "/workerPlaceholder.png"} classes={{ root: classes.cardMedia }} />
                     <Typography
                         variant="body1"
                         color="textPrimary"
@@ -38,36 +51,33 @@ export default function EmployeeCard(props) {
                         <b>Title:</b> {employee.title}
                         <br />
                     </Typography>
-                </EmployeeCardContent>
-            </Link>
-        </StyledCard>
+                    </PositionedCardContentDiv>
+                </EmployeeCardContentContainer>
+            </StyledLink>
+        </Card>
     );
 }
 
-const StyledCard = styled(Card)`
-    && {
-        box-shadow: none;
-    }
-    width: 250px;
-    height: 275px;
-`;
-
-const EmployeeCardContent = styled(CardContent)`
+const EmployeeCardContentContainer = styled(CardContent)`
     max-width: 250px;
     height: 275px;
     width: 100%;
     border: 1px solid #000000;
     box-sizing: border-box;
     border-radius: 25px;
+    padding: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     > * {
         width: 100%;
         text-align: center;
     }
 `;
 
-const PositionDiv = styled.div`
+const PositionOrgChartIconDiv = styled.div`
     position: relative;
-    left: calc(93% - 10px);
+    left: calc(93% - 5px);
     width: 0;
     height: 0;
 `;
@@ -81,5 +91,15 @@ const StyledOrgChartIcon = styled(OrgChartIcon)`
         rect {
             fill: midnightblue;
         }
+    }
+`;
+
+const PositionedCardContentDiv = styled.div`
+    margin: auto;
+`;
+
+const StyledLink = styled(Link)`
+    &:hover {
+        text-decoration: none;
     }
 `;

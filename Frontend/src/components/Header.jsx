@@ -35,6 +35,10 @@ function Header(props) {
             setCurrentTabIndex(1);
         } else if (pathname.startsWith(PagePathEnum.ORGCHART)) {
             setCurrentTabIndex(2);
+        } else if (pathname.startsWith(PagePathEnum.NEWCONTRACTOR)) {
+            setCurrentTabIndex(3);
+        } else if (pathname.startsWith(PagePathEnum.UPDATE)) {
+            setCurrentTabIndex(4);
         }
     }, [pathname]);
 
@@ -69,12 +73,18 @@ function Header(props) {
                             component={Link}
                             to={`${PagePathEnum.ORGCHART}/10001`}
                         />
-                        {/* <Tab
-                            label="Dashboard (redux demo)"
+                        <Tab
+                            label="Add Contractor"
                             classes={{ root: classes.tab }}
                             component={Link}
-                            to="/"
-                        /> */}
+                            to={`${PagePathEnum.NEWCONTRACTOR}`}
+                        />
+                        <Tab
+                            label="Update Note"
+                            classes={{ root: classes.tab }}
+                            component={Link}
+                            to={`${PagePathEnum.UPDATE}`}
+                        />
                     </Tabs>
                 </Toolbar>
             </AppBar>

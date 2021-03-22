@@ -1,6 +1,6 @@
 [
     {
-        "employeeId": "10001",
+        "employeeId": "0330024",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "01",
@@ -16,11 +16,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/acmes.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330024.jpeg",
         "skills": null
     },
     {
-        "employeeId": "10002",
+        "employeeId": "0330125",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "01",
@@ -36,11 +36,11 @@
         "workPhone": "604-123-5678",
         "workCell": "604-123-8765",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/johnsonj.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg",
         "skills": null
     },
     {
-        "employeeId": "10003",
+        "employeeId": "0330124",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "02",
@@ -56,11 +56,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/sampsons.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg",
         "skills": null
     },
     {
-        "employeeId": "10004",
+        "employeeId": "0330123",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "03",
@@ -76,11 +76,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/dasilvag.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330123.jpeg",
         "skills": null
     },
     {
-        "employeeId": "10005",
+        "employeeId": "0330112",
         "companycode": "01",
         "officecode": "01",
         "groupcode": "05",
@@ -96,11 +96,11 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/connerc.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330112.jpeg",
         "skills": null
     },
     {
-        "employeeId": "20006",
+        "employeeId": "0319102",
         "companycode": "02",
         "officecode": "01",
         "groupcode": "02",
@@ -116,7 +116,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/broadfootb.jpg",
+        "image": "https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0319102.jpeg",
         "skills": null
     },
     {
@@ -136,7 +136,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/smitherss.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -156,7 +156,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/joneso.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -176,7 +176,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/westersonw.jpg",
+        "image": null,
         "skills": "Marketing & Sales: Customer Service, Management: Planning, Marketing & Sales: Preparing Marketing Materials"
     },
     {
@@ -196,7 +196,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/mastersm.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -216,7 +216,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/amerasa.jpg",
+        "image": null,
         "skills": "Accounting: Reconciling, Management: Planning, Management: Performance Reviews"
     },
     {
@@ -236,7 +236,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/lonsl.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -256,7 +256,7 @@
         "workPhone": "250-123-4567",
         "workCell": "250-123-7654",
         "physicalLocation": "JGH7T",
-        "image": "some-url/pessurp.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -276,7 +276,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/robsonr.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -296,7 +296,7 @@
         "workPhone": "604-123-4567",
         "workCell": "604-123-7654",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/sanderss.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -316,7 +316,7 @@
         "workPhone": "250-123-4567",
         "workCell": "250-123-7654",
         "physicalLocation": "JGH7T",
-        "image": "some-url/thompsont.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -336,7 +336,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -356,7 +356,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -376,7 +376,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -396,7 +396,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -416,7 +416,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": "Accounting: Transaction Processing, Accounting: Reconciling, Accounting: Auditing, Management: Budgeting"
     },
     {
@@ -436,7 +436,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -456,7 +456,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -476,7 +476,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -496,7 +496,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -516,7 +516,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -536,7 +536,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -556,7 +556,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -576,7 +576,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -596,7 +596,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -616,7 +616,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -636,7 +636,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "JGH7T",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": "Agriculture: Harvesting, Agriculture: Fertilizing, Agriculture: Soil Preparation"
     },
     {
@@ -656,7 +656,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "GHHDT1H7",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -676,7 +676,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "TH8LF9",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     },
     {
@@ -696,7 +696,7 @@
         "workPhone": "604-555-5555",
         "workCell": "604-555-5555",
         "physicalLocation": "LDFS8F3DDS",
-        "image": "some-url/photo_default.jpg",
+        "image": null,
         "skills": null
     }
 ]

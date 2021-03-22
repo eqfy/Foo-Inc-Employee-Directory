@@ -61,8 +61,8 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
         });
 };
 
-export const setPageAction = (payload) => async (dispatch) => {
-    await dispatch({
+export const setPageAction = (payload) => (dispatch) => {
+    dispatch({
         type: "SET_SEARCH_PAGE_NUMBER",
         payload: {
             pageNumber: payload,
