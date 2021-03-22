@@ -46,7 +46,12 @@ function ResultsArea(props) {
             const employee = employeeId && byId[employeeId];
             return (
                 <div className="card-grid-col">
-                    {employee ? <EmployeeCard employee={employee} /> : null}
+                    {employee ? (
+                        <EmployeeCard
+                            employee={employee}
+                            linkToProfile={true}
+                        />
+                    ) : null}
                 </div>
             );
         }
