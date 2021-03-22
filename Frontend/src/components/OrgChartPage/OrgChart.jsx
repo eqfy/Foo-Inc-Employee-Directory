@@ -17,6 +17,7 @@ import React, { useEffect } from "react";
 import { setOrgChart } from "../../actions/orgChartAction";
 import { getPredictiveSearchAPI } from "../../api/predictiveSearchAPI";
 import { PagePathEnum } from "components/common/constants";
+import { coordinatedDebounce } from "components/searchPage/helpers";
 import { parseFullName } from "parse-full-name";
 
 const useStyles = makeStyles({
@@ -70,7 +71,7 @@ const useStyles = makeStyles({
 });
 
 // counter for timeout in case of input change
-let searchBarCounter = 0;
+const predictiveSearchTimer = {};
 
 function OrgChartSearchBar(props) {
     const history = useHistory();
@@ -79,24 +80,18 @@ function OrgChartSearchBar(props) {
     const [inputValue, setInputValue] = React.useState("");
 
     React.useEffect(() => {
-        searchBarCounter++;
-        const currCounter = searchBarCounter;
-        setTimeout(function() {
-            // make API call only if no change has been applied to input and input min-length = 2
-            if (searchBarCounter === currCounter && inputValue.length >= 2) {
-                const parsedName = parseFullName(inputValue);
-                getPredictiveSearchAPI(parsedName.first, parsedName.last).then((response) => {
-                    // update options only if no change has been applied to input
-                    if (searchBarCounter === currCounter) {
-                        setOptions(response);
-                    }
+        if (inputValue.length >= 2) {
+            coordinatedDebounce((name) => {
+                const { first, last } = parseFullName(name);
+                getPredictiveSearchAPI(first, last).then((response) => {
+                    setOptions(response);
                 });
-            }
-        }, 2000);
+            }, predictiveSearchTimer)(inputValue);
+        }
     }, [inputValue]);
 
     return (
-        <Autocomplete 
+        <Autocomplete
             options={options}
             getOptionLabel={(option) => inputValue}
             openOnFocus={true}
@@ -110,18 +105,22 @@ function OrgChartSearchBar(props) {
                     size="small"
                 />
             )}
-            renderOption={(option) => 
-                <div className={"orgchart-search-dropdown-entry"} onClick={() => {
-                    console.log('1');
-                    history.push(`${PagePathEnum.ORGCHART}/` + option.workerId);
-                }}>
-                    <img src="./../sample.png"/>
+            renderOption={(option) => (
+                <div
+                    className={"orgchart-search-dropdown-entry"}
+                    onClick={() => {
+                        history.push(
+                            `${PagePathEnum.ORGCHART}/` + option.employeeNumber
+                        );
+                    }}
+                >
+                    <img src="./../sample.png" />
                     <Typography noWrap>
                         {`${option.firstName} ${option.lastName}`}
                     </Typography>
                 </div>
-            }
-            onInputChange= {(event, value, reason) => {
+            )}
+            onInputChange={(event, value, reason) => {
                 setInputValue(value);
             }}
         />
