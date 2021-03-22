@@ -4,8 +4,8 @@ import { Pagination } from "@material-ui/lab";
 import styled from "styled-components";
 import { useHistory, useLocation } from "react-router";
 import "../common/Common.css";
-import { setPageAction } from 'actions/searchAction';
-import { connect } from 'react-redux';
+import { setPageAction } from "actions/searchAction";
+import { connect } from "react-redux";
 
 const entriesPerPage = 6;
 
@@ -23,7 +23,7 @@ function ResultsArea(props) {
         let params = new URLSearchParams(location.search);
         params.set("page", value);
         history.push({ search: params.toString() });
-    }
+    };
 
     React.useEffect(() => {
         let params = new URLSearchParams(location.search);
@@ -39,9 +39,11 @@ function ResultsArea(props) {
 
     const getEmployee = (index) => {
         if (index < resultOrder.length) {
+            const employeeId = resultOrder[index];
+            const employee = employeeId && byId[employeeId];
             return (
                 <div className="card-grid-col">
-                    <EmployeeCard employee={byId[resultOrder[index]]} />
+                    {employee ? <EmployeeCard employee={employee} /> : null}
                 </div>
             );
         }
@@ -82,8 +84,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    updatePage: (value) =>
-        dispatch(setPageAction(value)),
+    updatePage: (value) => dispatch(setPageAction(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);

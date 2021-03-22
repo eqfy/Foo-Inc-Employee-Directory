@@ -4,19 +4,22 @@ import { searchWorker, searchWorkerByName } from "../api/search";
 import {
     clearAppliedFilters,
     setExperienceAction,
+    setFiltersChanged,
     setNameAction,
 } from "./filterAction";
 
 export const searchByNameAction = (payload) => (dispatch, getState) => {
-    // If we do a search by name, we delete all applied filters first and then do a search by name
-    // After getting the names, we do another searchWithAppliedFilter once user clicks on a name
+    // The first search by name returns a list of possible values for the name
+    // If the user then proceeds to click on a name, then we clear all existing filters and
+    // do a regular search with name as the only filter
     const parsedName = parseFullName(payload);
     payload = {
         firstName: parsedName.first,
         lastName: parsedName.last,
     };
-    clearAppliedFilters();
-    setNameAction(payload);
+    // FIXME this no longer reflects the logic written in the above comments
+    dispatch(clearAppliedFilters());
+    dispatch(setNameAction(payload));
 
     console.log("Search By Name Action dispatched.\nPayload: %o", payload);
     searchWorkerByName(payload)
@@ -32,16 +35,42 @@ export const searchByNameAction = (payload) => (dispatch, getState) => {
 };
 
 export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
-    const payload = createSearchPayload(getState());
+    const currState = getState();
+    const payload = createSearchPayload(currState);
     console.log(
         "Search With Applied Filters Action dispatched.\nPayload: %o",
         payload
     );
+    const {
+        appState: { filtersChanged },
+        searchPageState: { resultOrder, pageNumber },
+    } = currState;
     searchWorker(payload)
         .then((response) => {
+            console.log("API Response", response);
+            let workersById = {};
+            let workersAllId = [];
+            let newResultOrder = [];
+            if (!filtersChanged) {
+                newResultOrder = resultOrder;
+            }
+            dispatch(setFiltersChanged(false));
+
+            response.data.forEach((worker, index) => {
+                workersById[worker.employeeNumber] = worker;
+                workersAllId.push(worker.employeeNumber);
+                newResultOrder[index] = worker.employeeNumber;
+            });
             dispatch({
-                type: "ADD_WORKER",
-                payload: response,
+                type: "ADD_WORKERS",
+                payload: {
+                    byId: workersById,
+                    allId: workersAllId,
+                },
+            });
+            dispatch({
+                type: "SET_SEARCH_RESULT_ORDER",
+                payload: { resultOrder: newResultOrder },
             });
         })
         .catch((error) => {
@@ -81,24 +110,31 @@ const createSearchPayload = (state) => {
         },
         searchPageState: { pageNumber, sortKey, isAscending },
     } = state;
-    return {
-        skills: Object.entries(skillState).map(
-            ([category, skill]) => category + ":::" + skill
-        ),
+
+    const payload = {
+        skills: Object.entries(skillState).reduce((acc, [category, skills]) => {
+            acc = acc.concat(
+                ...skills.map((skill) => category + ":::" + skill)
+            );
+            return acc;
+        }, []),
         locationPhysical: locationState,
         title: titleState,
         yearsPriorExperience: yearsPriorExperience,
         division: departmentState,
         companyname: companyState,
-        firstName: firstName,
-        lastName: lastName,
-        employmentType: {},
-        isContractor:
-            shownWorkerType === WorkerTypeEnum.ALL ||
-            shownWorkerType === WorkerTypeEnum.CONTRACTOR,
-        offset: pageNumber * 6,
-        fetch: 6,
+        // FIXME firstName and lastName can only be included after the user has done a predictive
+        // search by name and selected a name from the dropdown menu
+        // firstName: firstName, // need to handle empty string case
+        // lastName: lastName,
+        shownWorkerType: shownWorkerType,
+        // TODO change this so that we actually only get 3 (or potentially more pages of result)
+        // offset: (pageNumber - 1) * 6,
+        // fetch: 6,
+        offset: 0,
+        fetch: 100,
         orderBy: sortKey,
         orderDir: isAscending ? "ASC" : "DESC",
     };
+    return payload;
 };

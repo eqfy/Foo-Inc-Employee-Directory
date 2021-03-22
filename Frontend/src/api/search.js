@@ -11,5 +11,5 @@ export async function searchWorkerByName(searchByNamePayload) {
     const myInit = {
         queryStringParameters: searchByNamePayload,
     };
-    return API.get("ae-api", "search", myInit);
+    return API.get("ae-api", "predictiveSearchResource", myInit);
 }
