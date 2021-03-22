@@ -180,11 +180,18 @@ namespace Handler
 
         public APIGatewayProxyResponse predictiveSearch(APIGatewayProxyRequest request, ILambdaContext context)
         {
-
+            Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Content-Type", "application/json" },
+                            { "Access-Control-Allow-Origin", "*" },
+                            { "Access-Control-Allow-Methods", "*" },
+                            { "Access-Control-Allow-Headers", "*" },
+                        };
             try
             {
                 var firstNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["firstName"].ToLower());
                 var lastNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["lastName"].ToLower());
+
                 LambdaLogger.Log("firstName: " + firstNamePrefix);
                 LambdaLogger.Log("lastName: " + lastNamePrefix);
 
@@ -248,31 +255,37 @@ namespace Handler
                 {
                     StatusCode = 200,
                     Body = output,
-                    Headers = new Dictionary<string, string>
-                {
-                    { "Content-Type", "application/json" },
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },
-                }
+                    Headers = headers
                 };
 
                 return response;
 
+            }
+            catch (System.Collections.Generic.KeyNotFoundException error)
+            {
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 400,
+                    Body = "Bad Request. Missing query parameter : " + error,
+                    Headers = headers
+                };
+            }
+            catch (System.NullReferenceException error)
+            {
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 400,
+                    Body = "Bad request : No query parameters sent : " + error,
+                    Headers = headers
+                };
             }
             catch (System.Exception error)
             {
                 return new APIGatewayProxyResponse
                 {
                     StatusCode = 404,
-                    Body = "Error Reason: " + error,
-                    Headers = new Dictionary<string, string>
-                    {
-                        { "Content-Type", "application/json" },
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" },
-                    }
+                    Body = "Generic Error: " + error,
+                    Headers = headers
                 };
             }
         }
