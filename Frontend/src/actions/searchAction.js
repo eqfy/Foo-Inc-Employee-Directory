@@ -47,7 +47,6 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
     } = currState;
     searchWorker(payload)
         .then((response) => {
-            console.log("API Response", response);
             let workersById = {};
             let workersAllId = [];
             let newResultOrder = [];
@@ -128,7 +127,7 @@ const createSearchPayload = (state) => {
         title: titleState,
         yearsPriorExperience: yearsPriorExperience,
         division: departmentState,
-        companyname: companyState,
+        companyName: companyState,
         // FIXME firstName and lastName can only be included after the user has done a predictive
         // search by name and selected a name from the dropdown menu
         // firstName: firstName, // need to handle empty string case
