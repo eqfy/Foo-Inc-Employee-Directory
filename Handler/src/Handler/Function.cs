@@ -89,10 +89,10 @@ namespace Handler
         public  APIGatewayProxyResponse GetByName(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var firstName = request.QueryStringParameters["FirstName"];
-            var lastName = request.QueryStringParameters["LastName"];  
+            var firstName = request.QueryStringParameters["firstName"];
+            var lastName = request.QueryStringParameters["lastName"];  
             LambdaLogger.Log("FirstName: " + firstName);
-            LambdaLogger.Log("FirstName: " + lastName);
+            LambdaLogger.Log("lasttName: " + lastName);
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
@@ -149,7 +149,7 @@ namespace Handler
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
-                e.OfficeLocation = reader[18].ToString();
+                e.officeLocation = reader[18].ToString();
                 employees.Add(e);
             }
 
@@ -165,6 +165,83 @@ namespace Handler
                 StatusCode = 200,
                 Body = output,
                 //Body = myDbItems.ToString(),
+                Headers = new Dictionary<string, string>
+                { 
+                    { "Content-Type", "application/json" }, 
+                    { "Access-Control-Allow-Origin", "*" },
+                    { "Access-Control-Allow-Methods", "*" },
+                    { "Access-Control-Allow-Headers", "*" },  
+                }
+            };
+
+            return response;
+        }
+
+        public  APIGatewayProxyResponse predictiveSearch(APIGatewayProxyRequest request, ILambdaContext context)
+        {
+            
+            var firstNamePrefix = request.QueryStringParameters["firstName"].ToLower();
+            var lastNamePrefix = request.QueryStringParameters["lastName"].ToLower();
+            LambdaLogger.Log("firstName: " + firstNamePrefix);
+            LambdaLogger.Log("lastName: " + lastNamePrefix);
+
+            var appendSql = string.Empty;
+            
+            LambdaLogger.Log(GetRDSConnectionString());
+            //Open the connection to the postgres database
+            using var con = new NpgsqlConnection(GetRDSConnectionString());
+            con.Open();
+            
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+
+            //Get the sql script from the bucket
+            var script = getS3FileSync(bucketName, objectKey);
+        
+            
+            //Read the sql from the file
+            StreamReader readers3 = new StreamReader(script.ResponseStream);
+            String sql = readers3.ReadToEnd();
+
+            if (firstNamePrefix != string.Empty && lastNamePrefix != string.Empty) {
+                sql += " WHERE LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2 LIMIT 20";
+            } else {
+                sql += " WHERE (LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2) OR (LOWER(\"FirstName\") LIKE :p2 AND LOWER(\"LastName\") LIKE :p1) LIMIT 20";
+            }
+
+            LambdaLogger.Log("sql: " + sql);
+
+            using var cmd = new NpgsqlCommand(sql,con);
+            cmd.Parameters.AddWithValue("p1", firstNamePrefix+"%");
+            cmd.Parameters.AddWithValue("p2", lastNamePrefix+"%");
+
+            //Run the sql command
+            var reader = cmd.ExecuteReader();
+    
+            string output = string.Empty;
+            List<PredictiveSearchEmployee> predEmployees = new List<PredictiveSearchEmployee>();
+
+            while(reader.Read()) {
+                PredictiveSearchEmployee e = new PredictiveSearchEmployee();
+                
+                e.firstName = reader[0].ToString();
+                e.lastName = reader[1].ToString();
+                e.imageURL = reader[2].ToString();
+                e.employeeNumber = reader[3].ToString();
+
+                predEmployees.Add(e);
+            }
+
+            reader.Close();
+
+            output = Newtonsoft.Json.JsonConvert.SerializeObject(predEmployees);
+
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = output,
                 Headers = new Dictionary<string, string>
                 { 
                     { "Content-Type", "application/json" }, 
@@ -259,7 +336,7 @@ namespace Handler
                 supervisor.employeeNumber = readerSupervisor[15].ToString();
                 supervisor.employmentType = readerSupervisor[16].ToString();
                 supervisor.skills = readerSupervisor[17].ToString();
-                supervisor.OfficeLocation = readerSupervisor[18].ToString();
+                supervisor.officeLocation = readerSupervisor[18].ToString();
             }
 
             if (toggleIsEmpty || workerID == CeoID) {
@@ -300,7 +377,7 @@ namespace Handler
                 e.employeeNumber = readerColleagues[15].ToString();
                 e.employmentType = readerColleagues[16].ToString();
                 e.skills = readerColleagues[17].ToString();
-                e.OfficeLocation = readerColleagues[18].ToString(); 
+                e.officeLocation = readerColleagues[18].ToString(); 
                 if (e.employeeNumber == CeoID) {
                   ceo.Add(e);
                 } else {
@@ -345,7 +422,7 @@ namespace Handler
                 e.employeeNumber = readerSubordinates[15].ToString();
                 e.employmentType = readerSubordinates[16].ToString();
                 e.skills = readerSubordinates[17].ToString();
-                e.OfficeLocation = readerSubordinates[18].ToString();
+                e.officeLocation = readerSubordinates[18].ToString();
                 if (e.employeeNumber != CeoID) {
                   subs.Add(e);
                 }
@@ -618,14 +695,31 @@ namespace Handler
          // order by number, offset, and fecth functions
         
         //TODO make this not case sensitive and give errors when using something like blah 
-        private string createOrderByFilter(string order,ref int parameterCounter){
+        private string createOrderByFilter(string order){
             string orderByFilter ="";
-            if(order == "FirstName"){
+            if(order == "firstName"){
                 orderByFilter = " ORDER BY \"FirstName\"";
-            }else if(order == "Title"){
+            } else if(order == "lastName"){
+                orderByFilter = " ORDER BY \"LastName\"";
+
+            }else if(order == "title"){
                 orderByFilter = " ORDER BY \"Title\"";
             }
+            //throw expection TODO
             return orderByFilter;
+        }
+        
+        private string createOrderDirFilter(string orderDir){
+            string orderDirFilter = "";
+
+            if(orderDir == "ASC"){
+                orderDirFilter = " ASC";
+            } else if(orderDir == "DESC"){
+                orderDirFilter = " DESC";
+
+            }
+            //throw expection TODO
+            return orderDirFilter;
         }
         
         private string createOffsetFilter(ref int parameterCounter){
@@ -644,6 +738,8 @@ namespace Handler
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
+
+            //TODO SQL in file maybe
             var sqlSkill = "WITH category AS (SELECT \"SkillCategory\".\"Label\", \"SkillCategory\".\"SkillCategoryId\" FROM \"SkillCategory\") SELECT \"Skill\".\"Label\", category.\"Label\" FROM \"Skill\" JOIN category ON \"Skill\".\"SkillCategoryId\" = category.\"SkillCategoryId\"";
             using var cmdSkill = new NpgsqlCommand(sqlSkill, con);
 
@@ -734,7 +830,7 @@ namespace Handler
             return response;
         }
 
-        
+        //ADD ACSEN AND DEC OPTION AND LAST NAME 
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
@@ -742,22 +838,22 @@ namespace Handler
 
             // List<Employee> 
             List<string> skills = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("Skills")){
-                skills = (List<string>)request.MultiValueQueryStringParameters["Skills"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
+                skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
             }
             List<string> locations = new List<string>();
-            if (request.MultiValueQueryStringParameters.ContainsKey("LocationPhysical")){
-                locations = (List<string>)request.MultiValueQueryStringParameters["LocationPhysical"];
+            if (request.MultiValueQueryStringParameters.ContainsKey("locationPhysical")){
+                locations = (List<string>)request.MultiValueQueryStringParameters["locationPhysical"];
             }
             List<string> titles = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("Title")){
-                titles = (List<string>)request.MultiValueQueryStringParameters["Title"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("title")){
+                titles = (List<string>)request.MultiValueQueryStringParameters["title"];
             }
             
             // Note: if they change the slide bar to allow for partial years change this to a float
             List<string> yearsExperience = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("YearsPriorExperience")){
-                yearsExperience = (List<string>)request.MultiValueQueryStringParameters["YearsPriorExperience"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("yearsPriorExperience")){
+                yearsExperience = (List<string>)request.MultiValueQueryStringParameters["yearsPriorExperience"];
             }
 
             List<string> divisions = new List<string>();
@@ -765,24 +861,24 @@ namespace Handler
                 divisions = (List<string>)request.MultiValueQueryStringParameters["division"];
             }
             List<string> companynames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("companyname")){
+            if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
                 companynames = (List<string>)request.MultiValueQueryStringParameters["companyname"];
             }
             List<string> firstnames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("FirstName")){
-                firstnames = (List<string>)request.MultiValueQueryStringParameters["FirstName"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("firstName")){
+                firstnames = (List<string>)request.MultiValueQueryStringParameters["firstName"];
             }
             List<string> lastnames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("LastName")){
-                lastnames = (List<string>)request.MultiValueQueryStringParameters["LastName"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("lastName")){
+                lastnames = (List<string>)request.MultiValueQueryStringParameters["lastName"];
             }
             List<string> employementTypes = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("EmploymentType")){
-                employementTypes = (List<string>)request.MultiValueQueryStringParameters["EmploymentType"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("employmentType")){
+                employementTypes = (List<string>)request.MultiValueQueryStringParameters["employmentType"];
             }
             List<string> officeLocations = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("officelocations")){
-                officeLocations = (List<string>)request.MultiValueQueryStringParameters["officelocations"];
+            if(request.MultiValueQueryStringParameters.ContainsKey("officeLocations")){
+                officeLocations = (List<string>)request.MultiValueQueryStringParameters["officeLocations"];
             }
             List<string> isContractor = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("isContractor")){
@@ -799,6 +895,10 @@ namespace Handler
             List<string> fetchs = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("fetch")){
                 fetchs = (List<string>)request.MultiValueQueryStringParameters["fetch"];
+            }
+            List<string> orderDir = new List<string>();
+            if(request.MultiValueQueryStringParameters.ContainsKey("orderDir")){
+                orderDir = (List<string>)request.MultiValueQueryStringParameters["orderDir"];
             }
 
             string skillFilter="";
@@ -858,7 +958,11 @@ namespace Handler
             
             string orderByFilter ="";
             if(orderBys.Count > 0){
-                orderByFilter = createOrderByFilter(orderBys[0],ref parameterCounter);
+                orderByFilter = createOrderByFilter(orderBys[0]);
+            }
+            string orderDirFilter ="";
+            if(orderDir.Count > 0){
+                orderDirFilter = createOrderDirFilter(orderDir[0]);
             }
             
             string offsetFilter ="";
@@ -870,6 +974,7 @@ namespace Handler
             if(fetchs.Count > 0){
                 fetchFilter = createFetchFilter(ref parameterCounter);
             }
+
             using var con = new NpgsqlConnection(GetRDSConnectionString());
             con.Open();
 
@@ -915,6 +1020,7 @@ namespace Handler
             sql += orderByFilter;
             //Only add the fetch and offset filters if there is an orderBy
             if(orderBys.Count > 0){
+                sql += orderDirFilter;
                 sql += offsetFilter;
                 sql += fetchFilter;
             }
@@ -983,11 +1089,6 @@ namespace Handler
                 cmd.Parameters.AddWithValue("p"+currentParameterCounter++, isCon);
             }
 
-            foreach(string order in orderBys){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + order);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, order);
-            }
-
             foreach(string offset in offsets){
                 LambdaLogger.Log("p"+currentParameterCounter + " : " + offset);
                 cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(offset));
@@ -1028,7 +1129,7 @@ namespace Handler
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
-                e.OfficeLocation = reader[18].ToString();
+                e.officeLocation = reader[18].ToString();
                 employees.Add(e);
             }
 
@@ -1059,7 +1160,7 @@ namespace Handler
         public  APIGatewayProxyResponse getEmployeeID(APIGatewayProxyRequest request, ILambdaContext context)
         {
             
-            var employeeID = request.QueryStringParameters["EmployeeNumber"];  
+            var employeeID = request.QueryStringParameters["employeeNumber"];  
             LambdaLogger.Log("ID: " + employeeID);
 
             using var con = new NpgsqlConnection(GetRDSConnectionString());
@@ -1089,10 +1190,10 @@ namespace Handler
             var reader = cmd.ExecuteReader();
     
             string output = string.Empty;
-            List<Employee> employees = new List<Employee>();
+            //List<Employee> employees = new List<Employee>();
+            Employee e = new Employee();
 
             while(reader.Read()) {
-                Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
                 e.image = reader[2].ToString();
@@ -1111,13 +1212,17 @@ namespace Handler
                 e.employeeNumber = reader[15].ToString();
                 e.employmentType = reader[16].ToString();
                 e.skills = reader[17].ToString();
-                e.OfficeLocation = reader[18].ToString();
-                employees.Add(e);
+                e.officeLocation = reader[18].ToString();
+                //employees.Add(e);
             }
 
             reader.Close();
-            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
-            output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+            LambdaLogger.Log("employeeNumber ==: " + e.employeeNumber + "\n");
+            if(e.employeeNumber !=null){ 
+                output = Newtonsoft.Json.JsonConvert.SerializeObject(e);
+            }else{
+                output = Newtonsoft.Json.JsonConvert.SerializeObject(null);
+            }
             //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
         
             var response = new APIGatewayProxyResponse
@@ -1136,6 +1241,152 @@ namespace Handler
 
             return response;
         }
+        
+        private void insertSkills(string skills, string employeeNumber){
+            //TODO fill in
+            //Management:::Planning
+            // SELECT sc."SkillCategoryId", s."SkillId" FROM "SkillCategory" sc, "Skill" s WHERE sc."SkillCategoryId" = s."SkillCategoryId" AND sc."Label" = :p0 AND s."Label" = :p1
+
+            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+            LambdaLogger.Log("bucketName: " + bucketName);
+            LambdaLogger.Log("objectKey: " + objectKey);
+            
+            string[] skillList = skills.Split("|||");
+
+            LambdaLogger.Log("skillsList: " + skillList[0].ToString());
+
+            
+            //----Run the SQL in code for the input----
+
+            var idsScript = getS3FileSync(bucketName, "findSkillsIds.sql");
+            
+            var insertScript = getS3FileSync(bucketName, "insertContractorSkills.sql");
+
+            //Read the get ids sql from the file
+            StreamReader readers3ids = new StreamReader(idsScript.ResponseStream);
+            string idsSQL = readers3ids.ReadToEnd();
+
+            LambdaLogger.Log("idsSQL: " + idsSQL);
+
+            //Read the insert sql from the file
+            StreamReader readers3insert = new StreamReader(insertScript.ResponseStream);
+            string insertSQL = readers3insert.ReadToEnd();
+
+            LambdaLogger.Log("insertSQL: " + insertSQL);
+
+            
+
+           
+
+            
+            
+            foreach (var skill in skillList ){
+                
+                using var con = new NpgsqlConnection(GetRDSConnectionString());
+                con.Open();
+                //Parse into the two strings
+                string[] skillStrings= skill.Split(":::");
+                string skillCategory = skillStrings[0];
+                string skillLabel = skillStrings[1];
+
+                LambdaLogger.Log("skill Category: " + skillCategory);
+                LambdaLogger.Log("skill Label " + skillLabel);
+                
+
+                //Call sql to get the ids
+
+                //LambdaLogger.Log("groupCodeSQL: " + groupCodeSQL);
+
+                
+
+                // string sql1 = "SELECT sc.\"SkillCategoryId\", s.\"SkillId\" FROM \"SkillCategory\" sc, \"Skill\" s WHERE sc.\"SkillCategoryId\" = s.\"SkillCategoryId\" AND sc.\"Label\" = \"" + skillCategory + "\""  +  "AND s.\"Label\" = \"" + skillLabel + "\"";
+
+                // LambdaLogger.Log("SQL STATEMENT " + sql1);
+
+                
+
+                // using (var cmd = new NpgsqlCommand(sql1, con))
+                // using (var reader = cmd.ExecuteReader()) { 
+                //     while (readerID.Read()){
+                //         categoryId = readerID.GetString(readerID.GetOrdinal("SkillCategoryId");
+                //         skillId = readerID.GetString(readerID.GetOrdinal("SkillId"));
+                //     }
+                // }
+
+
+                string categoryId ="";
+                string skillId="";
+                using var idsCmd = new NpgsqlCommand(idsSQL,con);
+
+                LambdaLogger.Log("idsSQL " + idsSQL);
+
+                //Add the bind variable
+                idsCmd.Parameters.AddWithValue("p0",skillCategory);
+                idsCmd.Parameters.AddWithValue("p1",skillLabel);
+                
+                LambdaLogger.Log("HELOO EXCECUTE ---------");
+                using var readerID = idsCmd.ExecuteReader();
+
+                LambdaLogger.Log("BYE EXCECUTE -----------");
+
+
+
+                //LambdaLogger.Log("Reader closed? ---------" + readerID.IsClosed); 
+                LambdaLogger.Log("Reader Rows ---------" + readerID.HasRows);
+                //LambdaLogger.Log("Reader column count ---------" + readerID.FieldCount);
+
+                while (readerID.Read()){
+                    LambdaLogger.Log("HELOO WHILE ---------" );
+                    categoryId = readerID[0].ToString();
+                   
+                    skillId = readerID[1].ToString();
+                
+                }
+                LambdaLogger.Log("BYE WHILE ---------" );
+        
+                // readerID.Read();
+                // LambdaLogger.Log("BYE READ -----");
+                // if (readerID[0] == null){
+                //     LambdaLogger.Log("NULL READER[0] -----");
+                // }else{
+                //     LambdaLogger.Log("NOT NULL READER[0] -----");
+                //}
+                // string categoryId = readerID[0].ToString();
+                // string skillId = readerID[1].ToString();
+                // LambdaLogger.Log("HELOO CLOSE -----");
+                // LambdaLogger.Log("Reader next HI ? ---------"); 
+                // readerID.NextResult();
+                // readerID.Dispose();
+                readerID.Close();
+                LambdaLogger.Log("Reader next HI ? ---------"); 
+
+
+                LambdaLogger.Log("categoryID " + categoryId);
+                LambdaLogger.Log("skillId " + skillId);
+                
+
+                //Insert the skills into the EmployeeSkills table
+                using var insertSkillCmd = new NpgsqlCommand(insertSQL,con);
+
+                //Add the bind variable
+                insertSkillCmd.Parameters.AddWithValue("p0",employeeNumber);
+                insertSkillCmd.Parameters.AddWithValue("p1",categoryId);
+                insertSkillCmd.Parameters.AddWithValue("p2",skillId);
+
+                insertSkillCmd.ExecuteNonQuery();
+
+                
+                //call the sql to insert the pair into the employeeSkillsTable
+                //skillFilter =  ;
+                //}
+                //es.skills LIKE '%Accounting:::Transaction Processing%' AND es.skills LIKE '%Accounting:::Reconciling%' 
+                
+                con.Dispose();
+                con.Close();
+            }
+        }
+
 
         public  APIGatewayProxyResponse addContractor(APIGatewayProxyRequest request, ILambdaContext context){
             string requestBody = request.Body;
@@ -1157,6 +1408,179 @@ namespace Handler
             LambdaLogger.Log("bucketName: " + bucketName);
             LambdaLogger.Log("objectKey: " + objectKey);
 
+            
+            //----Run the SQL to find the PhysicalLocation code of the input----
+            
+            var locationCodeScript = getS3FileSync(bucketName, "locationCode.sql");
+
+            //Read the sql from the file
+            StreamReader readers3LocationCode = new StreamReader(locationCodeScript.ResponseStream);
+            string locationCodeSQL = readers3LocationCode.ReadToEnd();
+
+            LambdaLogger.Log("locationCodeSQL: " + locationCodeSQL);
+
+            using var locationCodeCmd = new NpgsqlCommand(locationCodeSQL,con);
+
+            //Add the bind variable
+            locationCodeCmd.Parameters.AddWithValue("p0",body["PhysicalLocation"].Value<string>());
+            LambdaLogger.Log("p0: " + body["PhysicalLocation"].Value<string>());
+            string physicalLocationId = "";
+            try{
+                var LocationCodereader = locationCodeCmd.ExecuteReader();
+                
+                
+                LocationCodereader.Read();
+                physicalLocationId = LocationCodereader[0].ToString();
+                LocationCodereader.Close();
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Invalid physical location: " + body["PhysicalLocation"].Value<string>(),
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
+
+
+            //----Run the SQL to find the Company code of the input----
+            var companyCodeScript = getS3FileSync(bucketName, "companyCode.sql");
+
+            //Read the sql from the file
+            StreamReader readers3CompanyCode = new StreamReader(companyCodeScript.ResponseStream);
+            String comapanyCodeSQL = readers3CompanyCode.ReadToEnd();
+
+            LambdaLogger.Log("comapanyCodeSQL: " + comapanyCodeSQL);
+
+            using var companyCodeCmd = new NpgsqlCommand(comapanyCodeSQL,con);
+
+            //Add the bind variable
+            companyCodeCmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
+
+            LambdaLogger.Log("p0: " + body["CompanyCode"].Value<string>());
+
+            string companyCodeId ="";
+
+            try{
+                var ComapanyCodereader = companyCodeCmd.ExecuteReader();
+                
+                ComapanyCodereader.Read();
+                companyCodeId = ComapanyCodereader[0].ToString();
+                ComapanyCodereader.Close();
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Invalid Company Code: " + body["CompanyCode"].Value<string>() ,
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
+
+            
+
+            //----Run the SQL to find the Office code of the input----
+            var officeCodeScript = getS3FileSync(bucketName, "officeCode.sql");
+
+            //Read the sql from the file
+            StreamReader readers3OfficeCode = new StreamReader(officeCodeScript.ResponseStream);
+            String officeCodeSQL = readers3OfficeCode.ReadToEnd();
+
+            LambdaLogger.Log("officeCodeSQL: " + officeCodeSQL);
+
+            using var officeCodeCmd = new NpgsqlCommand(officeCodeSQL,con);
+
+            //Add the bind variable
+            officeCodeCmd.Parameters.AddWithValue("p0",body["OfficeCode"].Value<string>());
+            officeCodeCmd.Parameters.AddWithValue("p1",companyCodeId);
+
+            LambdaLogger.Log("p0: " + body["OfficeCode"].Value<string>());
+            LambdaLogger.Log("p1: " + companyCodeId);
+
+            string officeCodeId = "";
+            try{
+                var OfficeCodereader = officeCodeCmd.ExecuteReader();
+                
+                OfficeCodereader.Read();
+                officeCodeId = OfficeCodereader[0].ToString();
+                OfficeCodereader.Close();
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Invalid Office Code: " + body["OfficeCode"].Value<string>() ,
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
+            
+            
+
+            //----Run the SQL to find the Group code of the input----
+            var groupCodeScript = getS3FileSync(bucketName, "groupCode.sql");
+
+            //Read the sql from the file
+            StreamReader readers3GroupCode = new StreamReader(groupCodeScript.ResponseStream);
+            String groupCodeSQL = readers3GroupCode.ReadToEnd();
+
+            LambdaLogger.Log("groupCodeSQL: " + groupCodeSQL);
+
+            using var groupCodeCmd = new NpgsqlCommand(groupCodeSQL,con);
+
+            //Add the bind variable
+            groupCodeCmd.Parameters.AddWithValue("p0",body["GroupCode"].Value<string>());
+            groupCodeCmd.Parameters.AddWithValue("p1",companyCodeId);
+            groupCodeCmd.Parameters.AddWithValue("p2",officeCodeId);
+
+            LambdaLogger.Log("p0: " + body["GroupCode"].Value<string>());
+            LambdaLogger.Log("p1: " + companyCodeId);
+            LambdaLogger.Log("p2: " + officeCodeId);
+
+            string groupCodeId = "";
+            try{
+                var groupCodereader = groupCodeCmd.ExecuteReader();
+                
+                groupCodereader.Read();
+                groupCodeId = groupCodereader[0].ToString();
+                groupCodereader.Close();
+
+                LambdaLogger.Log("groupCodeId: " + officeCodeId);
+            }
+            catch(System.Exception){
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Invaild Group Code: " + body["GroupCode"].Value<string>(),
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+            }
+            
+
+
             //Get the sql script from the bucket
             var script = getS3FileSync(bucketName, objectKey);
         
@@ -1171,45 +1595,70 @@ namespace Handler
 
             //Add the bind variables
             
-            cmd.Parameters.AddWithValue("p0",body["CompanyCode"].Value<string>());
-            cmd.Parameters.AddWithValue("p1",body["OfficeCode"].Value<string>());
-            cmd.Parameters.AddWithValue("p2",body["GroupCode"].Value<string>());
+            cmd.Parameters.AddWithValue("p0",companyCodeId);
+            cmd.Parameters.AddWithValue("p1",officeCodeId);
+            cmd.Parameters.AddWithValue("p2",groupCodeId);
             cmd.Parameters.AddWithValue("p3",body["FirstName"].Value<string>());
             cmd.Parameters.AddWithValue("p4",body["LastName"].Value<string>());
             cmd.Parameters.AddWithValue("p5",body["EmploymentType"].Value<string>());
             cmd.Parameters.AddWithValue("p6",body["Title"].Value<string>());
             cmd.Parameters.AddWithValue("p7",body["HireDate"].Value<string>());
-            /*if(body["TerminationDate"].Value<string>() == "NULL"){
-                cmd.Parameters.AddWithValue("p8",DBNull.value);
-            }else{
-                cmd.Parameters.AddWithValue("p8",body["TerminationDate"].Value<string>());
-            }*/
             cmd.Parameters.AddWithValue("p8",((object)body["TerminationDate"].Value<string>() ?? DBNull.Value));
             cmd.Parameters.AddWithValue("p9",body["SupervisorEmployeeNumber"].Value<string>());
             cmd.Parameters.AddWithValue("p10",body["YearsPriorExperience"].Value<string>());
             cmd.Parameters.AddWithValue("p11",body["Email"].Value<string>());
             cmd.Parameters.AddWithValue("p12",body["WorkPhone"].Value<string>());
             cmd.Parameters.AddWithValue("p13",body["WorkCell"].Value<string>());
-            cmd.Parameters.AddWithValue("p14",body["PhysicalLocationId"].Value<string>());
+            cmd.Parameters.AddWithValue("p14",physicalLocationId);
             cmd.Parameters.AddWithValue("p15",body["PhotoUrl"].Value<string>());
 
-            cmd.ExecuteNonQuery();
-            //TODO check that the query didn't fail
+            //try{
+                var contractorReader = cmd.ExecuteReader();
+                contractorReader.Read();
+                string addedContractorEmployeeNumber = contractorReader[0].ToString();
+                LambdaLogger.Log("added contracotr id: " + addedContractorEmployeeNumber);
 
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = 200,
-                Body = "New slave added!",
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },  
-                }
-            };
+                contractorReader.Close();
 
-            return response;
+                // List<string> skills = new List<string>();
+                // if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
+                //     skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
+                // }
+
+
+                //insert the contractors skills into the database
+                insertSkills(body["skills"].Value<string>(),addedContractorEmployeeNumber);
+
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 200,
+                    Body = "New slave added!",
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+
+                return response;
+            // }
+            // catch(System.Exception){
+            //     return new APIGatewayProxyResponse
+            //     {
+            //         StatusCode = 404,
+            //         Body = "New slave not added!",
+            //         Headers = new Dictionary<string, string>
+            //         { 
+            //             { "Content-Type", "application/json" }, 
+            //             { "Access-Control-Allow-Origin", "*" },
+            //             { "Access-Control-Allow-Methods", "*" },
+            //             { "Access-Control-Allow-Headers", "*" },  
+            //         }
+            //     };
+            // }
+            
         }
     }
 }

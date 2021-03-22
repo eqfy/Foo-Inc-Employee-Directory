@@ -297,9 +297,24 @@ namespace Project
             apiGateway.LambdaIntegration getEmployeeIDIntegration = new apiGateway.LambdaIntegration(getEmployeeID);
             apiGateway.Method getEmployeeIDMethod = getEmployeeIDResource.AddMethod("GET", getEmployeeIDIntegration);
 
-
-            lambda.Function databaseInitLambda = new lambda.Function(this, "databaseInit", new lambda.FunctionProps
-            {
+            //predictiveSearch Endpoint
+            lambda.Function predictiveSearch = new lambda.Function(this,"predictiveSearch", new lambda.FunctionProps{
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::predictiveSearch",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] {securityGroup}  
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource predictiveSearchResource = api.Root.AddResource("predictiveSearchResource");
+            apiGateway.LambdaIntegration predictiveSearchIntegration =  new apiGateway.LambdaIntegration(predictiveSearch);
+            apiGateway.Method predictiveSearchMethod =  predictiveSearchResource.AddMethod("GET", predictiveSearchIntegration);
+            
+            lambda.Function databaseInitLambda = new lambda.Function(this,"databaseInit", new lambda.FunctionProps{
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
                 Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
                 Handler = "Handler::Handler.Function::Init",
@@ -391,6 +406,7 @@ namespace Project
             databaseScriptsBucket.GrantRead(search);
             databaseScriptsBucket.GrantRead(getEmployeeID);
             databaseScriptsBucket.GrantRead(addContractor);
+            databaseScriptsBucket.GrantRead(predictiveSearch);
 
 
 
@@ -425,6 +441,12 @@ namespace Project
             getEmployeeID.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
             getEmployeeID.AddEnvironment("OBJECT_KEY", "getEmployeeID.sql");
             getEmployeeID.AddEnvironment("BUCKET_NAME", databaseScriptsBucket.BucketName);
+
+            predictiveSearch.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            predictiveSearch.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            predictiveSearch.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            predictiveSearch.AddEnvironment("OBJECT_KEY", "predictiveSearch.sql");
+            predictiveSearch.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
 
             addContractor.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             addContractor.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());

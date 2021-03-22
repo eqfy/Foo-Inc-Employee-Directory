@@ -189,7 +189,7 @@ function OrgChart(props) {
     setOrgChartForId = props.setOrgChart.bind(this);
 
     useEffect(() => {
-        props.setOrgChart(params.workerId);
+        props.setOrgChart(params["workerId"]);
     }, [params]);
 
     let dataSet;
