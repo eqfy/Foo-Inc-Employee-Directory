@@ -892,7 +892,7 @@ namespace Handler
             }
             List<string> companynames = new List<string>();
             if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
-                companynames = (List<string>)request.MultiValueQueryStringParameters["companyname"];
+                companynames = (List<string>)request.MultiValueQueryStringParameters["companyName"];
                 for(int i = 0; i < companynames.Count; i++){
                     companynames[i] = HttpUtility.UrlDecode(companynames[i]);
                 }
@@ -1183,7 +1183,7 @@ namespace Handler
             //LambdaLogger.Log("Hey1"+ reader.Read().ToString());
 
             while(reader.Read()) {
-                LambdaLogger.Log("Hey"+ reader[0].ToString());
+                //LambdaLogger.Log("Hey"+ reader[0].ToString());
                 Employee e = new Employee();
                 e.firstName = reader[0].ToString();
                 e.lastName = reader[1].ToString();
