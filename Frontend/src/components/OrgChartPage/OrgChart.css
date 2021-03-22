@@ -17,6 +17,18 @@
     margin-right: 20px;
 }
 
+.orgchart-search-dropdown-entry {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.orgchart-search-dropdown-entry img {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+}
+
 #legend {
     float: right;
     margin-right: 20px;
@@ -79,7 +91,7 @@
 .orgchart ul li .oc-node:not(:only-child)::after {
     background-color: black;
     width: 2px;
-    height: 40px; 
+    height: 40px;
     bottom: -36px;
 }
 
@@ -89,7 +101,8 @@
     top: -36px;
 }
 
-.card-name-extension, .card-title-extension {
+.card-name-extension,
+.card-title-extension {
     position: absolute;
     visibility: hidden;
     /* box-shadow: 0 0 50px 0 rgba(0,0,0,0.3); */
@@ -107,12 +120,14 @@
     top: calc(36px + 24px);
 }
 
-.card-text-too-long:hover + .card-name-extension, .card-text-too-long:hover + .card-title-extension {
+.card-text-too-long:hover + .card-name-extension,
+.card-text-too-long:hover + .card-title-extension {
     visibility: visible;
     opacity: 1;
-  }
+}
 
-.node-expander-top, .node-expander-bottom {
+.node-expander-top,
+.node-expander-bottom {
     position: absolute;
     margin-left: auto;
     margin-right: auto;
@@ -123,18 +138,19 @@
     z-index: 20;
 }
 
-.node-expander-top svg, .node-expander-bottom svg {
+.node-expander-top svg,
+.node-expander-bottom svg {
     background-color: white;
     width: 24px;
     height: 24px;
     color: #1c83fb;
-    transition: color .2s;
+    transition: color 0.2s;
 }
 
-.node-expander-top svg:hover, .node-expander-bottom svg:hover {
+.node-expander-top svg:hover,
+.node-expander-bottom svg:hover {
     color: #00569c;
 }
-
 
 .arrow-down svg {
     transform: rotate(90deg);
@@ -144,7 +160,8 @@
     transform: rotate(-90deg);
 }
 
-.node-expander-top:hover, .node-expander-bottom:hover {
+.node-expander-top:hover,
+.node-expander-bottom:hover {
     cursor: pointer;
 }
 
