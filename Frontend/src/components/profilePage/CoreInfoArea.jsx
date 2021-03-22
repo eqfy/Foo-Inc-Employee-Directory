@@ -9,7 +9,9 @@ function CoreInfoArea(props) {
     const { employee } = props;
     return (
         <ContainerDiv>
-            <EmployeeCard employee={employee} centered />
+            <CardContainer>
+            <EmployeeCard employee={employee} linkToProfile={false} />
+            </CardContainer>
             <div className="heading">Core Information</div>
             <StyledTypography
                 variant="body1"
@@ -35,6 +37,11 @@ const ContainerDiv = styled.div`
     width: 30%;
     height: 100%;
     border-right: 1px solid black;
+`;
+
+const CardContainer = styled.div`
+    display: flex;
+    justify-content: center;
 `;
 
 const StyledTypography = styled(Typography)`

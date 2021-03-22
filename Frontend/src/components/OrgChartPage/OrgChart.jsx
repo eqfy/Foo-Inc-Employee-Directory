@@ -15,6 +15,7 @@ import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
 import { setOrgChart } from "../../actions/orgChartAction";
+import WorkerNotFound from "components/common/WorkerNotFound";
 import { getPredictiveSearchAPI } from "../../api/predictiveSearchAPI";
 import { PagePathEnum } from "components/common/constants";
 import { coordinatedDebounce } from "components/searchPage/helpers";
@@ -55,9 +56,9 @@ const useStyles = makeStyles({
         paddingRight: "auto",
     },
     cardMedia: {
-        padding: 20,
-        minWidth: 50,
-        minHeight: 50,
+        minWidth: 80,
+        minHeight: 80,
+        margin: 5,
     },
     cardText: {
         textAlign: "left",
@@ -171,7 +172,7 @@ function OrgChartNode(props) {
             }}
         >
             <CardMedia
-                image={"./../sample.png"}
+                image={"/workerPlaceholder.png"}
                 classes={{ root: classes.cardMedia }}
             />
             <CardContent classes={{ root: classes.cardContent }}>
@@ -181,14 +182,18 @@ function OrgChartNode(props) {
                 >
                     {data.name}
                 </Typography>
-                <p className={"card-name-extension"}>{data.name}</p>
+                <Typography className={"card-name-extension"}>
+                    {data.name}
+                </Typography>
                 <Typography
                     classes={{ root: classes.cardText }}
                     className={`card-title-${data.id}`}
                 >
                     {data.title}
                 </Typography>
-                <p className={"card-title-extension"}>{data.title}</p>
+                <Typography className={"card-title-extension"}>
+                    {data.title}
+                </Typography>
             </CardContent>
         </Card>
     );
@@ -277,7 +282,7 @@ function OrgChart(props) {
     ) : props.dataSetDefault === undefined ? (
         // invalid state
         <div className={"orgchart-container"}>
-            Sorry, there is no employee or contractor with matching id.
+            <WorkerNotFound />
         </div>
     ) : (
         // chart state

@@ -104,25 +104,25 @@
 .card-name-extension,
 .card-title-extension {
     position: absolute;
-    visibility: hidden;
-    /* box-shadow: 0 0 50px 0 rgba(0,0,0,0.3); */
+    margin-top: 0;
+    margin-bottom: 0;
     background-color: #fff;
     opacity: 0;
     transition: opacity 0.5s ease;
     z-index: 30;
+    white-space: nowrap;
 }
 
 .card-name-extension {
-    top: 36px;
+    top: 26.5px;
 }
 
 .card-title-extension {
-    top: calc(36px + 24px);
+    top: 51px;
 }
 
-.card-text-too-long:hover + .card-name-extension,
-.card-text-too-long:hover + .card-title-extension {
-    visibility: visible;
+.card-text-too-long + .card-name-extension:hover,
+.card-text-too-long + .card-title-extension:hover {
     opacity: 1;
 }
 
