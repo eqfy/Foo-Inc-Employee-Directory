@@ -102,7 +102,12 @@ function LoadingResult(props) {
         </div>
     ) : !hasResult ? (
         <div className={"orgchart-container"}>
-            Sorry, there is no employee or contractor with matching id.
+            Sorry, no employee or contractor satisfies the filters.
+            <br />
+            Please try unchecking some filters or lowering the minimum work
+            experience filter
+            <br />
+            (currently, the most senior employee has 11 years of experience)
         </div>
     ) : (
         props.children
