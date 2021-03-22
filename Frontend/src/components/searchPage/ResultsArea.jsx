@@ -6,6 +6,8 @@ import { useHistory, useLocation } from "react-router";
 import "../common/Common.css";
 import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
+import Fade from "@material-ui/core/Fade";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const entriesPerPage = 6;
 
@@ -17,6 +19,7 @@ function ResultsArea(props) {
         updatePage,
         resultOrder,
         workers: { byId },
+        loading,
     } = props;
 
     const handleChange = (_event, value) => {
@@ -52,21 +55,53 @@ function ResultsArea(props) {
     const offset = (pageNumber - 1) * entriesPerPage;
     return (
         <>
-            <div className="card-grid">
-                {getEmployee(offset + 0)}
-                {getEmployee(offset + 1)}
-                {getEmployee(offset + 2)}
-            </div>
-            <div className="card-grid">
-                {getEmployee(offset + 3)}
-                {getEmployee(offset + 4)}
-                {getEmployee(offset + 5)}
-            </div>
+            <LoadingResult loading={loading}>
+                <div className="card-grid">
+                    {getEmployee(offset + 0)}
+                    {getEmployee(offset + 1)}
+                    {getEmployee(offset + 2)}
+                </div>
+                <div className="card-grid">
+                    {getEmployee(offset + 3)}
+                    {getEmployee(offset + 4)}
+                    {getEmployee(offset + 5)}
+                </div>
+            </LoadingResult>
             <StyledPagination
                 count={Math.max(Math.ceil(resultOrder.length / 6), 1)}
                 page={pageNumber}
                 onChange={handleChange}
             />
+        </>
+    );
+}
+
+function LoadingResult(props) {
+    const { loading } = props;
+    return (
+        <>
+            {loading ? (
+                <div
+                    style={{
+                        height: "570px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Fade
+                        in={loading}
+                        style={{
+                            transitionDelay: loading ? "300ms" : "0ms",
+                        }}
+                        unmountOnExit
+                    >
+                        <CircularProgress size={"100px"} />
+                    </Fade>
+                </div>
+            ) : (
+                props.children
+            )}
         </>
     );
 }
@@ -81,6 +116,7 @@ const mapStateToProps = (state) => ({
     workers: state.workers,
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
+    loading: state.appState.filtersChanged,
 });
 
 const mapDispatchToProps = (dispatch) => ({
