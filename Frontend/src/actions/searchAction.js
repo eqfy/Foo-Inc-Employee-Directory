@@ -78,6 +78,12 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
                 "Search endpoint failed (experience filter).\nErr:",
                 error
             );
+            // FIXME temporarily set result to empty if an error occured
+            dispatch(setFiltersChanged(false));
+            dispatch({
+                type: "SET_SEARCH_RESULT_ORDER",
+                payload: { resultOrder: [] },
+            });
         });
 };
 

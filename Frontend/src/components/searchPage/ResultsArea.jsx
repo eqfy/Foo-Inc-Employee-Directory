@@ -54,55 +54,53 @@ function ResultsArea(props) {
 
     const offset = (pageNumber - 1) * entriesPerPage;
     return (
-        <>
-            <LoadingResult loading={loading}>
-                <div className="card-grid">
-                    {getEmployee(offset + 0)}
-                    {getEmployee(offset + 1)}
-                    {getEmployee(offset + 2)}
-                </div>
-                <div className="card-grid">
-                    {getEmployee(offset + 3)}
-                    {getEmployee(offset + 4)}
-                    {getEmployee(offset + 5)}
-                </div>
-            </LoadingResult>
+        <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
+            <div className="card-grid">
+                {getEmployee(offset + 0)}
+                {getEmployee(offset + 1)}
+                {getEmployee(offset + 2)}
+            </div>
+            <div className="card-grid">
+                {getEmployee(offset + 3)}
+                {getEmployee(offset + 4)}
+                {getEmployee(offset + 5)}
+            </div>
             <StyledPagination
                 count={Math.max(Math.ceil(resultOrder.length / 6), 1)}
                 page={pageNumber}
                 onChange={handleChange}
             />
-        </>
+        </LoadingResult>
     );
 }
 
 function LoadingResult(props) {
-    const { loading } = props;
-    return (
-        <>
-            {loading ? (
-                <div
-                    style={{
-                        height: "570px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Fade
-                        in={loading}
-                        style={{
-                            transitionDelay: loading ? "300ms" : "0ms",
-                        }}
-                        unmountOnExit
-                    >
-                        <CircularProgress size={"100px"} />
-                    </Fade>
-                </div>
-            ) : (
-                props.children
-            )}
-        </>
+    const { loading, hasResult } = props;
+    return loading ? (
+        <div
+            style={{
+                height: "590px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <Fade
+                in={loading}
+                style={{
+                    transitionDelay: loading ? "300ms" : "0ms",
+                }}
+                unmountOnExit
+            >
+                <CircularProgress size={"100px"} />
+            </Fade>
+        </div>
+    ) : !hasResult ? (
+        <div className={"orgchart-container"}>
+            Sorry, there is no employee or contractor with matching id.
+        </div>
+    ) : (
+        props.children
     );
 }
 
