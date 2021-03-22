@@ -6,6 +6,10 @@
     width: 100%;
 }
 
+.apply-filter.full-height {
+    height: 100%;
+}
+
 .apply-filter .heading {
     padding: 11px 0 11px 16px;
     margin: 4px 0 10px 0;
@@ -13,6 +17,14 @@
     color: white;
     font-size: 20px;
     font-weight: 700;
+}
+
+.apply-filter .apply-filter-loading {
+    padding-top: 100px;
+    justify-content: center;
+    display: flex;
+    height: 100%;
+    color: #00569c;
 }
 
 .apply-filter .filter-widgets {

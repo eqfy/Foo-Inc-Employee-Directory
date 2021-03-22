@@ -12,6 +12,7 @@ export const defaultFilterState = {
     titleAllId: [],
     departmentAllId: [],
     companyAllId: [],
+    loaded: false,
 };
 
 export const mockFilterState = {
