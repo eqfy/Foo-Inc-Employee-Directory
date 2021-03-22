@@ -8,14 +8,18 @@ import {
     CircularProgress,
 } from "@material-ui/core";
 import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
+import { Autocomplete } from "@material-ui/lab";
 import { connect } from "react-redux";
 import { withRouter, useHistory, useParams } from "react-router";
 import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
 import { setOrgChart } from "../../actions/orgChartAction";
-import { PagePathEnum } from "components/common/constants";
 import WorkerNotFound from "components/common/WorkerNotFound";
+import { getPredictiveSearchAPI } from "../../api/predictiveSearchAPI";
+import { PagePathEnum } from "components/common/constants";
+import { coordinatedDebounce } from "components/searchPage/helpers";
+import { parseFullName } from "parse-full-name";
 
 const useStyles = makeStyles({
     searchRect: {
@@ -66,6 +70,63 @@ const useStyles = makeStyles({
         color: "#00569c",
     },
 });
+
+// counter for timeout in case of input change
+const predictiveSearchTimer = {};
+
+function OrgChartSearchBar(props) {
+    const history = useHistory();
+    const classes = useStyles();
+    const [options, setOptions] = React.useState([]);
+    const [inputValue, setInputValue] = React.useState("");
+
+    React.useEffect(() => {
+        if (inputValue.length >= 2) {
+            coordinatedDebounce((name) => {
+                const { first, last } = parseFullName(name);
+                getPredictiveSearchAPI(first, last).then((response) => {
+                    setOptions(response);
+                });
+            }, predictiveSearchTimer)(inputValue);
+        }
+    }, [inputValue]);
+
+    return (
+        <Autocomplete
+            options={options}
+            getOptionLabel={(option) => inputValue}
+            openOnFocus={true}
+            freeSolo={true}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Search by name"
+                    classes={{ root: classes.searchRect }}
+                    size="small"
+                />
+            )}
+            renderOption={(option) => (
+                <div
+                    className={"orgchart-search-dropdown-entry"}
+                    onClick={() => {
+                        history.push(
+                            `${PagePathEnum.ORGCHART}/` + option.employeeNumber
+                        );
+                    }}
+                >
+                    <img src="./../sample.png" />
+                    <Typography noWrap>
+                        {`${option.firstName} ${option.lastName}`}
+                    </Typography>
+                </div>
+            )}
+            onInputChange={(event, value, reason) => {
+                setInputValue(value);
+            }}
+        />
+    );
+}
 
 let setHideTop;
 let setHideBottom;
@@ -239,14 +300,9 @@ function OrgChart(props) {
     return (
         <div>
             <div id="searchLegendArea">
-                <form id="searchArea">
-                    <TextField
-                        label="Search by name"
-                        variant="outlined"
-                        classes={{ root: classes.searchRect }}
-                        size="small"
-                    />
-                </form>
+                <div id="searchArea">
+                    <OrgChartSearchBar />
+                </div>
                 <ul id="legend">
                     <li>LEGEND</li>
                     <li>
