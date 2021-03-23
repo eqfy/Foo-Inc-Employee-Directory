@@ -1,63 +1,131 @@
-import { Button, Grid, styled, TextField } from "@material-ui/core";
-import { Search } from "@material-ui/icons";
-import { searchByNameAction } from "actions/searchAction";
+import { TextField, Typography } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
+import { clearNameAction, setNameAction } from "actions/filterAction";
+import {
+    searchWithAppliedFilterAction,
+    searchWithAppliedFilterByNameAction,
+} from "actions/searchAction";
+import { getPredictiveSearchAPI } from "api/predictiveSearchAPI";
+import { SearchWithFilterTimer } from "components/SearchPageContainer";
+import { parseFullName } from "parse-full-name";
 import React from "react";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 
-const SearchByNameTimer = {};
+const searchByNameTimer = {};
 
 function SearchByNameBar(props) {
-    const { searchByNameAction } = props;
-    const [name, setName] = React.useState("");
-    const handleTextChange = (event) => {
-        const enteredName = event.target.value;
-        setName(enteredName);
-        coordinatedDebounce(searchByNameAction, SearchByNameTimer)(enteredName);
+    const {
+        firstName,
+        lastName,
+        searchWithAppliedFilterAction,
+        searchWithAppliedFilterByNameAction,
+        setNameAction,
+        clearNameAction,
+    } = props;
+    const [options, setOptions] = React.useState([]);
+    const [inputValue, setInputValue] = React.useState(
+        firstName + " " + lastName
+    );
+
+    React.useEffect(() => {
+        if (inputValue.length >= 2) {
+            coordinatedDebounce((name) => {
+                const { first, last } = parseFullName(name);
+                getPredictiveSearchAPI(first, last)
+                    .then((response) => {
+                        setOptions(response);
+                    })
+                    .catch((err) => {
+                        console.error("Search by name endpoint failed: ", err);
+                        setOptions([]);
+                    });
+            }, searchByNameTimer)(inputValue);
+        } else if (
+            inputValue.length === 0 &&
+            (firstName !== "" || lastName !== "")
+        ) {
+            // Only if a search by name happend earlier,
+            // set first/last name to empty and initiate a new search
+            clearNameAction();
+            coordinatedDebounce(
+                searchWithAppliedFilterAction,
+                SearchWithFilterTimer
+            )();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inputValue]);
+
+    const handleDropdownOptionClick = (option) => () => {
+        setInputValue(option.firstName + " " + option.lastName);
+        setNameAction({
+            firstName: option.firstName,
+            lastName: option.lastName,
+        });
+        coordinatedDebounce(
+            searchWithAppliedFilterByNameAction,
+            SearchWithFilterTimer
+        )();
     };
 
-    const handleSearchBtnClick = () => {
-        searchByNameAction(name);
+    const handleTextfieldChange = (_event, value, reason) => {
+        console.log(reason);
+        if (reason === "input") {
+            setInputValue(value);
+        } else if (reason === "clear") {
+            setInputValue("");
+        }
     };
 
     return (
-        <Grid container spacing={1} alignItems="flex-start" wrap="nowrap">
-            <Grid item className="full-width">
+        <Autocomplete
+            options={options}
+            getOptionLabel={() => inputValue}
+            openOnFocus={true}
+            freeSolo={true}
+            renderInput={(params) => (
                 <TextField
+                    {...params}
+                    variant="outlined"
                     label="Search by name"
                     size="small"
-                    variant="outlined"
-                    className="full-width"
-                    onChange={handleTextChange}
                 />
-            </Grid>
-            <Grid item>
-                <StyledButton
-                    className="icon-button"
-                    aria-label="search"
-                    onClick={handleSearchBtnClick}
+            )}
+            renderOption={(option) => (
+                <div
+                    className={"search-dropdown-entry"}
+                    onClick={handleDropdownOptionClick(option)}
                 >
-                    <Search />
-                </StyledButton>
-            </Grid>
-        </Grid>
+                    <img src={option.imageURL} alt={"workerPhoto"} />
+                    <Typography noWrap>
+                        {`${option.firstName} ${option.lastName}`}
+                    </Typography>
+                </div>
+            )}
+            inputValue={inputValue}
+            onInputChange={(_event, value, reason) => {
+                handleTextfieldChange(_event, value, reason);
+            }}
+        />
     );
 }
 
-const StyledButton = styled(Button)({
-    width: "40px",
-    minWidth: "40px",
-    height: "40px",
-    backgroundColor: "#1c83fb",
-    color: "white",
-    "&:hover": {
-        backgroundColor: "#00569C",
-    },
-});
+const mapStateToProps = (state) => {
+    const { firstName, lastName } = state.appState;
+    return {
+        firstName,
+        lastName,
+    };
+};
 
 const mapDispatchToProps = (dispatch) => ({
-    searchByNameAction: (name) => dispatch(searchByNameAction(name)),
+    searchWithAppliedFilterByNameAction: () =>
+        dispatch(searchWithAppliedFilterByNameAction()),
+    setNameAction: (name) => dispatch(setNameAction(name)),
+    searchWithAppliedFilterAction: () =>
+        dispatch(searchWithAppliedFilterAction()),
+    clearNameAction: () => dispatch(clearNameAction()),
 });
 
-export default connect(null, mapDispatchToProps)(SearchByNameBar);
+export default connect(mapStateToProps, mapDispatchToProps)(SearchByNameBar);
