@@ -178,81 +178,116 @@ namespace Handler
             return response;
         }
 
-        public  APIGatewayProxyResponse predictiveSearch(APIGatewayProxyRequest request, ILambdaContext context)
+        public APIGatewayProxyResponse predictiveSearch(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            
-            var firstNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["firstName"].ToLower());
-            var lastNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["lastName"].ToLower());
-            LambdaLogger.Log("firstName: " + firstNamePrefix);
-            LambdaLogger.Log("lastName: " + lastNamePrefix);
-
-            var appendSql = string.Empty;
-            
-            LambdaLogger.Log(GetRDSConnectionString());
-            //Open the connection to the postgres database
-            using var con = new NpgsqlConnection(GetRDSConnectionString());
-            con.Open();
-            
-            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
-            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
-            LambdaLogger.Log("bucketName: " + bucketName);
-            LambdaLogger.Log("objectKey: " + objectKey);
-
-            //Get the sql script from the bucket
-            var script = getS3FileSync(bucketName, objectKey);
-        
-            
-            //Read the sql from the file
-            StreamReader readers3 = new StreamReader(script.ResponseStream);
-            String sql = readers3.ReadToEnd();
-
-            if (firstNamePrefix != string.Empty && lastNamePrefix != string.Empty) {
-                sql += " WHERE LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2 LIMIT 20";
-            } else {
-                sql += " WHERE (LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2) OR (LOWER(\"FirstName\") LIKE :p2 AND LOWER(\"LastName\") LIKE :p1) LIMIT 20";
-            }
-
-            LambdaLogger.Log("sql: " + sql);
-
-            using var cmd = new NpgsqlCommand(sql,con);
-            cmd.Parameters.AddWithValue("p1", firstNamePrefix+"%");
-            cmd.Parameters.AddWithValue("p2", lastNamePrefix+"%");
-
-            //Run the sql command
-            var reader = cmd.ExecuteReader();
-    
-            string output = string.Empty;
-            List<PredictiveSearchEmployee> predEmployees = new List<PredictiveSearchEmployee>();
-
-            while(reader.Read()) {
-                PredictiveSearchEmployee e = new PredictiveSearchEmployee();
-                
-                e.firstName = reader[0].ToString();
-                e.lastName = reader[1].ToString();
-                e.imageURL = reader[2].ToString();
-                e.employeeNumber = reader[3].ToString();
-
-                predEmployees.Add(e);
-            }
-
-            reader.Close();
-
-            output = Newtonsoft.Json.JsonConvert.SerializeObject(predEmployees);
-
-            var response = new APIGatewayProxyResponse
+            Dictionary<string, string> headers = new Dictionary<string, string>
+                        {
+                            { "Content-Type", "application/json" },
+                            { "Access-Control-Allow-Origin", "*" },
+                            { "Access-Control-Allow-Methods", "*" },
+                            { "Access-Control-Allow-Headers", "*" },
+                        };
+            try
             {
-                StatusCode = 200,
-                Body = output,
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },  
-                }
-            };
+                var firstNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["firstName"].ToLower());
+                var lastNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["lastName"].ToLower());
 
-            return response;
+                LambdaLogger.Log("firstName: " + firstNamePrefix);
+                LambdaLogger.Log("lastName: " + lastNamePrefix);
+
+                var appendSql = string.Empty;
+
+                LambdaLogger.Log(GetRDSConnectionString());
+                //Open the connection to the postgres database
+                using var con = new NpgsqlConnection(GetRDSConnectionString());
+                con.Open();
+
+                var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+                var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+                LambdaLogger.Log("bucketName: " + bucketName);
+                LambdaLogger.Log("objectKey: " + objectKey);
+
+                //Get the sql script from the bucket
+                var script = getS3FileSync(bucketName, objectKey);
+
+
+                //Read the sql from the file
+                StreamReader readers3 = new StreamReader(script.ResponseStream);
+                String sql = readers3.ReadToEnd();
+
+                if (firstNamePrefix != string.Empty && lastNamePrefix != string.Empty)
+                {
+                    sql += " WHERE LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2 LIMIT 20";
+                }
+                else
+                {
+                    sql += " WHERE (LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2) OR (LOWER(\"FirstName\") LIKE :p2 AND LOWER(\"LastName\") LIKE :p1) LIMIT 20";
+                }
+
+                LambdaLogger.Log("sql: " + sql);
+
+                using var cmd = new NpgsqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("p1", firstNamePrefix + "%");
+                cmd.Parameters.AddWithValue("p2", lastNamePrefix + "%");
+
+                //Run the sql command
+                string output = string.Empty;
+                List<PredictiveSearchEmployee> predEmployees = new List<PredictiveSearchEmployee>();
+
+
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    PredictiveSearchEmployee e = new PredictiveSearchEmployee();
+
+                    e.firstName = reader[0].ToString();
+                    e.lastName = reader[1].ToString();
+                    e.imageURL = reader[2].ToString();
+                    e.employeeNumber = reader[3].ToString();
+
+                    predEmployees.Add(e);
+                }
+                reader.Close();
+
+                output = Newtonsoft.Json.JsonConvert.SerializeObject(predEmployees);
+
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 200,
+                    Body = output,
+                    Headers = headers
+                };
+
+                return response;
+
+            }
+            catch (System.Collections.Generic.KeyNotFoundException error)
+            {
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 400,
+                    Body = "Bad Request. Missing query parameter : " + error,
+                    Headers = headers
+                };
+            }
+            catch (System.NullReferenceException error)
+            {
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 400,
+                    Body = "Bad request : No query parameters sent : " + error,
+                    Headers = headers
+                };
+            }
+            catch (System.Exception error)
+            {
+                return new APIGatewayProxyResponse
+                {
+                    StatusCode = 404,
+                    Body = "Generic Error: " + error,
+                    Headers = headers
+                };
+            }
         }
 
         public  APIGatewayProxyResponse GetOrgChart(APIGatewayProxyRequest request, ILambdaContext context) {
