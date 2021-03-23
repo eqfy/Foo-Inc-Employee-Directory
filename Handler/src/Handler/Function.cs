@@ -883,467 +883,489 @@ namespace Handler
         //ADD ACSEN AND DEC OPTION AND LAST NAME 
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
         {
+            try{
+                int parameterCounter = 0;
+
+                // List<Employee> 
+                LambdaLogger.Log("Hello request-------     ");
+                List<string> skills = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
+                    skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
+                    for(int i = 0; i < skills.Count; i++){
+                        skills[i] = HttpUtility.UrlDecode(skills[i]);
+                    }
+                }
+                LambdaLogger.Log("bye  request   -------  ");
+                List<string> locations = new List<string>();
+                if (request.MultiValueQueryStringParameters.ContainsKey("locationPhysical")){
+                    locations = (List<string>)request.MultiValueQueryStringParameters["locationPhysical"];
+                    for(int i = 0; i < locations.Count; i++){
+                        locations[i] = HttpUtility.UrlDecode(locations[i]);
+                    }
+                }
+                List<string> titles = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("title")){
+                    titles = (List<string>)request.MultiValueQueryStringParameters["title"];
+                    for(int i = 0; i < titles.Count; i++){
+                        titles[i] = HttpUtility.UrlDecode(titles[i]);
+                    }
+                }
+                
+                // Note: if they change the slide bar to allow for partial years change this to a float
+                List<string> yearsExperience = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("yearsPriorExperience")){
+                    yearsExperience = (List<string>)request.MultiValueQueryStringParameters["yearsPriorExperience"];
+                    for(int i = 0; i < yearsExperience.Count; i++){
+                        yearsExperience[i] = HttpUtility.UrlDecode(yearsExperience[i]);
+                    }
+                }
+
+                List<string> divisions = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("division")){
+                    divisions = (List<string>)request.MultiValueQueryStringParameters["division"];
+                    for(int i = 0; i < divisions.Count; i++){
+                        divisions[i] = HttpUtility.UrlDecode(divisions[i]);
+                    }
+                }
+                List<string> companynames = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
+                    companynames = (List<string>)request.MultiValueQueryStringParameters["companyName"];
+                    for(int i = 0; i < companynames.Count; i++){
+                        companynames[i] = HttpUtility.UrlDecode(companynames[i]);
+                    }
+                }
+                List<string> firstnames = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("firstName")){
+                    firstnames = (List<string>)request.MultiValueQueryStringParameters["firstName"];
+                    for(int i = 0; i < firstnames.Count; i++){
+                        firstnames[i] = HttpUtility.UrlDecode(firstnames[i]);
+                    }
+                }
+                List<string> lastnames = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("lastName")){
+                    lastnames = (List<string>)request.MultiValueQueryStringParameters["lastName"];
+                    for(int i = 0; i < lastnames.Count; i++){
+                        lastnames[i] = HttpUtility.UrlDecode(lastnames[i]);
+                    }
+                }
+                List<string> employementTypes = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("employmentType")){
+                    employementTypes = (List<string>)request.MultiValueQueryStringParameters["employmentType"];
+                    for(int i = 0; i < employementTypes.Count; i++){
+                        employementTypes[i] = HttpUtility.UrlDecode(employementTypes[i]);
+                    }
+                }
+                List<string> officeLocations = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("officeLocations")){
+                    officeLocations = (List<string>)request.MultiValueQueryStringParameters["officeLocations"];
+                    for(int i = 0; i < officeLocations.Count; i++){
+                        officeLocations[i] = HttpUtility.UrlDecode(officeLocations[i]);
+                    }
+                }
+                List<string> shownWorkerType = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("shownWorkerType")){
+                    shownWorkerType = (List<string>)request.MultiValueQueryStringParameters["shownWorkerType"];
+                    for(int i = 0; i < shownWorkerType.Count; i++){
+                        shownWorkerType[i] = HttpUtility.UrlDecode(shownWorkerType[i]);
+                    }
+                }
+                List<string> orderBys = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("orderBy")){
+                    orderBys = (List<string>)request.MultiValueQueryStringParameters["orderBy"];
+                    for(int i = 0; i < orderBys.Count; i++){
+                        orderBys[i] = HttpUtility.UrlDecode(orderBys[i]);
+                    }
+                }
+                List<string> offsets = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("offset")){
+                    offsets = (List<string>)request.MultiValueQueryStringParameters["offset"];
+                    for(int i = 0; i < offsets.Count; i++){
+                        offsets[i] = HttpUtility.UrlDecode(offsets[i]);
+                    }
+                }
+                List<string> fetchs = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("fetch")){
+                    fetchs = (List<string>)request.MultiValueQueryStringParameters["fetch"];
+                    for(int i = 0; i < fetchs.Count; i++){
+                        fetchs[i] = HttpUtility.UrlDecode(fetchs[i]);
+                    }
+                }
+                List<string> orderDir = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("orderDir")){
+                    orderDir = (List<string>)request.MultiValueQueryStringParameters["orderDir"];
+                    for(int i = 0; i < orderDir.Count; i++){
+                        orderDir[i] = HttpUtility.UrlDecode(orderDir[i]);
+                    }
+                }
+
+                string skillFilter="";
+                if(skills.Count > 0){
+                    skillFilter = createSkillFilter(skills,ref parameterCounter);
+                }
+
+                string locationsFilter="";
+                if(locations.Count > 0){
+                    locationsFilter = createLocationsFilter(locations,ref parameterCounter);
+                }
+
+                string titlesFilter="";
+                if(titles.Count > 0){
+                    titlesFilter = createTitlesFilter(titles,ref parameterCounter);
+                }
+
+                string yearsPriorFilter="";
+                if(yearsExperience.Count > 0){
+                    yearsPriorFilter = createYearsPriorFilter(ref parameterCounter);
+                }
+
+                string divisionsFilter ="";
+                if(divisions.Count > 0){
+                    divisionsFilter = createDivisionsFilter(divisions, ref parameterCounter);
+                }
+
+                string companyNamesFilter ="";
+                if(companynames.Count > 0){
+                    companyNamesFilter = createCompanyNamesFilter(companynames, ref parameterCounter);
+                }
+
+                string firstNamesFilter ="";
+                if(firstnames.Count > 0){
+                    firstNamesFilter = createFirstNamesFilter(firstnames, ref parameterCounter);
+                }
+
+                string lastNamesFilter ="";
+                if(lastnames.Count > 0){
+                    lastNamesFilter = createLastNamesFilter(lastnames, ref parameterCounter);
+                }
+
+                string employmentTypesFilter ="";
+                if(employementTypes.Count > 0){
+                    employmentTypesFilter = createEmploymentTypesFilter(employementTypes, ref parameterCounter);
+                }
+
+                string officeLocationsFilter ="";
+                if(officeLocations.Count > 0){
+                    officeLocationsFilter = createOfficeLocationsFilter(officeLocations, ref parameterCounter);
+                }
+                
+                string shownWorkerTypeFilter ="";
+                if(shownWorkerType.Count > 0){
+                    shownWorkerTypeFilter = createShownWorkerTypeFilter(shownWorkerType[0]);
+                }
+                
+                string orderByFilter ="";
+                if(orderBys.Count > 0){
+                    orderByFilter = createOrderByFilter(orderBys[0]);
+                }
+                string orderDirFilter ="";
+                if(orderDir.Count > 0){
+                    orderDirFilter = createOrderDirFilter(orderDir[0]);
+                }
+                
+                string offsetFilter ="";
+                if(offsets.Count > 0){
+                    offsetFilter = createOffsetFilter(ref parameterCounter);
+                }
+
+                string fetchFilter ="";
+                if(fetchs.Count > 0){
+                    fetchFilter = createFetchFilter(ref parameterCounter);
+                }
+
+                using var con = new NpgsqlConnection(GetRDSConnectionString());
+                con.Open();
+
+
+                //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+                var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+                var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+                LambdaLogger.Log("bucketName: " + bucketName);
+                LambdaLogger.Log("objectKey: " + objectKey);
+
+                //Get the sql script from the bucket
+                var script = getS3FileSync(bucketName, objectKey);
+                var scriptForCount = getS3FileSync(bucketName, "searchTempCount.sql");
             
-            int parameterCounter = 0;
+                
+                //Read the sql from the file
+                StreamReader readers3 = new StreamReader(script.ResponseStream);
+                String sql = readers3.ReadToEnd();
+                //Read SQL from file for the search count
+                StreamReader readers3Count = new StreamReader(scriptForCount.ResponseStream);
+                String sqlForCount = readers3Count.ReadToEnd();
 
-            // List<Employee> 
-            List<string> skills = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
-                skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
-                for(int i = 0; i < skills.Count; i++){
-                    skills[i] = HttpUtility.UrlDecode(skills[i]);
+                //TODO add all the different filter strings here
+                if(skillFilter.Length > 0 || locationsFilter.Length > 0 || titlesFilter.Length > 0 || yearsPriorFilter.Length > 0 || divisionsFilter.Length >0 
+                || companyNamesFilter.Length >0 || firstNamesFilter.Length >0 || lastNamesFilter.Length >0 || employmentTypesFilter.Length >0 || 
+                officeLocationsFilter.Length>0 || shownWorkerTypeFilter.Length>0){
+                    sql += " WHERE ";
+
+                    sql += skillFilter;
+                    sql += locationsFilter;
+                    sql += titlesFilter; 
+                    sql += yearsPriorFilter;
+                    sql += divisionsFilter;
+                    sql += companyNamesFilter;
+                    sql += firstNamesFilter;
+                    sql += lastNamesFilter;
+                    sql += employmentTypesFilter;
+                    sql += officeLocationsFilter;
+                    sql += shownWorkerTypeFilter;
+                    //TODO add the rest of the filters here
+
+                    //Remove the last 'AND' from the sql string
+                    sql = sql.Remove(sql.Length - 3);
+
+                    sqlForCount += " WHERE ";
+
+                    sqlForCount += skillFilter;
+                    sqlForCount += locationsFilter;
+                    sqlForCount += titlesFilter; 
+                    sqlForCount += yearsPriorFilter;
+                    sqlForCount += divisionsFilter;
+                    sqlForCount += companyNamesFilter;
+                    sqlForCount += firstNamesFilter;
+                    sqlForCount += lastNamesFilter;
+                    sqlForCount += employmentTypesFilter;
+                    sqlForCount += officeLocationsFilter;
+                    sqlForCount += shownWorkerTypeFilter;
+                    //TODO add the rest of the filters here
+
+                    //Remove the last 'AND' from the sql string
+                    sqlForCount = sqlForCount.Remove(sqlForCount.Length - 3);
                 }
-            }
-            List<string> locations = new List<string>();
-            if (request.MultiValueQueryStringParameters.ContainsKey("locationPhysical")){
-                locations = (List<string>)request.MultiValueQueryStringParameters["locationPhysical"];
-                for(int i = 0; i < locations.Count; i++){
-                    locations[i] = HttpUtility.UrlDecode(locations[i]);
+                
+                //Add the order by, filter, and offset TODO do it! and TODO potentially order on multiple
+                sql += orderByFilter;
+                //Only add the fetch and offset filters if there is an orderBy
+                if(orderBys.Count > 0){
+                    sql += orderDirFilter;
+                    sql += offsetFilter;
+                    sql += fetchFilter;
                 }
-            }
-            List<string> titles = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("title")){
-                titles = (List<string>)request.MultiValueQueryStringParameters["title"];
-                for(int i = 0; i < titles.Count; i++){
-                    titles[i] = HttpUtility.UrlDecode(titles[i]);
-                }
-            }
+                
+                LambdaLogger.Log("sql: " + sql);
+
+                LambdaLogger.Log("sqlForCount: " + sqlForCount);
             
-            // Note: if they change the slide bar to allow for partial years change this to a float
-            List<string> yearsExperience = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("yearsPriorExperience")){
-                yearsExperience = (List<string>)request.MultiValueQueryStringParameters["yearsPriorExperience"];
-                for(int i = 0; i < yearsExperience.Count; i++){
-                    yearsExperience[i] = HttpUtility.UrlDecode(yearsExperience[i]);
+                using var cmd = new NpgsqlCommand(sql,con);
+
+                int currentParameterCounter = 0;
+                //Add the bind variables
+                foreach(string skill in skills){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + "%"+skill+"%");
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+skill+"%");
                 }
-            }
-
-            List<string> divisions = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("division")){
-                divisions = (List<string>)request.MultiValueQueryStringParameters["division"];
-                for(int i = 0; i < divisions.Count; i++){
-                    divisions[i] = HttpUtility.UrlDecode(divisions[i]);
+                foreach(string location in locations){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + location);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, location);
                 }
-            }
-            List<string> companynames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
-                companynames = (List<string>)request.MultiValueQueryStringParameters["companyName"];
-                for(int i = 0; i < companynames.Count; i++){
-                    companynames[i] = HttpUtility.UrlDecode(companynames[i]);
+                foreach(string title in titles){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + title);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, title);
                 }
-            }
-            List<string> firstnames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("firstName")){
-                firstnames = (List<string>)request.MultiValueQueryStringParameters["firstName"];
-                for(int i = 0; i < firstnames.Count; i++){
-                    firstnames[i] = HttpUtility.UrlDecode(firstnames[i]);
+                foreach(string yearsPrior in yearsExperience){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + yearsPrior);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, float.Parse(yearsPrior));
                 }
-            }
-            List<string> lastnames = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("lastName")){
-                lastnames = (List<string>)request.MultiValueQueryStringParameters["lastName"];
-                for(int i = 0; i < lastnames.Count; i++){
-                    lastnames[i] = HttpUtility.UrlDecode(lastnames[i]);
+
+                foreach(string division in divisions){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + division);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, division);
                 }
-            }
-            List<string> employementTypes = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("employmentType")){
-                employementTypes = (List<string>)request.MultiValueQueryStringParameters["employmentType"];
-                for(int i = 0; i < employementTypes.Count; i++){
-                    employementTypes[i] = HttpUtility.UrlDecode(employementTypes[i]);
+
+                foreach(string companyname in companynames){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + companyname);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, companyname);
                 }
-            }
-            List<string> officeLocations = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("officeLocations")){
-                officeLocations = (List<string>)request.MultiValueQueryStringParameters["officeLocations"];
-                for(int i = 0; i < officeLocations.Count; i++){
-                    officeLocations[i] = HttpUtility.UrlDecode(officeLocations[i]);
+
+                foreach(string firstname in firstnames){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + firstname);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, firstname);
                 }
-            }
-            List<string> shownWorkerType = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("shownWorkerType")){
-                shownWorkerType = (List<string>)request.MultiValueQueryStringParameters["shownWorkerType"];
-                for(int i = 0; i < shownWorkerType.Count; i++){
-                    shownWorkerType[i] = HttpUtility.UrlDecode(shownWorkerType[i]);
+
+                foreach(string lastname in lastnames){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + lastname);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, lastname);
                 }
-            }
-            List<string> orderBys = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("orderBy")){
-                orderBys = (List<string>)request.MultiValueQueryStringParameters["orderBy"];
-                for(int i = 0; i < orderBys.Count; i++){
-                    orderBys[i] = HttpUtility.UrlDecode(orderBys[i]);
+
+                foreach(string employementType in employementTypes){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + employementType);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, employementType);
                 }
-            }
-            List<string> offsets = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("offset")){
-                offsets = (List<string>)request.MultiValueQueryStringParameters["offset"];
-                for(int i = 0; i < offsets.Count; i++){
-                    offsets[i] = HttpUtility.UrlDecode(offsets[i]);
+
+                foreach(string officeLocation in officeLocations){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + officeLocation);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+officeLocation+"%");
                 }
-            }
-            List<string> fetchs = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("fetch")){
-                fetchs = (List<string>)request.MultiValueQueryStringParameters["fetch"];
-                for(int i = 0; i < fetchs.Count; i++){
-                    fetchs[i] = HttpUtility.UrlDecode(fetchs[i]);
+
+                foreach(string offset in offsets){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + offset);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(offset));
                 }
-            }
-            List<string> orderDir = new List<string>();
-            if(request.MultiValueQueryStringParameters.ContainsKey("orderDir")){
-                orderDir = (List<string>)request.MultiValueQueryStringParameters["orderDir"];
-                for(int i = 0; i < orderDir.Count; i++){
-                    orderDir[i] = HttpUtility.UrlDecode(orderDir[i]);
+
+                foreach(string fetch in fetchs){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + fetch);
+                    cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
                 }
-            }
 
-            string skillFilter="";
-            if(skills.Count > 0){
-                skillFilter = createSkillFilter(skills,ref parameterCounter);
-            }
+                //TODO: is contractor, hiredate, termination date
+                //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
 
-            string locationsFilter="";
-            if(locations.Count > 0){
-                locationsFilter = createLocationsFilter(locations,ref parameterCounter);
-            }
-
-            string titlesFilter="";
-            if(titles.Count > 0){
-                titlesFilter = createTitlesFilter(titles,ref parameterCounter);
-            }
-
-            string yearsPriorFilter="";
-            if(yearsExperience.Count > 0){
-                yearsPriorFilter = createYearsPriorFilter(ref parameterCounter);
-            }
-
-            string divisionsFilter ="";
-            if(divisions.Count > 0){
-                divisionsFilter = createDivisionsFilter(divisions, ref parameterCounter);
-            }
-
-            string companyNamesFilter ="";
-            if(companynames.Count > 0){
-                companyNamesFilter = createCompanyNamesFilter(companynames, ref parameterCounter);
-            }
-
-            string firstNamesFilter ="";
-            if(firstnames.Count > 0){
-                firstNamesFilter = createFirstNamesFilter(firstnames, ref parameterCounter);
-            }
-
-            string lastNamesFilter ="";
-            if(lastnames.Count > 0){
-                lastNamesFilter = createLastNamesFilter(lastnames, ref parameterCounter);
-            }
-
-            string employmentTypesFilter ="";
-            if(employementTypes.Count > 0){
-                employmentTypesFilter = createEmploymentTypesFilter(employementTypes, ref parameterCounter);
-            }
-
-            string officeLocationsFilter ="";
-            if(officeLocations.Count > 0){
-                officeLocationsFilter = createOfficeLocationsFilter(officeLocations, ref parameterCounter);
-            }
-            
-            string shownWorkerTypeFilter ="";
-            if(shownWorkerType.Count > 0){
-                shownWorkerTypeFilter = createShownWorkerTypeFilter(shownWorkerType[0]);
-            }
-            
-            string orderByFilter ="";
-            if(orderBys.Count > 0){
-                orderByFilter = createOrderByFilter(orderBys[0]);
-            }
-            string orderDirFilter ="";
-            if(orderDir.Count > 0){
-                orderDirFilter = createOrderDirFilter(orderDir[0]);
-            }
-            
-            string offsetFilter ="";
-            if(offsets.Count > 0){
-                offsetFilter = createOffsetFilter(ref parameterCounter);
-            }
-
-            string fetchFilter ="";
-            if(fetchs.Count > 0){
-                fetchFilter = createFetchFilter(ref parameterCounter);
-            }
-
-            using var con = new NpgsqlConnection(GetRDSConnectionString());
-            con.Open();
-
-
-            //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
-            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
-            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
-            LambdaLogger.Log("bucketName: " + bucketName);
-            LambdaLogger.Log("objectKey: " + objectKey);
-
-            //Get the sql script from the bucket
-            var script = getS3FileSync(bucketName, objectKey);
-            var scriptForCount = getS3FileSync(bucketName, "searchTempCount.sql");
+                //Run the sql command
+                var reader = cmd.ExecuteReader();
         
-            
-            //Read the sql from the file
-            StreamReader readers3 = new StreamReader(script.ResponseStream);
-            String sql = readers3.ReadToEnd();
-            //Read SQL from file for the search count
-            StreamReader readers3Count = new StreamReader(scriptForCount.ResponseStream);
-            String sqlForCount = readers3Count.ReadToEnd();
+                string output = string.Empty;
+                List<Employee> employees = new List<Employee>();
+                //LambdaLogger.Log("Hey1"+ reader.Read().ToString());
 
-            //TODO add all the different filter strings here
-            if(skillFilter.Length > 0 || locationsFilter.Length > 0 || titlesFilter.Length > 0 || yearsPriorFilter.Length > 0 || divisionsFilter.Length >0 
-            || companyNamesFilter.Length >0 || firstNamesFilter.Length >0 || lastNamesFilter.Length >0 || employmentTypesFilter.Length >0 || 
-            officeLocationsFilter.Length>0 || shownWorkerTypeFilter.Length>0){
-                sql += " WHERE ";
-
-                sql += skillFilter;
-                sql += locationsFilter;
-                sql += titlesFilter; 
-                sql += yearsPriorFilter;
-                sql += divisionsFilter;
-                sql += companyNamesFilter;
-                sql += firstNamesFilter;
-                sql += lastNamesFilter;
-                sql += employmentTypesFilter;
-                sql += officeLocationsFilter;
-                sql += shownWorkerTypeFilter;
-                //TODO add the rest of the filters here
-
-                //Remove the last 'AND' from the sql string
-                sql = sql.Remove(sql.Length - 3);
-
-                sqlForCount += " WHERE ";
-
-                sqlForCount += skillFilter;
-                sqlForCount += locationsFilter;
-                sqlForCount += titlesFilter; 
-                sqlForCount += yearsPriorFilter;
-                sqlForCount += divisionsFilter;
-                sqlForCount += companyNamesFilter;
-                sqlForCount += firstNamesFilter;
-                sqlForCount += lastNamesFilter;
-                sqlForCount += employmentTypesFilter;
-                sqlForCount += officeLocationsFilter;
-                sqlForCount += shownWorkerTypeFilter;
-                //TODO add the rest of the filters here
-
-                //Remove the last 'AND' from the sql string
-                sqlForCount = sqlForCount.Remove(sqlForCount.Length - 3);
-            }
-            
-            //Add the order by, filter, and offset TODO do it! and TODO potentially order on multiple
-            sql += orderByFilter;
-            //Only add the fetch and offset filters if there is an orderBy
-            if(orderBys.Count > 0){
-                sql += orderDirFilter;
-                sql += offsetFilter;
-                sql += fetchFilter;
-            }
-            
-            LambdaLogger.Log("sql: " + sql);
-
-            LambdaLogger.Log("sqlForCount: " + sqlForCount);
-           
-            using var cmd = new NpgsqlCommand(sql,con);
-
-            int currentParameterCounter = 0;
-            //Add the bind variables
-            foreach(string skill in skills){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + "%"+skill+"%");
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+skill+"%");
-            }
-            foreach(string location in locations){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + location);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, location);
-            }
-            foreach(string title in titles){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + title);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, title);
-            }
-            foreach(string yearsPrior in yearsExperience){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + yearsPrior);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, float.Parse(yearsPrior));
-            }
-
-            foreach(string division in divisions){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + division);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, division);
-            }
-
-            foreach(string companyname in companynames){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + companyname);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, companyname);
-            }
-
-            foreach(string firstname in firstnames){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + firstname);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, firstname);
-            }
-
-            foreach(string lastname in lastnames){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + lastname);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, lastname);
-            }
-
-            foreach(string employementType in employementTypes){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + employementType);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, employementType);
-            }
-
-            foreach(string officeLocation in officeLocations){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + officeLocation);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+officeLocation+"%");
-            }
-
-            foreach(string offset in offsets){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + offset);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(offset));
-            }
-
-            foreach(string fetch in fetchs){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + fetch);
-                cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
-            }
-
-            //TODO: is contractor, hiredate, termination date
-            //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
-
-            //Run the sql command
-            var reader = cmd.ExecuteReader();
-    
-            string output = string.Empty;
-            List<Employee> employees = new List<Employee>();
-            //LambdaLogger.Log("Hey1"+ reader.Read().ToString());
-
-            while(reader.Read()) {
-                //LambdaLogger.Log("Hey"+ reader[0].ToString());
-                Employee e = new Employee();
-                e.firstName = reader[0].ToString();
-                e.lastName = reader[1].ToString();
-                e.image = reader[2].ToString();
-                e.physicalLocation = reader[3].ToString();
-                e.division = reader[4].ToString();
-                e.companyName = reader[5].ToString();
-                e.title = reader[6].ToString();
-                e.hireDate = reader[7].ToString();
-                e.terminationDate = reader[8].ToString();
-                e.supervisorEmployeeNumber = reader[9].ToString();
-                e.yearsPriorExperience = reader[10].ToString();
-                e.email = reader[11].ToString();
-                e.workPhone = reader[12].ToString();
-                e.workCell = reader[13].ToString();
-                e.isContractor = System.Convert.ToBoolean(reader[14].ToString());
-                e.employeeNumber = reader[15].ToString();
-                e.employmentType = reader[16].ToString();
-                e.skills = reader[17].ToString();
-                e.officeLocation = reader[18].ToString();
-                employees.Add(e);
-            }
-
-            reader.Close();
-
-
-            //Run the SQL to get the count of how many workers satisfy the query
-            using var cmd2 = new NpgsqlCommand(sqlForCount,con);
-
-            currentParameterCounter = 0;
-            //Add the bind variables
-            foreach(string skill in skills){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + "%"+skill+"%");
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+skill+"%");
-            }
-            foreach(string location in locations){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + location);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, location);
-            }
-            foreach(string title in titles){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + title);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, title);
-            }
-            foreach(string yearsPrior in yearsExperience){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + yearsPrior);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, float.Parse(yearsPrior));
-            }
-
-            foreach(string division in divisions){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + division);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, division);
-            }
-
-            foreach(string companyname in companynames){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + companyname);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, companyname);
-            }
-
-            foreach(string firstname in firstnames){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + firstname);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, firstname);
-            }
-
-            foreach(string lastname in lastnames){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + lastname);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, lastname);
-            }
-
-            foreach(string employementType in employementTypes){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + employementType);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, employementType);
-            }
-
-            foreach(string officeLocation in officeLocations){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + officeLocation);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+officeLocation+"%");
-            }
-
-            foreach(string offset in offsets){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + offset);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(offset));
-            }
-
-            foreach(string fetch in fetchs){
-                LambdaLogger.Log("p"+currentParameterCounter + " : " + fetch);
-                cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
-            }
-
-            //TODO: is contractor, hiredate, termination date
-            //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
-
-            //Run the sql command
-            var reader2 = cmd2.ExecuteReader();
-            reader2.Read();
-            //Ya this is a dumb way cast please fix.
-            int count = int.Parse(reader2[0].ToString());
-
-            reader2.Close();
-
-            LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
-            LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
-            SearchResults searchResults = new SearchResults();
-            searchResults.data = employees;
-            searchResults.totalCount = count;
-
-            //output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
-            output = Newtonsoft.Json.JsonConvert.SerializeObject(searchResults); 
-            //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
-        
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = 200,
-                Body = output,
-                //Body = myDbItems.ToString(),
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },  
+                while(reader.Read()) {
+                    //LambdaLogger.Log("Hey"+ reader[0].ToString());
+                    Employee e = new Employee();
+                    e.firstName = reader[0].ToString();
+                    e.lastName = reader[1].ToString();
+                    e.image = reader[2].ToString();
+                    e.physicalLocation = reader[3].ToString();
+                    e.division = reader[4].ToString();
+                    e.companyName = reader[5].ToString();
+                    e.title = reader[6].ToString();
+                    e.hireDate = reader[7].ToString();
+                    e.terminationDate = reader[8].ToString();
+                    e.supervisorEmployeeNumber = reader[9].ToString();
+                    e.yearsPriorExperience = reader[10].ToString();
+                    e.email = reader[11].ToString();
+                    e.workPhone = reader[12].ToString();
+                    e.workCell = reader[13].ToString();
+                    e.isContractor = System.Convert.ToBoolean(reader[14].ToString());
+                    e.employeeNumber = reader[15].ToString();
+                    e.employmentType = reader[16].ToString();
+                    e.skills = reader[17].ToString();
+                    e.officeLocation = reader[18].ToString();
+                    employees.Add(e);
                 }
-            };
 
-            return response;
+                reader.Close();
+
+
+                //Run the SQL to get the count of how many workers satisfy the query
+                using var cmd2 = new NpgsqlCommand(sqlForCount,con);
+
+                currentParameterCounter = 0;
+                //Add the bind variables
+                foreach(string skill in skills){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + "%"+skill+"%");
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+skill+"%");
+                }
+                foreach(string location in locations){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + location);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, location);
+                }
+                foreach(string title in titles){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + title);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, title);
+                }
+                foreach(string yearsPrior in yearsExperience){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + yearsPrior);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, float.Parse(yearsPrior));
+                }
+
+                foreach(string division in divisions){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + division);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, division);
+                }
+
+                foreach(string companyname in companynames){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + companyname);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, companyname);
+                }
+
+                foreach(string firstname in firstnames){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + firstname);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, firstname);
+                }
+
+                foreach(string lastname in lastnames){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + lastname);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, lastname);
+                }
+
+                foreach(string employementType in employementTypes){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + employementType);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, employementType);
+                }
+
+                foreach(string officeLocation in officeLocations){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + officeLocation);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, "%"+officeLocation+"%");
+                }
+
+                foreach(string offset in offsets){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + offset);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(offset));
+                }
+
+                foreach(string fetch in fetchs){
+                    LambdaLogger.Log("p"+currentParameterCounter + " : " + fetch);
+                    cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
+                }
+
+                //TODO: is contractor, hiredate, termination date
+                //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
+
+                //Run the sql command
+                var reader2 = cmd2.ExecuteReader();
+                int count = 0;
+                while(reader2.Read()){
+                    //Ya this is a dumb way cast please fix.
+                    count = int.Parse(reader2[0].ToString());
+                }
+
+                reader2.Close();
+
+                //LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
+                //LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
+                SearchResults searchResults = new SearchResults();
+                searchResults.data = employees;
+                searchResults.totalCount = count;
+
+                //output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
+                output = Newtonsoft.Json.JsonConvert.SerializeObject(searchResults); 
+                //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+                if(count == 0){
+                    output = Newtonsoft.Json.JsonConvert.SerializeObject(null);
+                }
+            
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 200,
+                    Body = output,
+                    //Body = myDbItems.ToString(),
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },  
+                    }
+                };
+
+                return response;
+        }  catch(System.Exception){
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 400,
+                    Body = "Invalid query Parameters",
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" } 
+                    }
+                };
+
+                return response;
+            }
         }
+
 
         public  APIGatewayProxyResponse getEmployeeID(APIGatewayProxyRequest request, ILambdaContext context)
         {
