@@ -163,24 +163,18 @@ namespace Project
                 CognitoIdentityProviders = providers
             });
 
-            apiGateway.CfnAuthorizer cognitoAuthorizer = new apiGateway.CfnAuthorizer(this, "cognitoAuthorizer", new apiGateway.CfnAuthorizerProps
-            {
-                RestApiId = api.RestApiId,
-                Name = "CognitoAuth",
-                Type = "COGNITO_USER_POOLS",
+            apiGateway.CognitoUserPoolsAuthorizer cognitoAuthorizer = new apiGateway.CognitoUserPoolsAuthorizer(this, "dictator", new apiGateway.CognitoUserPoolsAuthorizerProps{
+                CognitoUserPools = new [] {user_pool},
+                AuthorizerName = "Cognito-Authorizer",
                 IdentitySource = "method.request.header.Authorization",
-                ProviderArns = new[] { user_pool.UserPoolArn }
-            }
-            );
+            });
+
             apiGateway.MethodOptions methodOptions = new apiGateway.MethodOptions
             {
-                AuthorizationType = apiGateway.AuthorizationType.CUSTOM,
-                // Could not add the cognitoAuthorizer as it wants an Authorizer type not a CfnAuthorize LOL, We may have to implement the Authorizer Interface 
-                // or update our cdk apigateay version to get the lib
-                // Authorizer = cognitoAuthorizer
+                AuthorizationType = apiGateway.AuthorizationType.COGNITO,
+                Authorizer = cognitoAuthorizer,
+                
             };
-            // TODO Link Authorizer to MethodOptions and add to specific method
-
 
             apiGateway.Resource employeeResource = api.Root.AddResource("employee");
             apiGateway.LambdaIntegration getEmployeeIntegration = new apiGateway.LambdaIntegration(getEmployees);
@@ -278,7 +272,7 @@ namespace Project
             });
             apiGateway.Resource addContractorResource = api.Root.AddResource("addContractor");
             apiGateway.LambdaIntegration addContractorIntegration =  new apiGateway.LambdaIntegration(addContractor);
-            apiGateway.Method addContractorMethod =  addContractorResource.AddMethod("PUT", addContractorIntegration);
+            apiGateway.Method addContractorMethod =  addContractorResource.AddMethod("PUT", addContractorIntegration, methodOptions);
 
             //getEmployeeID Endpoint
             lambda.Function getEmployeeID = new lambda.Function(this,"getEmployeeID", new lambda.FunctionProps{
