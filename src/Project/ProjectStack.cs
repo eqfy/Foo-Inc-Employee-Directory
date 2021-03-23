@@ -501,20 +501,5 @@ namespace Project
             });
         }
     }
-
-    // public class cognitoAuth : apiGateway.IAuthorizer
-    // {
-
-    //     //public AuthorizationType AuthorizationType {get;set;}
-    //     public string AuthorizerID { get; set; }
-
-    //     public string AuthorizerId => throw new NotImplementedException();
-
-    //     public cognitoAuth(AuthorizationType auth_type, string auth_id)
-    //     {
-    //         //this.AuthorizationType = auth_type;
-    //         this.AuthorizerID = auth_id;
-    //     }
-    // }
 }
 
