@@ -9,3 +9,4 @@ DROP TABLE "SkillCategory" CASCADE;
 DROP TABLE "ManagerLocationCompany" CASCADE;
 DROP TABLE "ManagerLocationGroup" CASCADE;
 DROP TABLE "ManagerLocationOffice" CASCADE;
+DROP SEQUENCE "public".contractorseq;
