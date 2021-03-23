@@ -153,7 +153,8 @@ function AddContractor(props) {
     
     let [photoURL, setPhotoURL] = React.useState('');
     // TODO: 6. Cognito log in page, auth flow
-    // TODO: 5. Progress bar for addContractor
+    // TODO: 7. Company code -> office code -> group code visibility order
+    // TODO: 5. Progress bar for company, office, groupcode selects, addContractor, image upload
     // TODO: 9  Page styling -> locations and company, btn, upload image
     // TODO: 4. Fix email validation
     // TODO: 7: Predictive search for supervisor
