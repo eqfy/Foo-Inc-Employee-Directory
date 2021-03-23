@@ -1,66 +1,95 @@
 import React from "react";
 import { connect } from "react-redux";
 import { useParams } from "react-router";
-import { PageContainer } from "./common/PageContainer";
+import { CircularProgress, makeStyles } from "@material-ui/core";
+import { CenteredPageContainer, PageContainer } from "./common/PageContainer";
 import CoreInfoArea from "./profilePage/CoreInfoArea";
 import SkillsArea from "./profilePage/SkillsArea";
 import PrevNextButtons from "./profilePage/PrevNextButtons";
 import SearchButton from "./profilePage/SearchButton";
 import styled from "styled-components";
-import { setFocusedWorkerId } from 'actions/generalAction';
-import NotFound from './NotFound';
+import { setProfile } from "actions/profileAction";
+import { setFocusedWorkerId } from "actions/generalAction";
+import WorkerNotFound from "./common/WorkerNotFound";
 
+const useStyles = makeStyles({
+    loading: {
+        color: "#00569c",
+    },
+});
 export function ProfilePageContainer(props) {
-    const { workers, focusedWorkerId, updateFocusedWorkerId } = props;
+    const { workers, ready, setProfile, setFocusedWorkerId } = props;
+    const classes = useStyles();
 
     // @ts-ignore
     const { workerId } = useParams();
-    let worker;
 
-    if (workerId) {
-        worker = workers.byId[workerId];
-
-        if (!worker) {
-            // TODO: If URL contains workerId that's not in the workers object, make an API call for it
+    React.useEffect(() => {
+        if (workerId) {
+            if (workers.byId[workerId] === undefined) {
+                // If URL contains workerId that's not in the workers object, make an API call for it
+                setProfile(workerId);
+                return;
+            } else {
+                // update workerId
+                setFocusedWorkerId(workerId);
+            }
         }
+    }, [workerId]);
 
-        // If worker is retrieved, update focusedWorkerId
-        if (worker) {
-            updateFocusedWorkerId(workerId);
-        } else {
-            // Worker with the specified id is not in the database 
-            return <NotFound />
-        }
+    const worker = workers.byId[workerId];
+
+    if (worker !== undefined) {
+        // has the page ready
+        return (
+            <PageContainer>
+                <StyledDiv className="flex space-between">
+                    <SearchButton />
+                    <PrevNextButtons />
+                </StyledDiv>
+                <div className="flex">
+                    <CoreInfoArea employee={worker} />
+                    <SkillsArea employee={worker} />
+                </div>
+            </PageContainer>
+        );
     } else {
-        // If no id is specified in the URL, use the default focusedWorkerId
-        worker = workers.byId[focusedWorkerId];
+        if (ready) {
+            // ready but no worker: invalid id
+            return (
+                <CenteredPageContainer>
+                    <WorkerNotFound />
+                </CenteredPageContainer>
+            );
+        } else {
+            // not ready: loading
+            return (
+                <CenteredPageContainer>
+                    <CircularProgress
+                        size={"100px"}
+                        classes={{ root: classes.loading }}
+                    />
+                </CenteredPageContainer>
+            );
+        }
     }
-
-    return (
-        <PageContainer>
-            <StyledDiv className="flex space-between">
-                <SearchButton />
-                <PrevNextButtons />
-            </StyledDiv>
-            <div className="flex">
-                <CoreInfoArea employee={worker} />
-                <SkillsArea employee={worker} />
-            </div>
-        </PageContainer>
-    );
 }
 
 const mapStateToProps = (state) => ({
     workers: state.workers,
     focusedWorkerId: state.appState.focusedWorkerId,
+    ready: state.appState.ready,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    updateFocusedWorkerId: (id) =>
-        dispatch(setFocusedWorkerId(id)),
+    setProfile: (workerId) => dispatch(setProfile(workerId)),
+    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfilePageContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ProfilePageContainer);
 
 const StyledDiv = styled.div`
     margin-bottom: 25px;

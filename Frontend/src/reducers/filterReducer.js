@@ -7,8 +7,9 @@ export default function filterReducer(state = defaultFilterState, action) {
             return {
                 ...state,
                 ...action.payload,
+                loaded: true,
             };
-        case "ADD_FILTERS":
+        case "ADD_FILTERS": // This can be used if we decide to add the abiity creating new filters
             return {
                 ...state,
                 byId: { ...state.byId, ...action.payload.byId },

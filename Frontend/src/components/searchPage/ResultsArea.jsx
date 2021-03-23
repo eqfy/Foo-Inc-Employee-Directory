@@ -4,8 +4,10 @@ import { Pagination } from "@material-ui/lab";
 import styled from "styled-components";
 import { useHistory, useLocation } from "react-router";
 import "../common/Common.css";
-import { setPageAction } from 'actions/searchAction';
-import { connect } from 'react-redux';
+import { setPageAction } from "actions/searchAction";
+import { connect } from "react-redux";
+import Fade from "@material-ui/core/Fade";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const entriesPerPage = 6;
 
@@ -17,13 +19,14 @@ function ResultsArea(props) {
         updatePage,
         resultOrder,
         workers: { byId },
+        loading,
     } = props;
 
     const handleChange = (_event, value) => {
         let params = new URLSearchParams(location.search);
         params.set("page", value);
         history.push({ search: params.toString() });
-    }
+    };
 
     React.useEffect(() => {
         let params = new URLSearchParams(location.search);
@@ -39,9 +42,16 @@ function ResultsArea(props) {
 
     const getEmployee = (index) => {
         if (index < resultOrder.length) {
+            const employeeId = resultOrder[index];
+            const employee = employeeId && byId[employeeId];
             return (
                 <div className="card-grid-col">
-                    <EmployeeCard employee={byId[resultOrder[index]]} />
+                    {employee ? (
+                        <EmployeeCard
+                            employee={employee}
+                            linkToProfile={true}
+                        />
+                    ) : null}
                 </div>
             );
         }
@@ -49,7 +59,7 @@ function ResultsArea(props) {
 
     const offset = (pageNumber - 1) * entriesPerPage;
     return (
-        <>
+        <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
             <div className="card-grid">
                 {getEmployee(offset + 0)}
                 {getEmployee(offset + 1)}
@@ -65,7 +75,42 @@ function ResultsArea(props) {
                 page={pageNumber}
                 onChange={handleChange}
             />
-        </>
+        </LoadingResult>
+    );
+}
+
+function LoadingResult(props) {
+    const { loading, hasResult } = props;
+    return loading ? (
+        <div
+            style={{
+                height: "590px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <Fade
+                in={loading}
+                style={{
+                    transitionDelay: loading ? "300ms" : "0ms",
+                }}
+                unmountOnExit
+            >
+                <CircularProgress size={"100px"} />
+            </Fade>
+        </div>
+    ) : !hasResult ? (
+        <div className={"orgchart-container"}>
+            Sorry, no employee or contractor satisfies the filters.
+            <br />
+            Please try unchecking some filters or lowering the minimum work
+            experience filter
+            <br />
+            (currently, the most senior employee has 11 years of experience)
+        </div>
+    ) : (
+        props.children
     );
 }
 
@@ -79,11 +124,11 @@ const mapStateToProps = (state) => ({
     workers: state.workers,
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
+    loading: state.appState.filtersChanged,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    updatePage: (value) =>
-        dispatch(setPageAction(value)),
+    updatePage: (value) => dispatch(setPageAction(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);

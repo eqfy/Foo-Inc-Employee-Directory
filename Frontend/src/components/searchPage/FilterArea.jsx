@@ -74,14 +74,26 @@ function FilterArea(props) {
 
     const handleWorkerTypeChange = (event) => {
         setWorkerTypeAction(event.target.value);
+        coordinatedDebounce(
+            searchWithAppliedFilterAction,
+            SearchWithFilterTimer
+        )();
     };
 
     const handleSortKeyChange = (event) => {
         setSortKeyAction(event.target.value);
+        coordinatedDebounce(
+            searchWithAppliedFilterAction,
+            SearchWithFilterTimer
+        )();
     };
 
     const handleSortOrderChange = (event) => {
         setSortOrderAction(event.target.checked);
+        coordinatedDebounce(
+            searchWithAppliedFilterAction,
+            SearchWithFilterTimer
+        )();
     };
 
     const handleDelete = (chipToDelete) => () => {
@@ -132,7 +144,10 @@ function FilterArea(props) {
                 {chipData.length > 0 ? (
                     chipData.map((data) => {
                         return (
-                            <li key={data.key} className={classes.chipItem}>
+                            <li
+                                key={createChipLabel(data)}
+                                className={classes.chipItem}
+                            >
                                 <Chip
                                     label={createChipLabel(data)}
                                     onDelete={handleDelete(data)}

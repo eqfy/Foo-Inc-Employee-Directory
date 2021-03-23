@@ -111,6 +111,7 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
+                MemorySize = 512,
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[] { securityGroup }
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
@@ -194,6 +195,7 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
+                MemorySize = 512,
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[] { securityGroup }
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
@@ -211,6 +213,7 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
+                MemorySize = 512,
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[]
                  { securityGroup }
@@ -229,6 +232,7 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
+                MemorySize = 512,
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[] { securityGroup }
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
@@ -249,6 +253,7 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
+                MemorySize = 512,
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[] { securityGroup }
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
@@ -266,6 +271,7 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
+                MemorySize = 512,
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[] {securityGroup}  
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
@@ -283,6 +289,7 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
+                MemorySize = 512,
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[] { securityGroup }
 
@@ -301,6 +308,7 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
+                MemorySize = 512,
                 //SecurityGroups = new[] {SG}
                 SecurityGroups = new[] {securityGroup}  
                 //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
@@ -317,7 +325,8 @@ namespace Project
                 VpcSubnets = selection,
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(30),
-                SecurityGroups = new[] { securityGroup }
+                MemorySize = 512,
+                SecurityGroups = new[] {securityGroup}  
             });
 
             lambda.Function databaseDropAllLambda = new lambda.Function(this, "databaseDropAll", new lambda.FunctionProps
