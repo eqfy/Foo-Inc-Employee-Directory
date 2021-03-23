@@ -1548,6 +1548,177 @@ namespace Handler
             }
         }
 
+        public APIGatewayProxyResponse getAllOfficeLocations(APIGatewayProxyRequest request, ILambdaContext context){
+
+            try{
+
+                List<string> companyName = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
+                    companyName = (List<string>)request.MultiValueQueryStringParameters["companyName"];
+                    for(int i = 0; i < companyName.Count; i++){
+                        companyName[i] = HttpUtility.UrlDecode(companyName[i]);
+                    }
+                }
+
+                using var con = new NpgsqlConnection(GetRDSConnectionString());
+                con.Open();
+
+
+                //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+                var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+                var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+                LambdaLogger.Log("bucketName: " + bucketName);
+                LambdaLogger.Log("objectKey: " + objectKey);
+
+                //Get the sql script from the bucket
+                var script = getS3FileSync(bucketName, objectKey);
+
+                //Read the sql from the file
+                StreamReader readers3 = new StreamReader(script.ResponseStream);
+                String sql = readers3.ReadToEnd();
+
+                LambdaLogger.Log("sql: " + sql);
+
+                using var cmd = new NpgsqlCommand(sql,con);
+
+                LambdaLogger.Log(companyName[0]);
+                cmd.Parameters.AddWithValue("p0",companyName[0]);
+
+
+                List<string> officeLocs = new List<string>();
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read()) {
+                LambdaLogger.Log("Office Location: " + reader[0] + "\n");
+                officeLocs.Add(reader[0].ToString());
+                }
+
+                string output = Newtonsoft.Json.JsonConvert.SerializeObject(officeLocs); 
+
+                if(officeLocs.Count == 0){
+                    output =  Newtonsoft.Json.JsonConvert.SerializeObject(null);
+                }
+
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 200,
+                    Body = output,
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" } 
+                    }
+                };
+
+                return response;
+            }
+            catch(System.Exception){
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 400,
+                    Body = "Invalid query Parameters",
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" } 
+                    }
+                };
+
+                return response;
+            }
+
+            
+        }
+
+        public APIGatewayProxyResponse getAllGroupCodes(APIGatewayProxyRequest request, ILambdaContext context){
+
+            try{
+                List<string> companyName = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
+                    companyName = (List<string>)request.MultiValueQueryStringParameters["companyName"];
+                    for(int i = 0; i < companyName.Count; i++){
+                        companyName[i] = HttpUtility.UrlDecode(companyName[i]);
+                    }
+                }
+
+                List<string> officeName = new List<string>();
+                if(request.MultiValueQueryStringParameters.ContainsKey("officeName")){
+                    officeName = (List<string>)request.MultiValueQueryStringParameters["officeName"];
+                    for(int i = 0; i < officeName.Count; i++){
+                        officeName[i] = HttpUtility.UrlDecode(officeName[i]);
+                    }
+                }
+
+                using var con = new NpgsqlConnection(GetRDSConnectionString());
+                con.Open();
+
+
+                //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+                var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+                var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+                LambdaLogger.Log("bucketName: " + bucketName);
+                LambdaLogger.Log("objectKey: " + objectKey);
+
+                //Get the sql script from the bucket
+                var script = getS3FileSync(bucketName, objectKey);
+
+                //Read the sql from the file
+                StreamReader readers3 = new StreamReader(script.ResponseStream);
+                String sql = readers3.ReadToEnd();
+
+                LambdaLogger.Log("sql: " + sql);
+
+                using var cmd = new NpgsqlCommand(sql,con);
+
+                LambdaLogger.Log(companyName[0]);
+                cmd.Parameters.AddWithValue("p0",companyName[0]);
+                
+                LambdaLogger.Log(officeName[0]);
+                cmd.Parameters.AddWithValue("p1",officeName[0]);
+
+                List<string> groupLabels = new List<string>();
+                
+                var reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                LambdaLogger.Log("Group Label: " + reader[0] + "\n");
+                groupLabels.Add(reader[0].ToString());
+                }
+
+                string output = Newtonsoft.Json.JsonConvert.SerializeObject(groupLabels); 
+                if(groupLabels.Count == 0){
+                    output =  Newtonsoft.Json.JsonConvert.SerializeObject(null);
+                }
+
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 200,
+                    Body = output,
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" } 
+                    }
+                };
+
+                return response;
+            }
+            catch(System.Exception){
+                var response = new APIGatewayProxyResponse
+                {
+                    StatusCode = 400,
+                    Body = "Invalid query Parameters",
+                    Headers = new Dictionary<string, string>
+                    { 
+                        { "Content-Type", "application/json" }, 
+                        { "Access-Control-Allow-Origin", "*" } 
+                    }
+                };
+
+                return response;
+            }
+
+        }
+
 
         public  APIGatewayProxyResponse addContractor(APIGatewayProxyRequest request, ILambdaContext context){
             string requestBody = request.Body;
