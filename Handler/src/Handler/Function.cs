@@ -880,14 +880,11 @@ namespace Handler
             return response;
         }
 
-        //ADD ACSEN AND DEC OPTION AND LAST NAME 
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
         {
             try{
                 int parameterCounter = 0;
 
-                // List<Employee> 
-                LambdaLogger.Log("Hello request-------     ");
                 List<string> skills = new List<string>();
                 if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
                     skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
@@ -895,7 +892,6 @@ namespace Handler
                         skills[i] = HttpUtility.UrlDecode(skills[i]);
                     }
                 }
-                LambdaLogger.Log("bye  request   -------  ");
                 List<string> locations = new List<string>();
                 if (request.MultiValueQueryStringParameters.ContainsKey("locationPhysical")){
                     locations = (List<string>)request.MultiValueQueryStringParameters["locationPhysical"];
