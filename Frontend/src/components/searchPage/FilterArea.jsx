@@ -118,6 +118,11 @@ function FilterArea(props) {
             chipData.label
         );
 
+    const createChipKey = (chipData) =>
+        chipData.category && chipData.category.length > 0 ?
+        `${chipData.label} (${chipData.category})` :
+        chipData.label;
+
     return (
         <div className={classes.filterArea}>
             <div className={classes.sortingArea}>
@@ -145,7 +150,7 @@ function FilterArea(props) {
                     chipData.map((data) => {
                         return (
                             <li
-                                key={createChipLabel(data)}
+                                key={createChipKey(data)}
                                 className={classes.chipItem}
                             >
                                 <Chip
