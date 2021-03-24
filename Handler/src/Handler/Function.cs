@@ -1353,8 +1353,10 @@ namespace Handler
                     Body = "Invalid query Parameters",
                     Headers = new Dictionary<string, string>
                     { 
-                        { "Content-Type", "application/json" }, 
-                        { "Access-Control-Allow-Origin", "*" } 
+                        { "Content-Type", "application/json" },
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },
                     }
                 };
 
@@ -1623,8 +1625,10 @@ namespace Handler
                     Body = output,
                     Headers = new Dictionary<string, string>
                     { 
-                        { "Content-Type", "application/json" }, 
-                        { "Access-Control-Allow-Origin", "*" } 
+                        { "Content-Type", "application/json" },
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },
                     }
                 };
 
@@ -1637,8 +1641,10 @@ namespace Handler
                     Body = "Invalid query Parameters",
                     Headers = new Dictionary<string, string>
                     { 
-                        { "Content-Type", "application/json" }, 
-                        { "Access-Control-Allow-Origin", "*" } 
+                        { "Content-Type", "application/json" },
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },
                     }
                 };
 
@@ -1713,8 +1719,10 @@ namespace Handler
                     Body = output,
                     Headers = new Dictionary<string, string>
                     { 
-                        { "Content-Type", "application/json" }, 
-                        { "Access-Control-Allow-Origin", "*" } 
+                        { "Content-Type", "application/json" },
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" },
                     }
                 };
 
@@ -1727,8 +1735,10 @@ namespace Handler
                     Body = "Invalid query Parameters",
                     Headers = new Dictionary<string, string>
                     { 
-                        { "Content-Type", "application/json" }, 
-                        { "Access-Control-Allow-Origin", "*" } 
+                        { "Content-Type", "application/json" },
+                        { "Access-Control-Allow-Origin", "*" },
+                        { "Access-Control-Allow-Methods", "*" },
+                        { "Access-Control-Allow-Headers", "*" }, 
                     }
                 };
 
