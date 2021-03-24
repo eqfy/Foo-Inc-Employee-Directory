@@ -312,15 +312,41 @@ INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCod
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('19102', '01', '01', '01', 'TermEmployee01', 'Name', 'Salary', 'Some "Title"', '2015-01-01', '2018-06-01',
-                      '10002', 0, 'something@acme.ca', '604-555-5555', '604-555-5555', 'GHHDT1H7', 'some-url/photo_default.jpg');
+                      '10002', 0, 'something@acme.ca', '604-555-5555', '604-555-5555', 'GHHDT1H7', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0129102.jpeg');
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('29102', '02', '02', '04', 'TermEmployee02', 'Name', 'Salary', 'Some "Title"', '2016-01-01', '2019-06-01',
-                      '20004', 0, 'something@acme.ca', '604-555-5555', '604-555-5555', 'TH8LF9', 'some-url/photo_default.jpg');
+                      '20004', 0, 'something@acme.ca', '604-555-5555', '604-555-5555', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg');
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('39123', '03', '03', '04', 'TermEmployee03', 'Name', 'Salary', 'Some "Title"', '2017-01-01', '2020-06-01',
-                      '30023', 0, 'something@acme.ca', '604-555-5555', '604-555-5555', 'LDFS8F3DDS', 'some-url/photo_default.jpg');
+                      '30023', 0, 'something@acme.ca', '604-555-5555', '604-555-5555', 'LDFS8F3DDS', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg');
+
+/* Edge case testing employees */
+
+INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
+                      "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
+              VALUES ('50000', '03', '03', '05', 'West', 'Kanye', 'Salary', 'Some "Title"', '2020-01-01', NULL,
+                      '30024', 1, 'something@acme.ca', '604-555-5555', '604-555-5555', 'LDFS8F3DDS', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg');
+INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
+                      "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
+              VALUES ('50001', '03', '04', '08', 'West', 'Kanye', 'Salary', 'Some "Title"', '2020-01-03', NULL,
+                      '30025', 2, 'something@acme.ca', '604-555-5555', '604-555-5555', 'JGH7T', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg');
+
+/* Edge case testing contractors */
+
+INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
+                      "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl", "isContractor")
+              VALUES ('60001', '02', '01', '03', 'Aldrin', 'Buzz', 'Salary', 'Some "Title"', '2020-02-01', NULL,
+                      '20003', 1, 'something@acme.ca', '604-555-5555', '604-555-5555', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0230115.jpeg', true);
+INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
+                      "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl", "isContractor")
+              VALUES ('60002', '02', '02', '04', 'Aldrin', 'Buzz', 'Salary', 'Some "Title"', '2020-03-01', NULL,
+                      '20004', 2, 'something@acme.ca', '604-555-5555', '604-555-5555', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg', true);
+INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
+                      "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl", "isContractor")
+              VALUES ('60003', '02', '02', '05', 'Armstrong', 'Neil', 'Salary', 'Some "Title"', '2020-04-01', NULL,
+                      '20005', 3, 'something@acme.ca', '604-555-5555', '604-555-5555', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0129102.jpeg', true);
 
 INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('30015', '2', '2');
 INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('30015', '3', '1');
