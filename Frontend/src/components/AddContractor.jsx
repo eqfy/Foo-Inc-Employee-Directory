@@ -47,6 +47,7 @@ function AddContractor(props) {
         workPhone: '',
         cellPhone: '',
         snackBar: {},
+        profilePic: {},
     })
 
     function Alert(props) {
@@ -148,8 +149,6 @@ function AddContractor(props) {
             errors,
         });
     };
-    
-    let [photoURL, setPhotoURL] = React.useState('');
 
     let selectedSkills = []; // objects of selected skills
     
@@ -166,24 +165,34 @@ function AddContractor(props) {
     // THIS METHOD EXPOSES AWS AUTH KEYS TO CLIENT. 
     // TODO: Upload from backend or replace with react-s3-uploader or a different library
     // TODO: Fix bug where trying to upload image multiple times (without page refresh) fails
-    const uploadProfilePicture = (e) => {
-        let file = e.target.files[0];
-        let fileExt = file.name.split('.')[file.name.split('.').length-1];
-        let fileNameWithoutExt = file.name.replace(`.${fileExt}`,'');
-        let newFileName = fileNameWithoutExt + '_' + (new Date()).getTime() + '.' + fileExt;
-        const profilePic = new File([e.target.files[0]], newFileName);
-        S3FileUpload.uploadFile(profilePic, config)
+async function uploadProfilePicture (){
+        let profilePic = formState.profilePic;
+        await S3FileUpload.uploadFile(profilePic['file'], config)
         .then((data) => {
-            setPhotoURL(data.location);
+            profilePic['url'] = data.location;
+            setFormState({
+                ...formState,
+                profilePic,
+            })
         })
         .catch((err) => {
             console.log(err)
-            })
-        }
+        })
+    }
 
-    function uploadedPPicName(){
-        const rawName = photoURL.substring(photoURL.lastIndexOf('/') + 1);
-        return (rawName.substring(0, rawName.indexOf('_')) + rawName.substring(rawName.lastIndexOf('.'))).toLowerCase();
+   const saveProfilePicture = (e) => {
+        let file = e.target.files[0];
+        let fileExt = (file.name).substring((file.name).lastIndexOf('.') + 1);
+        let fileNameWithoutExt = file.name.replace(`.${fileExt}`,'');
+        let newFileName = (fileNameWithoutExt + '_' + (new Date()).getTime() + '.' + fileExt).toLowerCase();
+        
+        let profilePic = formState.profilePic;
+        profilePic['file'] = new File([e.target.files[0]], newFileName);
+        profilePic['name'] = file.name;
+        setFormState({
+            ...formState,
+            profilePic,
+        })
     }
 
     function fieldErrorHelper(fieldName){
@@ -195,7 +204,7 @@ function AddContractor(props) {
     function fieldHelperText(fieldName){
         return !formState.fieldsStatusIsValid[fieldName]? formState.errors[fieldName]: '';
     }
-    const handleSubmit = (event) => {
+    async function handleSubmit(event){
         event.preventDefault();
 
         let skills = "";
@@ -203,6 +212,9 @@ function AddContractor(props) {
             skills += selectedSkill.category+':::'+selectedSkill.skill+'|||';
         }
         skills = skills.slice(0,-3);
+
+        // Upload profile pic
+        await uploadProfilePicture();
 
         const details = {
             FirstName: event.target.firstName.value,
@@ -220,7 +232,7 @@ function AddContractor(props) {
             OfficeCode: event.target.officeLocation.value,
             skills: skills,
             YearsPriorExperience: event.target.YPE.value,
-            PhotoUrl: photoURL,
+            PhotoUrl: formState.profilePic['url'],
             EmploymentType: event.target.employmentType.value,
         }
         // Submit form to backend
@@ -314,11 +326,11 @@ function AddContractor(props) {
                         id="contained-button-file"
                         multiple
                         type="file"
-                        onChange={ uploadProfilePicture }
+                        onChange={ saveProfilePicture }
                     />
                         <label htmlFor="contained-button-file">
                             <Button variant="outlined" component="span" startIcon={ <AccountBoxIcon /> } className= {classes.button}>
-                        {photoURL === ''? 'Upload Profile Image': uploadedPPicName()}
+                        {formState.profilePic['name'] === undefined? 'Upload Profile Image': formState.profilePic['name']}
                             </Button>
                         </label>
                     <h3><u>Position Details</u></h3>
