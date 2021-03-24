@@ -256,6 +256,44 @@ namespace Project
             apiGateway.LambdaIntegration searchIntegration = new apiGateway.LambdaIntegration(search);
             apiGateway.Method searchMethod = searchResource.AddMethod("GET", searchIntegration);
 
+            //getAllOfficeLocations
+            lambda.Function getAllOfficeLocations = new lambda.Function(this, "getAllOfficeLocations", new lambda.FunctionProps
+            {
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::getAllOfficeLocations",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                MemorySize = 512,
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] { securityGroup }
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource getAllOfficeLocationsResource = api.Root.AddResource("getAllOfficeLocations");
+            apiGateway.LambdaIntegration getAllOfficeLocationsIntegration = new apiGateway.LambdaIntegration(getAllOfficeLocations);
+            apiGateway.Method getAllOfficeLocationsMethod = getAllOfficeLocationsResource.AddMethod("GET", getAllOfficeLocationsIntegration);
+
+            //getAllOfficeLocations
+            lambda.Function getAllGroupCodes = new lambda.Function(this, "getAllGroupCodes", new lambda.FunctionProps
+            {
+                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
+                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
+                Handler = "Handler::Handler.Function::getAllGroupCodes",
+                Vpc = vpc,
+                VpcSubnets = selection,
+                AllowPublicSubnet = true,
+                Timeout = Duration.Seconds(60),
+                MemorySize = 512,
+                //SecurityGroups = new[] {SG}
+                SecurityGroups = new[] { securityGroup }
+                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+            });
+            apiGateway.Resource getAllGroupCodesResource = api.Root.AddResource("getAllGroupCodes");
+            apiGateway.LambdaIntegration getAllGroupCodesIntegration = new apiGateway.LambdaIntegration(getAllGroupCodes);
+            apiGateway.Method getAllGroupCodesMethod = getAllGroupCodesResource.AddMethod("GET", getAllGroupCodesIntegration);
+
             //Add Contractor Enpoint
             lambda.Function addContractor = new lambda.Function(this,"addContractor", new lambda.FunctionProps{
                 Runtime = lambda.Runtime.DOTNET_CORE_3_1,
@@ -405,6 +443,8 @@ namespace Project
             databaseScriptsBucket.GrantRead(getEmployeeID);
             databaseScriptsBucket.GrantRead(addContractor);
             databaseScriptsBucket.GrantRead(predictiveSearch);
+            databaseScriptsBucket.GrantRead(getAllGroupCodes);
+            databaseScriptsBucket.GrantRead(getAllOfficeLocations);
 
 
 
@@ -451,6 +491,20 @@ namespace Project
             addContractor.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
             addContractor.AddEnvironment("OBJECT_KEY", "addContarctor.sql");
             addContractor.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+            getAllOfficeLocations.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            getAllOfficeLocations.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            getAllOfficeLocations.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            getAllOfficeLocations.AddEnvironment("OBJECT_KEY", "getallOfficeLocation.sql");
+            getAllOfficeLocations.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+            getAllGroupCodes.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
+            getAllGroupCodes.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
+            getAllGroupCodes.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            getAllGroupCodes.AddEnvironment("OBJECT_KEY", "getAllGroupCode.sql");
+            getAllGroupCodes.AddEnvironment("BUCKET_NAME",databaseScriptsBucket.BucketName);
+
+
 
             getOrgChart.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getOrgChart.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
