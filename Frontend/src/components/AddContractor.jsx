@@ -32,8 +32,6 @@ function AddContractor(props) {
     // TODO: Fetch from backend/redux
     const tempLocations = ['Corporate', 'Vancouver', 'Prince George'];
 
-
-
     let skillsByCategory = [];
     for (const category in skillAllId){
         for(const skill of skillAllId[category]){
@@ -152,17 +150,6 @@ function AddContractor(props) {
     };
     
     let [photoURL, setPhotoURL] = React.useState('');
-    // TODO: 6. Cognito log in page, auth flow
-    // TODO: 7. Company code -> office code -> group code visibility order
-    // TODO: 5. Progress bar for company, office, groupcode selects, addContractor, image upload
-    // TODO: 9  Page styling -> locations and company, btn, upload image
-    // TODO: 4. Fix email validation
-    // TODO: 7: Predictive search for supervisor
-    // TODO: 8: Refractor
-    // TODO: 10: Locations/Office code/group bug? (mapping?)
-    // TODO: 11: Confirm with AE -> will we need to support company/groups/locations/officecodes not in db?
-    // TODO: 12: fix -> fetch locations from backend once above is confirmed
-    // TODO: 11: Confirm with AE -> will contractor's employment type always be hourly?
 
     let selectedSkills = []; // objects of selected skills
     
