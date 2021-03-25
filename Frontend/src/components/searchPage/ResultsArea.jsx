@@ -92,7 +92,7 @@ function LoadingResult(props) {
     ) : !hasResult ? (
         <div
             className={"orgchart-container"}
-            style={{ height: "calc(100vh - 280px);" }}
+            style={{ height: "calc(100vh - 280px)" }}
         >
             Sorry, no employee or contractor satisfies the filters.
             <br />

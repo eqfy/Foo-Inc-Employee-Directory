@@ -124,9 +124,7 @@ function SkillsArea(props) {
                     variant="contained"
                     disableElevation
                     onClick={() => {
-                        if (employee.skills) {
-                            setProfileSkills(skillObject);
-                        }
+                        setProfileSkills(skillObject);
                         searchWithAppliedFilterAction();
                         history.push(PagePathEnum.SEARCH);
                     }}
