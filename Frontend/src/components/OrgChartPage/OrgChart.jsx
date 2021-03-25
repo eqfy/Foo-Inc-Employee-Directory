@@ -192,7 +192,7 @@ function OrgChartNode(props) {
             }}
         >
             <CardMedia
-                image={"/workerPlaceholder.png"}
+                image={data.image || "/workerPlaceholder.png"}
                 classes={{ root: classes.cardMedia }}
             />
             <CardContent classes={{ root: classes.cardContent }}>

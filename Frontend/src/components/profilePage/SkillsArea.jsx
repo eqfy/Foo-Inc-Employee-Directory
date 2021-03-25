@@ -12,6 +12,7 @@ const useStyles = makeStyles({
     skillTitle: {
         color: "#1C83FB",
         fontSize: "18px",
+        fontWeight: "bold",
     },
     skillChip: {
         fontSize: "18px",
@@ -28,10 +29,17 @@ const useStyles = makeStyles({
     },
 });
 
-const convertSkillArrayToSkillObject = (skillArray) => {
+const convertSkillsToSkillObject = (skills) => {
     const skillObject = {};
+
+    if (skills === "") {
+        return skillObject;
+    }
+
+    const skillArray = skills.split("||| ");
+
     skillArray.forEach((fullSkill) => {
-        const [skillCategory, skill] = fullSkill.split(": ");
+        const [skillCategory, skill] = fullSkill.split(":::");
         if (skillObject[skillCategory]) {
             skillObject[skillCategory].push(skill);
         } else {
@@ -42,22 +50,16 @@ const convertSkillArrayToSkillObject = (skillArray) => {
     return skillObject;
 };
 
-const parseSkills = (skills, styles, setProfileSkills, searchWithAppliedFilterAction, history) => {
-    if (!skills) {
+const parseSkillsToTable = (
+    skillObject,
+    styles,
+    setProfileSkills,
+    searchWithAppliedFilterAction,
+    history
+) => {
+    if (Object.keys(skillObject).length === 0) {
         return "No skills";
     }
-
-    const skillArray = skills.split(", ");
-
-    /**
-     * 2/20/21
-     *
-     * This parsing is subject to change with the backend implementation.
-     * Any changes to the formatting of skills should be reflected in the mocks.
-     */
-
-    // convert array to map
-    const skillObject = convertSkillArrayToSkillObject(skillArray);
 
     const skillEntries = [];
 
@@ -88,9 +90,8 @@ const parseSkills = (skills, styles, setProfileSkills, searchWithAppliedFilterAc
                                     const skills = {};
                                     skills[skillCategory] = [skill];
                                     setProfileSkills(skills);
-                                    history.push(PagePathEnum.SEARCH);
                                     searchWithAppliedFilterAction();
-                                    console.log('lll');
+                                    history.push(PagePathEnum.SEARCH);
                                 }}
                             />
                         );
@@ -108,9 +109,11 @@ const parseSkills = (skills, styles, setProfileSkills, searchWithAppliedFilterAc
 };
 
 function SkillsArea(props) {
-    const { employee, setProfileSkills,searchWithAppliedFilterAction } = props;
+    const { employee, setProfileSkills, searchWithAppliedFilterAction } = props;
     const styles = useStyles();
     const history = useHistory();
+
+    const skillObject = convertSkillsToSkillObject(employee.skills);
 
     return (
         <ContainerDiv>
@@ -122,22 +125,18 @@ function SkillsArea(props) {
                     disableElevation
                     onClick={() => {
                         if (employee.skills) {
-                            setProfileSkills(
-                                convertSkillArrayToSkillObject(
-                                    employee.skills.split(", ")
-                                )
-                            );
+                            setProfileSkills(skillObject);
                         }
-                        history.push(PagePathEnum.SEARCH);
                         searchWithAppliedFilterAction();
+                        history.push(PagePathEnum.SEARCH);
                     }}
                 >
                     Search with these skills
                 </SkillButton>
             </StyledHeading>
             <StyledSkillContainer>
-                {parseSkills(
-                    employee.skills,
+                {parseSkillsToTable(
+                    skillObject,
                     styles,
                     setProfileSkills,
                     searchWithAppliedFilterAction,
@@ -149,8 +148,7 @@ function SkillsArea(props) {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    setProfileSkills: (skills) =>
-        dispatch(setProfileSkills(skills)),
+    setProfileSkills: (skills) => dispatch(setProfileSkills(skills)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
 });

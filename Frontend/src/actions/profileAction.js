@@ -1,4 +1,5 @@
 import { getProfileAPI } from "api/profileAPI";
+import { setFiltersChanged } from "./filterAction";
 
 export const setProfile = (workerId) => (dispatch) => {
     dispatch({
@@ -51,4 +52,5 @@ export const setProfileSkills = (skills) => (dispatch) => {
         type: "SET_SKILL",
         payload: skills,
     })
+    dispatch(setFiltersChanged(true));
 }
