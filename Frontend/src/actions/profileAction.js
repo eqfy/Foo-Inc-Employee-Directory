@@ -43,9 +43,9 @@ export const setProfile = (workerId) => (dispatch) => {
         });
 };
 
-export const searchWithProfileSkills = (skills) => (dispatch) => {
+export const setProfileSkills = (skills) => (dispatch) => {
     dispatch({
-        type: "CLEAR_FILTERS",
+        type: "CLEAR_APPLIED_FILTERS",
     })
     dispatch({
         type: "SET_SKILL",

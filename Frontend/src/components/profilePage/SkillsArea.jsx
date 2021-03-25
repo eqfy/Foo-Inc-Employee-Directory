@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { Button, Typography, makeStyles, Chip } from "@material-ui/core";
 import "./ProfilePage.css";
-import { searchWithProfileSkills } from "actions/profileAction";
+import { setProfileSkills } from "actions/profileAction";
+import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { useHistory } from "react-router";
 import { PagePathEnum } from "components/common/constants";
 
@@ -41,7 +42,7 @@ const convertSkillArrayToSkillObject = (skillArray) => {
     return skillObject;
 };
 
-const parseSkills = (skills, styles, searchWithProfileSkills, history) => {
+const parseSkills = (skills, styles, setProfileSkills, searchWithAppliedFilterAction, history) => {
     if (!skills) {
         return "No skills";
     }
@@ -86,8 +87,10 @@ const parseSkills = (skills, styles, searchWithProfileSkills, history) => {
                                 onClick={() => {
                                     const skills = {};
                                     skills[skillCategory] = [skill];
-                                    searchWithProfileSkills(skills);
+                                    setProfileSkills(skills);
                                     history.push(PagePathEnum.SEARCH);
+                                    searchWithAppliedFilterAction();
+                                    console.log('lll');
                                 }}
                             />
                         );
@@ -105,7 +108,7 @@ const parseSkills = (skills, styles, searchWithProfileSkills, history) => {
 };
 
 function SkillsArea(props) {
-    const { employee, searchWithProfileSkills } = props;
+    const { employee, setProfileSkills,searchWithAppliedFilterAction } = props;
     const styles = useStyles();
     const history = useHistory();
 
@@ -119,13 +122,14 @@ function SkillsArea(props) {
                     disableElevation
                     onClick={() => {
                         if (employee.skills) {
-                            searchWithProfileSkills(
+                            setProfileSkills(
                                 convertSkillArrayToSkillObject(
                                     employee.skills.split(", ")
                                 )
                             );
                         }
                         history.push(PagePathEnum.SEARCH);
+                        searchWithAppliedFilterAction();
                     }}
                 >
                     Search with these skills
@@ -135,7 +139,8 @@ function SkillsArea(props) {
                 {parseSkills(
                     employee.skills,
                     styles,
-                    searchWithProfileSkills,
+                    setProfileSkills,
+                    searchWithAppliedFilterAction,
                     history
                 )}
             </StyledSkillContainer>
@@ -144,8 +149,10 @@ function SkillsArea(props) {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    searchWithProfileSkills: (skills) =>
-        dispatch(searchWithProfileSkills(skills)),
+    setProfileSkills: (skills) =>
+        dispatch(setProfileSkills(skills)),
+    searchWithAppliedFilterAction: () =>
+        dispatch(searchWithAppliedFilterAction()),
 });
 
 const ContainerDiv = styled.div`
