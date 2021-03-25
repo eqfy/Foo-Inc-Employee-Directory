@@ -82,6 +82,11 @@ export const setNameAction = (workerName) => (dispatch) => {
     dispatch(setFiltersChanged(true));
 };
 
+export const clearNameAction = () => (dispatch) => {
+    dispatch({ type: "SET_NAME", payload: { firstName: "", lastName: "" } });
+    dispatch(setFiltersChanged(true));
+};
+
 export const clearAppliedFilters = () => (dispatch) => {
     dispatch({
         type: "CLEAR_APPLIED_FILTERS",

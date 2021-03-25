@@ -2,7 +2,6 @@ import React from "react";
 import EmployeeCard from "../common/EmployeeCard";
 import { Pagination } from "@material-ui/lab";
 import styled from "styled-components";
-import { useHistory, useLocation } from "react-router";
 import "../common/Common.css";
 import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
@@ -12,8 +11,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 const entriesPerPage = 6;
 
 function ResultsArea(props) {
-    const history = useHistory();
-    const location = useLocation();
     const {
         pageNumber,
         updatePage,
@@ -23,22 +20,8 @@ function ResultsArea(props) {
     } = props;
 
     const handleChange = (_event, value) => {
-        let params = new URLSearchParams(location.search);
-        params.set("page", value);
-        history.push({ search: params.toString() });
+        updatePage(value);
     };
-
-    React.useEffect(() => {
-        let params = new URLSearchParams(location.search);
-        const page = Number(params.get("page"));
-
-        // Sync Redux with URL page param
-        if (page && page !== pageNumber) {
-            updatePage(page);
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location]);
 
     const getEmployee = (index) => {
         if (index < resultOrder.length) {
@@ -84,19 +67,13 @@ function LoadingResult(props) {
     return loading ? (
         <div
             style={{
-                height: "590px",
+                height: "80%",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
             }}
         >
-            <Fade
-                in={loading}
-                style={{
-                    transitionDelay: loading ? "300ms" : "0ms",
-                }}
-                unmountOnExit
-            >
+            <Fade in={loading} unmountOnExit>
                 <CircularProgress size={"100px"} />
             </Fade>
         </div>

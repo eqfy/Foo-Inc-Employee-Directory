@@ -6,9 +6,9 @@ export const SortKeyEnum = {
     TITLE: "title",
 };
 
-
 export const defualtSearchPageState = {
-    resultOrder: data.map(e => e["employeeNumber"]), // TODO: Change to empty array after backend is hooked up. 
+    // resultOrder: data.map(e => e["employeeNumber"]), // TODO: Change to empty array after backend is hooked up.
+    resultOrder: [],
     pageNumber: 1,
     isAscending: false,
     sortKey: SortKeyEnum.FIRST_NAME,

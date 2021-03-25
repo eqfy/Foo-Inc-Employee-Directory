@@ -84,17 +84,33 @@ function OrgChartSearchBar(props) {
         if (inputValue.length >= 2) {
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
-                getPredictiveSearchAPI(first, last).then((response) => {
-                    setOptions(response);
-                });
+                getPredictiveSearchAPI(first, last)
+                    .then((response) => {
+                        setOptions(response);
+                    })
+                    .catch((err) => {
+                        console.error(
+                            "Org chart predictive search endpoint failed: ",
+                            err
+                        );
+                        setOptions([]);
+                    });
             }, predictiveSearchTimer)(inputValue);
         }
     }, [inputValue]);
 
+    const handleTextfieldChange = (value, reason) => {
+        if (reason === "input") {
+            setInputValue(value);
+        } else if (reason === "clear") {
+            setInputValue("");
+        }
+    };
+
     return (
         <Autocomplete
             options={options}
-            getOptionLabel={(option) => inputValue}
+            getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
             renderInput={(params) => (
@@ -115,14 +131,18 @@ function OrgChartSearchBar(props) {
                         );
                     }}
                 >
-                    <img src="./../sample.png" />
+                    <img
+                        src={option.imageURL || "/workerPlaceholder.png"}
+                        alt={"workerPhoto"}
+                    />
                     <Typography noWrap>
                         {`${option.firstName} ${option.lastName}`}
                     </Typography>
                 </div>
             )}
-            onInputChange={(event, value, reason) => {
-                setInputValue(value);
+            inputValue={inputValue}
+            onInputChange={(_event, value, reason) => {
+                handleTextfieldChange(value, reason);
             }}
         />
     );
