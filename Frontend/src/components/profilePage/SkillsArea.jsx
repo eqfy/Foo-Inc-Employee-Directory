@@ -6,38 +6,46 @@ import "./ProfilePage.css";
 
 const useStyles = makeStyles({
     skillTitle: {
-        color: '#0663d0',
-        fontSize: '18px',
+        color: "#0663d0",
+        fontSize: "18px",
     },
     skillContent: {
-        fontSize: '18px',
-    }
+        fontSize: "18px",
+    },
 });
 
 const parseSkills = (skills, styles) => {
-
     if (!skills) {
         return "No skills";
     }
 
     const skillArray = skills.split(", ");
-    let counter = 0;
-    return skillArray.map((fullSkill) => {
+    return skillArray.map((fullSkill, index) => {
         /**
          * 2/20/21
-         * 
+         *
          * This parsing is subject to change with the backend implementation.
          * Any changes to the formatting of skills should be reflected in the mocks.
          */
         const [skillCategory, skill] = fullSkill.split(": ");
         return (
-            <div key={`skill${counter++}`}>
-                <StyledTypography display='inline' variant="body1" color="textPrimary" classes={{root: styles.skillTitle}}>
+            <div key={`skill${index}`}>
+                <StyledTypography
+                    display="inline"
+                    variant="body1"
+                    color="textPrimary"
+                    classes={{ root: styles.skillTitle }}
+                >
                     {skillCategory}
                     {": "}
                 </StyledTypography>
-                <StyledTypography display='inline' variant="body1" color="textPrimary" classes={{root: styles.skillContent}}>
-                {skill}
+                <StyledTypography
+                    display="inline"
+                    variant="body1"
+                    color="textPrimary"
+                    classes={{ root: styles.skillContent }}
+                >
+                    {skill}
                 </StyledTypography>
             </div>
         );

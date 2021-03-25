@@ -188,21 +188,23 @@ function CategorizedCheckboxList(props) {
             aria-label="filter list"
             className="categorized-filter-list"
         >
-            {Object.entries(categorizedFilters).map(([category, filters]) => (
-                <CollapsableCategoryBox
-                    label={category}
-                    key={category}
-                    parentExpanded={expanded}
-                    isPredictive={isPredictive}
-                >
-                    <CheckboxList
-                        category={category}
-                        filters={filters}
-                        appliedFilters={appliedFilters[`${category}`] || []}
-                        handleCheckboxChange={handleCheckboxChange}
-                    />
-                </CollapsableCategoryBox>
-            ))}
+            {Object.entries(categorizedFilters).map(
+                ([category, filters], index) => (
+                    <CollapsableCategoryBox
+                        label={category}
+                        key={category + index}
+                        parentExpanded={expanded}
+                        isPredictive={isPredictive}
+                    >
+                        <CheckboxList
+                            category={category}
+                            filters={filters}
+                            appliedFilters={appliedFilters[`${category}`] || []}
+                            handleCheckboxChange={handleCheckboxChange}
+                        />
+                    </CollapsableCategoryBox>
+                )
+            )}
         </List>
     );
 }
@@ -225,7 +227,7 @@ function CheckboxList(props) {
                         onClick={() => {
                             handleCheckboxChange(filterName, category);
                         }}
-                        key={index}
+                        key={filterName + index}
                     >
                         <ListItemIcon className="filter-list-icon">
                             <StyledCheckbox

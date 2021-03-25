@@ -29,9 +29,9 @@ export default function Dropdown(props) {
                     label={capitalize(props.label)}
                     value={currValue}
                 >
-                    {values.map((value) => {
+                    {values.map((value, index) => {
                         return (
-                            <MenuItem value={value} key={value}>
+                            <MenuItem value={value} key={value + index}>
                                 {capitalize(value)}
                             </MenuItem>
                         );
