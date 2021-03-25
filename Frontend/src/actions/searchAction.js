@@ -1,27 +1,26 @@
 import { parseFullName } from "parse-full-name";
+import { WorkerTypeEnum } from "states/appState";
 import { searchWorker, searchWorkerByName } from "../api/search";
-import { setExperienceAction } from "./filterAction";
-
-export const searchAction = (searchProps) => (dispatch) => {
-    searchWorker(searchProps)
-        .then((response) => {
-            dispatch({
-                type: "ADD_WORKER",
-                payload: "employee data that satisfy filter",
-            });
-        })
-        .catch((error) => {
-            console.error("Search endpoint failed.\nErr:", error);
-        });
-};
+import {
+    clearAppliedFilters,
+    setExperienceAction,
+    setFiltersChanged,
+    setNameAction,
+} from "./filterAction";
 
 export const searchByNameAction = (payload) => (dispatch, getState) => {
-    // We don't store the name in our redux store, (all name searches are one-time)
+    // The first search by name returns a list of possible values for the name
+    // If the user then proceeds to click on a name, then we clear all existing filters and
+    // do a regular search with name as the only filter
     const parsedName = parseFullName(payload);
     payload = {
         firstName: parsedName.first,
         lastName: parsedName.last,
     };
+    // FIXME this no longer reflects the logic written in the above comments
+    dispatch(clearAppliedFilters());
+    dispatch(setNameAction(payload));
+
     console.log("Search By Name Action dispatched.\nPayload: %o", payload);
     searchWorkerByName(payload)
         .then((response) => {
@@ -35,22 +34,42 @@ export const searchByNameAction = (payload) => (dispatch, getState) => {
         });
 };
 
-export const searchByExperienceAction = (payload) => (dispatch, getState) => {
-    dispatch(setExperienceAction(payload));
-    dispatch(searchWithAppliedFilterAction());
-};
-
 export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
-    const payload = createSearchPayload(getState());
+    const currState = getState();
+    const payload = createSearchPayload(currState);
     console.log(
         "Search With Applied Filters Action dispatched.\nPayload: %o",
         payload
     );
+    const {
+        appState: { filtersChanged },
+        searchPageState: { resultOrder, pageNumber },
+    } = currState;
     searchWorker(payload)
         .then((response) => {
+            let workersById = {};
+            let workersAllId = [];
+            let newResultOrder = [];
+            if (!filtersChanged) {
+                newResultOrder = resultOrder;
+            }
+            dispatch(setFiltersChanged(false));
+
+            response.data.forEach((worker, index) => {
+                workersById[worker.employeeNumber] = worker;
+                workersAllId.push(worker.employeeNumber);
+                newResultOrder[index] = worker.employeeNumber;
+            });
             dispatch({
-                type: "ADD_WORKER",
-                payload: response,
+                type: "ADD_WORKERS",
+                payload: {
+                    byId: workersById,
+                    allId: workersAllId,
+                },
+            });
+            dispatch({
+                type: "SET_SEARCH_RESULT_ORDER",
+                payload: { resultOrder: newResultOrder },
             });
         })
         .catch((error) => {
@@ -58,7 +77,18 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
                 "Search endpoint failed (experience filter).\nErr:",
                 error
             );
+            // FIXME temporarily set result to empty if an error occured
+            dispatch(setFiltersChanged(false));
+            dispatch({
+                type: "SET_SEARCH_RESULT_ORDER",
+                payload: { resultOrder: [] },
+            });
         });
+};
+
+export const searchByExperienceAction = (payload) => (dispatch, getState) => {
+    dispatch(setExperienceAction(payload));
+    dispatch(searchWithAppliedFilterAction());
 };
 
 export const setPageAction = (payload) => (dispatch) => {
@@ -71,29 +101,45 @@ export const setPageAction = (payload) => (dispatch) => {
 };
 
 const createSearchPayload = (state) => {
-    // FIXME this is not complete!  Fix this once search endpoint is merged in.
     const {
         appState: {
-            skillState,
-            locationState,
-            titleState,
-            departmentState,
-            companyState,
-            yearsPriorExperience,
-            shownWorkerType,
+            skillState = {},
+            locationState = [],
+            titleState = [],
+            departmentState = [],
+            companyState = [],
+            yearsPriorExperience = 0,
+            firstName = "",
+            lastName = "",
+            shownWorkerType = WorkerTypeEnum.ALL,
         },
         searchPageState: { pageNumber, sortKey, isAscending },
     } = state;
-    return {
-        skills: skillState,
-        locations: locationState,
-        titles: titleState,
-        departments: departmentState,
-        companies: companyState,
-        yearsPriorExperience,
-        pageNumber,
-        sortKey,
-        isAscending,
-        shownWorkerType,
+
+    const payload = {
+        skills: Object.entries(skillState).reduce((acc, [category, skills]) => {
+            acc = acc.concat(
+                ...skills.map((skill) => category + ":::" + skill)
+            );
+            return acc;
+        }, []),
+        locationPhysical: locationState,
+        title: titleState,
+        yearsPriorExperience: yearsPriorExperience,
+        division: departmentState,
+        companyName: companyState,
+        // FIXME firstName and lastName can only be included after the user has done a predictive
+        // search by name and selected a name from the dropdown menu
+        // firstName: firstName, // need to handle empty string case
+        // lastName: lastName,
+        shownWorkerType: shownWorkerType,
+        // TODO change this so that we actually only get 3 (or potentially more pages of result)
+        // offset: (pageNumber - 1) * 6,
+        // fetch: 6,
+        offset: 0,
+        fetch: 100,
+        orderBy: sortKey,
+        orderDir: isAscending ? "ASC" : "DESC",
     };
+    return payload;
 };
