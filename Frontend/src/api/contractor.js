@@ -2,7 +2,7 @@ import { API } from "aws-amplify";
 
 export async function insertContractorAPI(payload) {
     const myInit = {
-        queryStringParameters: payload,
+        body: payload,
     };
-    return API.post("ae-api", "addContractor", myInit);
+    return API.put("ae-api", "addContractor", myInit);
 }
