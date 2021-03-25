@@ -2,7 +2,7 @@
     background-color: white;
 }
 
-.MuiToolbar-root img {
+.MuiToolbar-root .company-logo {
     height: 50px;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -10,6 +10,12 @@
 
 .MuiToolbar-root a {
     text-decoration: none;
+}
+
+div.popover-content {
+    pointer-events: auto;
+    margin: 10px;
+    font-size: 16px;
 }
 
 .grow {

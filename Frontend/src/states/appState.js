@@ -10,10 +10,12 @@ export const WorkerTypeEnum = {
     CONTRACTOR: "contractor",
 };
 
+export const mockCurrentEmployeeNumber = "20004";
+
 export const defaultAppState = {
     isAdmin: false,
     currPage: pageEnum.SEARCH,
-    currWorkerId: "",
+    currWorkerId: mockCurrentEmployeeNumber,
     // TODO: this is a mock assuming current focus worker is CEO
     focusedWorkerId: "10001",
     profileShowPrevNext: false,

@@ -69,7 +69,7 @@ const useStyles = makeStyles({
 
 export default function EmployeeCard(props) {
     // linkToProfile: employeeCard in profile page does not need to redirect to itself
-    const { employee, linkToProfile } = props;
+    const { employee, linkToProfile, handleProfileClick } = props;
     const classes = useStyles();
 
     useEffect(() => {
@@ -153,6 +153,7 @@ export default function EmployeeCard(props) {
                 {linkToProfile ? (
                     <StyledLink
                         to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
+                        onClick={handleProfileClick(employee.employeeNumber)}
                     >
                         {employeeCardContent}
                     </StyledLink>
