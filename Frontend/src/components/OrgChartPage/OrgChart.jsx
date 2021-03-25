@@ -126,6 +126,7 @@ function OrgChartSearchBar(props) {
                 <div
                     className={"orgchart-search-dropdown-entry"}
                     onClick={() => {
+                        setInputValue(option.firstName + " " + option.lastName);
                         history.push(
                             `${PagePathEnum.ORGCHART}/` + option.employeeNumber
                         );
