@@ -5,14 +5,13 @@ const byIdReducer = (accumulator, employee) => {
     return accumulator;
 };
 
-
-// TODO: Remove and uncomment the empty default once the backend is hooked up. 
-export const defaultWorkerState = {
-    byId: data.reduce(byIdReducer, {}),
-    allId: data.map(e => e["employeeNumber"]),
-};
-
+// TODO: Remove and uncomment the empty default once the backend is hooked up.
 // export const defaultWorkerState = {
-//     byId: {},
-//     allId: [],
+//     byId: data.reduce(byIdReducer, {}),
+//     allId: data.map(e => e["employeeNumber"]),
 // };
+
+export const defaultWorkerState = {
+    byId: {},
+    allId: [],
+};

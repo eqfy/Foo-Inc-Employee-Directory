@@ -1,37 +1,17 @@
-import { parseFullName } from "parse-full-name";
 import { WorkerTypeEnum } from "states/appState";
-import { searchWorker, searchWorkerByName } from "../api/search";
+import { searchWorker } from "../api/search";
 import {
     clearAppliedFilters,
     setExperienceAction,
     setFiltersChanged,
-    setNameAction,
 } from "./filterAction";
 
-export const searchByNameAction = (payload) => (dispatch, getState) => {
+export const searchWithAppliedFilterByNameAction = () => (dispatch) => {
     // The first search by name returns a list of possible values for the name
     // If the user then proceeds to click on a name, then we clear all existing filters and
     // do a regular search with name as the only filter
-    const parsedName = parseFullName(payload);
-    payload = {
-        firstName: parsedName.first,
-        lastName: parsedName.last,
-    };
-    // FIXME this no longer reflects the logic written in the above comments
     dispatch(clearAppliedFilters());
-    dispatch(setNameAction(payload));
-
-    console.log("Search By Name Action dispatched.\nPayload: %o", payload);
-    searchWorkerByName(payload)
-        .then((response) => {
-            dispatch({
-                type: "ADD_WORKER",
-                payload: response,
-            });
-        })
-        .catch((error) => {
-            console.error("Search endpoint failed (by name).\nErr:", error);
-        });
+    dispatch(searchWithAppliedFilterAction());
 };
 
 export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
@@ -71,6 +51,7 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
                 type: "SET_SEARCH_RESULT_ORDER",
                 payload: { resultOrder: newResultOrder },
             });
+            dispatch(setPageAction(1));
         })
         .catch((error) => {
             console.error(
@@ -116,7 +97,7 @@ const createSearchPayload = (state) => {
         searchPageState: { pageNumber, sortKey, isAscending },
     } = state;
 
-    const payload = {
+    let payload = {
         skills: Object.entries(skillState).reduce((acc, [category, skills]) => {
             acc = acc.concat(
                 ...skills.map((skill) => category + ":::" + skill)
@@ -128,10 +109,6 @@ const createSearchPayload = (state) => {
         yearsPriorExperience: yearsPriorExperience,
         division: departmentState,
         companyName: companyState,
-        // FIXME firstName and lastName can only be included after the user has done a predictive
-        // search by name and selected a name from the dropdown menu
-        // firstName: firstName, // need to handle empty string case
-        // lastName: lastName,
         shownWorkerType: shownWorkerType,
         // TODO change this so that we actually only get 3 (or potentially more pages of result)
         // offset: (pageNumber - 1) * 6,
@@ -141,5 +118,8 @@ const createSearchPayload = (state) => {
         orderBy: sortKey,
         orderDir: isAscending ? "ASC" : "DESC",
     };
+    if (firstName !== "" || lastName !== "") {
+        payload = { ...payload, firstName, lastName };
+    }
     return payload;
 };
