@@ -10,6 +10,7 @@ import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { parseFullName } from "parse-full-name";
 import React from "react";
 import { connect } from "react-redux";
+import { useHistory } from "react-router";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 
@@ -69,8 +70,7 @@ function SearchByNameBar(props) {
         )();
     };
 
-    const handleTextfieldChange = (_event, value, reason) => {
-        console.log(reason);
+    const handleTextfieldChange = (value, reason) => {
         if (reason === "input") {
             setInputValue(value);
         } else if (reason === "clear") {
@@ -97,7 +97,10 @@ function SearchByNameBar(props) {
                     className={"search-dropdown-entry"}
                     onClick={handleDropdownOptionClick(option)}
                 >
-                    <img src={option.imageURL} alt={"workerPhoto"} />
+                    <img
+                        src={option.imageURL || "/workerPlaceholder.png"}
+                        alt={"workerPhoto"}
+                    />
                     <Typography noWrap>
                         {`${option.firstName} ${option.lastName}`}
                     </Typography>
@@ -105,7 +108,7 @@ function SearchByNameBar(props) {
             )}
             inputValue={inputValue}
             onInputChange={(_event, value, reason) => {
-                handleTextfieldChange(_event, value, reason);
+                handleTextfieldChange(value, reason);
             }}
         />
     );

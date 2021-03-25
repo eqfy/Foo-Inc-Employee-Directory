@@ -51,6 +51,7 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
                 type: "SET_SEARCH_RESULT_ORDER",
                 payload: { resultOrder: newResultOrder },
             });
+            dispatch(setPageAction(1));
         })
         .catch((error) => {
             console.error(
