@@ -16,7 +16,7 @@ export default function UpdatePageContainer(props) {
                     <ul>
                         <li>
                             Search by filters is almost fully connected to
-                            backend, except handling cases when .
+                            backend, except updating it to not fetch data all at once, if there are a large amount of matching results.
                         </li>
                         <li>
                             Typing in a filter/category in the apply filter area
@@ -33,6 +33,9 @@ export default function UpdatePageContainer(props) {
                     Profile View:
                     <ul>
                         <li>
+                            Append WIP link with /profile/some_id is functioning.
+                        </li>
+                        <li>
                             Core information section shows more information now.
                         </li>
                         <li>
@@ -43,6 +46,9 @@ export default function UpdatePageContainer(props) {
                     </ul>
                     Org Chart:
                     <ul>
+                        <li>
+                            Append WIP link with /orgChart/some_id is functioning.
+                        </li>
                         <li>
                             Org chart search by name bar now displays the name
                             when choosing an option.

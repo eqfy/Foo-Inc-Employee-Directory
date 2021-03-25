@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Switch ,useHistory } from "react-router-dom";
+import { Route, Switch, useHistory } from "react-router-dom";
 import { Redirect, useLocation } from "react-router";
 import NotFound from "./components/NotFound";
 import OrgChartPageContainer from "./components/OrgChartPageContainer";
@@ -16,16 +16,15 @@ export default function Routes() {
     const [ready, setReady] = useState(false);
 
     // TODO: maybe find a better way to handle hash than this dirty workaround
-    React.useEffect(() => {    
+    React.useEffect(() => {
         // /#!/abc/def => /abc/def
-	    if (location.hash && location.hash.length >= 2) {
-		    history.replace(location.hash.substring(2));
-	    }
+        if (location.hash && location.hash.length >= 2) {
+            history.replace(location.hash.substring(2));
+        }
         setReady(true);
     }, []);
 
-    return (
-        ready ?
+    return ready ? (
         <Switch>
             <Route exact path={PagePathEnum.SEARCH}>
                 <Header activeTabIndex={0} />
@@ -56,7 +55,7 @@ export default function Routes() {
                 <NotFound />
             </Route>
         </Switch>
-        :
+    ) : (
         <div></div>
     );
 }
