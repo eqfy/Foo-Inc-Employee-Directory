@@ -54,6 +54,18 @@ export default function UpdatePageContainer(props) {
                             when choosing an option.
                         </li>
                     </ul>
+                    Add Contractor:
+                    <ul>
+                        <li>
+                            Connected to backend
+                        </li>
+                        <li>
+                            Implemented field validation (except email)
+                        </li>
+                        <li>
+                            Page styling
+                        </li>
+                    </ul>
                 </h3>
             </div>
             <div>
