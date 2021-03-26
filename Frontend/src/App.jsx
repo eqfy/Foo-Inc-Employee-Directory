@@ -13,7 +13,9 @@ function App(props) {
     }, [props]); // TODO Make sure that this only runs once
     return (
         <div className="App">
-            <Router>{Routes()}</Router>
+            <Router>
+                <Routes />
+            </Router>
         </div>
     );
 }

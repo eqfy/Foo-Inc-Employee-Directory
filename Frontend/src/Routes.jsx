@@ -1,6 +1,6 @@
-import React from "react";
-import { Route, Switch } from "react-router-dom";
-import { Redirect } from "react-router";
+import React, { useState } from "react";
+import { Route, Switch, useHistory } from "react-router-dom";
+import { Redirect, useLocation } from "react-router";
 import NotFound from "./components/NotFound";
 import OrgChartPageContainer from "./components/OrgChartPageContainer";
 import ProfilePageContainer from "./components/ProfilePageContainer";
@@ -11,7 +11,20 @@ import { PagePathEnum } from "components/common/constants";
 import { NewContractorsContainer } from "components/NewContractorsContainer";
 
 export default function Routes() {
-    return (
+    const history = useHistory();
+    const location = useLocation();
+    const [ready, setReady] = useState(false);
+
+    // TODO: maybe find a better way to handle hash than this dirty workaround
+    React.useEffect(() => {
+        // /#!/abc/def => /abc/def
+        if (location.hash && location.hash.length >= 2) {
+            history.replace(location.hash.substring(2));
+        }
+        setReady(true);
+    }, []);
+
+    return ready ? (
         <Switch>
             <Route exact path={PagePathEnum.SEARCH}>
                 <Header activeTabIndex={0} />
@@ -42,5 +55,7 @@ export default function Routes() {
                 <NotFound />
             </Route>
         </Switch>
+    ) : (
+        <div></div>
     );
 }

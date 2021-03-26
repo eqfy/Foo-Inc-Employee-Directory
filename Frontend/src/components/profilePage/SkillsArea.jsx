@@ -1,68 +1,155 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { Button, Typography, makeStyles } from "@material-ui/core";
+import { Button, Typography, makeStyles, Chip } from "@material-ui/core";
 import "./ProfilePage.css";
+import { setProfileSkills } from "actions/profileAction";
+import { searchWithAppliedFilterAction } from "actions/searchAction";
+import { useHistory } from "react-router";
+import { PagePathEnum } from "components/common/constants";
 
 const useStyles = makeStyles({
     skillTitle: {
-        color: '#0663d0',
-        fontSize: '18px',
+        color: "#1C83FB",
+        fontSize: "18px",
+        fontWeight: "bold",
     },
-    skillContent: {
-        fontSize: '18px',
-    }
+    skillChip: {
+        fontSize: "18px",
+        height: "36px",
+        padding: "6px",
+        margin: "5px",
+        backgroundColor: "#1C83FB",
+        color: "white",
+        transition: "background-color ease 0.5s",
+        "&:hover": {
+            backgroundColor: "#00569C",
+            cursor: "pointer",
+        },
+    },
 });
 
-const parseSkills = (skills, styles) => {
+const convertSkillsToSkillObject = (skills) => {
+    const skillObject = {};
 
-    if (!skills) {
+    if (skills === "") {
+        return skillObject;
+    }
+
+    const skillArray = skills.split("||| ");
+
+    skillArray.forEach((fullSkill) => {
+        const [skillCategory, skill] = fullSkill.split(":::");
+        if (skillObject[skillCategory]) {
+            skillObject[skillCategory].push(skill);
+        } else {
+            skillObject[skillCategory] = [skill];
+        }
+    });
+
+    return skillObject;
+};
+
+const parseSkillsToTable = (
+    skillObject,
+    styles,
+    setProfileSkills,
+    searchWithAppliedFilterAction,
+    history
+) => {
+    if (Object.keys(skillObject).length === 0) {
         return "No skills";
     }
 
-    const skillArray = skills.split(", ");
-    let counter = 0;
-    return skillArray.map((fullSkill) => {
-        /**
-         * 2/20/21
-         * 
-         * This parsing is subject to change with the backend implementation.
-         * Any changes to the formatting of skills should be reflected in the mocks.
-         */
-        const [skillCategory, skill] = fullSkill.split(": ");
-        return (
-            <div key={`skill${counter++}`}>
-                <StyledTypography display='inline' variant="body1" color="textPrimary" classes={{root: styles.skillTitle}}>
-                    {skillCategory}
-                    {": "}
-                </StyledTypography>
-                <StyledTypography display='inline' variant="body1" color="textPrimary" classes={{root: styles.skillContent}}>
-                {skill}
-                </StyledTypography>
-            </div>
+    const skillEntries = [];
+
+    let categoryCounter = 0;
+    for (const skillCategory in skillObject) {
+        let skillCounter = 0;
+        skillEntries.push(
+            <tr key={`skillGroup${categoryCounter++}`}>
+                <SkillCategoryTd>
+                    <StyledTypography
+                        display="inline"
+                        variant="body1"
+                        color="textPrimary"
+                        classes={{ root: styles.skillTitle }}
+                    >
+                        {skillCategory}
+                        {": "}
+                    </StyledTypography>
+                </SkillCategoryTd>
+                <td>
+                    {skillObject[skillCategory].map((skill) => {
+                        return (
+                            <Chip
+                                label={skill}
+                                classes={{ root: styles.skillChip }}
+                                key={`skill${skillCounter++}`}
+                                onClick={() => {
+                                    const skills = {};
+                                    skills[skillCategory] = [skill];
+                                    setProfileSkills(skills);
+                                    searchWithAppliedFilterAction();
+                                    history.push(PagePathEnum.SEARCH);
+                                }}
+                            />
+                        );
+                    })}
+                </td>
+            </tr>
         );
-    });
+    }
+
+    return (
+        <table>
+            <tbody>{skillEntries}</tbody>
+        </table>
+    );
 };
 
 function SkillsArea(props) {
-    const { employee } = props;
+    const { employee, setProfileSkills, searchWithAppliedFilterAction } = props;
     const styles = useStyles();
+    const history = useHistory();
+
+    const skillObject = convertSkillsToSkillObject(employee.skills);
 
     return (
         <ContainerDiv>
             <StyledHeading className="heading">
                 Skills
                 {/* TODO: Implement search functionality */}
-                <SkillButton variant="contained" disableElevation>
+                <SkillButton
+                    variant="contained"
+                    disableElevation
+                    onClick={() => {
+                        setProfileSkills(skillObject);
+                        searchWithAppliedFilterAction();
+                        history.push(PagePathEnum.SEARCH);
+                    }}
+                >
                     Search with these skills
                 </SkillButton>
             </StyledHeading>
             <StyledSkillContainer>
-                {parseSkills(employee.skills, styles)}
+                {parseSkillsToTable(
+                    skillObject,
+                    styles,
+                    setProfileSkills,
+                    searchWithAppliedFilterAction,
+                    history
+                )}
             </StyledSkillContainer>
         </ContainerDiv>
     );
 }
+
+const mapDispatchToProps = (dispatch) => ({
+    setProfileSkills: (skills) => dispatch(setProfileSkills(skills)),
+    searchWithAppliedFilterAction: () =>
+        dispatch(searchWithAppliedFilterAction()),
+});
 
 const ContainerDiv = styled.div`
     width: 100%;
@@ -96,7 +183,15 @@ const SkillButton = styled(Button)`
         background-color: white;
         color: #1c83fb;
         text-transform: none;
+        transition: color ease 0.5s, background-color ease 0.5s;
+    }
+    &&:hover {
+        color: #00569c;
     }
 `;
 
-export default connect()(SkillsArea);
+const SkillCategoryTd = styled.td`
+    text-align: right;
+`;
+
+export default connect(null, mapDispatchToProps)(SkillsArea);

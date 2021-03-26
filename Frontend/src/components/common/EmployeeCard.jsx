@@ -36,6 +36,7 @@ const useStyles = makeStyles({
         marginRight: "auto",
         marginTop: 10,
         marginBottom: 5,
+        borderRadius: 20,
     },
     cardText: {
         textAlign: "center",
