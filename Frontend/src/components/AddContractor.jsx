@@ -1,11 +1,11 @@
 /* eslint-disable no-lone-blocks */
 import React from "react";
 import { PageContainer } from "./common/PageContainer";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import MuiPickersUtilsProvider from "@material-ui/pickers/MuiPickersUtilsProvider";
-import { KeyboardDatePicker } from "@material-ui/pickers";
+import { Grid, TextField, Button, Typography,} from "@material-ui/core";
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker,
+  } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { insertContractorAPI } from "../api/contractor";
@@ -20,6 +20,9 @@ import MuiAlert from '@material-ui/lab/Alert';
 import MenuItem from '@material-ui/core/MenuItem';
 import { PagePathEnum } from './common/constants';
 import { Storage } from 'aws-amplify';
+import { getPredictiveSearchAPI } from "../../src/api/predictiveSearchAPI";
+import { coordinatedDebounce } from "components/searchPage/helpers";
+import { parseFullName } from "parse-full-name";
 
 function AddContractor(props) {
     const {
@@ -42,18 +45,60 @@ function AddContractor(props) {
 
     const [formState, setFormState] = React.useState({
         selectedHireDate: new Date(),
-        selectedTerminateDate: new Date(),
         fieldsStatusIsValid: {},
         errors: {},
         workPhone: '',
         cellPhone: '',
         snackBar: {},
         profilePic: {},
+        supervisor: {}
     })
+   // counter for timeout in case of supervisor input change
+    const predictiveSearchTimer = {};
+
+    React.useEffect(() => {
+        if (formState.supervisor['input'] && formState.supervisor['input'].length >= 2) {
+            coordinatedDebounce((name) => {
+                const { first, last } = parseFullName(name);
+                let supervisor = formState.supervisor;
+                getPredictiveSearchAPI(first, last)
+                    .then((response) => {
+                        supervisor['allSupervisors'] = response;
+                        setFormState({
+                            ...formState,
+                            supervisor,
+                        })
+                    })
+                    .catch((err) => {
+                        console.error(
+                            "Add Contractor Supervisor predictive search failed: ",
+                            err
+                        );
+                    });
+            }, predictiveSearchTimer)(formState.supervisor['input']?formState.supervisor['input']:'');
+        }
+    }, [formState.supervisor['input']?formState.supervisor['input']:'']);
 
     if (!isAdmin) {
         return <Redirect to={`${PagePathEnum.LOGIN}?referrer=addContractor`}/>;
     }
+    
+    const handleSupervisorTextfieldChange = (value, reason) => {
+        let supervisor = formState.supervisor;
+        if (reason === "input") {
+            supervisor['input'] = value;
+            setFormState({
+                ...formState,
+                supervisor,
+            })
+        } else if (reason === "clear") {
+            supervisor['input'] = '';
+            setFormState({
+                ...formState,
+                supervisor,
+            })
+        }
+    };
 
     function Alert(props) {
         return <MuiAlert elevation={6} variant="filled" {... props} />
@@ -68,6 +113,14 @@ function AddContractor(props) {
         });
     }
 
+    // TODO: fix 'no credentials' error, add progress spinner
+    async function uploadImageAmplify(e) {
+        const file = e.target.files[0];
+        Storage.put(file.name, file)
+        .then (result => console.log(result))
+        .catch(err => console.log(err));  
+      }
+
     const validateFormField = (event) => {
         const fieldName = event.target.name;
         const fieldValue = event.target.value;
@@ -77,12 +130,7 @@ function AddContractor(props) {
         switch(fieldName){
             case "firstName":
             case "lastName":
-            case "title":
-            case "supervisor":
-            case "physicalLocation":
-            case "groupType":
-            case "companyName":
-            case "officeLocation": {
+            case "title": {
                 fieldsStatusIsValid[fieldName] = regexHelper(fieldValue, fieldName);
                 errors[fieldName] = 'Alpabetical characters only';
                 setFormState({
@@ -112,19 +160,11 @@ function AddContractor(props) {
         switch(fieldName){
             case "firstName":
             case "lastName":
-            case "title":
-            case "supervisor":
-            case "physicalLocation":
-            case "groupType":
-            case "companyName":
-            case "officeLocation":regex = '([a-zA-Z .])'; break;
-            case "workPhone": 
-            case "cellPhone": {} break;
-         //   case "email": regex = '^(([^<>()[.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'; break;
+            case "title": regex = '([a-zA-Z .])'; break;
             default: {}
         }
 
-        if(fieldName === 'email') return new RegExp(regex).test(fieldValue);
+        if(fieldName === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue)
         
         let strLen = fieldValue.length;
         let isValid = true;
@@ -141,19 +181,6 @@ function AddContractor(props) {
             selectedHireDate,
         });
       };
-      
-    const handleTerminateDateChange = (selectedTerminateDate) => {
-        let fieldsStatusIsValid = formState.fieldsStatusIsValid;
-        let errors = formState.errors;
-        fieldsStatusIsValid['terminationDate'] = !(selectedTerminateDate < formState.selectedHireDate);
-        errors['terminationDate'] = 'Contract end date cannot be before hire date';
-        setFormState({
-            ...formState,
-            selectedTerminateDate,
-            fieldsStatusIsValid,
-            errors,
-        });
-    };
 
     let selectedSkills = []; // objects of selected skills
     
@@ -228,9 +255,9 @@ async function uploadProfilePicture (){
             WorkPhone: event.target.workPhone.value,
             WorkCell: event.target.cellPhone.value === '+1' ? '': event.target.cellPhone.value,
             Title: event.target.title.value,
-            SupervisorEmployeeNumber: "10001", // TODO: Replace with  actual supervisor employee number once we have predictive search
+            SupervisorEmployeeNumber: formState.supervisor['employeeNumber'], // TODO: Replace with  actual supervisor employee number once we have predictive search
             HireDate: event.target.hireDate.value,
-            TerminationDate: event.target.terminationDate.value, 
+            TerminationDate: null, 
             PhysicalLocation: event.target.physicalLocation.value,
             GroupCode: event.target.groupType.value,
             CompanyCode: event.target.companyName.value,
@@ -333,6 +360,7 @@ async function uploadProfilePicture (){
                         multiple
                         type="file"
                         onChange={ saveProfilePicture }
+                        // onChange = { uploadImageAmplify }
                     />
                         <label htmlFor="contained-button-file">
                             <Button variant="outlined" component="span" startIcon={ <AccountBoxIcon /> } className= {classes.button}>
@@ -342,7 +370,7 @@ async function uploadProfilePicture (){
                     <h3><u>Position Details</u></h3>
                     <TextField 
                             label="Title" 
-                            placeholder="Manager" 
+                            placeholder="Contractor" 
                             name="title" 
                             variant="outlined" 
                             size="small" 
@@ -352,17 +380,44 @@ async function uploadProfilePicture (){
                             helperText={fieldHelperText("title")}
                             className= {classes.textField}
                         />
-                        <TextField 
-                            label="Supervisor"
-                            placeholder="James Smith" 
-                            name="supervisor" 
-                            variant="outlined" 
-                            size="small" 
-                            required
-                            onChange={validateFormField} 
-                            error = {fieldErrorHelper("supervisor")}
-                            helperText={fieldHelperText("supervisor")}
+                    <Autocomplete
+                            options={formState.supervisor['allSupervisors']? formState.supervisor['allSupervisors']: []}
+                            getOptionLabel={() => formState.supervisor['input']? formState.supervisor['input']:''}
                             className= {classes.textField}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    placeholder="James Smith" 
+                                    variant="outlined"
+                                    label="Supervisor"
+                                    size="small"
+                                />
+                                )}
+                            renderOption={(option) => (
+                                        <div
+                                            onClick={() => {
+                                                let supervisor = formState.supervisor;
+                                                supervisor['input'] = option.firstName + " " + option.lastName;
+                                                supervisor['employeeNumber'] = option.employeeNumber;
+                                                setFormState({
+                                                    ...formState,
+                                                    supervisor,
+                                                })
+                                            }}
+                                        >
+                                            <img
+                                                src={option.imageURL || "/workerPlaceholder.png"}
+                                                alt={"workerPhoto"}
+                                            />
+                                            <Typography noWrap>
+                                                {`${option.firstName} ${option.lastName}`}
+                                            </Typography>
+                                        </div>
+                            )}
+                            inputValue={ formState.supervisor['input']? formState.supervisor['input']:'' }
+                            onInputChange={(_event, value, reason) => {
+                                handleSupervisorTextfieldChange(value, reason);
+                            }}
                     />
                     <br></br>
                     <TextField
@@ -381,12 +436,14 @@ async function uploadProfilePicture (){
                             <MenuItem key="salary" value="salary">
                                 Salary
                             </MenuItem>
-                    </TextField>
+                    </TextField> 
                     <TextField 
                         label="Years Prior Experience"
                         name="YPE" 
                         variant="outlined" 
                         size="small"
+                        type="number"
+                        InputProps={{ inputProps: { min: 0, max: 50 } }}
                         className= {classes.textField}
                         />
                     <br></br>
@@ -404,25 +461,6 @@ async function uploadProfilePicture (){
                                 }}
                                 required
                                 name="hireDate"
-                                autoOk={true}
-                                className= {classes.textField}
-                                />
-                                <KeyboardDatePicker
-                                disableToolbar
-                                variant="inline"
-                                format="MM/dd/yyyy"
-                                margin="normal"
-                                id="date-picker-inline"
-                                label="Contract End Date"
-                                value={formState.selectedTerminateDate}
-                                onChange={handleTerminateDateChange}
-                                KeyboardButtonProps={{
-                                    'aria-label': 'change date',
-                                }}
-                                required
-                                name="terminationDate"
-                                error = {fieldErrorHelper("terminationDate")}
-                                helperText={fieldHelperText("terminationDate")}
                                 autoOk={true}
                                 className= {classes.textField}
                                 />
@@ -567,6 +605,7 @@ async function uploadProfilePicture (){
             width: 230,
             marginRight: 15,
             marginBottom: 10,
+            display: "inline-grid"
         },
         submitBtn: {
             width: "30%",
