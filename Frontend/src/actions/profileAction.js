@@ -1,4 +1,5 @@
 import { getProfileAPI } from "api/profileAPI";
+import { setFiltersChanged } from "./filterAction";
 
 export const setProfile = (workerId) => (dispatch) => {
     dispatch({
@@ -42,3 +43,14 @@ export const setProfile = (workerId) => (dispatch) => {
             console.error("Profile endpoint failed.\nErr:", error);
         });
 };
+
+export const setProfileSkills = (skills) => (dispatch) => {
+    dispatch({
+        type: "CLEAR_APPLIED_FILTERS",
+    })
+    dispatch({
+        type: "SET_SKILL",
+        payload: skills,
+    })
+    dispatch(setFiltersChanged(true));
+}

@@ -8,8 +8,15 @@ import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { setFocusedWorkerId } from "actions/generalAction";
+import { makeStyles } from "@material-ui/core";
 
 const entriesPerPage = 6;
+
+const useStyles = makeStyles({
+    loading: {
+        color: "#00569c",
+    },
+});
 
 function ResultsArea(props) {
     const {
@@ -71,6 +78,8 @@ function ResultsArea(props) {
 
 function LoadingResult(props) {
     const { loading, hasResult } = props;
+    const styles = useStyles();
+
     return loading ? (
         <div
             style={{
@@ -81,11 +90,17 @@ function LoadingResult(props) {
             }}
         >
             <Fade in={loading} unmountOnExit>
-                <CircularProgress size={"100px"} />
+                <CircularProgress
+                    size={"100px"}
+                    classes={{ root: styles.loading }}
+                />
             </Fade>
         </div>
     ) : !hasResult ? (
-        <div className={"orgchart-container"}>
+        <div
+            className={"orgchart-container"}
+            style={{ height: "calc(100vh - 280px)" }}
+        >
             Sorry, no employee or contractor satisfies the filters.
             <br />
             Please try unchecking some filters or lowering the minimum work

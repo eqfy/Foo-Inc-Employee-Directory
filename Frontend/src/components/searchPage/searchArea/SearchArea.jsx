@@ -4,7 +4,14 @@ import SearchByNameBar from "./SearchByNameBar";
 import "./SearchArea.css";
 import ExperienceSlider from "./ExperienceSlider";
 import ApplyFilterWidget from "./ApplyFilterWidget";
+import { makeStyles } from "@material-ui/core";
 import { connect } from "react-redux";
+
+const useStyles = makeStyles({
+    loading: {
+        color: "#00569c",
+    },
+});
 
 function SearchArea(props) {
     return (
@@ -28,6 +35,8 @@ function SearchArea(props) {
 
 function ApplyFilterArea(props) {
     const { loaded } = props;
+
+    const styles = useStyles();
 
     return (
         <div className="apply-filter full-height">
@@ -53,7 +62,10 @@ function ApplyFilterArea(props) {
                         }}
                         unmountOnExit
                     >
-                        <CircularProgress size={"50px"} />
+                        <CircularProgress
+                            size={"50px"}
+                            classes={{ root: styles.loading }}
+                        />
                     </Fade>
                 </div>
             )}

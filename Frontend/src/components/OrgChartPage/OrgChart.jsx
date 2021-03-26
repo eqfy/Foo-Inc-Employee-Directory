@@ -31,7 +31,7 @@ const useStyles = makeStyles({
         borderColor: "black",
         "&.current": {
             borderColor: "#00569C",
-            "&:hover": {
+            "&:hover:not(.contractor)": {
                 boxShadow: "0 0 3px 3px #004680",
             },
         },
@@ -59,6 +59,7 @@ const useStyles = makeStyles({
         minWidth: 80,
         minHeight: 80,
         margin: 5,
+        borderRadius: 13,
     },
     cardText: {
         textAlign: "left",
@@ -193,7 +194,7 @@ function OrgChartNode(props) {
             }}
         >
             <CardMedia
-                image={"/workerPlaceholder.png"}
+                image={data.image || "/workerPlaceholder.png"}
                 classes={{ root: classes.cardMedia }}
             />
             <CardContent classes={{ root: classes.cardContent }}>
