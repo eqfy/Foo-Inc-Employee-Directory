@@ -5,9 +5,9 @@ export default function UpdatePageContainer(props) {
     return (
         <PageContainer>
             <div>
-                <h1>Mar 24</h1>
+                <h2>Mar 24</h2>
                 <h3>
-                    Note that code start time has been reduced to 4~5s after 5
+                    Note that cold start time has been reduced to 4~5s after 5
                     minutes of no actions.
                 </h3>
                 <h2>Below are some visible changes since last deployment:</h2>
@@ -16,11 +16,18 @@ export default function UpdatePageContainer(props) {
                     <ul>
                         <li>
                             Search by filters is almost fully connected to
-                            backend, except updating it to not fetch data all at once, if there are a large amount of matching results.
+                            backend, except updating it to not fetch data all at
+                            once, if there are a large amount of matching
+                            results.
                         </li>
                         <li>
                             Typing in a filter/category in the apply filter area
-                            will now show the checkboxes automatically.
+                            search bar will now expand the filters
+                            automatically.
+                        </li>
+                        <li>
+                            Clearing the input in the apply filter area search
+                            bar will now collapse all filters automatically.
                         </li>
                         <li>
                             Predictive search by name is implemented. Entering
@@ -33,7 +40,8 @@ export default function UpdatePageContainer(props) {
                     Profile View:
                     <ul>
                         <li>
-                            Append WIP link with /profile/some_id is functioning.
+                            Append WIP link with /profile/some_id is
+                            functioning.
                         </li>
                         <li>
                             Core information section shows more information now.
@@ -47,29 +55,42 @@ export default function UpdatePageContainer(props) {
                     Org Chart:
                     <ul>
                         <li>
-                            Append WIP link with /orgChart/some_id is functioning.
+                            Append WIP link with /orgChart/some_id is
+                            functioning.
                         </li>
                         <li>
-                            Org chart search by name bar now displays the name
-                            when choosing an option.
+                            Org chart search by name bar now sets its value to
+                            the worker's name selected by the user in the
+                            dropdown.
                         </li>
                     </ul>
                     Add Contractor:
                     <ul>
                         <li>
-                            Connected to backend. We are now able to successfully add contractor to the DB
+                            Connected to backend. We are now able to
+                            successfully add contractor to the DB.
+                        </li>
+                        <li>Implemented field validation (except email).</li>
+                        <li>Additional page styling.</li>
+                    </ul>
+                    General:
+                    <ul>
+                        <li>
+                            We now use a mock worker to simulate a logged in
+                            worker (currWorker). The search page will now use
+                            the currWorker's location filter to initiate a
+                            search when the page loads for the first time.
                         </li>
                         <li>
-                            Implemented field validation (except email)
-                        </li>
-                        <li>
-                            Additional page styling
+                            Added an avatar as a tab entry for the currWorker on
+                            the tab bar. Clicking on it navigates to the profile
+                            page for the currWorker.
                         </li>
                     </ul>
                 </h3>
             </div>
             <div>
-                <h1>Mar 21</h1>
+                <h2>Mar 21</h2>
                 <h3>
                     Note that some of the loading takes around 15 seconds. This
                     is due to the cold start for each API endpoints if there is
@@ -128,7 +149,7 @@ export default function UpdatePageContainer(props) {
                 </h3>
             </div>
             <div>
-                <h1>Mar 14</h1>
+                <h2>Mar 14</h2>
                 <h2>Below are some visible changes since last deployment:</h2>
                 <h3>
                     Search Page:
