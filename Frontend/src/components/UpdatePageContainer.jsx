@@ -66,9 +66,12 @@ export default function UpdatePageContainer(props) {
                     </ul>
                     Add Contractor:
                     <ul>
-                        <li>Connected to backend.</li>
+                        <li>
+                            Connected to backend. We are now able to
+                            successfully add contractor to the DB.
+                        </li>
                         <li>Implemented field validation (except email).</li>
-                        <li>Page styling.</li>
+                        <li>Additional page styling.</li>
                     </ul>
                     General:
                     <ul>
