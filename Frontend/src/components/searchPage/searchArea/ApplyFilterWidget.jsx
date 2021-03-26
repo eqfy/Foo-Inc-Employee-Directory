@@ -285,6 +285,13 @@ const predictiveFilterSearch = (
     setDisplayedFilters,
     setExpanded
 ) => {
+    // If userInput is empty, set expanded to false and displayedFilters to be all possible filters
+    if (!userInput || userInput === "") {
+        setExpanded(false);
+        setDisplayedFilters(filters);
+        return;
+    }
+
     let matchedResult;
     if (Array.isArray(filters)) {
         matchedResult = matchSorter(filters, userInput);
@@ -322,11 +329,7 @@ const predictiveFilterSearch = (
         );
     }
     setDisplayedFilters(matchedResult);
-    if (matchedResult.length > 0 || Object.keys(matchedResult).length > 0) {
-        setExpanded(true);
-    } else {
-        setExpanded(false);
-    }
+    setExpanded(true);
 };
 
 const StyledTextField = styled(TextField)({
