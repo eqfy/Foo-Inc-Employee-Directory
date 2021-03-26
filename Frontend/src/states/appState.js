@@ -16,8 +16,7 @@ export const defaultAppState = {
     isAdmin: false,
     currPage: pageEnum.SEARCH,
     currWorkerId: mockCurrentEmployeeNumber,
-    // TODO: this is a mock assuming current focus worker is CEO
-    focusedWorkerId: "10001",
+    focusedWorkerId: mockCurrentEmployeeNumber,
     profileShowPrevNext: false,
     ready: false,
     filtersChanged: false,
