@@ -14,8 +14,6 @@ function App(props) {
         props.loadFiltersAction();
         // Load the current user and set the current user's physical location as a filter
         props.configureCurrUser();
-        // Initiate a search with the current user's physical location
-        props.searchWithAppliedFilters();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
