@@ -7,6 +7,7 @@ import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { setFocusedWorkerId } from "actions/generalAction";
 import { makeStyles } from "@material-ui/core";
 
 const entriesPerPage = 6;
@@ -24,10 +25,15 @@ function ResultsArea(props) {
         resultOrder,
         workers: { byId },
         loading,
+        setFocusedWorkerId,
     } = props;
 
     const handleChange = (_event, value) => {
         updatePage(value);
+    };
+
+    const handleProfileClick = (workerId) => () => {
+        setFocusedWorkerId(workerId);
     };
 
     const getEmployee = (index) => {
@@ -40,6 +46,7 @@ function ResultsArea(props) {
                         <EmployeeCard
                             employee={employee}
                             linkToProfile={true}
+                            handleProfileClick={handleProfileClick}
                         />
                     ) : null}
                 </div>
@@ -121,6 +128,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     updatePage: (value) => dispatch(setPageAction(value)),
+    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);
