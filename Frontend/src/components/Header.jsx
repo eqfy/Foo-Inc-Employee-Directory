@@ -56,7 +56,12 @@ function Header(props) {
     );
 
     const updateTabIndex = (event, newTabIndex) => {
-        setCurrentTabIndex(newTabIndex);
+        if (newTabIndex === 5) {
+            setCurrentTabIndex(1);
+            setFocusedWorkerId(currWorkerId);
+        } else {
+            setCurrentTabIndex(newTabIndex);
+        }
     };
 
     const { pathname } = useLocation();
@@ -65,13 +70,7 @@ function Header(props) {
         if (pathname.startsWith(PagePathEnum.SEARCH)) {
             setCurrentTabIndex(0);
         } else if (pathname.startsWith(PagePathEnum.PROFILE)) {
-            console.log(currWorkerId, focusedWorkerId);
-            // If profile is for the current worker, set the tab index to be the worker avatar instead
-            if (currWorkerId === focusedWorkerId) {
-                setCurrentTabIndex(5);
-            } else {
-                setCurrentTabIndex(1);
-            }
+            setCurrentTabIndex(1);
         } else if (pathname.startsWith(PagePathEnum.ORGCHART)) {
             setCurrentTabIndex(2);
         } else if (pathname.startsWith(PagePathEnum.NEWCONTRACTOR)) {
@@ -144,9 +143,6 @@ function Header(props) {
                                 />
                             }
                             component={Link}
-                            onClick={() => {
-                                setFocusedWorkerId(currWorkerId);
-                            }}
                             to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
                             onMouseEnter={handlePopoverOpen}
                             onMouseLeave={handlePopoverClose}
