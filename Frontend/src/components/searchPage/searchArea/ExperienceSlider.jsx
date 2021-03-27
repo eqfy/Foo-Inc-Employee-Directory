@@ -49,7 +49,7 @@ function ExperienceSlider(props) {
             className="experience-slider"
         >
             <Grid item>
-                <Work />
+                <Work style={{ color: "rgba(0, 0, 0, 0.88)" }} />
             </Grid>
             <Grid item xs>
                 <Slider
