@@ -48,7 +48,6 @@ function Header(props) {
         focusedWorkerId,
         currWorkerId,
         currWorkerImgURL,
-        currWorkerName,
         setFocusedWorkerId,
     } = props;
     const [currentTabIndex, setCurrentTabIndex] = React.useState(
@@ -180,7 +179,6 @@ const mapStateToProps = (state) => {
         focusedWorkerId,
         currWorkerId,
         currWorkerImgURL: currWorker.image || "",
-        currWorkerName: currWorker.firstName,
     };
 };
 

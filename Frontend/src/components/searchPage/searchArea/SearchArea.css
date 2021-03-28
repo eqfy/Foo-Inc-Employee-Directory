@@ -42,12 +42,11 @@
 .apply-filter .filter-form {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .apply-filter .filter-list {
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 6px;
 }
 
 .apply-filter .expand-icon {
@@ -65,7 +64,7 @@
 }
 
 .apply-filter .filter-checkbox-text span {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
 }
 
@@ -73,12 +72,16 @@
     padding: 0;
 }
 
+.apply-filter .categorized-filter-list {
+    padding-top: 6px;
+}
+
 .apply-filter .category {
     display: flex;
     justify-content: space-between;
     padding-left: 6px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-top: 0;
+    padding-bottom: 0;
     padding-right: 14px;
 }
 
