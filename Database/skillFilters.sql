@@ -1,0 +1,1 @@
+WITH category AS (SELECT "SkillCategory"."Label", "SkillCategory"."SkillCategoryId" FROM "SkillCategory") SELECT "Skill"."Label", category."Label" FROM "Skill" JOIN category ON "Skill"."SkillCategoryId" = category."SkillCategoryId" ORDER BY category."Label", "Skill"."Label"
