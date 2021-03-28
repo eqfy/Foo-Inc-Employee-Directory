@@ -10,7 +10,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles } from "@material-ui/core/styles";
 import { insertContractorAPI } from "../api/contractor";
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { withRouter } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import S3FileUpload from "react-s3";
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
@@ -18,15 +18,15 @@ import MuiPhoneNumber from 'material-ui-phone-number';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import MenuItem from '@material-ui/core/MenuItem';
+import { PagePathEnum } from './common/constants';
 
 function AddContractor(props) {
+    const {
+        filterData,
+        isAdmin,
+    } = props;
 
     const classes = useStyles();
-
-    const {
-        filterData
-    } = props;
-    
     const {companyAllId, departmentAllId, locationAllId, skillAllId} = filterData;
     
     // TODO: Fetch from backend/redux
@@ -49,6 +49,10 @@ function AddContractor(props) {
         snackBar: {},
         profilePic: {},
     })
+
+    if (!isAdmin) {
+        return <Redirect to={`${PagePathEnum.LOGIN}?referrer=addContractor`}/>;
+    }
 
     function Alert(props) {
         return <MuiAlert elevation={6} variant="filled" {... props} />
@@ -249,6 +253,7 @@ async function uploadProfilePicture (){
             });
         })
         .catch((err) => {
+            console.error(err);
             // update snackbar failed
             let snackBar = formState.snackBar;
             snackBar['severity'] = 'error';
@@ -531,11 +536,11 @@ async function uploadProfilePicture (){
     }
 
     const mapStateToProps = (state) => {
-        const {
-            filters,
-        } = state;
+        const { filters } = state;
+        const isAdmin = state.appState.isAdmin;
         return {
             filterData: filters,
+            isAdmin,
         };
     };
 

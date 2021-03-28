@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import React from "react";
 import {
@@ -9,13 +8,13 @@ import {
     Toolbar,
     makeStyles,
     Avatar,
-    Popover,
+    Menu,
+    MenuItem,
 } from "@material-ui/core";
 import logo from "./../assets/ae_logo.png";
 import "./Header.css";
 import { useLocation } from "react-router";
 import { PagePathEnum } from "./common/constants";
-import { setFocusedWorkerId } from "actions/generalAction";
 
 const useStyles = makeStyles({
     tabIndicator: {
@@ -38,8 +37,8 @@ const useStyles = makeStyles({
         marginTop: 0,
         marginBottom: 0,
     },
-    myProfilePopover: {
-        pointerEvents: "none",
+    myProfileMenuItem: {
+        textDecoration: 'none !important',
     },
 });
 
@@ -47,21 +46,16 @@ function Header(props) {
     const {
         focusedWorkerId,
         currWorkerId,
+        isAdmin,
         currWorkerImgURL,
         currWorkerName,
-        setFocusedWorkerId,
     } = props;
     const [currentTabIndex, setCurrentTabIndex] = React.useState(
         props.activeTabIndex
     );
 
-    const updateTabIndex = (event, newTabIndex) => {
-        if (newTabIndex === 5) {
-            setCurrentTabIndex(1);
-            setFocusedWorkerId(currWorkerId);
-        } else {
-            setCurrentTabIndex(newTabIndex);
-        }
+    const updateTabIndex = (_event, newTabIndex) => {
+        setCurrentTabIndex(newTabIndex);
     };
 
     const { pathname } = useLocation();
@@ -74,11 +68,13 @@ function Header(props) {
         } else if (pathname.startsWith(PagePathEnum.ORGCHART)) {
             setCurrentTabIndex(2);
         } else if (pathname.startsWith(PagePathEnum.NEWCONTRACTOR)) {
-            setCurrentTabIndex(3);
+            setCurrentTabIndex(isAdmin ? 3 : 5);
         } else if (pathname.startsWith(PagePathEnum.UPDATE)) {
             setCurrentTabIndex(4);
+        } else if (pathname.startsWith(PagePathEnum.LOGIN)) {
+            setCurrentTabIndex(5);
         }
-    }, [pathname, currWorkerId, focusedWorkerId]);
+    }, [pathname, currWorkerId, focusedWorkerId, isAdmin]);
 
     const classes = useStyles();
 
@@ -87,9 +83,10 @@ function Header(props) {
         setAnchorEl(event.currentTarget);
     };
 
-    const handlePopoverClose = (event) => {
+    const handlePopoverClose = (_event) => {
         setAnchorEl(null);
     };
+
     return (
         <div className="App">
             <AppBar position="static">
@@ -142,16 +139,16 @@ function Header(props) {
                                     alt={"workerPhoto"}
                                 />
                             }
-                            component={Link}
-                            to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
-                            onMouseEnter={handlePopoverOpen}
-                            onMouseLeave={handlePopoverClose}
+                            onClick={handlePopoverOpen}
+                            aria-controls="user-menu"
+                            aria-haspopup="true"
                         />
                     </Tabs>
-                    <Popover
+                    <Menu
+                        id="user-menu"
                         anchorEl={anchorEl}
-                        classes={{ root: classes.myProfilePopover }}
-                        open={Boolean(anchorEl)}
+                        getContentAnchorEl={null}
+                        
                         anchorOrigin={{
                             vertical: "bottom",
                             horizontal: "center",
@@ -161,9 +158,27 @@ function Header(props) {
                             horizontal: "center",
                         }}
                         disableRestoreFocus
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handlePopoverClose}
                     >
-                        <div className="popover-content">{currWorkerName}</div>
-                    </Popover>
+                        <MenuItem
+                            classes={{ root: classes.myProfileMenuItem }}
+                            component={Link}
+                            to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
+                            onClick={handlePopoverClose}
+                        >
+                            {currWorkerName}
+                        </MenuItem>
+                        <MenuItem
+                            classes={{ root: classes.myProfileMenuItem }}
+                            component={Link}
+                            to={PagePathEnum.LOGIN}
+                            onClick={handlePopoverClose}
+                        >
+                            Login as admin
+                        </MenuItem>
+                    </Menu>
                 </Toolbar>
             </AppBar>
         </div>
@@ -172,20 +187,17 @@ function Header(props) {
 
 const mapStateToProps = (state) => {
     const {
-        appState: { focusedWorkerId, currWorkerId },
+        appState: { focusedWorkerId, currWorkerId, isAdmin },
         workers: { byId },
     } = state;
     const currWorker = byId[currWorkerId] || {};
     return {
         focusedWorkerId,
         currWorkerId,
+        isAdmin,
         currWorkerImgURL: currWorker.image || "",
         currWorkerName: currWorker.firstName + " " + currWorker.lastName,
     };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
-});
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
+export default connect(mapStateToProps)(Header);
