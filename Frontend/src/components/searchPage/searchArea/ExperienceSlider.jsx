@@ -1,5 +1,5 @@
 import { Grid, Slider, Input } from "@material-ui/core";
-import { Work } from "@material-ui/icons";
+import WorkIcon from "@material-ui/icons/Work";
 import { searchByExperienceAction } from "actions/searchAction";
 import { MAX_WORK_EXPERIENCE } from "components/common/constants";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
@@ -49,7 +49,7 @@ function ExperienceSlider(props) {
             className="experience-slider"
         >
             <Grid item>
-                <Work style={{ color: "rgba(0, 0, 0, 0.88)" }} />
+                <WorkIcon style={{ color: "rgba(0, 0, 0, 0.88)" }} />
             </Grid>
             <Grid item xs>
                 <Slider
