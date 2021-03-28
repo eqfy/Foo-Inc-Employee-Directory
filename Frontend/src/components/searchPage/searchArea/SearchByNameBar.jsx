@@ -10,7 +10,6 @@ import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { parseFullName } from "parse-full-name";
 import React from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 
@@ -73,7 +72,7 @@ function SearchByNameBar(props) {
     const handleTextfieldChange = (value, reason) => {
         if (reason === "input") {
             setInputValue(value);
-        } else if (reason === "clear") {
+        } else if (reason === "clear" || (reason === "reset" && value === "")) {
             setInputValue("");
         }
     };
