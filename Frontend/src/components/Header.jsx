@@ -162,7 +162,7 @@ function Header(props) {
                         }}
                         disableRestoreFocus
                     >
-                        <div className="popover-content">{currWorkerName}</div>
+                        <div className="popover-content">{"My profile"}</div>
                     </Popover>
                 </Toolbar>
             </AppBar>
@@ -180,7 +180,7 @@ const mapStateToProps = (state) => {
         focusedWorkerId,
         currWorkerId,
         currWorkerImgURL: currWorker.image || "",
-        currWorkerName: currWorker.firstName + " " + currWorker.lastName,
+        currWorkerName: currWorker.firstName,
     };
 };
 
