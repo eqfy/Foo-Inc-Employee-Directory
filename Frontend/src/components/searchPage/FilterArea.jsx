@@ -16,14 +16,15 @@ import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { WorkerTypeEnum } from "states/appState";
 import { SortKeyEnum } from "states/searchPageState";
+import { filterTypeEnum } from "states/filterState";
 
 const chipColors = {
-    location: "#00D1FF",
-    title: "#FF9900",
-    company: "#A4DA65",
-    department: "#A5BDE5",
-    skill: "#D877CF",
-    name: "#FFBE0B",
+    [filterTypeEnum.LOCATION]: "#00D1FF",
+    [filterTypeEnum.TITLE]: "#FF9900",
+    [filterTypeEnum.COMPANY]: "#A4DA65",
+    [filterTypeEnum.DEPARTMENT]: "#A5BDE5",
+    [filterTypeEnum.SKILL]: "#D877CF",
+    [filterTypeEnum.NAME]: "#FFBE0B",
 };
 
 function FilterArea(props) {
@@ -52,7 +53,7 @@ function FilterArea(props) {
             ? [
                   {
                       label: `Searched name: ${firstName} ${lastName}`,
-                      type: "name",
+                      type: filterTypeEnum.NAME,
                   },
               ]
             : [];
@@ -80,11 +81,11 @@ function FilterArea(props) {
 
     const chipData = [
         ...createNameChip(),
-        ...createChipDataList(locationState, "location"),
-        ...createChipDataList(titleState, "title"),
-        ...createChipDataList(companyState, "company"),
-        ...createChipDataList(departmentState, "department"),
-        ...createCatagorizedChipDataList(skillState, "skill"),
+        ...createChipDataList(locationState, filterTypeEnum.LOCATION),
+        ...createChipDataList(titleState, filterTypeEnum.TITLE),
+        ...createChipDataList(companyState, filterTypeEnum.COMPANY),
+        ...createChipDataList(departmentState, filterTypeEnum.DEPARTMENT),
+        ...createCatagorizedChipDataList(skillState, filterTypeEnum.SKILL),
     ];
 
     const handleWorkerTypeChange = (event) => {
