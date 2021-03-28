@@ -1,6 +1,7 @@
 import { TextField, Typography } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { clearNameAction, setNameAction } from "actions/filterAction";
+import { setFocusedWorkerId } from "actions/generalAction";
 import {
     searchWithAppliedFilterAction,
     searchWithAppliedFilterByNameAction,
@@ -23,10 +24,11 @@ function SearchByNameBar(props) {
         searchWithAppliedFilterByNameAction,
         setNameAction,
         clearNameAction,
+        setFocusedWorkerId,
     } = props;
     const [options, setOptions] = React.useState([]);
     const [inputValue, setInputValue] = React.useState(
-        firstName + " " + lastName
+        firstName && lastName ? firstName + " " + lastName : ""
     );
 
     React.useEffect(() => {
@@ -57,12 +59,13 @@ function SearchByNameBar(props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputValue]);
 
-    const handleDropdownOptionClick = (option) => () => {
+    const handleDropdownOptionClick = (option, state) => () => {
         setInputValue(option.firstName + " " + option.lastName);
         setNameAction({
             firstName: option.firstName,
             lastName: option.lastName,
         });
+        setFocusedWorkerId(option.employeeNumber);
         coordinatedDebounce(
             searchWithAppliedFilterByNameAction,
             SearchWithFilterTimer
@@ -72,7 +75,7 @@ function SearchByNameBar(props) {
     const handleTextfieldChange = (value, reason) => {
         if (reason === "input") {
             setInputValue(value);
-        } else if (reason === "clear" || (reason === "reset" && value === "")) {
+        } else if (reason === "clear") {
             setInputValue("");
         }
     };
@@ -91,10 +94,10 @@ function SearchByNameBar(props) {
                     size="small"
                 />
             )}
-            renderOption={(option) => (
+            renderOption={(option, state) => (
                 <div
                     className={"search-dropdown-entry"}
-                    onClick={handleDropdownOptionClick(option)}
+                    onClick={handleDropdownOptionClick(option, state)}
                 >
                     <img
                         src={option.imageURL || "/workerPlaceholder.png"}
@@ -128,6 +131,7 @@ const mapDispatchToProps = (dispatch) => ({
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
     clearNameAction: () => dispatch(clearNameAction()),
+    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchByNameBar);

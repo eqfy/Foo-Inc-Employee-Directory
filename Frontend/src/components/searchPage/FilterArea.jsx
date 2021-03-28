@@ -5,6 +5,7 @@ import Dropdown from "../common/Dropdown";
 import Chip from "@material-ui/core/Chip";
 import { connect } from "react-redux";
 import {
+    clearNameAction,
     setFilterAction,
     setSortKeyAction,
     setSortOrderAction,
@@ -22,12 +23,15 @@ const chipColors = {
     company: "#A4DA65",
     department: "#A5BDE5",
     skill: "#D877CF",
+    name: "#FFBE0B",
 };
 
 function FilterArea(props) {
     const {
         areaState: { isAscending, sortKey },
         filterState: {
+            firstName,
+            lastName,
             skillState,
             locationState,
             titleState,
@@ -40,8 +44,18 @@ function FilterArea(props) {
         setSortKeyAction,
         setSortOrderAction,
         searchWithAppliedFilterAction,
+        clearNameAction,
     } = props;
     const classes = useStyles();
+    const createNameChip = () =>
+        firstName && lastName
+            ? [
+                  {
+                      label: `Searched name: ${firstName} ${lastName}`,
+                      type: "name",
+                  },
+              ]
+            : [];
     const createChipDataList = (filterState = [], type = "") => {
         return filterState.map((filter) => ({ label: filter, type: type }));
     };
@@ -65,6 +79,7 @@ function FilterArea(props) {
     };
 
     const chipData = [
+        ...createNameChip(),
         ...createChipDataList(locationState, "location"),
         ...createChipDataList(titleState, "title"),
         ...createChipDataList(companyState, "company"),
@@ -97,11 +112,15 @@ function FilterArea(props) {
     };
 
     const handleDelete = (chipToDelete) => () => {
-        setFilterAction(
-            chipToDelete.type,
-            chipToDelete.label,
-            chipToDelete.category
-        );
+        if (chipToDelete.type === "name") {
+            clearNameAction();
+        } else {
+            setFilterAction(
+                chipToDelete.type,
+                chipToDelete.label,
+                chipToDelete.category
+            );
+        }
         coordinatedDebounce(
             searchWithAppliedFilterAction,
             SearchWithFilterTimer
@@ -119,9 +138,9 @@ function FilterArea(props) {
         );
 
     const createChipKey = (chipData) =>
-        chipData.category && chipData.category.length > 0 ?
-        `${chipData.label} (${chipData.category})` :
-        chipData.label;
+        chipData.category && chipData.category.length > 0
+            ? `${chipData.label} (${chipData.category})`
+            : chipData.label;
 
     return (
         <div className={classes.filterArea}>
@@ -149,19 +168,21 @@ function FilterArea(props) {
                 {chipData.length > 0 ? (
                     chipData.map((data) => {
                         return (
-                            <li
-                                key={createChipKey(data)}
-                                className={classes.chipItem}
-                            >
-                                <Chip
-                                    label={createChipLabel(data)}
-                                    onDelete={handleDelete(data)}
-                                    className={classes.chip}
-                                    style={{
-                                        background: chipColors[data.type],
-                                    }}
-                                />
-                            </li>
+                            data && (
+                                <li
+                                    key={createChipKey(data)}
+                                    className={classes.chipItem}
+                                >
+                                    <Chip
+                                        label={createChipLabel(data)}
+                                        onDelete={handleDelete(data)}
+                                        className={classes.chip}
+                                        style={{
+                                            background: chipColors[data.type],
+                                        }}
+                                    />
+                                </li>
+                            )
                         );
                     })
                 ) : (
@@ -178,6 +199,8 @@ const mapStateToProps = (state) => {
     const {
         searchPageState: { isAscending, sortKey },
         appState: {
+            firstName = "",
+            lastName = "",
             skillState = [],
             locationState = [],
             titleState = [],
@@ -186,12 +209,15 @@ const mapStateToProps = (state) => {
             shownWorkerType,
         },
     } = state;
+
     return {
         areaState: {
             isAscending,
             sortKey,
         },
         filterState: {
+            firstName,
+            lastName,
             skillState,
             locationState,
             titleState,
@@ -209,6 +235,7 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(setWorkerTypeAction(workerTypeFilter)),
     setSortKeyAction: (sortKey) => dispatch(setSortKeyAction(sortKey)),
     setSortOrderAction: (sortOrder) => dispatch(setSortOrderAction(sortOrder)),
+    clearNameAction: () => dispatch(clearNameAction()),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
 });
