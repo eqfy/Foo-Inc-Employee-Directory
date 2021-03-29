@@ -5,29 +5,42 @@ import { PageContainer } from "./common/PageContainer";
 import ResultsArea from "./searchPage/ResultsArea";
 import SearchArea from "./searchPage/searchArea/SearchArea";
 import FilterArea from "./searchPage/FilterArea";
-import { Grid, styled } from "@material-ui/core";
+import { Grid, styled, makeStyles } from "@material-ui/core";
 import { SEARCH_AREA_WIDTH } from "./common/constants";
+
+const useStyles = makeStyles((theme) => ({
+    gridContainer: {
+        marginTop: 20,
+        [theme.breakpoints.up("sm")]: {
+            flexWrap: "nowrap",
+        },
+        [theme.breakpoints.only("xs")]: {
+            flexWrap: "wrap",
+        },
+    },
+}));
 
 export const SearchWithFilterTimer = {};
 
 export function SearchPageContainer(props) {
+    const styles = useStyles();
+
     return (
         // TODO: Refactor so this container div doesn't need to be added for every page container
         <PageContainer>
-            <StyledSearchPageGridContainer
+            <Grid
                 container
-                className=""
+                classes={{ root: styles.gridContainer }}
                 spacing={1}
-                wrap="nowrap"
             >
-                <StyledSearchAreaGridItem item xs={2}>
+                <StyledSearchAreaGridItem item sm={2} xs={12}>
                     <SearchArea />
                 </StyledSearchAreaGridItem>
-                <Grid item xs={10}>
+                <Grid item sm={10} xs={12}>
                     <FilterArea />
                     <ResultsArea />
                 </Grid>
-            </StyledSearchPageGridContainer>
+            </Grid>
         </PageContainer>
     );
 }
@@ -44,10 +57,6 @@ const mapDispatchToProps = () => ({
 export default withRouter(
     connect(mapStateToProps, mapDispatchToProps)(SearchPageContainer)
 );
-
-const StyledSearchPageGridContainer = styled(Grid)({
-    marginTop: 20,
-});
 
 const StyledSearchAreaGridItem = styled(Grid)({
     minWidth: SEARCH_AREA_WIDTH,

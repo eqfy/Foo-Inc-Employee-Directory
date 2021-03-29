@@ -7,16 +7,38 @@ import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { setFocusedWorkerId } from "actions/generalAction";
-import { makeStyles } from "@material-ui/core";
+import {
+    createMuiTheme,
+    Grid,
+    makeStyles,
+    ThemeProvider,
+} from "@material-ui/core";
 
-const entriesPerPage = 6;
+const entriesPerPage = 8;
 
-const useStyles = makeStyles({
+const gridWidth = 260;
+
+const useStyles = makeStyles((theme) => ({
     loading: {
         color: "#00569c",
     },
-});
+    gridContainer: {
+        marginLeft: "auto",
+        marginRight: "auto",
+        [theme.breakpoints.only("xs")]: {
+            width: gridWidth,
+        },
+        [theme.breakpoints.only("sm")]: {
+            width: gridWidth * 2,
+        },
+        [theme.breakpoints.only("md")]: {
+            width: gridWidth * 3,
+        },
+        [theme.breakpoints.up("lg")]: {
+            width: gridWidth * 4,
+        },
+    },
+}));
 
 function ResultsArea(props) {
     const {
@@ -25,15 +47,16 @@ function ResultsArea(props) {
         resultOrder,
         workers: { byId },
         loading,
-        setFocusedWorkerId,
     } = props;
 
     const handleChange = (_event, value) => {
         updatePage(value);
     };
 
-    const handleProfileClick = (workerId) => () => {
-        setFocusedWorkerId(workerId);
+    const styles = useStyles();
+
+    const emptyDiv = () => {
+        return <div style={{ height: 26 }}></div>;
     };
 
     const getEmployee = (index) => {
@@ -41,37 +64,50 @@ function ResultsArea(props) {
             const employeeId = resultOrder[index];
             const employee = employeeId && byId[employeeId];
             return (
-                <div className="card-grid-col">
-                    {employee ? (
-                        <EmployeeCard
-                            employee={employee}
-                            linkToProfile={true}
-                            handleProfileClick={handleProfileClick}
-                        />
-                    ) : null}
-                </div>
+                // <div className="card-grid-col">
+                employee ? (
+                    <EmployeeCard employee={employee} linkToProfile={true} />
+                ) : (
+                    emptyDiv()
+                )
+                // </div>
             );
         }
+        return emptyDiv();
     };
 
     const offset = (pageNumber - 1) * entriesPerPage;
+    const employeeList = [];
+
+    for (let i = 0; i < entriesPerPage; i++) {
+        const employee = getEmployee(offset + i);
+        employeeList.push(
+            <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+                {employee}
+            </Grid>
+        );
+    }
+
     return (
         <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
-            <div className="card-grid">
-                {getEmployee(offset + 0)}
-                {getEmployee(offset + 1)}
-                {getEmployee(offset + 2)}
-            </div>
-            <div className="card-grid">
-                {getEmployee(offset + 3)}
-                {getEmployee(offset + 4)}
-                {getEmployee(offset + 5)}
-            </div>
-            <StyledPagination
-                count={Math.max(Math.ceil(resultOrder.length / 6), 1)}
-                page={pageNumber}
-                onChange={handleChange}
-            />
+            <Grid
+                container
+                spacing={2}
+                classes={{ root: styles.gridContainer }}
+                justify="center"
+            >
+                {employeeList}
+                <Grid item xs={12}>
+                    <StyledPagination
+                        count={Math.max(
+                            Math.ceil(resultOrder.length / entriesPerPage),
+                            1
+                        )}
+                        page={pageNumber}
+                        onChange={handleChange}
+                    />
+                </Grid>
+            </Grid>
         </LoadingResult>
     );
 }
@@ -128,7 +164,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     updatePage: (value) => dispatch(setPageAction(value)),
-    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);

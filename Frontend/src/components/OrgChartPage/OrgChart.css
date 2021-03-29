@@ -5,6 +5,9 @@
 
 #searchLegendArea {
     height: 150px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 #searchArea {
@@ -102,27 +105,41 @@
 }
 
 .card-name-extension,
-.card-title-extension {
+.card-title-extension,
+.card-email-extension {
     position: absolute;
     margin-top: 0;
     margin-bottom: 0;
     background-color: #fff;
     opacity: 0;
+    visibility: hidden;
     transition: opacity 0.5s ease;
     z-index: 30;
     white-space: nowrap;
 }
 
 .card-name-extension {
-    top: 26.5px;
+    top: 15px;
 }
 
 .card-title-extension {
-    top: 51px;
+    top: 39px;
+}
+
+.card-email-extension {
+    top: 63px;
+}
+
+.card-text-too-long + .card-name-extension,
+.card-text-too-long + .card-title-extension,
+.card-text-too-long + .card-email-extension {
+    visibility: visible;
+    cursor: text;
 }
 
 .card-text-too-long + .card-name-extension:hover,
-.card-text-too-long + .card-title-extension:hover {
+.card-text-too-long + .card-title-extension:hover,
+.card-text-too-long + .card-email-extension:hover {
     opacity: 1;
 }
 

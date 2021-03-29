@@ -5,24 +5,24 @@ import {
     makeStyles,
     Typography,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import OrgChartIcon from "./OrgChartIcon";
 import "../common/Common.css";
 import React, { useEffect } from "react";
 import { PagePathEnum } from "./constants";
+import ProfileIcon from "./ProfileIcon";
 
 const useStyles = makeStyles({
     card: {
-        width: 248,
-        height: 270,
+        width: 240,
+        height: 260,
         borderWidth: 1,
         borderRadius: 25,
         borderColor: "black",
         marginLeft: "auto",
         marginRight: "auto",
         "&.link-to-profile:hover": {
-            cursor: "pointer",
             boxShadow: "0 0 3px 3px black",
         },
     },
@@ -30,11 +30,11 @@ const useStyles = makeStyles({
         overflow: "hidden",
     },
     cardMedia: {
-        width: 160,
-        height: 160,
+        width: 140,
+        height: 140,
         marginLeft: "auto",
         marginRight: "auto",
-        marginTop: 10,
+        marginTop: 6,
         marginBottom: 5,
         borderRadius: 20,
     },
@@ -43,6 +43,7 @@ const useStyles = makeStyles({
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "nowrap",
+        cursor: "text",
         "&.card-text-too-long + p": {
             visibility: "visible",
             "&:hover": {
@@ -50,28 +51,36 @@ const useStyles = makeStyles({
             },
         },
     },
-    // some of the pixels are hard-coded for now
+
     cardExtension: {
         whiteSpace: "nowrap",
         position: "absolute",
         left: 17,
-        bottom: 32,
         zIndex: 30,
         opacity: 0,
         transition: "opacity 0.5s ease",
         textAlign: "center",
         backgroundColor: "white",
         visibility: "hidden",
+        cursor: "text",
         "&:nth-child(3)": {
-            bottom: 32 + 24,
+            bottom: 22 + 24 * 2,
+        },
+        "&:nth-child(5)": {
+            bottom: 22 + 24,
+        },
+        "&:nth-child(7)": {
+            bottom: 22,
         },
     },
 });
 
 export default function EmployeeCard(props) {
     // linkToProfile: employeeCard in profile page does not need to redirect to itself
-    const { employee, linkToProfile, handleProfileClick } = props;
+    const { employee, linkToProfile } = props;
     const classes = useStyles();
+
+    const history = useHistory();
 
     useEffect(() => {
         const nameTextTypography = document.getElementsByClassName(
@@ -88,6 +97,14 @@ export default function EmployeeCard(props) {
 
         if (titleTextTypography.clientWidth < titleTextTypography.scrollWidth) {
             titleTextTypography.classList.add("card-text-too-long");
+        }
+
+        const emailTextTypography = document.getElementsByClassName(
+            `card-email-${employee.employeeNumber}`
+        )[0];
+
+        if (emailTextTypography.clientWidth < emailTextTypography.scrollWidth) {
+            emailTextTypography.classList.add("card-text-too-long");
         }
     }, [employee.employeeNumber]);
 
@@ -135,6 +152,25 @@ export default function EmployeeCard(props) {
                 <b>Title: </b>
                 <span>{`${employee.title}`}</span>
             </Typography>
+            <Typography
+                variant="body1"
+                color="textPrimary"
+                component="p"
+                classes={{ root: classes.cardText }}
+                className={`card-email-${employee.employeeNumber}`}
+            >
+                <b>Email: </b>
+                <span>{employee.email}</span>
+            </Typography>
+            <Typography
+                variant="body1"
+                color="textPrimary"
+                component="p"
+                classes={{ root: classes.cardExtension }}
+            >
+                <b>Email: </b>
+                <span>{`${employee.email}`}</span>
+            </Typography>
         </CardContent>
     );
     return (
@@ -143,7 +179,23 @@ export default function EmployeeCard(props) {
                 className={linkToProfile ? "link-to-profile" : ""}
                 classes={{ root: classes.card }}
                 variant="outlined"
+                onDoubleClick={() => {
+                    if (linkToProfile) {
+                        history.push(
+                            `${PagePathEnum.PROFILE}/${employee.employeeNumber}`
+                        );
+                    }
+                }}
             >
+                {linkToProfile ? (
+                    <PositionProfileIconDiv>
+                        <Link
+                            to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
+                        >
+                            <StyledProfileIcon />
+                        </Link>
+                    </PositionProfileIconDiv>
+                ) : null}
                 <PositionOrgChartIconDiv>
                     <Link
                         to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
@@ -154,7 +206,6 @@ export default function EmployeeCard(props) {
                 {linkToProfile ? (
                     <StyledLink
                         to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
-                        onClick={handleProfileClick(employee.employeeNumber)}
                     >
                         {employeeCardContent}
                     </StyledLink>
@@ -166,12 +217,32 @@ export default function EmployeeCard(props) {
     );
 }
 
+const PositionProfileIconDiv = styled.div`
+    position: relative;
+    left: 4%;
+    top: 26px;
+    width: 0;
+    height: 0;
+`;
+
 const PositionOrgChartIconDiv = styled.div`
     position: relative;
     left: 86%;
     top: 26px;
     width: 0;
     height: 0;
+`;
+
+const StyledProfileIcon = styled(ProfileIcon)`
+    position: absolute;
+    circle {
+        transition: fill 0.25s;
+    }
+    &:hover {
+        circle {
+            fill: midnightblue;
+        }
+    }
 `;
 
 const StyledOrgChartIcon = styled(OrgChartIcon)`
@@ -186,8 +257,11 @@ const StyledOrgChartIcon = styled(OrgChartIcon)`
     }
 `;
 
-const StyledLink = styled(Link)`
-    &:hover,
+const StyledLink = styled.div`
+    &:hover {
+        text-decoration: none;
+        cursor: default;
+    }
     &:not(:hover) {
         text-decoration: none;
     }

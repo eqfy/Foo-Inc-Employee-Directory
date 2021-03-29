@@ -42,14 +42,14 @@ const useStyles = makeStyles({
             },
         },
         "&:hover": {
-            cursor: "pointer",
+            cursor: "default",
             boxShadow: "0 0 3px 3px black",
         },
         display: "flex",
     },
     cardContent: {
         "&:last-child": {
-            padding: 20,
+            padding: 8,
         },
         width: 150,
         paddingLeft: "auto",
@@ -66,6 +66,7 @@ const useStyles = makeStyles({
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "nowrap",
+        cursor: "text",
     },
     loading: {
         color: "#00569c",
@@ -176,6 +177,13 @@ function OrgChartNode(props) {
         if (titleText.clientWidth < titleText.scrollWidth) {
             titleText.classList.add("card-text-too-long");
         }
+
+        const emailText = document.getElementsByClassName(
+            `card-email-${data.id}`
+        )[0];
+        if (emailText.clientWidth < emailText.scrollWidth) {
+            emailText.classList.add("card-text-too-long");
+        }
     }, [data.id]);
 
     const card = (
@@ -185,7 +193,7 @@ function OrgChartNode(props) {
                 data.isContractor ? "contractor" : ""
             }`}
             classes={{ root: classes.card }}
-            onClick={() => {
+            onDoubleClick={() => {
                 setHideTop(false);
                 setHideBottom(false);
                 if (!data.isCurrent) {
@@ -202,10 +210,10 @@ function OrgChartNode(props) {
                     classes={{ root: classes.cardText }}
                     className={`card-name-${data.id}`}
                 >
-                    {data.name}
+                    <b>{data.name}</b>
                 </Typography>
                 <Typography className={"card-name-extension"}>
-                    {data.name}
+                    <b>{data.name}</b>
                 </Typography>
                 <Typography
                     classes={{ root: classes.cardText }}
@@ -215,6 +223,15 @@ function OrgChartNode(props) {
                 </Typography>
                 <Typography className={"card-title-extension"}>
                     {data.title}
+                </Typography>
+                <Typography
+                    classes={{ root: classes.cardText }}
+                    className={`card-email-${data.id}`}
+                >
+                    {data.email}
+                </Typography>
+                <Typography className={"card-email-extension"}>
+                    {data.email}
                 </Typography>
             </CardContent>
         </Card>
@@ -362,6 +379,7 @@ const mapStateToProps = (state) => {
                 isCurrent: workerId === focusedWorkerId,
                 isContractor: worker.isContractor,
                 image: worker.image,
+                email: worker.email,
             };
         };
 
