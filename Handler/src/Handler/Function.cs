@@ -71,21 +71,7 @@ namespace Handler
 
             //TODO close connection?
 
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = 200,
-                Body = output,
-                //Body = myDbItems.ToString(),
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },  
-                }
-            };
-
-            return response;
+            return EH.response(200, output);
         }
 
         public  APIGatewayProxyResponse GetByName(APIGatewayProxyRequest request, ILambdaContext context)
@@ -160,33 +146,11 @@ namespace Handler
             LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
             output = Newtonsoft.Json.JsonConvert.SerializeObject(employees); 
             //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
-        
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = 200,
-                Body = output,
-                //Body = myDbItems.ToString(),
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },  
-                }
-            };
-
-            return response;
+            return EH.response(200, output);
         }
 
         public APIGatewayProxyResponse predictiveSearch(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Content-Type", "application/json" },
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },
-                        };
             try
             {
                 var firstNamePrefix = HttpUtility.UrlDecode(request.QueryStringParameters["firstName"].ToLower());
@@ -250,54 +214,24 @@ namespace Handler
                 reader.Close();
 
                 output = Newtonsoft.Json.JsonConvert.SerializeObject(predEmployees);
-
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = 200,
-                    Body = output,
-                    Headers = headers
-                };
-
-                return response;
+                return EH.response(200, output);
 
             }
             catch (System.Collections.Generic.KeyNotFoundException error)
             {
-                return new APIGatewayProxyResponse
-                {
-                    StatusCode = 400,
-                    Body = "Bad Request. Missing query parameter : " + error,
-                    Headers = headers
-                };
+                return EH.response(400, "Bad Request. Missing query parameter : " + error);
             }
             catch (System.NullReferenceException error)
             {
-                return new APIGatewayProxyResponse
-                {
-                    StatusCode = 400,
-                    Body = "Bad request : No query parameters sent : " + error,
-                    Headers = headers
-                };
+                return EH.response(400, "Bad request : No query parameters sent : " + error);
             }
             catch (System.Exception error)
             {
-                return new APIGatewayProxyResponse
-                {
-                    StatusCode = 404,
-                    Body = "Generic Error: " + error,
-                    Headers = headers
-                };
+                return EH.response(404, "Generic Error: " + error);
             }
         }
 
         public  APIGatewayProxyResponse GetOrgChart(APIGatewayProxyRequest request, ILambdaContext context) {
-            Dictionary<string, string> headers = new Dictionary<string, string>
-              {
-                  { "Content-Type", "application/json" },
-                  { "Access-Control-Allow-Origin", "*" },
-                  { "Access-Control-Allow-Methods", "*" },
-                  { "Access-Control-Allow-Headers", "*" },
-              };
             try {
               string workerID = HttpUtility.UrlDecode(request.QueryStringParameters["WorkerID"]);
               string CeoID = "10001";
@@ -476,37 +410,14 @@ namespace Handler
               readerSubordinates.Close();
 
               output = Newtonsoft.Json.JsonConvert.SerializeObject(orgChart); 
-
-              var response = new APIGatewayProxyResponse
-              {
-                  StatusCode = 200,
-                  Body = output,
-                  Headers = headers
-              };
-
-              return response;
+              return EH.response(200, output);
             } catch (System.Collections.Generic.KeyNotFoundException error) {
-                return new APIGatewayProxyResponse
-                {
-                    StatusCode = 400,
-                    Body = "Bad Request. Missing query parameter : " + error,
-                    Headers = headers
-                };
+                return EH.response(400,"Bad Request. Missing query parameter : " + error);
             }
             catch (System.NullReferenceException error) {
-              return new APIGatewayProxyResponse
-                {
-                    StatusCode = 400,
-                    Body = "Bad request : No query parameters sent : " + error,
-                    Headers = headers
-                };
+                return EH.response(400,"Bad request : No query parameters sent : " + error);
             } catch (System.Exception error) {
-              return new APIGatewayProxyResponse
-                {
-                    StatusCode = 404,
-                    Body = "Generic Error: " + error,
-                    Headers = headers
-                };
+                return EH.response(404, "Generic Error: " + error);
             }
             
         }
@@ -560,21 +471,7 @@ namespace Handler
             
             
             //TODO close connection?
-
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = 200,
-                Body = "Database initialized",
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },  
-                }
-            };
-
-            return response;
+            return EH.response(200, "Database initialized.");
         }
 
         public APIGatewayProxyResponse dropAll(APIGatewayProxyRequest request, ILambdaContext context)
@@ -604,21 +501,7 @@ namespace Handler
             cmd.ExecuteNonQuery();
 
             //TODO close connection?
-
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = 200,
-                Body = "dropped all tables",
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "*" },
-                    { "Access-Control-Allow-Headers", "*" },  
-                }
-            };
-
-            return response;
+            return EH.response(200, "Dropped all tables.");
         }
 
 
@@ -891,18 +774,7 @@ namespace Handler
 
             string output = Newtonsoft.Json.JsonConvert.SerializeObject(filters); 
 
-            var response = new APIGatewayProxyResponse
-            {
-                StatusCode = 200,
-                Body = output,
-                Headers = new Dictionary<string, string>
-                { 
-                    { "Content-Type", "application/json" }, 
-                    { "Access-Control-Allow-Origin", "*" } 
-                }
-            };
-
-            return response;
+            return EH.response(200, output);
         }
 
         public  APIGatewayProxyResponse search(APIGatewayProxyRequest request, ILambdaContext context)
@@ -1355,37 +1227,11 @@ namespace Handler
                 if(count == 0){
                     output = Newtonsoft.Json.JsonConvert.SerializeObject(null);
                 }
-            
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = 200,
-                    Body = output,
-                    //Body = myDbItems.ToString(),
-                    Headers = new Dictionary<string, string>
-                    { 
-                        { "Content-Type", "application/json" }, 
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" },  
-                    }
-                };
+                var response = EH.response(200, output);
 
                 return response;
         }  catch(System.Exception){
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = 400,
-                    Body = "Invalid query Parameters",
-                    Headers = new Dictionary<string, string>
-                    { 
-                        { "Content-Type", "application/json" },
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" },
-                    }
-                };
-
-                return response;
+                return EH.response(400, "Invalid query parameters");
             }
         }
 
@@ -1457,35 +1303,9 @@ namespace Handler
                     output = Newtonsoft.Json.JsonConvert.SerializeObject(null);
                 }
                 //jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
-            
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = 200,
-                    Body = output,
-                    //Body = myDbItems.ToString(),
-                    Headers = new Dictionary<string, string>
-                    { 
-                        { "Content-Type", "application/json" }, 
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" },  
-                    }
-                };
-
-                return response;
+                return EH.response(200, output);
             }catch(System.Exception){
-                    return new APIGatewayProxyResponse
-                    {
-                        StatusCode = 400,
-                        Body = "Invalid querry parameters",
-                        Headers = new Dictionary<string, string>
-                        { 
-                            { "Content-Type", "application/json" }, 
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },  
-                        }
-                    };
+                return EH.response(400, "Invalid query parameters.");
             }
         }
         
@@ -1657,37 +1477,10 @@ namespace Handler
                 if(officeLocs.Count == 0){
                     output =  Newtonsoft.Json.JsonConvert.SerializeObject(null);
                 }
-
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = 200,
-                    Body = output,
-                    Headers = new Dictionary<string, string>
-                    { 
-                        { "Content-Type", "application/json" },
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" },
-                    }
-                };
-
-                return response;
+                return EH.response(200, output);
             }
             catch(System.Exception){
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = 400,
-                    Body = "Invalid query Parameters",
-                    Headers = new Dictionary<string, string>
-                    { 
-                        { "Content-Type", "application/json" },
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" },
-                    }
-                };
-
-                return response;
+                return EH.response(400, "Invalid query Parameters");
             }
 
             
@@ -1751,37 +1544,10 @@ namespace Handler
                 if(groupLabels.Count == 0){
                     output =  Newtonsoft.Json.JsonConvert.SerializeObject(null);
                 }
-
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = 200,
-                    Body = output,
-                    Headers = new Dictionary<string, string>
-                    { 
-                        { "Content-Type", "application/json" },
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" },
-                    }
-                };
-
-                return response;
+                return EH.response(200, output);
             }
             catch(System.Exception){
-                var response = new APIGatewayProxyResponse
-                {
-                    StatusCode = 400,
-                    Body = "Invalid query Parameters",
-                    Headers = new Dictionary<string, string>
-                    { 
-                        { "Content-Type", "application/json" },
-                        { "Access-Control-Allow-Origin", "*" },
-                        { "Access-Control-Allow-Methods", "*" },
-                        { "Access-Control-Allow-Headers", "*" }, 
-                    }
-                };
-
-                return response;
+                return EH.response(400, "Invalid query Parameters");
             }
 
         }
@@ -1831,18 +1597,7 @@ namespace Handler
                     LocationCodereader.Close();
                 }
                 catch(System.Exception){
-                    return new APIGatewayProxyResponse
-                    {
-                        StatusCode = 400,
-                        Body = "Invalid physical location: " + HttpUtility.UrlDecode(body["PhysicalLocation"].Value<string>()),
-                        Headers = new Dictionary<string, string>
-                        { 
-                            { "Content-Type", "application/json" }, 
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },  
-                        }
-                    };
+                    return EH.response(400, "Invalid physical location: " + HttpUtility.UrlDecode(body["PhysicalLocation"].Value<string>()));
                 }
 
 
@@ -1872,18 +1627,7 @@ namespace Handler
                     ComapanyCodereader.Close();
                 }
                 catch(System.Exception){
-                    return new APIGatewayProxyResponse
-                    {
-                        StatusCode = 400,
-                        Body = "Invalid Company Code: " + HttpUtility.UrlDecode(body["CompanyCode"].Value<string>()),
-                        Headers = new Dictionary<string, string>
-                        { 
-                            { "Content-Type", "application/json" }, 
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },  
-                        }
-                    };
+                    return EH.response(400, "Invalid Company Code: " + HttpUtility.UrlDecode(body["CompanyCode"].Value<string>()));
                 }
 
                 
@@ -1915,18 +1659,7 @@ namespace Handler
                     OfficeCodereader.Close();
                 }
                 catch(System.Exception){
-                    return new APIGatewayProxyResponse
-                    {
-                        StatusCode = 400,
-                        Body = "Invalid Office Code: " + HttpUtility.UrlDecode(body["OfficeCode"].Value<string>()),
-                        Headers = new Dictionary<string, string>
-                        { 
-                            { "Content-Type", "application/json" }, 
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },  
-                        }
-                    };
+                    return EH.response(400, "Invalid Office Code: " + HttpUtility.UrlDecode(body["OfficeCode"].Value<string>()));
                 }
                 
                 
@@ -1962,18 +1695,7 @@ namespace Handler
                     LambdaLogger.Log("groupCodeId: " + officeCodeId);
                 }
                 catch(System.Exception){
-                    return new APIGatewayProxyResponse
-                    {
-                        StatusCode = 400,
-                        Body = "Invaild Group Code: " + HttpUtility.UrlDecode(body["GroupCode"].Value<string>()),
-                        Headers = new Dictionary<string, string>
-                        { 
-                            { "Content-Type", "application/json" }, 
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },  
-                        }
-                    };
+                    return EH.response(400, "Invaild Group Code: " + HttpUtility.UrlDecode(body["GroupCode"].Value<string>()));
                 }
                 
 
@@ -2020,49 +1742,14 @@ namespace Handler
 
                     //insert the contractors skills into the database
                     insertSkills(HttpUtility.UrlDecode(body["skills"].Value<string>()),addedContractorEmployeeNumber);
-
-                    var response = new APIGatewayProxyResponse
-                    {
-                        StatusCode = 200,
-                        Body = "New contractor added!",
-                        Headers = new Dictionary<string, string>
-                        { 
-                            { "Content-Type", "application/json" }, 
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },  
-                        }
-                    };
-
-                    return response;
+                    
+                    return EH.response(200, "New contractor added.");
                 }
                 catch(System.Exception){
-                    return new APIGatewayProxyResponse
-                    {
-                        StatusCode = 400,
-                        Body = "Invalid Skills "+ body["skills"].Value<string>(),
-                        Headers = new Dictionary<string, string>
-                        { 
-                            { "Content-Type", "application/json" }, 
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },  
-                        }
-                    };
+                    return EH.response(400,"Invalid Skills "+ body["skills"].Value<string>());
                 }
             }catch(System.Exception){
-                    return new APIGatewayProxyResponse
-                    {
-                        StatusCode = 400,
-                        Body = "Invalid body",
-                        Headers = new Dictionary<string, string>
-                        { 
-                            { "Content-Type", "application/json" }, 
-                            { "Access-Control-Allow-Origin", "*" },
-                            { "Access-Control-Allow-Methods", "*" },
-                            { "Access-Control-Allow-Headers", "*" },  
-                        }
-                    };
+                return EH.response(400, "Invalid body");
             }
             
         }
