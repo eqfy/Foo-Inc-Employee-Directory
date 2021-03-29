@@ -504,7 +504,7 @@ namespace Handler
             return EH.response(200, "Dropped all tables.");
         }
 
-
+/*
         private String createSkillFilter(List<string> skills, ref int parameterCounter){
             //TODO fill in
             
@@ -688,7 +688,7 @@ namespace Handler
         private string createFetchFilter(ref int parameterCounter){
             string fetchFilter = " FETCH NEXT :p"+parameterCounter++ + " ROWS ONLY";
             return fetchFilter;
-        }
+        }*/
 
         public APIGatewayProxyResponse GetAllFilters(APIGatewayProxyRequest request, ILambdaContext context)
         {
@@ -893,76 +893,76 @@ namespace Handler
 
                 string skillFilter="";
                 if(skills.Count > 0){
-                    skillFilter = createSkillFilter(skills,ref parameterCounter);
+                    skillFilter = EH.createSkillFilter(skills,ref parameterCounter);
                 }
 
                 string locationsFilter="";
                 if(locations.Count > 0){
-                    locationsFilter = createLocationsFilter(locations,ref parameterCounter);
+                    locationsFilter = EH.createLocationsFilter(locations,ref parameterCounter);
                 }
 
                 string titlesFilter="";
                 if(titles.Count > 0){
-                    titlesFilter = createTitlesFilter(titles,ref parameterCounter);
+                    titlesFilter = EH.createTitlesFilter(titles,ref parameterCounter);
                 }
 
                 string yearsPriorFilter="";
                 if(yearsExperience.Count > 0){
-                    yearsPriorFilter = createYearsPriorFilter(ref parameterCounter);
+                    yearsPriorFilter = EH.createYearsPriorFilter(ref parameterCounter);
                 }
 
                 string divisionsFilter ="";
                 if(divisions.Count > 0){
-                    divisionsFilter = createDivisionsFilter(divisions, ref parameterCounter);
+                    divisionsFilter = EH.createDivisionsFilter(divisions, ref parameterCounter);
                 }
 
                 string companyNamesFilter ="";
                 if(companynames.Count > 0){
-                    companyNamesFilter = createCompanyNamesFilter(companynames, ref parameterCounter);
+                    companyNamesFilter = EH.createCompanyNamesFilter(companynames, ref parameterCounter);
                 }
 
                 string firstNamesFilter ="";
                 if(firstnames.Count > 0){
-                    firstNamesFilter = createFirstNamesFilter(firstnames, ref parameterCounter);
+                    firstNamesFilter = EH.createFirstNamesFilter(firstnames, ref parameterCounter);
                 }
 
                 string lastNamesFilter ="";
                 if(lastnames.Count > 0){
-                    lastNamesFilter = createLastNamesFilter(lastnames, ref parameterCounter);
+                    lastNamesFilter = EH.createLastNamesFilter(lastnames, ref parameterCounter);
                 }
 
                 string employmentTypesFilter ="";
                 if(employementTypes.Count > 0){
-                    employmentTypesFilter = createEmploymentTypesFilter(employementTypes, ref parameterCounter);
+                    employmentTypesFilter = EH.createEmploymentTypesFilter(employementTypes, ref parameterCounter);
                 }
 
                 string officeLocationsFilter ="";
                 if(officeLocations.Count > 0){
-                    officeLocationsFilter = createOfficeLocationsFilter(officeLocations, ref parameterCounter);
+                    officeLocationsFilter = EH.createOfficeLocationsFilter(officeLocations, ref parameterCounter);
                 }
                 
                 string shownWorkerTypeFilter ="";
                 if(shownWorkerType.Count > 0){
-                    shownWorkerTypeFilter = createShownWorkerTypeFilter(shownWorkerType[0]);
+                    shownWorkerTypeFilter = EH.createShownWorkerTypeFilter(shownWorkerType[0]);
                 }
                 
                 string orderByFilter ="";
                 if(orderBys.Count > 0){
-                    orderByFilter = createOrderByFilter(orderBys[0]);
+                    orderByFilter = EH.createOrderByFilter(orderBys[0]);
                 }
                 string orderDirFilter ="";
                 if(orderDir.Count > 0){
-                    orderDirFilter = createOrderDirFilter(orderDir[0]);
+                    orderDirFilter = EH.createOrderDirFilter(orderDir[0]);
                 }
                 
                 string offsetFilter ="";
                 if(offsets.Count > 0){
-                    offsetFilter = createOffsetFilter(ref parameterCounter);
+                    offsetFilter = EH.createOffsetFilter(ref parameterCounter);
                 }
 
                 string fetchFilter ="";
                 if(fetchs.Count > 0){
-                    fetchFilter = createFetchFilter(ref parameterCounter);
+                    fetchFilter = EH.createFetchFilter(ref parameterCounter);
                 }
 
                 using var con = new NpgsqlConnection(GetRDSConnectionString());
