@@ -504,192 +504,6 @@ namespace Handler
             return EH.response(200, "Dropped all tables.");
         }
 
-/*
-        private String createSkillFilter(List<string> skills, ref int parameterCounter){
-            //TODO fill in
-            
-            String skillFilter = "";
-            
-            for (int i = 0; i < skills.Count; i++ ){
-                //  if (i == skills.Count){
-                //     sillFilter += "ed.\"Skills\" = :p"+parameterCounter;
-                // }else {
-                    skillFilter += " es.\"skills\" LIKE :p"+parameterCounter +  " AND";
-                    parameterCounter++;
-                //}
-                //es.skills LIKE '%Accounting:::Transaction Processing%' AND es.skills LIKE '%Accounting:::Reconciling%' 
-            }
-            return skillFilter;
-        }
-
-        private string createLocationsFilter(List<string> locations, ref int parameterCounter){
-            string locationFilter = " ed.\"location\" IN ( ";
-            for(int i = 0; i < locations.Count; i++){
-                if(i > 0){
-                    locationFilter += " , ";
-                }
-                locationFilter += ":p"+parameterCounter++;
-            }
-
-            locationFilter += ") AND";
-            return locationFilter;
-        }
-
-        private string createTitlesFilter(List<string> titles, ref int parameterCounter){
-            string titleFilter = " ed.\"Title\" IN ( ";
-            for(int i = 0; i < titles.Count; i++){
-                if(i > 0){
-                    titleFilter += " , ";
-                }
-                titleFilter += ":p"+parameterCounter++;
-            }
-
-            titleFilter += ") AND";
-            return titleFilter;
-        }
-        
-        private string createYearsPriorFilter(ref int parameterCounter){
-            string yearsPriorFilter = "";
-            
-            yearsPriorFilter = " ed.\"YearsPriorExperience\" >= :p" + parameterCounter++;
-
-            yearsPriorFilter += " AND";
-            return yearsPriorFilter;
-        }
-
-        private string createDivisionsFilter(List<string> divisions, ref int parameterCounter){
-            string divisionFilter = " ed.\"division\" IN ( ";
-            for(int i = 0; i < divisions.Count; i++){
-                if(i > 0){
-                    divisionFilter += " , ";
-                }
-                divisionFilter += ":p"+parameterCounter++;
-            }
-
-            divisionFilter += ") AND";
-            return divisionFilter;
-        }
-
-        private string createCompanyNamesFilter(List<string> companynames, ref int parameterCounter){
-            string companynameFilter = " ed.\"companyname\" IN ( ";
-            for(int i = 0; i < companynames.Count; i++){
-                if(i > 0){
-                    companynameFilter += " , ";
-                }
-                companynameFilter += ":p"+parameterCounter++;
-            }
-
-            companynameFilter += ") AND";
-            return companynameFilter;
-        }
-
-        private string createFirstNamesFilter(List<string> firstnames, ref int parameterCounter){
-            string firstnameFilter = " ed.\"FirstName\" IN ( ";
-            for(int i = 0; i < firstnames.Count; i++){
-                if(i > 0){
-                    firstnameFilter += " , ";
-                }
-                firstnameFilter += ":p"+parameterCounter++;
-            }
-
-            firstnameFilter += ") AND";
-            return firstnameFilter;
-        }
-
-        private string createLastNamesFilter(List<string> lastnames, ref int parameterCounter){
-            string lastnameFilter = " ed.\"LastName\" IN ( ";
-            for(int i = 0; i < lastnames.Count; i++){
-                if(i > 0){
-                    lastnameFilter += " , ";
-                }
-                lastnameFilter += ":p"+parameterCounter++;
-            }
-
-            lastnameFilter += ") AND";
-            return lastnameFilter;
-        }
-
-        private string createEmploymentTypesFilter(List<string> employementTypes, ref int parameterCounter){
-            string employmentTypesFilter = " ed.\"EmploymentType\" IN ( ";
-            for(int i = 0; i < employementTypes.Count; i++){
-                if(i > 0){
-                    employmentTypesFilter += " , ";
-                }
-                employmentTypesFilter += ":p"+parameterCounter++;
-            }
-
-            employmentTypesFilter += ") AND";
-            return employmentTypesFilter;
-        }
-
-        private string createOfficeLocationsFilter(List<string> officeLocations, ref int parameterCounter){
-            string officeLocationsFilter = "";
-            for(int i = 0; i < officeLocations.Count; i++){
-                officeLocationsFilter += " ol.\"officelocations\" LIKE :p"+parameterCounter +  " AND";
-                parameterCounter++;
-            }
-            return officeLocationsFilter;
-        }
-
-        private string createShownWorkerTypeFilter(string shownWorkerType){
-            string shownWorkerTypeFilter="";
-            switch (shownWorkerType)
-            {
-                case "all":
-                    break;
-                case "contractor":
-                    shownWorkerTypeFilter = " ed.\"isContractor\" = true" + " AND";
-                    break;
-                case "employee": 
-                    shownWorkerTypeFilter = " ed.\"isContractor\" = false" + " AND";
-                    break;
-                default:
-                    break;
-            }
-            
-            return shownWorkerTypeFilter;
-        }
-        
-         // order by number, offset, and fecth functions
-        
-        //TODO make this not case sensitive and give errors when using something like blah 
-        private string createOrderByFilter(string order){
-            string orderByFilter ="";
-            if(order == "firstName"){
-                orderByFilter = " ORDER BY \"FirstName\"";
-            } else if(order == "lastName"){
-                orderByFilter = " ORDER BY \"LastName\"";
-
-            }else if(order == "title"){
-                orderByFilter = " ORDER BY \"Title\"";
-            }
-            //throw expection TODO
-            return orderByFilter;
-        }
-        
-        private string createOrderDirFilter(string orderDir){
-            string orderDirFilter = "";
-
-            if(orderDir == "ASC"){
-                orderDirFilter = " ASC";
-            } else if(orderDir == "DESC"){
-                orderDirFilter = " DESC";
-
-            }
-            //throw expection TODO
-            return orderDirFilter;
-        }
-        
-        private string createOffsetFilter(ref int parameterCounter){
-            string offsetFilter = " OFFSET :p"+parameterCounter++;
-            return offsetFilter;
-        }
-
-        private string createFetchFilter(ref int parameterCounter){
-            string fetchFilter = " FETCH NEXT :p"+parameterCounter++ + " ROWS ONLY";
-            return fetchFilter;
-        }*/
-
         public APIGatewayProxyResponse GetAllFilters(APIGatewayProxyRequest request, ILambdaContext context)
         {
             LambdaLogger.Log(GetRDSConnectionString());
@@ -782,115 +596,25 @@ namespace Handler
             try{
                 int parameterCounter = 0;
 
-                List<string> skills = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("skills")){
-                    skills = (List<string>)request.MultiValueQueryStringParameters["skills"];
-                    for(int i = 0; i < skills.Count; i++){
-                        skills[i] = HttpUtility.UrlDecode(skills[i]);
-                    }
-                }
-                List<string> locations = new List<string>();
-                if (request.MultiValueQueryStringParameters.ContainsKey("locationPhysical")){
-                    locations = (List<string>)request.MultiValueQueryStringParameters["locationPhysical"];
-                    for(int i = 0; i < locations.Count; i++){
-                        locations[i] = HttpUtility.UrlDecode(locations[i]);
-                    }
-                }
-                List<string> titles = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("title")){
-                    titles = (List<string>)request.MultiValueQueryStringParameters["title"];
-                    for(int i = 0; i < titles.Count; i++){
-                        titles[i] = HttpUtility.UrlDecode(titles[i]);
-                    }
-                }
-                
+                //Get the information from the Query parameters
+                List<string> skills = EH.getMultiValueQueryStringParameters("skills", request);
+                List<string> locations = EH.getMultiValueQueryStringParameters("locationPhysical", request);
+                List<string> titles = EH.getMultiValueQueryStringParameters("title", request);
                 // Note: if they change the slide bar to allow for partial years change this to a float
-                List<string> yearsExperience = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("yearsPriorExperience")){
-                    yearsExperience = (List<string>)request.MultiValueQueryStringParameters["yearsPriorExperience"];
-                    for(int i = 0; i < yearsExperience.Count; i++){
-                        yearsExperience[i] = HttpUtility.UrlDecode(yearsExperience[i]);
-                    }
-                }
+                List<string> yearsExperience = EH.getMultiValueQueryStringParameters("yearsPriorExperience", request);
+                List<string> divisions = EH.getMultiValueQueryStringParameters("division", request);
+                List<string> companynames = EH.getMultiValueQueryStringParameters("companyName", request);
+                List<string> firstnames = EH.getMultiValueQueryStringParameters("firstName", request);
+                List<string> lastnames = EH.getMultiValueQueryStringParameters("lastName", request);
+                List<string> employementTypes = EH.getMultiValueQueryStringParameters("employmentType", request);
+                List<string> officeLocations = EH.getMultiValueQueryStringParameters("officeLocations", request);
+                List<string> shownWorkerType = EH.getMultiValueQueryStringParameters("shownWorkerType", request);
+                List<string> orderBys = EH.getMultiValueQueryStringParameters("orderBy", request);
+                List<string> offsets = EH.getMultiValueQueryStringParameters("offset", request);
+                List<string> fetchs = EH.getMultiValueQueryStringParameters("fetch", request);
+                List<string> orderDir = EH.getMultiValueQueryStringParameters("orderDir", request);
 
-                List<string> divisions = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("division")){
-                    divisions = (List<string>)request.MultiValueQueryStringParameters["division"];
-                    for(int i = 0; i < divisions.Count; i++){
-                        divisions[i] = HttpUtility.UrlDecode(divisions[i]);
-                    }
-                }
-                List<string> companynames = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
-                    companynames = (List<string>)request.MultiValueQueryStringParameters["companyName"];
-                    for(int i = 0; i < companynames.Count; i++){
-                        companynames[i] = HttpUtility.UrlDecode(companynames[i]);
-                    }
-                }
-                List<string> firstnames = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("firstName")){
-                    firstnames = (List<string>)request.MultiValueQueryStringParameters["firstName"];
-                    for(int i = 0; i < firstnames.Count; i++){
-                        firstnames[i] = HttpUtility.UrlDecode(firstnames[i]);
-                    }
-                }
-                List<string> lastnames = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("lastName")){
-                    lastnames = (List<string>)request.MultiValueQueryStringParameters["lastName"];
-                    for(int i = 0; i < lastnames.Count; i++){
-                        lastnames[i] = HttpUtility.UrlDecode(lastnames[i]);
-                    }
-                }
-                List<string> employementTypes = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("employmentType")){
-                    employementTypes = (List<string>)request.MultiValueQueryStringParameters["employmentType"];
-                    for(int i = 0; i < employementTypes.Count; i++){
-                        employementTypes[i] = HttpUtility.UrlDecode(employementTypes[i]);
-                    }
-                }
-                List<string> officeLocations = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("officeLocations")){
-                    officeLocations = (List<string>)request.MultiValueQueryStringParameters["officeLocations"];
-                    for(int i = 0; i < officeLocations.Count; i++){
-                        officeLocations[i] = HttpUtility.UrlDecode(officeLocations[i]);
-                    }
-                }
-                List<string> shownWorkerType = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("shownWorkerType")){
-                    shownWorkerType = (List<string>)request.MultiValueQueryStringParameters["shownWorkerType"];
-                    for(int i = 0; i < shownWorkerType.Count; i++){
-                        shownWorkerType[i] = HttpUtility.UrlDecode(shownWorkerType[i]);
-                    }
-                }
-                List<string> orderBys = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("orderBy")){
-                    orderBys = (List<string>)request.MultiValueQueryStringParameters["orderBy"];
-                    for(int i = 0; i < orderBys.Count; i++){
-                        orderBys[i] = HttpUtility.UrlDecode(orderBys[i]);
-                    }
-                }
-                List<string> offsets = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("offset")){
-                    offsets = (List<string>)request.MultiValueQueryStringParameters["offset"];
-                    for(int i = 0; i < offsets.Count; i++){
-                        offsets[i] = HttpUtility.UrlDecode(offsets[i]);
-                    }
-                }
-                List<string> fetchs = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("fetch")){
-                    fetchs = (List<string>)request.MultiValueQueryStringParameters["fetch"];
-                    for(int i = 0; i < fetchs.Count; i++){
-                        fetchs[i] = HttpUtility.UrlDecode(fetchs[i]);
-                    }
-                }
-                List<string> orderDir = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("orderDir")){
-                    orderDir = (List<string>)request.MultiValueQueryStringParameters["orderDir"];
-                    for(int i = 0; i < orderDir.Count; i++){
-                        orderDir[i] = HttpUtility.UrlDecode(orderDir[i]);
-                    }
-                }
-
+                //Create the sql filters from the information we got from the query parameters
                 string skillFilter="";
                 if(skills.Count > 0){
                     skillFilter = EH.createSkillFilter(skills,ref parameterCounter);
@@ -1102,9 +826,6 @@ namespace Handler
                     cmd.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
                 }
 
-                //TODO: is contractor, hiredate, termination date
-                //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
-
                 //Run the sql command
                 var reader = cmd.ExecuteReader();
         
@@ -1202,9 +923,6 @@ namespace Handler
                     cmd2.Parameters.AddWithValue("p"+currentParameterCounter++, int.Parse(fetch));
                 }
 
-                //TODO: is contractor, hiredate, termination date
-                //Done: DIVISION, companyname, lastname, firstname. employment type and office location 
-
                 //Run the sql command
                 var reader2 = cmd2.ExecuteReader();
                 int count = 0;
@@ -1214,9 +932,6 @@ namespace Handler
                 }
 
                 reader2.Close();
-
-                //LambdaLogger.Log("firstName ==: " + employees[0].firstName + "\n");
-                //LambdaLogger.Log("employeeNumber ==: " + employees[0].employeeNumber + "\n");
                 SearchResults searchResults = new SearchResults();
                 searchResults.data = employees;
                 searchResults.totalCount = count;
@@ -1430,14 +1145,7 @@ namespace Handler
         public APIGatewayProxyResponse getAllOfficeLocations(APIGatewayProxyRequest request, ILambdaContext context){
 
             try{
-
-                List<string> companyName = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
-                    companyName = (List<string>)request.MultiValueQueryStringParameters["companyName"];
-                    for(int i = 0; i < companyName.Count; i++){
-                        companyName[i] = HttpUtility.UrlDecode(companyName[i]);
-                    }
-                }
+                List<string> companyName = EH.getMultiValueQueryStringParameters("companyName", request);
 
                 using var con = new NpgsqlConnection(GetRDSConnectionString());
                 con.Open();
@@ -1489,21 +1197,8 @@ namespace Handler
         public APIGatewayProxyResponse getAllGroupCodes(APIGatewayProxyRequest request, ILambdaContext context){
 
             try{
-                List<string> companyName = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("companyName")){
-                    companyName = (List<string>)request.MultiValueQueryStringParameters["companyName"];
-                    for(int i = 0; i < companyName.Count; i++){
-                        companyName[i] = HttpUtility.UrlDecode(companyName[i]);
-                    }
-                }
-
-                List<string> officeName = new List<string>();
-                if(request.MultiValueQueryStringParameters.ContainsKey("officeName")){
-                    officeName = (List<string>)request.MultiValueQueryStringParameters["officeName"];
-                    for(int i = 0; i < officeName.Count; i++){
-                        officeName[i] = HttpUtility.UrlDecode(officeName[i]);
-                    }
-                }
+                List<string> companyName = EH.getMultiValueQueryStringParameters("companyName", request);
+                List<string> officeName = EH.getMultiValueQueryStringParameters("officeName", request);
 
                 using var con = new NpgsqlConnection(GetRDSConnectionString());
                 con.Open();

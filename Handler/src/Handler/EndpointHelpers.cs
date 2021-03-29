@@ -1,5 +1,6 @@
 using Amazon.Lambda.APIGatewayEvents;
 using System.Collections.Generic;
+using System.Web;
 public static class EH{
     public static APIGatewayProxyResponse response(int statusCode, string body){
 
@@ -191,6 +192,17 @@ public static class EH{
     public static string createFetchFilter(ref int parameterCounter){
         string fetchFilter = " FETCH NEXT :p"+parameterCounter++ + " ROWS ONLY";
         return fetchFilter;
+    }
+
+    public static List<string> getMultiValueQueryStringParameters(string key, APIGatewayProxyRequest request){
+        List<string> returnValue = new List<string>();
+        if(request.MultiValueQueryStringParameters.ContainsKey(key)){
+            returnValue = (List<string>)request.MultiValueQueryStringParameters[key];
+            for(int i = 0; i < returnValue.Count; i++){
+                returnValue[i] = HttpUtility.UrlDecode(returnValue[i]);
+            }
+        }
+        return returnValue;
     }
 
 }
