@@ -95,6 +95,11 @@ export default function appStateReducer(state = defaultAppState, action) {
                 ...state,
                 filtersChanged: action.payload,
             };
+        case "SET_SNACKBAR_STATE":
+            return {
+                ...state,
+                snackbarState: action.payload.snackbarState,
+            };
         default:
             return state;
     }

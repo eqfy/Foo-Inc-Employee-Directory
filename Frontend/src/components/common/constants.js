@@ -5,6 +5,7 @@ export const PagePathEnum = {
     PROFILE: "/profile",
     ORGCHART: "/orgchart",
     NEWCONTRACTOR: "/addContractor",
+    LOGIN: "/login",
     // TODO: remove after update
     UPDATE: "/update",
 };
