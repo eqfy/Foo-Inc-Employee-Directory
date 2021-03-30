@@ -6,6 +6,7 @@ import Chip from "@material-ui/core/Chip";
 import { connect } from "react-redux";
 import {
     clearNameAction,
+    clearAppliedFilters,
     setFilterAction,
     setSortKeyAction,
     setSortOrderAction,
@@ -17,6 +18,9 @@ import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { WorkerTypeEnum } from "states/appState";
 import { SortKeyEnum } from "states/searchPageState";
 import { filterTypeEnum } from "states/filterState";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const chipColors = {
     [filterTypeEnum.LOCATION]: "#00D1FF",
@@ -46,6 +50,7 @@ function FilterArea(props) {
         setSortOrderAction,
         searchWithAppliedFilterAction,
         clearNameAction,
+        clearAppliedFilters,
     } = props;
     const classes = useStyles();
     const createNameChip = () =>
@@ -128,6 +133,14 @@ function FilterArea(props) {
         )();
     };
 
+    const handleDeleteAll = () => {
+        clearAppliedFilters();
+        coordinatedDebounce(
+            searchWithAppliedFilterAction,
+            SearchWithFilterTimer
+        )();
+    };
+
     const createChipLabel = (chipData) =>
         chipData.category && chipData.category.length > 0 ? (
             <>
@@ -191,6 +204,23 @@ function FilterArea(props) {
                         {"No filters applied!"}
                     </div>
                 )}
+                {chipData.length > 1 && (
+                    <Tooltip
+                        title="Clear filters"
+                        classes={{
+                            tooltip: classes.deleteAllToolTip,
+                        }}
+                    >
+                        <IconButton
+                            aria-label="deleteAll"
+                            className={classes.deleteAllButton}
+                            size="small"
+                            onClick={handleDeleteAll}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                )}
             </div>
         </div>
     );
@@ -239,6 +269,7 @@ const mapDispatchToProps = (dispatch) => ({
     clearNameAction: () => dispatch(clearNameAction()),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
+    clearAppliedFilters: () => dispatch(clearAppliedFilters()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FilterArea);
@@ -258,6 +289,7 @@ const useStyles = makeStyles(() => ({
         display: "flex",
         minHeight: "42px",
         justifyContent: "left",
+        alignItems: "center",
         flexWrap: "wrap",
     },
     sortingArea: {
@@ -270,6 +302,16 @@ const useStyles = makeStyles(() => ({
     chip: {
         margin: "5px",
         fontSize: "1rem",
+    },
+    deleteAllButton: {
+        color: "rgba(0, 0, 0, 0.88)",
+        marginLeft: "auto",
+    },
+    deleteAllToolTip: {
+        backgroundColor: "white",
+        color: "black",
+        fontSize: "14px",
+        boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.50)",
     },
     emptyText: {
         display: "flex",

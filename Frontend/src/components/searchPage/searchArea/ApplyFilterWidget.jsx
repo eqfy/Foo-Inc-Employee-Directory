@@ -5,6 +5,8 @@ import { matchSorter } from "match-sorter";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 const React = require("react");
 const {
     TextField,
@@ -17,7 +19,6 @@ const {
     Checkbox,
     IconButton,
 } = require("@material-ui/core");
-const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 
 const FilterTextTimer = {};
 
@@ -99,7 +100,11 @@ function ApplyFilterWidget(props) {
                             aria-label="expand less"
                             onClick={handleExpandMoreClick}
                         >
-                            {!expanded ? <ExpandMore /> : <ExpandLess />}
+                            {!expanded ? (
+                                <ExpandMoreIcon />
+                            ) : (
+                                <ExpandLessIcon />
+                            )}
                         </IconButton>
                     ),
                 }}
@@ -151,9 +156,9 @@ function CollapsableCategoryBox(props) {
             >
                 <ListItemText primary={label} className="category-text" />
                 {!expanded ? (
-                    <ExpandMore className="expand-icon" />
+                    <ExpandMoreIcon className="expand-icon" />
                 ) : (
-                    <ExpandLess className="expand-icon" />
+                    <ExpandLessIcon className="expand-icon" />
                 )}
             </ListItem>
             <Collapse in={expanded} timeout="auto" unmountOnExit>

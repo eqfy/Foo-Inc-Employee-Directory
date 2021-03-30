@@ -208,10 +208,7 @@ namespace Project
                 AllowPublicSubnet = true,
                 Timeout = Duration.Seconds(60),
                 MemorySize = 512,
-                //SecurityGroups = new[] {SG}
-                SecurityGroups = new[]
-                 { securityGroup }
-                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
+                SecurityGroups = new[] { securityGroup }
             });
             apiGateway.Resource getAllFiltersResource = api.Root.AddResource("getAllFilters");
             apiGateway.LambdaIntegration getAllFiltersIntegration = new apiGateway.LambdaIntegration(getAllFilters);
@@ -438,6 +435,7 @@ namespace Project
             databaseScriptsBucket.GrantRead(databaseInitLambda);
             databaseScriptsBucket.GrantRead(databaseDropAllLambda);
             databaseScriptsBucket.GrantRead(getOrgChart);
+            databaseScriptsBucket.GrantRead(getAllFilters);
             databaseScriptsBucket.GrantRead(getEmployeeByName);
             databaseScriptsBucket.GrantRead(search);
             databaseScriptsBucket.GrantRead(getEmployeeID);
@@ -515,6 +513,8 @@ namespace Project
             getAllFilters.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             getAllFilters.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             getAllFilters.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
+            getAllFilters.AddEnvironment("OBJECT_KEY", "skillFilters.sql");
+            getAllFilters.AddEnvironment("BUCKET_NAME", databaseScriptsBucket.BucketName);
 
             databaseInitLambda.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             databaseInitLambda.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
