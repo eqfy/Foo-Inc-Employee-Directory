@@ -119,7 +119,7 @@ function LoadingResult(props) {
     return loading ? (
         <div
             style={{
-                height: "80%",
+                height: "calc(100vh - 280px)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",

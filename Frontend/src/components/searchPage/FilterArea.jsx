@@ -5,6 +5,7 @@ import Dropdown from "../common/Dropdown";
 import Chip from "@material-ui/core/Chip";
 import { connect } from "react-redux";
 import {
+    clearNameAction,
     clearAppliedFilters,
     setFilterAction,
     setSortKeyAction,
@@ -16,22 +17,26 @@ import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { WorkerTypeEnum } from "states/appState";
 import { SortKeyEnum } from "states/searchPageState";
+import { filterTypeEnum } from "states/filterState";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
 
 const chipColors = {
-    location: "#00D1FF",
-    title: "#FF9900",
-    company: "#A4DA65",
-    department: "#A5BDE5",
-    skill: "#D877CF",
+    [filterTypeEnum.LOCATION]: "#00D1FF",
+    [filterTypeEnum.TITLE]: "#FF9900",
+    [filterTypeEnum.COMPANY]: "#A4DA65",
+    [filterTypeEnum.DEPARTMENT]: "#A5BDE5",
+    [filterTypeEnum.SKILL]: "#D877CF",
+    [filterTypeEnum.NAME]: "#FFBE0B",
 };
 
 function FilterArea(props) {
     const {
         areaState: { isAscending, sortKey },
         filterState: {
+            firstName,
+            lastName,
             skillState,
             locationState,
             titleState,
@@ -44,9 +49,19 @@ function FilterArea(props) {
         setSortKeyAction,
         setSortOrderAction,
         searchWithAppliedFilterAction,
+        clearNameAction,
         clearAppliedFilters,
     } = props;
     const classes = useStyles();
+    const createNameChip = () =>
+        firstName && lastName
+            ? [
+                  {
+                      label: `Searched name: ${firstName} ${lastName}`,
+                      type: filterTypeEnum.NAME,
+                  },
+              ]
+            : [];
     const createChipDataList = (filterState = [], type = "") => {
         return filterState.map((filter) => ({ label: filter, type: type }));
     };
@@ -70,11 +85,12 @@ function FilterArea(props) {
     };
 
     const chipData = [
-        ...createChipDataList(locationState, "location"),
-        ...createChipDataList(titleState, "title"),
-        ...createChipDataList(companyState, "company"),
-        ...createChipDataList(departmentState, "department"),
-        ...createCatagorizedChipDataList(skillState, "skill"),
+        ...createNameChip(),
+        ...createChipDataList(locationState, filterTypeEnum.LOCATION),
+        ...createChipDataList(titleState, filterTypeEnum.TITLE),
+        ...createChipDataList(companyState, filterTypeEnum.COMPANY),
+        ...createChipDataList(departmentState, filterTypeEnum.DEPARTMENT),
+        ...createCatagorizedChipDataList(skillState, filterTypeEnum.SKILL),
     ];
 
     const handleWorkerTypeChange = (event) => {
@@ -102,11 +118,15 @@ function FilterArea(props) {
     };
 
     const handleDelete = (chipToDelete) => () => {
-        setFilterAction(
-            chipToDelete.type,
-            chipToDelete.label,
-            chipToDelete.category
-        );
+        if (chipToDelete.type === "name") {
+            clearNameAction();
+        } else {
+            setFilterAction(
+                chipToDelete.type,
+                chipToDelete.label,
+                chipToDelete.category
+            );
+        }
         coordinatedDebounce(
             searchWithAppliedFilterAction,
             SearchWithFilterTimer
@@ -162,19 +182,21 @@ function FilterArea(props) {
                 {chipData.length > 0 ? (
                     chipData.map((data) => {
                         return (
-                            <li
-                                key={createChipKey(data)}
-                                className={classes.chipItem}
-                            >
-                                <Chip
-                                    label={createChipLabel(data)}
-                                    onDelete={handleDelete(data)}
-                                    className={classes.chip}
-                                    style={{
-                                        background: chipColors[data.type],
-                                    }}
-                                />
-                            </li>
+                            data && (
+                                <li
+                                    key={createChipKey(data)}
+                                    className={classes.chipItem}
+                                >
+                                    <Chip
+                                        label={createChipLabel(data)}
+                                        onDelete={handleDelete(data)}
+                                        className={classes.chip}
+                                        style={{
+                                            background: chipColors[data.type],
+                                        }}
+                                    />
+                                </li>
+                            )
                         );
                     })
                 ) : (
@@ -208,6 +230,8 @@ const mapStateToProps = (state) => {
     const {
         searchPageState: { isAscending, sortKey },
         appState: {
+            firstName = "",
+            lastName = "",
             skillState = [],
             locationState = [],
             titleState = [],
@@ -216,12 +240,15 @@ const mapStateToProps = (state) => {
             shownWorkerType,
         },
     } = state;
+
     return {
         areaState: {
             isAscending,
             sortKey,
         },
         filterState: {
+            firstName,
+            lastName,
             skillState,
             locationState,
             titleState,
@@ -239,6 +266,7 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(setWorkerTypeAction(workerTypeFilter)),
     setSortKeyAction: (sortKey) => dispatch(setSortKeyAction(sortKey)),
     setSortOrderAction: (sortOrder) => dispatch(setSortOrderAction(sortOrder)),
+    clearNameAction: () => dispatch(clearNameAction()),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
     clearAppliedFilters: () => dispatch(clearAppliedFilters()),

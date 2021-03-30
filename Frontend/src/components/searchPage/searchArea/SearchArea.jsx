@@ -6,6 +6,7 @@ import ExperienceSlider from "./ExperienceSlider";
 import ApplyFilterWidget from "./ApplyFilterWidget";
 import { makeStyles } from "@material-ui/core";
 import { connect } from "react-redux";
+import { filterTypeEnum } from "states/filterState";
 
 const useStyles = makeStyles({
     loading: {
@@ -44,14 +45,26 @@ function ApplyFilterArea(props) {
             {loaded ? (
                 <div className="filter-widgets">
                     <ExperienceSlider />
-                    <ApplyFilterWidget type="location" isCategorized={false} />
-                    <ApplyFilterWidget type="title" isCategorized={false} />
-                    <ApplyFilterWidget type="company" isCategorized={false} />
                     <ApplyFilterWidget
-                        type="department"
+                        type={filterTypeEnum.LOCATION}
                         isCategorized={false}
                     />
-                    <ApplyFilterWidget type="skill" isCategorized={true} />
+                    <ApplyFilterWidget
+                        type={filterTypeEnum.TITLE}
+                        isCategorized={false}
+                    />
+                    <ApplyFilterWidget
+                        type={filterTypeEnum.COMPANY}
+                        isCategorized={false}
+                    />
+                    <ApplyFilterWidget
+                        type={filterTypeEnum.DEPARTMENT}
+                        isCategorized={false}
+                    />
+                    <ApplyFilterWidget
+                        type={filterTypeEnum.SKILL}
+                        isCategorized={true}
+                    />
                 </div>
             ) : (
                 <div className="apply-filter-loading">

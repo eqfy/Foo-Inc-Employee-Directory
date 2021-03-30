@@ -38,18 +38,12 @@ const useStyles = makeStyles({
         marginBottom: 0,
     },
     myProfileMenuItem: {
-        textDecoration: 'none !important',
+        textDecoration: "none !important",
     },
 });
 
 function Header(props) {
-    const {
-        focusedWorkerId,
-        currWorkerId,
-        isAdmin,
-        currWorkerImgURL,
-        currWorkerName,
-    } = props;
+    const { focusedWorkerId, currWorkerId, isAdmin, currWorkerImgURL } = props;
     const [currentTabIndex, setCurrentTabIndex] = React.useState(
         props.activeTabIndex
     );
@@ -82,8 +76,11 @@ function Header(props) {
     const handlePopoverOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
-
     const handlePopoverClose = (_event) => {
+        setAnchorEl(null);
+    };
+    const handleMyProfileClick = () => {
+        setCurrentTabIndex(1);
         setAnchorEl(null);
     };
 
@@ -148,7 +145,6 @@ function Header(props) {
                         id="user-menu"
                         anchorEl={anchorEl}
                         getContentAnchorEl={null}
-                        
                         anchorOrigin={{
                             vertical: "bottom",
                             horizontal: "center",
@@ -166,9 +162,9 @@ function Header(props) {
                             classes={{ root: classes.myProfileMenuItem }}
                             component={Link}
                             to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
-                            onClick={handlePopoverClose}
+                            onClick={handleMyProfileClick}
                         >
-                            {currWorkerName}
+                            My profile
                         </MenuItem>
                         <MenuItem
                             classes={{ root: classes.myProfileMenuItem }}
@@ -196,7 +192,6 @@ const mapStateToProps = (state) => {
         currWorkerId,
         isAdmin,
         currWorkerImgURL: currWorker.image || "",
-        currWorkerName: currWorker.firstName + " " + currWorker.lastName,
     };
 };
 

@@ -7,6 +7,6 @@ export const SortKeyEnum = {
 export const defualtSearchPageState = {
     resultOrder: [],
     pageNumber: 1,
-    isAscending: false,
+    isAscending: true,
     sortKey: SortKeyEnum.FIRST_NAME,
 };
