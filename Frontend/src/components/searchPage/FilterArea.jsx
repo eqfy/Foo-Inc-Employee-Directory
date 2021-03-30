@@ -261,6 +261,7 @@ const useStyles = makeStyles(() => ({
         display: "flex",
         minHeight: "42px",
         justifyContent: "left",
+        alignItems: "center",
         flexWrap: "wrap",
     },
     sortingArea: {
@@ -276,6 +277,7 @@ const useStyles = makeStyles(() => ({
     },
     deleteAllButton: {
         color: "rgba(0, 0, 0, 0.88)",
+        marginLeft: "auto",
     },
     deleteAllToolTip: {
         backgroundColor: "white",
