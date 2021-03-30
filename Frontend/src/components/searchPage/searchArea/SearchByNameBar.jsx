@@ -1,5 +1,5 @@
-import { Avatar, TextField, Typography } from "@material-ui/core";
-import { Autocomplete, AvatarGroup } from "@material-ui/lab";
+import { TextField, Typography } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import { clearNameAction, setNameAction } from "actions/filterAction";
 import { setFocusedWorkerId } from "actions/generalAction";
 import {
@@ -44,15 +44,11 @@ function SearchByNameBar(props) {
                                     option.firstName + option.lastName
                                 ] = option;
                                 option.count = 1;
-                                option.images = [option.imageURL];
                                 return true;
                             } else {
                                 seen[
                                     option.firstName + option.lastName
                                 ].count += 1;
-                                seen[
-                                    option.firstName + option.lastName
-                                ].images.push(option.imageURL);
                             }
                             return false;
                         });
