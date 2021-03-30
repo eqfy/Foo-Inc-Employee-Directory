@@ -1,5 +1,5 @@
-import { TextField, Typography } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+import { Avatar, TextField, Typography } from "@material-ui/core";
+import { Autocomplete, AvatarGroup } from "@material-ui/lab";
 import { clearNameAction, setNameAction } from "actions/filterAction";
 import { setFocusedWorkerId } from "actions/generalAction";
 import {
@@ -37,7 +37,26 @@ function SearchByNameBar(props) {
                 const { first, last } = parseFullName(name);
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
-                        setOptions(response);
+                        const seen = {};
+                        const uniqueResponse = response.filter((option) => {
+                            if (!seen[option.firstName + option.lastName]) {
+                                seen[
+                                    option.firstName + option.lastName
+                                ] = option;
+                                option.count = 1;
+                                option.images = [option.imageURL];
+                                return true;
+                            } else {
+                                seen[
+                                    option.firstName + option.lastName
+                                ].count += 1;
+                                seen[
+                                    option.firstName + option.lastName
+                                ].images.push(option.imageURL);
+                            }
+                            return false;
+                        });
+                        setOptions(uniqueResponse);
                     })
                     .catch((err) => {
                         console.error("Search by name endpoint failed: ", err);
@@ -99,10 +118,19 @@ function SearchByNameBar(props) {
                     className={"search-dropdown-entry"}
                     onClick={handleDropdownOptionClick(option, state)}
                 >
-                    <img
-                        src={option.imageURL || "/workerPlaceholder.png"}
-                        alt={"workerPhoto"}
-                    />
+                    {option.count === 1 ? (
+                        <img
+                            src={option.imageURL || "/workerPlaceholder.png"}
+                            alt={"workerPhoto"}
+                        />
+                    ) : (
+                        <div className="grouped-options">
+                            <span className="grouped-count">
+                                {option.count}
+                            </span>{" "}
+                            <span className="grouped-count-text">Found</span>
+                        </div>
+                    )}
                     <Typography noWrap>
                         {`${option.firstName} ${option.lastName}`}
                     </Typography>
