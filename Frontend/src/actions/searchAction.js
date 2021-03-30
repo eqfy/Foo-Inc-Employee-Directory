@@ -1,18 +1,6 @@
 import { WorkerTypeEnum } from "states/appState";
 import { searchWorker } from "../api/search";
-import {
-    clearAppliedFilters,
-    setExperienceAction,
-    setFiltersChanged,
-} from "./filterAction";
-
-export const searchWithAppliedFilterByNameAction = () => (dispatch) => {
-    // The first search by name returns a list of possible values for the name
-    // If the user then proceeds to click on a name, then we clear all existing filters and
-    // do a regular search with name as the only filter
-    dispatch(clearAppliedFilters());
-    dispatch(searchWithAppliedFilterAction());
-};
+import { setExperienceAction, setFiltersChanged } from "./filterAction";
 
 export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
     const currState = getState();

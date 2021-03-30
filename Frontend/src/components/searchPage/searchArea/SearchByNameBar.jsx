@@ -1,11 +1,12 @@
 import { TextField, Typography } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-import { clearNameAction, setNameAction } from "actions/filterAction";
-import { setFocusedWorkerId } from "actions/generalAction";
 import {
-    searchWithAppliedFilterAction,
-    searchWithAppliedFilterByNameAction,
-} from "actions/searchAction";
+    clearAppliedFilters,
+    clearNameAction,
+    setNameAction,
+} from "actions/filterAction";
+import { setFocusedWorkerId } from "actions/generalAction";
+import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { getPredictiveSearchAPI } from "api/predictiveSearchAPI";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { parseFullName } from "parse-full-name";
@@ -17,13 +18,17 @@ import "./SearchArea.css";
 const searchByNameTimer = {};
 
 function SearchByNameBar(props) {
+    // The first search by name returns a list of possible name values
+    // If the user then proceeds to click on a name, then we clear all existing filters
+    // (except workerType, sortKey and sortDirection)
+    // and do a regular search with the selected name
     const {
         firstName,
         lastName,
         searchWithAppliedFilterAction,
-        searchWithAppliedFilterByNameAction,
         setNameAction,
         clearNameAction,
+        clearAppliedFilters,
         setFocusedWorkerId,
     } = props;
     const [options, setOptions] = React.useState([]);
@@ -76,13 +81,14 @@ function SearchByNameBar(props) {
 
     const handleDropdownOptionClick = (option, state) => () => {
         setInputValue(option.firstName + " " + option.lastName);
+        clearAppliedFilters();
         setNameAction({
             firstName: option.firstName,
             lastName: option.lastName,
         });
         setFocusedWorkerId(option.employeeNumber);
         coordinatedDebounce(
-            searchWithAppliedFilterByNameAction,
+            searchWithAppliedFilterAction,
             SearchWithFilterTimer
         )();
     };
@@ -149,12 +155,11 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    searchWithAppliedFilterByNameAction: () =>
-        dispatch(searchWithAppliedFilterByNameAction()),
     setNameAction: (name) => dispatch(setNameAction(name)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
     clearNameAction: () => dispatch(clearNameAction()),
+    clearAppliedFilters: () => dispatch(clearAppliedFilters()),
     setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
