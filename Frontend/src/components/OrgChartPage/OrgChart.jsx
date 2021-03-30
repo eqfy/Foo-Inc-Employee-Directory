@@ -31,7 +31,7 @@ const useStyles = makeStyles({
         borderColor: "black",
         "&.current": {
             borderColor: "#00569C",
-            "&:hover": {
+            "&:hover, &.nodeSelected": {
                 boxShadow: "0 0 3px 3px #004680",
             },
         },
@@ -44,9 +44,9 @@ const useStyles = makeStyles({
         "&:hover": {
             cursor: "default",
             boxShadow: "0 0 3px 3px black",
-            "&.nodeSelected": {
-                boxShadow: "0 0 3px 3px black",
-            },
+        },
+        "&.nodeSelected": {
+            boxShadow: "0 0 3px 3px black",
         },
         display: "flex",
     },
