@@ -1,42 +1,33 @@
 import React from "react";
-import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import { PageContainer } from "./common/PageContainer";
 import ResultsArea from "./searchPage/ResultsArea";
 import SearchArea from "./searchPage/searchArea/SearchArea";
 import FilterArea from "./searchPage/FilterArea";
-import { Grid, styled, makeStyles } from "@material-ui/core";
-import { SEARCH_AREA_WIDTH } from "./common/constants";
-
-const useStyles = makeStyles((theme) => ({
-    gridContainer: {
-        marginTop: 20,
-        [theme.breakpoints.up("sm")]: {
-            flexWrap: "nowrap",
-        },
-        [theme.breakpoints.only("xs")]: {
-            flexWrap: "wrap",
-        },
-    },
-}));
+import { Grid, makeStyles } from "@material-ui/core";
 
 export const SearchWithFilterTimer = {};
 
 export function SearchPageContainer(props) {
-    const styles = useStyles();
-
+    const classes = useStyles();
     return (
         // TODO: Refactor so this container div doesn't need to be added for every page container
         <PageContainer>
             <Grid
                 container
-                classes={{ root: styles.gridContainer }}
+                className=""
                 spacing={1}
+                wrap="nowrap"
+                classes={{ root: classes.gridContainer }}
             >
-                <StyledSearchAreaGridItem item sm={2} xs={12}>
+                <Grid item xs={2} classes={{ root: classes.searchAreaItem }}>
                     <SearchArea />
-                </StyledSearchAreaGridItem>
-                <Grid item sm={10} xs={12}>
+                </Grid>
+                <Grid
+                    item
+                    xs={10}
+                    classes={{ root: classes.filterAndResultAreaItem }}
+                >
                     <FilterArea />
                     <ResultsArea />
                 </Grid>
@@ -45,19 +36,16 @@ export function SearchPageContainer(props) {
     );
 }
 
-const mapStateToProps = (state) => {
-    // TODO get the current filter info from the state
-    return {};
-};
+export default withRouter(SearchPageContainer);
 
-const mapDispatchToProps = () => ({
-    // TODO dispatches setFilters
-});
-
-export default withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(SearchPageContainer)
-);
-
-const StyledSearchAreaGridItem = styled(Grid)({
-    minWidth: SEARCH_AREA_WIDTH,
+const useStyles = makeStyles({
+    gridContainer: {
+        marginTop: 20,
+    },
+    searchAreaItem: {
+        minWidth: 250,
+    },
+    filterAndResultAreaItem: {
+        minWidth: 900,
+    },
 });
