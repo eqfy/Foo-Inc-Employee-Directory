@@ -11,7 +11,6 @@ import OrgChartIcon from "./OrgChartIcon";
 import "../common/Common.css";
 import React, { useEffect } from "react";
 import { PagePathEnum } from "./constants";
-import ProfileIcon from "./ProfileIcon";
 
 const useStyles = makeStyles({
     card: {
@@ -23,6 +22,9 @@ const useStyles = makeStyles({
         marginLeft: "auto",
         marginRight: "auto",
         "&.link-to-profile:hover": {
+            boxShadow: "0 0 3px 3px black",
+        },
+        "&.link-to-profile.cardSelected": {
             boxShadow: "0 0 3px 3px black",
         },
     },
@@ -43,12 +45,17 @@ const useStyles = makeStyles({
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "nowrap",
+        transition: "opacity 0.5s ease",
+        opacity: 1,
         cursor: "text",
         "&.card-text-too-long + p": {
             visibility: "visible",
             "&:hover": {
                 opacity: 1,
             },
+        },
+        ".cardSelected &.card-text-too-long + p": {
+            opacity: 1,
         },
     },
 
@@ -77,7 +84,15 @@ const useStyles = makeStyles({
 
 export default function EmployeeCard(props) {
     // linkToProfile: employeeCard in profile page does not need to redirect to itself
-    const { employee, linkToProfile } = props;
+    // offset: to set and identify current selected card
+    const {
+        employee,
+        linkToProfile,
+        cardIndexOnPage,
+        selectedIndexOnPage,
+        setSelectedIndexOnPage,
+        setCardClicked,
+    } = props;
     const classes = useStyles();
 
     const history = useHistory();
@@ -176,9 +191,19 @@ export default function EmployeeCard(props) {
     return (
         <CardContainer>
             <Card
-                className={linkToProfile ? "link-to-profile" : ""}
+                className={`${linkToProfile ? "link-to-profile" : ""} ${
+                    cardIndexOnPage === selectedIndexOnPage
+                        ? "cardSelected"
+                        : ""
+                }`}
                 classes={{ root: classes.card }}
                 variant="outlined"
+                onClick={() => {
+                    if (setCardClicked && setSelectedIndexOnPage) {
+                        setCardClicked(true);
+                        setSelectedIndexOnPage(cardIndexOnPage);
+                    }
+                }}
                 onDoubleClick={() => {
                     if (linkToProfile) {
                         history.push(
@@ -187,15 +212,6 @@ export default function EmployeeCard(props) {
                     }
                 }}
             >
-                {linkToProfile ? (
-                    <PositionProfileIconDiv>
-                        <Link
-                            to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
-                        >
-                            <StyledProfileIcon />
-                        </Link>
-                    </PositionProfileIconDiv>
-                ) : null}
                 <PositionOrgChartIconDiv>
                     <Link
                         to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
@@ -217,32 +233,12 @@ export default function EmployeeCard(props) {
     );
 }
 
-const PositionProfileIconDiv = styled.div`
-    position: relative;
-    left: 4%;
-    top: 26px;
-    width: 0;
-    height: 0;
-`;
-
 const PositionOrgChartIconDiv = styled.div`
     position: relative;
     left: 86%;
     top: 26px;
     width: 0;
     height: 0;
-`;
-
-const StyledProfileIcon = styled(ProfileIcon)`
-    position: absolute;
-    circle {
-        transition: fill 0.25s;
-    }
-    &:hover {
-        circle {
-            fill: midnightblue;
-        }
-    }
 `;
 
 const StyledOrgChartIcon = styled(OrgChartIcon)`

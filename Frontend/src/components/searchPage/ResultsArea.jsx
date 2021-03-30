@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import EmployeeCard from "../common/EmployeeCard";
 import { Pagination } from "@material-ui/lab";
 import styled from "styled-components";
@@ -7,38 +7,23 @@ import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import {
-    createMuiTheme,
-    Grid,
-    makeStyles,
-    ThemeProvider,
-} from "@material-ui/core";
+import { Grid, makeStyles } from "@material-ui/core";
 
 const entriesPerPage = 8;
 
 const gridWidth = 260;
+const gridHeight = 266;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
     loading: {
         color: "#00569c",
     },
     gridContainer: {
+        width: gridWidth * 4,
         marginLeft: "auto",
         marginRight: "auto",
-        [theme.breakpoints.only("xs")]: {
-            width: gridWidth,
-        },
-        [theme.breakpoints.only("sm")]: {
-            width: gridWidth * 2,
-        },
-        [theme.breakpoints.only("md")]: {
-            width: gridWidth * 3,
-        },
-        [theme.breakpoints.up("lg")]: {
-            width: gridWidth * 4,
-        },
     },
-}));
+});
 
 function ResultsArea(props) {
     const {
@@ -49,24 +34,48 @@ function ResultsArea(props) {
         loading,
     } = props;
 
+    const [selectedIndexOnPage, setSelectedIndexOnPage] = useState(-1);
+
+    // workaround for handling background and card both onClick
+    const [cardClicked, setCardClicked] = useState(false);
+    const [gridClickToggle, setGridClickToggle] = useState(true);
+
     const handleChange = (_event, value) => {
+        setSelectedIndexOnPage(-1);
         updatePage(value);
     };
+
+    useEffect(() => {
+        if (cardClicked) {
+            setCardClicked(false);
+        } else {
+            setSelectedIndexOnPage(-1);
+        }
+    }, [gridClickToggle]);
 
     const styles = useStyles();
 
     const emptyDiv = () => {
-        return <div style={{ height: 265 }}></div>;
+        return <div style={{ height: gridHeight }}></div>;
     };
 
     const getEmployee = (index) => {
-        if (index < resultOrder.length) {
-            const employeeId = resultOrder[index];
+        if (offset + index < resultOrder.length) {
+            const employeeId = resultOrder[offset + index];
             const employee = employeeId && byId[employeeId];
             return (
                 // <div className="card-grid-col">
                 employee ? (
-                    <EmployeeCard employee={employee} linkToProfile={true} />
+                    <EmployeeCard
+                        employee={employee}
+                        linkToProfile={true}
+                        cardIndexOnPage={index}
+                        selectedIndexOnPage={selectedIndexOnPage}
+                        setSelectedIndexOnPage={setSelectedIndexOnPage.bind(
+                            this
+                        )}
+                        setCardClicked={setCardClicked.bind(this)}
+                    />
                 ) : (
                     emptyDiv()
                 )
@@ -80,9 +89,9 @@ function ResultsArea(props) {
     const employeeList = [];
 
     for (let i = 0; i < entriesPerPage; i++) {
-        const employee = getEmployee(offset + i);
+        const employee = getEmployee(i);
         employeeList.push(
-            <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+            <Grid item xs={3} key={i}>
                 {employee}
             </Grid>
         );
@@ -90,24 +99,30 @@ function ResultsArea(props) {
 
     return (
         <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
-            <Grid
-                container
-                spacing={2}
-                classes={{ root: styles.gridContainer }}
-                justify="center"
+            <div
+                onClick={() => {
+                    setGridClickToggle(!gridClickToggle);
+                }}
             >
-                {employeeList}
-                <Grid item xs={12}>
-                    <StyledPagination
-                        count={Math.max(
-                            Math.ceil(resultOrder.length / entriesPerPage),
-                            1
-                        )}
-                        page={pageNumber}
-                        onChange={handleChange}
-                    />
+                <Grid
+                    container
+                    spacing={2}
+                    justify="center"
+                    classes={{ root: styles.gridContainer }}
+                >
+                    {employeeList}
+                    <Grid item xs={12}>
+                        <StyledPagination
+                            count={Math.max(
+                                Math.ceil(resultOrder.length / entriesPerPage),
+                                1
+                            )}
+                            page={pageNumber}
+                            onChange={handleChange}
+                        />
+                    </Grid>
                 </Grid>
-            </Grid>
+            </div>
         </LoadingResult>
     );
 }

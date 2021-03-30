@@ -31,19 +31,22 @@ const useStyles = makeStyles({
         borderColor: "black",
         "&.current": {
             borderColor: "#00569C",
-            "&:hover:not(.contractor)": {
+            "&:hover": {
                 boxShadow: "0 0 3px 3px #004680",
             },
         },
-        "&.contractor": {
+        "&.contractor:not(.current)": {
             borderColor: "#FF9900",
-            "&:hover": {
+            "&:hover, &.nodeSelected": {
                 boxShadow: "0 0 3px 3px #CC7A00",
             },
         },
         "&:hover": {
             cursor: "default",
             boxShadow: "0 0 3px 3px black",
+            "&.nodeSelected": {
+                boxShadow: "0 0 3px 3px black",
+            },
         },
         display: "flex",
     },
@@ -151,101 +154,108 @@ function OrgChartSearchBar(props) {
     );
 }
 
-let setHideTop;
-let setHideBottom;
-let orgChartHideTop = false;
-let orgChartHideBottom = false;
-
 function OrgChartNode(props) {
     const classes = useStyles();
     const history = useHistory();
 
-    const data = props.nodeData;
+    const {
+        nodeData,
+        selectedIdOnChart,
+        setSelectedIdOnChart,
+        hideTop,
+        setHideTop,
+        hideBottom,
+        setHideBottom,
+    } = props;
 
     // Add classes to display full text in a floating div if name/title is too long
     useEffect(() => {
         const nameText = document.getElementsByClassName(
-            `card-name-${data.id}`
+            `card-name-${nodeData.id}`
         )[0];
         if (nameText.clientWidth < nameText.scrollWidth) {
             nameText.classList.add("card-text-too-long");
         }
 
         const titleText = document.getElementsByClassName(
-            `card-title-${data.id}`
+            `card-title-${nodeData.id}`
         )[0];
         if (titleText.clientWidth < titleText.scrollWidth) {
             titleText.classList.add("card-text-too-long");
         }
 
         const emailText = document.getElementsByClassName(
-            `card-email-${data.id}`
+            `card-email-${nodeData.id}`
         )[0];
         if (emailText.clientWidth < emailText.scrollWidth) {
             emailText.classList.add("card-text-too-long");
         }
-    }, [data.id]);
+    }, [nodeData.id]);
 
     const card = (
         <Card
             variant="outlined"
-            className={`${data.isCurrent ? "current" : ""} ${
-                data.isContractor ? "contractor" : ""
-            }`}
+            className={`${nodeData.isCurrent ? "current" : ""} ${
+                nodeData.isContractor ? "contractor" : ""
+            } ${nodeData.id === selectedIdOnChart ? "nodeSelected" : ""}`}
             classes={{ root: classes.card }}
+            onClick={() => {
+                setSelectedIdOnChart(nodeData.id);
+            }}
             onDoubleClick={() => {
                 setHideTop(false);
                 setHideBottom(false);
-                if (!data.isCurrent) {
-                    history.push(`${PagePathEnum.ORGCHART}/` + data.id);
+                setSelectedIdOnChart("");
+                if (!nodeData.isCurrent) {
+                    history.push(`${PagePathEnum.ORGCHART}/` + nodeData.id);
                 }
             }}
         >
             <CardMedia
-                image={data.image || "/workerPlaceholder.png"}
+                image={nodeData.image || "/workerPlaceholder.png"}
                 classes={{ root: classes.cardMedia }}
             />
             <CardContent classes={{ root: classes.cardContent }}>
                 <Typography
                     classes={{ root: classes.cardText }}
-                    className={`card-name-${data.id}`}
+                    className={`card-name-${nodeData.id}`}
                 >
-                    <b>{data.name}</b>
+                    <b>{nodeData.name}</b>
                 </Typography>
                 <Typography className={"card-name-extension"}>
-                    <b>{data.name}</b>
+                    <b>{nodeData.name}</b>
                 </Typography>
                 <Typography
                     classes={{ root: classes.cardText }}
-                    className={`card-title-${data.id}`}
+                    className={`card-title-${nodeData.id}`}
                 >
-                    {data.title}
+                    {nodeData.title}
                 </Typography>
                 <Typography className={"card-title-extension"}>
-                    {data.title}
+                    {nodeData.title}
                 </Typography>
                 <Typography
                     classes={{ root: classes.cardText }}
-                    className={`card-email-${data.id}`}
+                    className={`card-email-${nodeData.id}`}
                 >
-                    {data.email}
+                    {nodeData.email}
                 </Typography>
                 <Typography className={"card-email-extension"}>
-                    {data.email}
+                    {nodeData.email}
                 </Typography>
             </CardContent>
         </Card>
     );
 
-    if (data.isCurrent) {
+    if (nodeData.isCurrent) {
         return (
             <div>
                 <div
                     className={`node-expander-top ${
-                        orgChartHideTop ? "arrow-up" : "arrow-down"
+                        hideTop ? "arrow-up" : "arrow-down"
                     }`}
                     onClick={() => {
-                        setHideTop(!orgChartHideTop);
+                        setHideTop(!hideTop);
                     }}
                 >
                     <PlayCircleFilledWhiteIcon />
@@ -253,10 +263,10 @@ function OrgChartNode(props) {
                 {card}
                 <div
                     className={`node-expander-bottom ${
-                        orgChartHideBottom ? "arrow-down" : "arrow-up"
+                        hideBottom ? "arrow-down" : "arrow-up"
                     }`}
                     onClick={() => {
-                        setHideBottom(!orgChartHideBottom);
+                        setHideBottom(!hideBottom);
                     }}
                 >
                     <PlayCircleFilledWhiteIcon />
@@ -271,24 +281,12 @@ function OrgChartNode(props) {
 function OrgChart(props) {
     const classes = useStyles();
 
-    const [hideTop, reactSetHideTop] = React.useState(false);
-    const [hideBottom, reactSetHideBottom] = React.useState(false);
+    const [hideTop, setHideTop] = React.useState(false);
+    const [hideBottom, setHideBottom] = React.useState(false);
+
+    const [selectedIdOnChart, setSelectedIdOnChart] = React.useState("");
 
     const params = useParams();
-
-    setHideTop = (hide) => {
-        orgChartHideTop = hide;
-        reactSetHideTop(orgChartHideTop);
-    };
-
-    setHideTop = setHideTop.bind(this);
-
-    setHideBottom = (hide) => {
-        orgChartHideBottom = hide;
-        reactSetHideBottom(orgChartHideBottom);
-    };
-
-    setHideBottom = setHideBottom.bind(this);
 
     useEffect(() => {
         props.setOrgChart(params["workerId"]);
@@ -332,7 +330,20 @@ function OrgChart(props) {
             pan={true}
             zoominLimit={1}
             zoomoutLimit={0.4}
-            NodeTemplate={OrgChartNode}
+            NodeTemplate={(nodeData) =>
+                OrgChartNode({
+                    ...nodeData,
+                    selectedIdOnChart: selectedIdOnChart,
+                    setSelectedIdOnChart: setSelectedIdOnChart.bind(this),
+                    hideTop: hideTop,
+                    setHideTop: setHideTop.bind(this),
+                    hideBottom: hideBottom,
+                    setHideBottom: setHideBottom.bind(this),
+                })
+            }
+            onClickChart={() => {
+                setSelectedIdOnChart("");
+            }}
         />
     );
 

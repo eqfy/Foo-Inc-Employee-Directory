@@ -137,6 +137,12 @@
     cursor: text;
 }
 
+.nodeSelected .card-text-too-long + .card-name-extension,
+.nodeSelected .card-text-too-long + .card-title-extension,
+.nodeSelected .card-text-too-long + .card-email-extension {
+    opacity: 1;
+}
+
 .card-text-too-long + .card-name-extension:hover,
 .card-text-too-long + .card-title-extension:hover,
 .card-text-too-long + .card-email-extension:hover {
