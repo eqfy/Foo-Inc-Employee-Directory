@@ -7,8 +7,8 @@ import {
     KeyboardDatePicker,
   } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import { insertContractorAPI } from "../api/contractor";
+import { makeStyles } from "@material-ui/core/styles";
+import { insertContractorAPI, getOfficeLocations, getGroups } from "../api/contractor";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
@@ -31,11 +31,8 @@ function AddContractor(props) {
     } = props;
 
     const classes = useStyles();
-    const {companyAllId, departmentAllId, locationAllId, skillAllId} = filterData;
+    const {companyAllId, locationAllId, skillAllId} = filterData;
     
-    // TODO: Fetch from backend/redux
-    const tempLocations = ['Corporate', 'Vancouver', 'Prince George'];
-
     let skillsByCategory = [];
     for (const category in skillAllId){
         for(const skill of skillAllId[category]){
@@ -51,8 +48,12 @@ function AddContractor(props) {
         cellPhone: '',
         snackBar: {},
         profilePic: {},
-        supervisor: {}
+        supervisor: {},
+        selectedCompanyCode: '',
+        groupCodesField:{},
+        officeCodesField:{}
     })
+
    // counter for timeout in case of supervisor input change
     const predictiveSearchTimer = {};
 
@@ -99,6 +100,54 @@ function AddContractor(props) {
             })
         }
     };
+
+    const handleCompanyTextFieldChange = (event, values) => {
+        // get office locations
+        let selectedCompanyCode = values;
+        let officeCodesField = formState.officeCodesField;
+        getOfficeLocations(values)
+        .then((response) => {
+            officeCodesField['isVisible'] = true;
+            officeCodesField['options'] = response;
+            setFormState({
+                ...formState,
+                selectedCompanyCode,
+                officeCodesField,
+            })
+        })
+        .catch((err) => {
+            // handle errors
+            console.log(err);
+        });
+    }
+
+    const handleOfficeTextFieldChange = (event, values) => {
+        // get group codes
+        let groupCodesField = formState.groupCodesField;
+        let requestPayload = {
+            companyName: formState.selectedCompanyCode,
+            officeName: values,
+        } 
+        setFormState({
+            ...formState,
+            groupCodesField,
+        })
+        getGroups(requestPayload)
+        .then((response) => {
+            // handle response array
+            groupCodesField['isVisible'] = true;
+            groupCodesField['options'] = response;
+            setFormState({
+                ...formState,
+                groupCodesField,
+            })
+        })
+        .catch((err) => {
+            // handle errors
+            console.log(err);
+        });
+
+    }
 
     function Alert(props) {
         return <MuiAlert elevation={6} variant="filled" {... props} />
@@ -486,8 +535,49 @@ async function uploadProfilePicture (){
                         />
                         </Grid>
                         <Grid item xs={6}>
-                    <Autocomplete
-                            options={departmentAllId}
+                        <Autocomplete
+                            options={companyAllId}
+                            getOptionLabel={(option) => option}
+                            onChange={handleCompanyTextFieldChange}
+                            renderInput={(params) => (
+                                <TextField 
+                                    {...params} 
+                                    name="companyName"
+                                    variant="outlined" 
+                                    label="Company"
+                                    placeholder="Acme Seeds Inc." 
+                                    size="small"
+                                    required
+                                    className= {classes.textField}
+                                    />
+                        )} />
+                        </Grid>
+                        </Grid>
+                <Grid container spacing={1} xs={9}>
+                        <Grid item xs={6}>
+                        {formState.officeCodesField['isVisible']? 
+                        <Autocomplete
+                            options={formState.officeCodesField['options']}
+                            getOptionLabel={(option) => option}
+                            onChange={handleOfficeTextFieldChange}
+                            renderInput={(params) => (
+                                <TextField 
+                                    {...params} 
+                                    name="officeLocation"
+                                    variant="outlined" 
+                                    label="Office Location"
+                                    placeholder="Corporate" 
+                                    size="small"
+                                    required
+                                    className= {classes.textField}
+                                    />
+                            )}
+                        />: ''}
+                        </Grid>
+                        <Grid item xs={6}>
+                    { formState.groupCodesField['isVisible']? 
+                        <Autocomplete
+                            options={formState.groupCodesField['options']}
                             getOptionLabel={(option) => option}
                             renderInput={(params) => (
                                 <TextField 
@@ -501,45 +591,7 @@ async function uploadProfilePicture (){
                                     className= {classes.textField}
                                     />
                         )}
-                        />
-                        </Grid>
-                        </Grid>
-                <Grid container spacing={1} xs={9}>
-                    <Grid item xs={6}>
-                    <Autocomplete
-                            options={companyAllId}
-                            getOptionLabel={(option) => option}
-                            renderInput={(params) => (
-                                <TextField 
-                                    {...params} 
-                                    name="companyName"
-                                    variant="outlined" 
-                                    label="Company"
-                                    placeholder="Acme Seeds Inc." 
-                                    size="small"
-                                    required
-                                    className= {classes.textField}
-                                    />
-                        )}
-                        />
-                        </Grid>
-                        <Grid item xs={6}>
-                        <Autocomplete
-                            options={tempLocations}
-                            getOptionLabel={(option) => option}
-                            renderInput={(params) => (
-                                <TextField 
-                                    {...params} 
-                                    name="officeLocation"
-                                    variant="outlined" 
-                                    label="Office Location"
-                                    placeholder="Corporate" 
-                                    size="small"
-                                    required
-                                    className= {classes.textField}
-                                    />
-                        )}
-                        />
+                        />:''}
                         </Grid>
                         </Grid>
                         <h3><u>Skills</u></h3>
