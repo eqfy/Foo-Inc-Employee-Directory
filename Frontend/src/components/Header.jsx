@@ -164,7 +164,7 @@ function Header(props) {
                             to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
                             onClick={handleMyProfileClick}
                         >
-                            My Profile
+                            My profile
                         </MenuItem>
                         <MenuItem
                             classes={{ root: classes.myProfileMenuItem }}
