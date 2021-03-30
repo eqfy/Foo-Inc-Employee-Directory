@@ -56,7 +56,7 @@ function ResultsArea(props) {
     const styles = useStyles();
 
     const emptyDiv = () => {
-        return <div style={{ height: 260 }}></div>;
+        return <div style={{ height: 265 }}></div>;
     };
 
     const getEmployee = (index) => {
