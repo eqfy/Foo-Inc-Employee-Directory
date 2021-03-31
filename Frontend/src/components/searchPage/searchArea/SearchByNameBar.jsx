@@ -25,6 +25,8 @@ const searchByNameTimer = {};
 const useStyles = makeStyles({
     loading: {
         color: "#00569c",
+        marginLeft: "auto",
+        marginRight: "auto",
     },
 });
 
@@ -79,7 +81,7 @@ function SearchByNameBar(props) {
                         setOptions([]);
                     })
                     .finally(() => {
-                        // setLoading(false);
+                        setLoading(false);
                     });
             }, searchByNameTimer)(inputValue);
         } else if (
