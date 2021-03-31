@@ -1,4 +1,4 @@
-name: CICD Workflow
+name: CI/CD Workflow
 # This workflow is triggered on pushes to the repository branch master.
 on:
   push:
