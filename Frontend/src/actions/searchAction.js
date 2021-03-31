@@ -10,11 +10,16 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
         searchPageState: { resultOrder, pageNumber },
     } = currState;
 
-    if (!filtersChanged && resultOrder[getPageOffset(pageNumber)]) {
+    const pageNumberToSearch = getPageNumberToSearch(pageNumber, resultOrder);
+    if (
+        !filtersChanged &&
+        resultOrder[getPageOffset(pageNumber)] &&
+        pageNumberToSearch === pageNumber
+    ) {
         return;
     }
+    const payload = createSearchPayload(currState, pageNumberToSearch);
 
-    const payload = createSearchPayload(currState);
     searchWorker(payload)
         .then((response) => {
             let workersById = {};
@@ -29,7 +34,7 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
             response.data.forEach((worker, index) => {
                 workersById[worker.employeeNumber] = worker;
                 workersAllId.push(worker.employeeNumber);
-                newResultOrder[index + getPageOffset(pageNumber)] =
+                newResultOrder[index + getPageOffset(pageNumberToSearch)] =
                     worker.employeeNumber;
             });
             dispatch({
@@ -78,7 +83,7 @@ export const setPageAction = (payload) => (dispatch) => {
     dispatch(searchWithAppliedFilterAction());
 };
 
-const createSearchPayload = (state) => {
+const createSearchPayload = (state, pageNumberOverride) => {
     const {
         appState: {
             skillState = {},
@@ -107,15 +112,37 @@ const createSearchPayload = (state) => {
         division: departmentState,
         companyName: companyState,
         shownWorkerType: shownWorkerType,
-        offset: getPageOffset(pageNumber),
+        offset: getPageOffset(pageNumberOverride || pageNumber),
         fetch: PagesToFetch * ResultEntryPerPage,
         orderBy: sortKey,
         orderDir: isAscending ? "ASC" : "DESC",
     };
     if (firstName !== "" || lastName !== "") {
-        payload = { ...payload, firstName, lastName };
+        payload.firstName = firstName;
+        payload.lastName = lastName;
     }
     return payload;
 };
 
 const getPageOffset = (pageNumber) => (pageNumber - 1) * ResultEntryPerPage;
+
+const getPageNumberToSearch = (pageNumber = 1, resultOrder = []) => {
+    const halfPagesToFetch = Math.floor(PagesToFetch / 2);
+    const maxPages = Math.ceil(resultOrder.length / ResultEntryPerPage);
+    const prevPage = Math.max(pageNumber - 1, 1);
+    const nextPage = Math.min(pageNumber + 1, maxPages);
+    const prevPagePresent = resultOrder[getPageOffset(prevPage)];
+    const nextPagePresent = resultOrder[getPageOffset(nextPage)];
+
+    // If the prevPage and nextPage don't exist, then fetch the pages around the current pageNumber
+    // Right now this should be only used by the first page load or switching to the last page
+    // because the user cannot go directly to a page in the middle with the current pagination design
+    if (!prevPagePresent && !nextPagePresent) {
+        return Math.max(pageNumber - halfPagesToFetch, 1);
+    } else if (!prevPagePresent) {
+        return Math.max(pageNumber - PagesToFetch, 1);
+    } else if (!nextPagePresent) {
+        return Math.min(nextPage, maxPages);
+    }
+    return pageNumber;
+};
