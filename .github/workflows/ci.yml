@@ -12,7 +12,7 @@ env:
   
 jobs:
   deploy:
-    name: Build And Deploy
+    name: Build and Deploy
     # This job runs on Linux
     runs-on: ubuntu-latest
     steps:
@@ -35,7 +35,7 @@ jobs:
         with:
           dotnet-version: 5.0.x
       # Build and Deploy CDK application
-      - name: Build & Deploy Backend
+      - name: Build and Deploy
         run: |
           cd $GITHUB_WORKSPACE
           chmod 700 deployCI.sh

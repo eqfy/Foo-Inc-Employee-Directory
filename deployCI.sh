@@ -9,7 +9,7 @@ cdk deploy ProjectStack --outputs-file Frontend/src/endpoint.json --require-appr
 cd Frontend
 echo "***Building frontend***"
 yarn install
-yarn build
+CI='' yarn build
 cd ..
 echo "***Deploying frontend***"
 cdk deploy FrontendStack --require-approval never
