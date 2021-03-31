@@ -1,4 +1,9 @@
-import { TextField, Typography } from "@material-ui/core";
+import {
+    makeStyles,
+    CircularProgress,
+    TextField,
+    Typography,
+} from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import {
     clearAppliedFilters,
@@ -16,6 +21,14 @@ import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 
 const searchByNameTimer = {};
+
+const useStyles = makeStyles({
+    loading: {
+        color: "#00569c",
+        marginLeft: "auto",
+        marginRight: "auto",
+    },
+});
 
 function SearchByNameBar(props) {
     // The first search by name returns a list of possible name values
@@ -35,11 +48,15 @@ function SearchByNameBar(props) {
     const [inputValue, setInputValue] = React.useState(
         firstName && lastName ? firstName + " " + lastName : ""
     );
+    const [loading, setLoading] = React.useState(false);
+
+    const classes = useStyles();
 
     React.useEffect(() => {
         if (inputValue.length >= 2) {
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
+                setLoading(true);
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
                         const seen = {};
@@ -62,6 +79,9 @@ function SearchByNameBar(props) {
                     .catch((err) => {
                         console.error("Search by name endpoint failed: ", err);
                         setOptions([]);
+                    })
+                    .finally(() => {
+                        setLoading(false);
                     });
             }, searchByNameTimer)(inputValue);
         } else if (
@@ -115,29 +135,47 @@ function SearchByNameBar(props) {
                     size="small"
                 />
             )}
-            renderOption={(option, state) => (
-                <div
-                    className={"search-dropdown-entry"}
-                    onClick={handleDropdownOptionClick(option, state)}
-                >
-                    {option.count === 1 ? (
-                        <img
-                            src={option.imageURL || "/workerPlaceholder.png"}
-                            alt={"workerPhoto"}
-                        />
-                    ) : (
-                        <div className="grouped-options">
-                            <span className="grouped-count">
-                                {option.count}
-                            </span>{" "}
-                            <span className="grouped-count-text">Found</span>
+            renderOption={(option, state) => {
+                if (loading) {
+                    return (
+                        <div className={"search-dropdown-entry"}>
+                            <CircularProgress
+                                size={"20px"}
+                                classes={{ root: classes.loading }}
+                            />
                         </div>
-                    )}
-                    <Typography noWrap>
-                        {`${option.firstName} ${option.lastName}`}
-                    </Typography>
-                </div>
-            )}
+                    );
+                } else {
+                    return (
+                        <div
+                            className={"search-dropdown-entry"}
+                            onClick={handleDropdownOptionClick(option, state)}
+                        >
+                            {option.count === 1 ? (
+                                <img
+                                    src={
+                                        option.imageURL ||
+                                        "/workerPlaceholder.png"
+                                    }
+                                    alt={"workerPhoto"}
+                                />
+                            ) : (
+                                <div className="grouped-options">
+                                    <span className="grouped-count">
+                                        {option.count}
+                                    </span>{" "}
+                                    <span className="grouped-count-text">
+                                        Found
+                                    </span>
+                                </div>
+                            )}
+                            <Typography noWrap>
+                                {`${option.firstName} ${option.lastName}`}
+                            </Typography>
+                        </div>
+                    );
+                }
+            }}
             inputValue={inputValue}
             onInputChange={(_event, value, reason) => {
                 handleTextfieldChange(value, reason);

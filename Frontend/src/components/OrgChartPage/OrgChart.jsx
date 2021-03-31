@@ -23,7 +23,7 @@ import { parseFullName } from "parse-full-name";
 
 const useStyles = makeStyles({
     searchRect: {
-        minWidth: 300,
+        minWidth: 284,
     },
     card: {
         borderRadius: 20,
@@ -69,6 +69,8 @@ const useStyles = makeStyles({
     },
     loading: {
         color: "#00569c",
+        marginLeft: "auto",
+        marginRight: "auto",
     },
 });
 
@@ -80,11 +82,13 @@ function OrgChartSearchBar(props) {
     const classes = useStyles();
     const [options, setOptions] = React.useState([]);
     const [inputValue, setInputValue] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
 
     React.useEffect(() => {
         if (inputValue.length >= 2) {
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
+                setLoading(true);
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
                         setOptions(response);
@@ -95,6 +99,9 @@ function OrgChartSearchBar(props) {
                             err
                         );
                         setOptions([]);
+                    })
+                    .finally(() => {
+                        setLoading(false);
                     });
             }, predictiveSearchTimer)(inputValue);
         }
@@ -110,7 +117,7 @@ function OrgChartSearchBar(props) {
 
     return (
         <Autocomplete
-            options={options}
+            options={loading ? ["loading"] : options}
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
@@ -123,25 +130,37 @@ function OrgChartSearchBar(props) {
                     size="small"
                 />
             )}
-            renderOption={(option) => (
-                <div
-                    className={"orgchart-search-dropdown-entry"}
-                    onClick={() => {
-                        setInputValue(option.firstName + " " + option.lastName);
-                        history.push(
-                            `${PagePathEnum.ORGCHART}/` + option.employeeNumber
-                        );
-                    }}
-                >
-                    <img
-                        src={option.imageURL || "/workerPlaceholder.png"}
-                        alt={"workerPhoto"}
-                    />
-                    <Typography noWrap>
-                        {`${option.firstName} ${option.lastName}`}
-                    </Typography>
-                </div>
-            )}
+            renderOption={(option) =>
+                loading ? (
+                    <div className={"search-dropdown-entry"}>
+                        <CircularProgress
+                            size={"20px"}
+                            classes={{ root: classes.loading }}
+                        />
+                    </div>
+                ) : (
+                    <div
+                        className={"search-dropdown-entry"}
+                        onClick={() => {
+                            setInputValue(
+                                option.firstName + " " + option.lastName
+                            );
+                            history.push(
+                                `${PagePathEnum.ORGCHART}/` +
+                                    option.employeeNumber
+                            );
+                        }}
+                    >
+                        <img
+                            src={option.imageURL || "/workerPlaceholder.png"}
+                            alt={"workerPhoto"}
+                        />
+                        <Typography noWrap>
+                            {`${option.firstName} ${option.lastName}`}
+                        </Typography>
+                    </div>
+                )
+            }
             inputValue={inputValue}
             onInputChange={(_event, value, reason) => {
                 handleTextfieldChange(value, reason);
