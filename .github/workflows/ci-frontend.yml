@@ -9,7 +9,7 @@ on:
 env:
   REGION: us-west-2 # Deployment Region
   
-  jobs:
+jobs:
   deploy:
     name: Build And Deploy
     # This job runs on Linux
