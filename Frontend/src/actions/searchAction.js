@@ -1,32 +1,36 @@
 import { WorkerTypeEnum } from "states/appState";
+import { PagesToFetch, ResultEntryPerPage } from "states/searchPageState";
 import { searchWorker } from "../api/search";
 import { setExperienceAction, setFiltersChanged } from "./filterAction";
 
 export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
     const currState = getState();
-    const payload = createSearchPayload(currState);
-    console.log(
-        "Search With Applied Filters Action dispatched.\nPayload: %o",
-        payload
-    );
     const {
         appState: { filtersChanged },
         searchPageState: { resultOrder, pageNumber },
     } = currState;
+
+    if (!filtersChanged && resultOrder[getPageOffset(pageNumber)]) {
+        return;
+    }
+
+    const payload = createSearchPayload(currState);
     searchWorker(payload)
         .then((response) => {
             let workersById = {};
             let workersAllId = [];
             let newResultOrder = [];
-            if (!filtersChanged) {
+            if (filtersChanged) {
+                newResultOrder = Array(response.totalCount);
+            } else {
                 newResultOrder = resultOrder;
             }
-            dispatch(setFiltersChanged(false));
 
             response.data.forEach((worker, index) => {
                 workersById[worker.employeeNumber] = worker;
                 workersAllId.push(worker.employeeNumber);
-                newResultOrder[index] = worker.employeeNumber;
+                newResultOrder[index + getPageOffset(pageNumber)] =
+                    worker.employeeNumber;
             });
             dispatch({
                 type: "ADD_WORKERS",
@@ -39,19 +43,23 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
                 type: "SET_SEARCH_RESULT_ORDER",
                 payload: { resultOrder: newResultOrder },
             });
-            dispatch(setPageAction(1));
+            if (filtersChanged) {
+                dispatch(setPageAction(1));
+            }
         })
         .catch((error) => {
             console.error(
                 "Search endpoint failed (experience filter).\nErr:",
                 error
             );
-            // FIXME temporarily set result to empty if an error occured
-            dispatch(setFiltersChanged(false));
+            // FIXME Set result to empty, should ideally show an error message
             dispatch({
                 type: "SET_SEARCH_RESULT_ORDER",
                 payload: { resultOrder: [] },
             });
+        })
+        .finally(() => {
+            dispatch(setFiltersChanged(false));
         });
 };
 
@@ -67,6 +75,7 @@ export const setPageAction = (payload) => (dispatch) => {
             pageNumber: payload,
         },
     });
+    dispatch(searchWithAppliedFilterAction());
 };
 
 const createSearchPayload = (state) => {
@@ -98,11 +107,8 @@ const createSearchPayload = (state) => {
         division: departmentState,
         companyName: companyState,
         shownWorkerType: shownWorkerType,
-        // TODO change this so that we actually only get 3 (or potentially more pages of result)
-        // offset: (pageNumber - 1) * 6,
-        // fetch: 6,
-        offset: 0,
-        fetch: 100,
+        offset: getPageOffset(pageNumber),
+        fetch: PagesToFetch * ResultEntryPerPage,
         orderBy: sortKey,
         orderDir: isAscending ? "ASC" : "DESC",
     };
@@ -111,3 +117,5 @@ const createSearchPayload = (state) => {
     }
     return payload;
 };
+
+const getPageOffset = (pageNumber) => (pageNumber - 1) * ResultEntryPerPage;

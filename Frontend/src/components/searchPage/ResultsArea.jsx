@@ -9,8 +9,7 @@ import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { setFocusedWorkerId } from "actions/generalAction";
 import { makeStyles } from "@material-ui/core";
-
-const entriesPerPage = 6;
+import { ResultEntryPerPage } from "states/searchPageState";
 
 const useStyles = makeStyles({
     loading: {
@@ -54,7 +53,7 @@ function ResultsArea(props) {
         }
     };
 
-    const offset = (pageNumber - 1) * entriesPerPage;
+    const offset = (pageNumber - 1) * ResultEntryPerPage;
     return (
         <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
             <div className="card-grid">
@@ -68,7 +67,10 @@ function ResultsArea(props) {
                 {getEmployee(offset + 5)}
             </div>
             <StyledPagination
-                count={Math.max(Math.ceil(resultOrder.length / 6), 1)}
+                count={Math.max(
+                    Math.ceil(resultOrder.length / ResultEntryPerPage),
+                    1
+                )}
                 page={pageNumber}
                 onChange={handleChange}
             />

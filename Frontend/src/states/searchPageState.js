@@ -4,6 +4,10 @@ export const SortKeyEnum = {
     TITLE: "title",
 };
 
+export const ResultEntryPerPage = 6;
+
+export const PagesToFetch = 5;
+
 export const defualtSearchPageState = {
     resultOrder: [],
     pageNumber: 1,
