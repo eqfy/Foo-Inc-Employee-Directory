@@ -19,6 +19,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import MenuItem from '@material-ui/core/MenuItem';
 import { PagePathEnum } from './common/constants';
+import { Storage } from 'aws-amplify';
 
 function AddContractor(props) {
     const {
@@ -49,6 +50,14 @@ function AddContractor(props) {
         snackBar: {},
         profilePic: {},
     })
+
+    // TODO: fix 'no credentials' error, add progress spinner
+    async function uploadImageAmplify(e) {
+        const file = e.target.files[0];
+        Storage.put(file.name, file)
+        .then (result => console.log(result))
+        .catch(err => console.log(err));  
+    }
 
     if (!isAdmin) {
         return <Redirect to={`${PagePathEnum.LOGIN}?referrer=addContractor`}/>;
@@ -331,7 +340,8 @@ async function uploadProfilePicture (){
                         id="contained-button-file"
                         multiple
                         type="file"
-                        onChange={ saveProfilePicture }
+                        // onChange={ saveProfilePicture }
+                        onChange = { uploadImageAmplify }
                     />
                         <label htmlFor="contained-button-file">
                             <Button variant="outlined" component="span" startIcon={ <AccountBoxIcon /> } className= {classes.button}>

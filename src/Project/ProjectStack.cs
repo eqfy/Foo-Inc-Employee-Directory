@@ -158,7 +158,7 @@ namespace Project
 
             cognito.CfnIdentityPool identity_pool = new cognito.CfnIdentityPool(this, "Foo-identity-pool", new cognito.CfnIdentityPoolProps
             {
-                AllowUnauthenticatedIdentities = false,
+                AllowUnauthenticatedIdentities = true,
                 IdentityPoolName = "Foo-identity-pool",
                 CognitoIdentityProviders = providers
             });
@@ -415,6 +415,7 @@ namespace Project
             authenticated_role.AddToPolicy(api_policy);
             authenticated_role.AddToPolicy(s3_policy);
             unauthenticated_role.AddToPolicy(cognito_policy);
+            unauthenticated_role.AddToPolicy(s3_policy);
 
             Dictionary<String, Object> roles = new Dictionary<string, object>{
                 {"unauthenticated", unauthenticated_role.RoleArn},
