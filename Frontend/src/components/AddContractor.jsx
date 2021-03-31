@@ -601,6 +601,7 @@ async function uploadProfilePicture (){
                             multiple
                             size="small"
                             options={skillsByCategory}
+                            groupBy={(option) => option.category}
                             getOptionLabel={(option) => option.skill}
                             getOptionSelected={(option, value) => option.skill === value.skill}
                             onChange={(event, value) => selectedSkills = value}
