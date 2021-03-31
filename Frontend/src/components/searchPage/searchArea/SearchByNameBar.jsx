@@ -123,7 +123,7 @@ function SearchByNameBar(props) {
 
     return (
         <Autocomplete
-            options={loading ? ["loading"] : options}
+            options={options}
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
@@ -135,21 +135,23 @@ function SearchByNameBar(props) {
                     size="small"
                 />
             )}
-            renderOption={(option, state) => (
-                <div
-                    className={"search-dropdown-entry"}
-                    onClick={handleDropdownOptionClick(option, state)}
-                >
-                    {loading ? (
+            renderOption={(option, state) => {
+                if (loading) {
+                    return (
                         <div className={"search-dropdown-entry"}>
                             <CircularProgress
                                 size={"20px"}
                                 classes={{ root: classes.loading }}
                             />
                         </div>
-                    ) : (
-                        `${
-                            option.count === 1 ? (
+                    );
+                } else {
+                    return (
+                        <div
+                            className={"search-dropdown-entry"}
+                            onClick={handleDropdownOptionClick(option, state)}
+                        >
+                            {option.count === 1 ? (
                                 <img
                                     src={
                                         option.imageURL ||
@@ -166,15 +168,14 @@ function SearchByNameBar(props) {
                                         Found
                                     </span>
                                 </div>
-                            )
-                        } ${(
+                            )}
                             <Typography noWrap>
                                 {`${option.firstName} ${option.lastName}`}
                             </Typography>
-                        )}`
-                    )}
-                </div>
-            )}
+                        </div>
+                    );
+                }
+            }}
             inputValue={inputValue}
             onInputChange={(_event, value, reason) => {
                 handleTextfieldChange(value, reason);
