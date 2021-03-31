@@ -1,10 +1,10 @@
 name: CI/CD Workflow
-# This workflow is triggered on pushes to the repository branch master.
+# This workflow is triggered on pushes to the repository branch main.
 on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - main
 
 # Initializes environment variables for the workflow
 env:
