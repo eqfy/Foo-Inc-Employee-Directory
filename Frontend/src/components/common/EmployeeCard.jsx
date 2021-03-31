@@ -5,7 +5,7 @@ import {
     makeStyles,
     Typography,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import OrgChartIcon from "./OrgChartIcon";
 import "../common/Common.css";
@@ -14,15 +14,17 @@ import { PagePathEnum } from "./constants";
 
 const useStyles = makeStyles({
     card: {
-        width: 248,
-        height: 270,
+        width: 240,
+        height: 260,
         borderWidth: 1,
         borderRadius: 25,
         borderColor: "black",
         marginLeft: "auto",
         marginRight: "auto",
         "&.link-to-profile:hover": {
-            cursor: "pointer",
+            boxShadow: "0 0 3px 3px black",
+        },
+        "&.link-to-profile.cardSelected": {
             boxShadow: "0 0 3px 3px black",
         },
     },
@@ -30,11 +32,11 @@ const useStyles = makeStyles({
         overflow: "hidden",
     },
     cardMedia: {
-        width: 160,
-        height: 160,
+        width: 140,
+        height: 140,
         marginLeft: "auto",
         marginRight: "auto",
-        marginTop: 10,
+        marginTop: 6,
         marginBottom: 5,
         borderRadius: 20,
     },
@@ -43,35 +45,57 @@ const useStyles = makeStyles({
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "nowrap",
+        transition: "opacity 0.5s ease",
+        opacity: 1,
+        cursor: "text",
         "&.card-text-too-long + p": {
             visibility: "visible",
             "&:hover": {
                 opacity: 1,
             },
         },
+        ".cardSelected &.card-text-too-long + p": {
+            opacity: 1,
+        },
     },
-    // some of the pixels are hard-coded for now
+
     cardExtension: {
         whiteSpace: "nowrap",
         position: "absolute",
         left: 17,
-        bottom: 32,
         zIndex: 30,
         opacity: 0,
         transition: "opacity 0.5s ease",
         textAlign: "center",
         backgroundColor: "white",
         visibility: "hidden",
+        cursor: "text",
         "&:nth-child(3)": {
-            bottom: 32 + 24,
+            bottom: 22 + 24 * 2,
+        },
+        "&:nth-child(5)": {
+            bottom: 22 + 24,
+        },
+        "&:nth-child(7)": {
+            bottom: 22,
         },
     },
 });
 
 export default function EmployeeCard(props) {
     // linkToProfile: employeeCard in profile page does not need to redirect to itself
-    const { employee, linkToProfile, handleProfileClick } = props;
+    // offset: to set and identify current selected card
+    const {
+        employee,
+        linkToProfile,
+        cardIndexOnPage,
+        selectedIndexOnPage,
+        setSelectedIndexOnPage,
+        setCardClicked,
+    } = props;
     const classes = useStyles();
+
+    const history = useHistory();
 
     useEffect(() => {
         const nameTextTypography = document.getElementsByClassName(
@@ -88,6 +112,14 @@ export default function EmployeeCard(props) {
 
         if (titleTextTypography.clientWidth < titleTextTypography.scrollWidth) {
             titleTextTypography.classList.add("card-text-too-long");
+        }
+
+        const emailTextTypography = document.getElementsByClassName(
+            `card-email-${employee.employeeNumber}`
+        )[0];
+
+        if (emailTextTypography.clientWidth < emailTextTypography.scrollWidth) {
+            emailTextTypography.classList.add("card-text-too-long");
         }
     }, [employee.employeeNumber]);
 
@@ -135,14 +167,50 @@ export default function EmployeeCard(props) {
                 <b>Title: </b>
                 <span>{`${employee.title}`}</span>
             </Typography>
+            <Typography
+                variant="body1"
+                color="textPrimary"
+                component="p"
+                classes={{ root: classes.cardText }}
+                className={`card-email-${employee.employeeNumber}`}
+            >
+                <b>Email: </b>
+                <span>{employee.email}</span>
+            </Typography>
+            <Typography
+                variant="body1"
+                color="textPrimary"
+                component="p"
+                classes={{ root: classes.cardExtension }}
+            >
+                <b>Email: </b>
+                <span>{`${employee.email}`}</span>
+            </Typography>
         </CardContent>
     );
     return (
         <CardContainer data-cy="employee-card">
             <Card
-                className={linkToProfile ? "link-to-profile" : ""}
+                className={`${linkToProfile ? "link-to-profile" : ""} ${
+                    cardIndexOnPage === selectedIndexOnPage
+                        ? "cardSelected"
+                        : ""
+                }`}
                 classes={{ root: classes.card }}
                 variant="outlined"
+                onClick={() => {
+                    if (setCardClicked && setSelectedIndexOnPage) {
+                        setCardClicked(true);
+                        setSelectedIndexOnPage(cardIndexOnPage);
+                    }
+                }}
+                onDoubleClick={() => {
+                    if (linkToProfile) {
+                        history.push(
+                            `${PagePathEnum.PROFILE}/${employee.employeeNumber}`
+                        );
+                    }
+                }}
             >
                 <PositionOrgChartIconDiv>
                     <Link
@@ -154,7 +222,6 @@ export default function EmployeeCard(props) {
                 {linkToProfile ? (
                     <StyledLink
                         to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
-                        onClick={handleProfileClick(employee.employeeNumber)}
                     >
                         {employeeCardContent}
                     </StyledLink>
@@ -186,8 +253,11 @@ const StyledOrgChartIcon = styled(OrgChartIcon)`
     }
 `;
 
-const StyledLink = styled(Link)`
-    &:hover,
+const StyledLink = styled.div`
+    &:hover {
+        text-decoration: none;
+        cursor: default;
+    }
     &:not(:hover) {
         text-decoration: none;
     }

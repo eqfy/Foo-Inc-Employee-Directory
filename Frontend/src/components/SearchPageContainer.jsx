@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router";
 import { PageContainer } from "./common/PageContainer";
 import ResultsArea from "./searchPage/ResultsArea";
@@ -46,6 +46,6 @@ const useStyles = makeStyles({
         minWidth: 250,
     },
     filterAndResultAreaItem: {
-        minWidth: 900,
+        minWidth: 1040,
     },
 });

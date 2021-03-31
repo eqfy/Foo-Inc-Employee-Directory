@@ -5,6 +5,69 @@ export default function UpdatePageContainer(props) {
     return (
         <PageContainer>
             <div>
+                <h2>Mar 30</h2>
+                <h2>Below are some visible changes since last deployment:</h2>
+                <h3>
+                    Search Page:
+                    <ul>
+                        <li>
+                            Search by name bar has loading indication now. If n
+                            (at least 2) results with same name are found, they
+                            are displayed as "n Found", and selecting an option
+                            in the dropdown will add a filter tag in the filter
+                            area.
+                        </li>
+                        <li>
+                            Result area has 8 entries per page, and will not
+                            overlay with other areas on smaller dimensions.
+                        </li>
+                        <li>
+                            Employee cards now show hidden texts (if any string
+                            is too long) on single click indicated by the box
+                            shadow. Double click navigates to profile page (used
+                            to be single click).
+                        </li>
+                        <li>Employee cards now show email.</li>
+                        <li>Search bar has a clear all filters button</li>
+                    </ul>
+                    Profile View:
+                    <ul>
+                        <li>
+                            Termination date has been removed from core
+                            information area.
+                        </li>
+                        <li>
+                            Overlay between left and right section is resolved
+                            in smaller dimensions.
+                        </li>
+                    </ul>
+                    Org Chart:
+                    <ul>
+                        <li>
+                            Similar to employee cards, Orgchart nodes now show
+                            full text on single click, and regenerate a new org
+                            chart on double click (used to be single click).
+                        </li>
+                    </ul>
+                    Add Contractor:
+                    <ul>
+                        <li>
+                            Admin authentication has been added. User will be
+                            redirected to login page first if he/she does not
+                            have admin permissions.
+                        </li>
+                    </ul>
+                    General:
+                    <ul>
+                        <li>
+                            Clicking on the current user's avatar in the header
+                            tab now provides two dropdown options, to go to
+                            profile for the current user or to login as admin.
+                        </li>
+                    </ul>
+                </h3>
+            </div>
+            <div>
                 <h2>Mar 24</h2>
                 <h3>
                     Note that cold start time has been reduced to 4~5s after 5
