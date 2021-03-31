@@ -1,5 +1,6 @@
 import React from "react";
-import { ArrowLeft, ArrowRight } from "@material-ui/icons";
+import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
+import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import styled from "styled-components";
 import LinkButton from "components/common/LinkButton";
 import "components/common/Common.css";
@@ -31,7 +32,7 @@ const previousButton = (index, classes, resultOrder) => {
             to={`${PagePathEnum.PROFILE}/${prevEmployeeId}`}
             disabled={!prevEmployeeId}
         >
-            <ArrowLeft />
+            <ArrowLeftIcon />
             Previous
         </LinkButton>
     );
@@ -50,7 +51,7 @@ const nextButton = (index, classes, resultOrder) => {
             disabled={!nextEmployeeId}
         >
             Next
-            <ArrowRight />
+            <ArrowRightIcon />
         </LinkButton>
     );
 };

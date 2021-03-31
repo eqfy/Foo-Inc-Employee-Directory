@@ -108,7 +108,7 @@ function OrgChartSearchBar(props) {
     const handleTextfieldChange = (value, reason) => {
         if (reason === "input") {
             setInputValue(value);
-        } else if (reason === "clear") {
+        } else if (reason === "clear" || (reason === "reset" && value === "")) {
             setInputValue("");
         }
     };

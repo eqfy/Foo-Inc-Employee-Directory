@@ -5,21 +5,20 @@ import { matchSorter } from "match-sorter";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 const React = require("react");
 const {
     TextField,
-    FormLabel,
-    FormGroup,
     styled,
-    Button,
     List,
     ListItemText,
     ListItem,
     Collapse,
     ListItemIcon,
     Checkbox,
+    IconButton,
 } = require("@material-ui/core");
-const { ExpandLess, ExpandMore } = require("@material-ui/icons");
 
 const FilterTextTimer = {};
 
@@ -78,8 +77,12 @@ function ApplyFilterWidget(props) {
         )();
     };
 
+    const handleExpandMoreClick = () => {
+        setExpanded(!expanded);
+        setIsPredictive(false);
+    };
+
     const textFieldLabel = `Filter by ${type}`;
-    const formLabel = `Type in a ${type} or select one from below`;
 
     return (
         <div className="filter-form">
@@ -89,12 +92,28 @@ function ApplyFilterWidget(props) {
                 variant="outlined"
                 onChange={handleTextChange}
                 onKeyPress={handleTextKeyPress}
+                InputProps={{
+                    endAdornment: (
+                        <IconButton
+                            type="submit"
+                            className="expand-more expand-icon"
+                            aria-label="expand less"
+                            onClick={handleExpandMoreClick}
+                        >
+                            {!expanded ? (
+                                <ExpandMoreIcon />
+                            ) : (
+                                <ExpandLessIcon />
+                            )}
+                        </IconButton>
+                    ),
+                }}
             />
-            <StyledFormLabel>{formLabel}</StyledFormLabel>
-            <CollapsableFilterBox
-                expanded={expanded}
-                setExpanded={setExpanded}
-                setIsPredictive={setIsPredictive}
+            <Collapse
+                in={expanded}
+                timeout="auto"
+                unmountOnExit
+                style={{ width: "100%" }}
             >
                 {!isCategorized ? (
                     <CheckboxList
@@ -113,33 +132,8 @@ function ApplyFilterWidget(props) {
                         isPredictive={isPredictive}
                     />
                 )}
-            </CollapsableFilterBox>
-        </div>
-    );
-}
-
-function CollapsableFilterBox(props) {
-    const { children, expanded, setExpanded, setIsPredictive } = props;
-
-    const handleExpandMoreClick = () => {
-        setExpanded(!expanded);
-        setIsPredictive(false);
-    };
-
-    return (
-        <FormGroup>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                {children}
             </Collapse>
-            <Button
-                type="submit"
-                className="expand-more expand-icon"
-                aria-label="expand less"
-                onClick={handleExpandMoreClick}
-            >
-                {!expanded ? <ExpandMore /> : <ExpandLess />}
-            </Button>
-        </FormGroup>
+        </div>
     );
 }
 
@@ -162,9 +156,9 @@ function CollapsableCategoryBox(props) {
             >
                 <ListItemText primary={label} className="category-text" />
                 {!expanded ? (
-                    <ExpandMore className="expand-icon" />
+                    <ExpandMoreIcon className="expand-icon" />
                 ) : (
-                    <ExpandLess className="expand-icon" />
+                    <ExpandLessIcon className="expand-icon" />
                 )}
             </ListItem>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -336,13 +330,9 @@ const predictiveFilterSearch = (
 
 const StyledTextField = styled(TextField)({
     alignSelf: "center",
+    justifyContent: "center",
     width: "100%",
-    paddingBottom: 4,
-});
-
-const StyledFormLabel = styled(FormLabel)({
-    marginTop: 6,
-    fontSize: 12,
+    minWidth: "192px",
 });
 
 const StyledCheckbox = styled(Checkbox)({

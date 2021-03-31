@@ -1,6 +1,6 @@
 import React from "react";
 import LinkButton from "components/common/LinkButton";
-import { ArrowBackIos as ArrowBack } from "@material-ui/icons";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import styled from "styled-components";
 import { PagePathEnum } from 'components/common/constants';
 import { makeStyles } from '@material-ui/core';
@@ -24,7 +24,7 @@ function SearchButton() {
 
 export default SearchButton;
 
-const StyledArrow = styled(ArrowBack)`
+const StyledArrow = styled(ArrowBackIosIcon)`
     && {
         height: 18px;
     }
