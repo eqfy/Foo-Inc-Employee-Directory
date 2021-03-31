@@ -69,6 +69,8 @@ const useStyles = makeStyles({
     },
     loading: {
         color: "#00569c",
+        marginLeft: "auto",
+        marginRight: "auto",
     },
 });
 
