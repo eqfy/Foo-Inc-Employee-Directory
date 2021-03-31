@@ -1,14 +1,4 @@
-name: Lambda API CICD Workflow
-# This workflow is triggered on pushes to the repository branch master.
-on:
-  push:
-    branches:
-      - master
-
-# Initializes environment variables for the workflow
-env:
-  REGION: us-east-1 # Deployment Region
-name: Lambda API CICD Workflow
+name: CICD Workflow
 # This workflow is triggered on pushes to the repository branch master.
 on:
   push:
@@ -40,7 +30,6 @@ env:
         run: |
           sudo npm install -g aws-cdk@1.95.1 yarn
       # Build and Deploy CDK application
-            # Build and Deploy CDK application
       - name: Build & Deploy
         run: |
           cd $GITHUB_WORKSPACE
