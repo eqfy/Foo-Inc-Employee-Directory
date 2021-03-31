@@ -92,6 +92,7 @@ function ApplyFilterWidget(props) {
                 variant="outlined"
                 onChange={handleTextChange}
                 onKeyPress={handleTextKeyPress}
+                data-cy={`${type}-input`}
                 InputProps={{
                     endAdornment: (
                         <IconButton
@@ -99,6 +100,7 @@ function ApplyFilterWidget(props) {
                             className="expand-more expand-icon"
                             aria-label="expand less"
                             onClick={handleExpandMoreClick}
+                            data-cy={`expand-${type}-filters`}
                         >
                             {!expanded ? (
                                 <ExpandMoreIcon />
@@ -223,7 +225,7 @@ function CheckboxList(props) {
                         }}
                         key={filterName + index}
                     >
-                        <ListItemIcon className="filter-list-icon">
+                        <ListItemIcon className="filter-list-icon" data-cy={`${filterName} checkbox`}>
                             <StyledCheckbox
                                 edge="start"
                                 checked={appliedFilters.includes(filterName)}

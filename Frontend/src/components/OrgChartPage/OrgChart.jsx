@@ -318,6 +318,7 @@ function OrgChart(props) {
             <CircularProgress
                 size={"100px"}
                 classes={{ root: classes.loading }}
+                data-cy="loading-orgchart"
             />
         </div>
     ) : props.dataSetDefault === undefined ? (

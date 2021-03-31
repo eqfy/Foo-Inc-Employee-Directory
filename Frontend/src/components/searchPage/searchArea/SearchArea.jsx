@@ -78,6 +78,7 @@ function ApplyFilterArea(props) {
                         <CircularProgress
                             size={"50px"}
                             classes={{ root: styles.loading }}
+                            data-cy="loading-filters"
                         />
                     </Fade>
                 </div>

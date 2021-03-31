@@ -93,6 +93,7 @@ function LoadingResult(props) {
                 <CircularProgress
                     size={"100px"}
                     classes={{ root: styles.loading }}
+                    data-cy="loading-results"
                 />
             </Fade>
         </div>

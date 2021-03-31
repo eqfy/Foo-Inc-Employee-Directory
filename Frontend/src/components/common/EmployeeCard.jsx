@@ -138,7 +138,7 @@ export default function EmployeeCard(props) {
         </CardContent>
     );
     return (
-        <CardContainer>
+        <CardContainer data-cy="employee-card">
             <Card
                 className={linkToProfile ? "link-to-profile" : ""}
                 classes={{ root: classes.card }}
@@ -148,7 +148,7 @@ export default function EmployeeCard(props) {
                     <Link
                         to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
                     >
-                        <StyledOrgChartIcon />
+                        <StyledOrgChartIcon workerId={employee.employeeNumber}/>
                     </Link>
                 </PositionOrgChartIconDiv>
                 {linkToProfile ? (
