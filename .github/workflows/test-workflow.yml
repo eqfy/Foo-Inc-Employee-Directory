@@ -1,0 +1,23 @@
+name: Test
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches-ignore:
+      - main
+  
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Packages
+        run: sudo npm install -g yarn && yarn install
+      - name: Cypress Tests
+        uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          headless: true
+          start: yarn start
