@@ -16,7 +16,7 @@ jobs:
       - name: Cypress Tests
         uses: cypress-io/github-action@v2
         with:
-          working-directory: Frontend
+          working-directory: ./Frontend/cypress/integration
           browser: chrome
           headless: true
           start: yarn start
