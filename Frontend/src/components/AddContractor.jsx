@@ -18,11 +18,11 @@ import MuiPhoneNumber from 'material-ui-phone-number';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import MenuItem from '@material-ui/core/MenuItem';
-import { PagePathEnum } from './common/constants';
 import { Storage } from 'aws-amplify';
 import { getPredictiveSearchAPI } from "../../src/api/predictiveSearchAPI";
 import { coordinatedDebounce } from "components/searchPage/helpers";
 import { parseFullName } from "parse-full-name";
+import { PagePathEnum } from "./common/constants";
 
 function AddContractor(props) {
     const {
@@ -45,7 +45,7 @@ function AddContractor(props) {
         fieldsStatusIsValid: {},
         errors: {},
         workPhone: '',
-        cellPhone: '',
+        workCell: '',
         snackBar: {},
         profilePic: {},
         supervisor: {},
@@ -62,12 +62,7 @@ function AddContractor(props) {
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
                 let supervisor = formState.supervisor;
-                let loadingState = formState.loadingState;
-                loadingState['supervisor'] = true;
-                setFormState({
-                    ...formState,
-                    loadingState,
-                })
+                updateLoadingState('supervisor', true);
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
                         supervisor['allSupervisors'] = response;
@@ -83,15 +78,11 @@ function AddContractor(props) {
                         );
                     })
                     .finally(() => {
-                        loadingState['supervisor'] = false;
-                        setFormState({
-                            ...formState,
-                            loadingState,
-                        })
+                        updateLoadingState('supervisor', false);
                     });
             }, predictiveSearchTimer)(formState.supervisor['input']?formState.supervisor['input']:'');
         }
-    }, [formState.supervisor['input']?formState.supervisor['input']:'']);
+    }, [formState.supervisor['input']? formState.supervisor['input']:'']);
 
     if (!isAdmin) {
         return <Redirect to={`${PagePathEnum.LOGIN}?referrer=addContractor`}/>;
@@ -119,16 +110,14 @@ function AddContractor(props) {
         let selectedCompanyCode = formState.selectedCompanyCode;
         let officeCodesField = formState.officeCodesField;
         let groupCodesField = formState.groupCodesField;
-        let loadingState = formState.loadingState;
         officeCodesField['isVisible'] = false;
         officeCodesField['options'] = [];
         groupCodesField['isVisible'] = false;
         groupCodesField['options'] = [];
         selectedCompanyCode['value'] = values;
-        loadingState['officeCode'] = true;
+        updateLoadingState('officeCode', true);
         setFormState({
             ...formState,
-            loadingState,
             selectedCompanyCode,
             officeCodesField,
             groupCodesField,
@@ -147,24 +136,18 @@ function AddContractor(props) {
             console.log(err);
         })
         .finally(() => {
-            loadingState['officeCode'] = false;
-            setFormState({
-                ...formState,
-                loadingState,
-            });
+            updateLoadingState('officeCode', false);
         })
     }
 
     async function handleOfficeTextFieldChange (event, values) {
         // get group codes
         let groupCodesField = formState.groupCodesField;
-        let loadingState = formState.loadingState;
         groupCodesField['isVisible'] = false;
         groupCodesField['options'] = [];
-        loadingState['groupCode'] = true;
+        updateLoadingState('groupCode', true);
         setFormState({
             ...formState,
-            loadingState,
             groupCodesField,
         });
         
@@ -187,16 +170,32 @@ function AddContractor(props) {
             console.log(err);
         })
         .finally(() => {
-            loadingState['groupCode'] = false;
-            setFormState({
-                ...formState,
-                loadingState,
-            });
+            updateLoadingState('groupCode', false);
         });
     }
 
     function Alert(props) {
         return <MuiAlert elevation={6} variant="filled" {... props} />
+    }
+
+    function showSnackbar(severity, message){
+        let snackBar = formState.snackBar;
+        snackBar['severity'] = severity;
+        snackBar['isOpen'] = true;
+        snackBar['message'] = message;
+        setFormState({
+                ...formState,
+                snackBar,
+        });
+    }
+
+    function updateLoadingState(type, isLoading){
+        let loadingState = formState.loadingState;
+        loadingState[type] = isLoading;
+        setFormState({
+            ...formState,
+            loadingState,
+        });
     }
     const handleSnackbarClose = (event, reason) => {
         
@@ -223,18 +222,7 @@ function AddContractor(props) {
         let fieldsStatusIsValid = formState.fieldsStatusIsValid;
         let errors = formState.errors;
         switch(fieldName){
-            case "firstName":
-            case "lastName":
-            case "title": {
-                fieldsStatusIsValid[fieldName] = regexHelper(fieldValue, fieldName);
-                errors[fieldName] = 'Alpabetical characters only';
-                setFormState({
-                    ...formState,
-                    fieldsStatusIsValid,
-                    errors,
-                })
-            }
-            break;
+            
             case "email": {
                 fieldsStatusIsValid[fieldName] = regexHelper(fieldValue, fieldName);
                 errors[fieldName] = 'Incorrect email format';
@@ -252,22 +240,10 @@ function AddContractor(props) {
     
     function regexHelper(fieldValue, fieldName){
         let regex = '';
-        switch(fieldName){
-            case "firstName":
-            case "lastName":
-            case "title": regex = '([a-zA-Z .])'; break;
-            default: {}
-        }
 
-        if(fieldName === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue)
-        
-        let strLen = fieldValue.length;
-        let isValid = true;
 
-        while (strLen--) {
-          isValid = isValid && new RegExp(regex).test(fieldValue.charAt(strLen));
-        }
-        return isValid;
+        if(fieldName === 'email' && fieldValue !== '') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue)
+        return true;
     }
 
     const handleHireDateChange = (selectedHireDate) => {
@@ -291,7 +267,6 @@ function AddContractor(props) {
 
     // THIS METHOD EXPOSES AWS AUTH KEYS TO CLIENT. 
     // TODO: Upload from backend or replace with react-s3-uploader or a different library
-    // TODO: Fix bug where trying to upload image multiple times (without page refresh) fails
 async function uploadProfilePicture (){
         let profilePic = formState.profilePic;
         await S3FileUpload.uploadFile(profilePic['file'], config)
@@ -340,13 +315,19 @@ async function uploadProfilePicture (){
         }
         skills = skills.slice(0,-3);
 
-        let loadingState = formState.loadingState;
-        loadingState['submit'] = true;
-        setFormState({
-            ...formState,
-            loadingState,
-        });
 
+        if(!event.target.groupCode || !event.target.officeCode) {
+            showSnackbar('error','Operation failed. Missing office location or group.');
+            return;
+        }
+
+        // validate email field
+        if(!regexHelper(event.target.email.value, "email")){
+            showSnackbar('error','Operation failed. Email field is invalid.');
+            return;
+         }
+
+        updateLoadingState('submit', true);
         // Upload profile pic
         await uploadProfilePicture();
 
@@ -355,54 +336,36 @@ async function uploadProfilePicture (){
             LastName: event.target.lastName.value,
             Email: event.target.email.value,
             WorkPhone: event.target.workPhone.value,
-            WorkCell: event.target.cellPhone.value === '+1' ? '': event.target.cellPhone.value,
+            WorkCell: event.target.workCell.value === '+1' ? '': event.target.workCell.value,
             Title: event.target.title.value,
             SupervisorEmployeeNumber: formState.supervisor['employeeNumber'],
             HireDate: event.target.hireDate.value,
-            TerminationDate: null, 
+            TerminationDate: '', 
             PhysicalLocation: event.target.physicalLocation.value,
-            GroupCode: event.target.groupType.value,
-            CompanyCode: event.target.companyName.value,
-            OfficeCode: event.target.officeLocation.value,
+            GroupCode: event.target.groupCode.value,
+            CompanyCode: event.target.companyCode.value,
+            OfficeCode: event.target.officeCode.value,
             skills: skills,
             YearsPriorExperience: event.target.YPE.value,
-            PhotoUrl: formState.profilePic['url'],
+            PhotoUrl: formState.profilePic['url']? formState.profilePic['url']: '',
             EmploymentType: event.target.employmentType.value,
         }
+        console.log(details);
         // Submit form to backend
         await insertContractorAPI(details).then((response) => {
             // update snackbar success
-            let snackBar = formState.snackBar;
-            snackBar['severity'] = 'success';
-            snackBar['isOpen'] = true;
-            snackBar['message'] = 'Contractor added successfully';
+            showSnackbar('success','Contractor added successfully');
 
-            setFormState({
-                ...formState,
-                snackBar,
-            });
-
-            // TODO: clear form
+            window.location.reload();
         })
         .catch((err) => {
-            console.error(err);
+            console.log(err);
             // update snackbar failed
-            let snackBar = formState.snackBar;
-            snackBar['severity'] = 'error';
-            snackBar['isOpen'] = true;
-            snackBar['message'] = 'Operation failed. Please try again';
-            setFormState({
-                ...formState,
-                snackBar,
-            });
+            showSnackbar('error','Operation failed. Please try again');
             })
-            .finally(() => {
-            loadingState['submit'] = false;
-            setFormState({
-                ...formState,
-                loadingState,
-            });
-            })
+        .finally(() => {
+        updateLoadingState('submit', false);
+        })
         }
         
         return (
@@ -457,7 +420,7 @@ async function uploadProfilePicture (){
                     <MuiPhoneNumber 
                         defaultCountry={'ca'} 
                         label="Cell Phone"  
-                        name="cellPhone" 
+                        name="workCell" 
                         variant="outlined" 
                         size="small" 
                         className= {classes.textField}
@@ -490,7 +453,8 @@ async function uploadProfilePicture (){
                             className= {classes.textField}
                         />
                     <Autocomplete
-                            options={formState.supervisor['allSupervisors']? formState.supervisor['allSupervisors']: (formState.isLoading? ['loading']: [])}
+                            options={formState.supervisor['allSupervisors']? formState.supervisor['allSupervisors']: 
+                                        (formState.loadingState['supervisor'] ? ['loading']: [])}
                             getOptionLabel={() => formState.supervisor['input']? formState.supervisor['input']:''}
                             className= {classes.textField}
                             renderInput={(params) => (
@@ -500,6 +464,7 @@ async function uploadProfilePicture (){
                                     variant="outlined"
                                     label="Supervisor"
                                     size="small"
+                                    required
                                 />
                                 )}
                             renderOption={(option) => (
@@ -532,7 +497,6 @@ async function uploadProfilePicture (){
                                         </div>
                                 )
                             )}
-                            inputValue={ formState.supervisor['input']? formState.supervisor['input']:'' }
                             onInputChange={(_event, value, reason) => {
                                 handleSupervisorTextfieldChange(value, reason);
                             }}
@@ -585,11 +549,10 @@ async function uploadProfilePicture (){
                         </MuiPickersUtilsProvider>
 
                     <h3><u>Location</u></h3>
-                    <Grid container spacing={1} xs={9}>
-                    <Grid item xs={6}>
                         <Autocomplete
                             options={locationAllId}
                             getOptionLabel={(option) => option}
+                            className= {classes.textField}
                             renderInput={(params) => (
                                 <TextField 
                                     {...params} 
@@ -598,20 +561,18 @@ async function uploadProfilePicture (){
                                     label="Physical Location"
                                     size="small"
                                     required
-                                    className= {classes.textField}
                                     />
                         )}
                         />
-                        </Grid>
-                        <Grid item xs={6}>
                         <Autocomplete
                             options={companyAllId}
                             getOptionLabel={(option) => option}
+                            className= {classes.textField}
                             onChange={handleCompanyTextFieldChange}
                             renderInput={(params) => (
                                 <TextField 
                                     {...params} 
-                                    name="companyName"
+                                    name="companyCode"
                                     variant="outlined" 
                                     label="Company"
                                     placeholder="Acme Seeds Inc." 
@@ -620,10 +581,7 @@ async function uploadProfilePicture (){
                                     className= {classes.textField}
                                     />
                         )} />
-                        </Grid>
-                        </Grid>
-                <Grid container spacing={1} xs={9}>
-                        <Grid item xs={6}>
+                         <br></br>
                         {formState.loadingState['officeCode']? 
                         <CircularProgress
                                 size={"20px"}
@@ -635,21 +593,19 @@ async function uploadProfilePicture (){
                             options={formState.officeCodesField['options']}
                             getOptionLabel={(option) => option}
                             onChange={handleOfficeTextFieldChange}
+                            className= {classes.textField}
                             renderInput={(params) => (
                                 <TextField 
                                     {...params} 
-                                    name="officeLocation"
+                                    name="officeCode"
                                     variant="outlined" 
                                     label="Office Location"
                                     placeholder="Corporate" 
                                     size="small"
                                     required
-                                    className= {classes.textField}
                                     />
                             )}
                         />: ''}
-                        </Grid>
-                        <Grid item xs={6}>
                     { formState.loadingState['groupCode']? 
                         <CircularProgress
                                 size={"20px"}
@@ -660,24 +616,20 @@ async function uploadProfilePicture (){
                         <Autocomplete
                             options={formState.groupCodesField['options']}
                             getOptionLabel={(option) => option}
+                            className= {classes.textField}
                             renderInput={(params) => (
                                 <TextField 
                                     {...params} 
-                                    name="groupType"
+                                    name="groupCode"
                                     variant="outlined" 
                                     label="Group"
                                     placeholder="Administration" 
                                     size="small"
                                     required
-                                    className= {classes.textField}
                                     />
                         )}
                         />:''}
-                        </Grid>
-                        </Grid>
                         <h3><u>Skills</u></h3>
-                        <Grid container spacing={1} xs={12}>
-                    <Grid item xs={9}>
                         <Autocomplete
                             multiple
                             size="small"
@@ -685,13 +637,12 @@ async function uploadProfilePicture (){
                             groupBy={(option) => option.category}
                             getOptionLabel={(option) => option.skill}
                             getOptionSelected={(option, value) => option.skill === value.skill}
+                            className= {classes.skillsTextField}
                             onChange={(event, value) => selectedSkills = value}
                             renderInput={(params) => (
                             <TextField {...params} variant="outlined" label="Skill" size="small" />
                             )}
                         />
-                        </Grid>
-                        </Grid>
                 <Button 
                     type="submit" 
                     variant="contained" 
@@ -746,10 +697,14 @@ async function uploadProfilePicture (){
             width: 230,
             marginRight: 15,
             marginBottom: 10,
-            display: "inline-grid"
+            display: "inline-grid",
+        },
+        skillsTextField: {
+            minWidth: 230,
+            maxWidth: 480
         },
         submitBtn: {
-            width: "30%",
+            width: 200,
             marginLeft: "auto",
             marginRight: "auto",
             marginTop: 20,
