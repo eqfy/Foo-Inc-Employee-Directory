@@ -340,8 +340,8 @@ async function uploadProfilePicture (){
                         id="contained-button-file"
                         multiple
                         type="file"
-                        // onChange={ saveProfilePicture }
-                        onChange = { uploadImageAmplify }
+                        onChange={ saveProfilePicture }
+                        //onChange = { uploadImageAmplify }
                     />
                         <label htmlFor="contained-button-file">
                             <Button variant="outlined" component="span" startIcon={ <AccountBoxIcon /> } className= {classes.button}>
