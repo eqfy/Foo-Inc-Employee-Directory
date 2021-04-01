@@ -9,7 +9,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install Packages
-        run: sudo npm install -g yarn && yarn install
+        run: |
+          sudo npm install -g yarn
+          cd Frontend
+          yarn install
       - name: Cypress Tests
         uses: cypress-io/github-action@v2
         with:
