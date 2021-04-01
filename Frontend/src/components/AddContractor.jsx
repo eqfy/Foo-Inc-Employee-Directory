@@ -1,7 +1,7 @@
 /* eslint-disable no-lone-blocks */
 import React from "react";
 import { PageContainer } from "./common/PageContainer";
-import { Grid, TextField, Button, Typography,} from "@material-ui/core";
+import { Grid, TextField, Button, Typography, CircularProgress} from "@material-ui/core";
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
@@ -49,11 +49,11 @@ function AddContractor(props) {
         snackBar: {},
         profilePic: {},
         supervisor: {},
-        selectedCompanyCode: '',
-        groupCodesField:{},
-        officeCodesField:{}
+        selectedCompanyCode: {},
+        groupCodesField: {},
+        officeCodesField: {},
+        loadingState: {},
     })
-
    // counter for timeout in case of supervisor input change
     const predictiveSearchTimer = {};
 
@@ -62,6 +62,12 @@ function AddContractor(props) {
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
                 let supervisor = formState.supervisor;
+                let loadingState = formState.loadingState;
+                loadingState['supervisor'] = true;
+                setFormState({
+                    ...formState,
+                    loadingState,
+                })
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
                         supervisor['allSupervisors'] = response;
@@ -75,6 +81,13 @@ function AddContractor(props) {
                             "Add Contractor Supervisor predictive search failed: ",
                             err
                         );
+                    })
+                    .finally(() => {
+                        loadingState['supervisor'] = false;
+                        setFormState({
+                            ...formState,
+                            loadingState,
+                        })
                     });
             }, predictiveSearchTimer)(formState.supervisor['input']?formState.supervisor['input']:'');
         }
@@ -101,38 +114,65 @@ function AddContractor(props) {
         }
     };
 
-    const handleCompanyTextFieldChange = (event, values) => {
+    async function handleCompanyTextFieldChange(event, values) {
         // get office locations
-        let selectedCompanyCode = values;
+        let selectedCompanyCode = formState.selectedCompanyCode;
         let officeCodesField = formState.officeCodesField;
-        getOfficeLocations(values)
+        let groupCodesField = formState.groupCodesField;
+        let loadingState = formState.loadingState;
+        officeCodesField['isVisible'] = false;
+        officeCodesField['options'] = [];
+        groupCodesField['isVisible'] = false;
+        groupCodesField['options'] = [];
+        selectedCompanyCode['value'] = values;
+        loadingState['officeCode'] = true;
+        setFormState({
+            ...formState,
+            loadingState,
+            selectedCompanyCode,
+            officeCodesField,
+            groupCodesField,
+        });
+        await getOfficeLocations(values)
         .then((response) => {
             officeCodesField['isVisible'] = true;
             officeCodesField['options'] = response;
             setFormState({
                 ...formState,
-                selectedCompanyCode,
                 officeCodesField,
             })
         })
         .catch((err) => {
             // handle errors
             console.log(err);
-        });
+        })
+        .finally(() => {
+            loadingState['officeCode'] = false;
+            setFormState({
+                ...formState,
+                loadingState,
+            });
+        })
     }
 
-    const handleOfficeTextFieldChange = (event, values) => {
+    async function handleOfficeTextFieldChange (event, values) {
         // get group codes
         let groupCodesField = formState.groupCodesField;
-        let requestPayload = {
-            companyName: formState.selectedCompanyCode,
-            officeName: values,
-        } 
+        let loadingState = formState.loadingState;
+        groupCodesField['isVisible'] = false;
+        groupCodesField['options'] = [];
+        loadingState['groupCode'] = true;
         setFormState({
             ...formState,
+            loadingState,
             groupCodesField,
-        })
-        getGroups(requestPayload)
+        });
+        
+        let requestPayload = {
+            companyName: formState.selectedCompanyCode['value'],
+            officeName: values,
+        } 
+        await getGroups(requestPayload)
         .then((response) => {
             // handle response array
             groupCodesField['isVisible'] = true;
@@ -145,8 +185,14 @@ function AddContractor(props) {
         .catch((err) => {
             // handle errors
             console.log(err);
+        })
+        .finally(() => {
+            loadingState['groupCode'] = false;
+            setFormState({
+                ...formState,
+                loadingState,
+            });
         });
-
     }
 
     function Alert(props) {
@@ -294,6 +340,13 @@ async function uploadProfilePicture (){
         }
         skills = skills.slice(0,-3);
 
+        let loadingState = formState.loadingState;
+        loadingState['submit'] = true;
+        setFormState({
+            ...formState,
+            loadingState,
+        });
+
         // Upload profile pic
         await uploadProfilePicture();
 
@@ -304,7 +357,7 @@ async function uploadProfilePicture (){
             WorkPhone: event.target.workPhone.value,
             WorkCell: event.target.cellPhone.value === '+1' ? '': event.target.cellPhone.value,
             Title: event.target.title.value,
-            SupervisorEmployeeNumber: formState.supervisor['employeeNumber'], // TODO: Replace with  actual supervisor employee number once we have predictive search
+            SupervisorEmployeeNumber: formState.supervisor['employeeNumber'],
             HireDate: event.target.hireDate.value,
             TerminationDate: null, 
             PhysicalLocation: event.target.physicalLocation.value,
@@ -317,7 +370,7 @@ async function uploadProfilePicture (){
             EmploymentType: event.target.employmentType.value,
         }
         // Submit form to backend
-        insertContractorAPI(details).then((response) => {
+        await insertContractorAPI(details).then((response) => {
             // update snackbar success
             let snackBar = formState.snackBar;
             snackBar['severity'] = 'success';
@@ -328,6 +381,8 @@ async function uploadProfilePicture (){
                 ...formState,
                 snackBar,
             });
+
+            // TODO: clear form
         })
         .catch((err) => {
             console.error(err);
@@ -336,13 +391,18 @@ async function uploadProfilePicture (){
             snackBar['severity'] = 'error';
             snackBar['isOpen'] = true;
             snackBar['message'] = 'Operation failed. Please try again';
-
             setFormState({
                 ...formState,
                 snackBar,
             });
             })
-
+            .finally(() => {
+            loadingState['submit'] = false;
+            setFormState({
+                ...formState,
+                loadingState,
+            });
+            })
         }
         
         return (
@@ -430,7 +490,7 @@ async function uploadProfilePicture (){
                             className= {classes.textField}
                         />
                     <Autocomplete
-                            options={formState.supervisor['allSupervisors']? formState.supervisor['allSupervisors']: []}
+                            options={formState.supervisor['allSupervisors']? formState.supervisor['allSupervisors']: (formState.isLoading? ['loading']: [])}
                             getOptionLabel={() => formState.supervisor['input']? formState.supervisor['input']:''}
                             className= {classes.textField}
                             renderInput={(params) => (
@@ -443,7 +503,15 @@ async function uploadProfilePicture (){
                                 />
                                 )}
                             renderOption={(option) => (
-                                        <div
+                                formState.loadingState['supervisor'] ? (
+                                    <div className={"search-dropdown-entry"}>
+                                        <CircularProgress
+                                            size={"20px"}
+                                            classes={{ root: classes.loading }}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className={"search-dropdown-entry"}
                                             onClick={() => {
                                                 let supervisor = formState.supervisor;
                                                 supervisor['input'] = option.firstName + " " + option.lastName;
@@ -462,6 +530,7 @@ async function uploadProfilePicture (){
                                                 {`${option.firstName} ${option.lastName}`}
                                             </Typography>
                                         </div>
+                                )
                             )}
                             inputValue={ formState.supervisor['input']? formState.supervisor['input']:'' }
                             onInputChange={(_event, value, reason) => {
@@ -555,7 +624,13 @@ async function uploadProfilePicture (){
                         </Grid>
                 <Grid container spacing={1} xs={9}>
                         <Grid item xs={6}>
-                        {formState.officeCodesField['isVisible']? 
+                        {formState.loadingState['officeCode']? 
+                        <CircularProgress
+                                size={"20px"}
+                                className={ classes.loading }
+                            />
+                        
+                        :formState.officeCodesField['isVisible']? 
                         <Autocomplete
                             options={formState.officeCodesField['options']}
                             getOptionLabel={(option) => option}
@@ -575,7 +650,13 @@ async function uploadProfilePicture (){
                         />: ''}
                         </Grid>
                         <Grid item xs={6}>
-                    { formState.groupCodesField['isVisible']? 
+                    { formState.loadingState['groupCode']? 
+                        <CircularProgress
+                                size={"20px"}
+                                classes={{ root: classes.loading }}
+                            />
+                            
+                        :formState.groupCodesField['isVisible']? 
                         <Autocomplete
                             options={formState.groupCodesField['options']}
                             getOptionLabel={(option) => option}
@@ -616,7 +697,14 @@ async function uploadProfilePicture (){
                     variant="contained" 
                     color="primary"
                     className= {classes.submitBtn}
-                    >Add contractor</Button>
+                    > {
+                    formState.loadingState['submit']? 
+                    <CircularProgress
+                        size={"20px"}
+                        className={ classes.loading }
+                    />: "Add contractor" 
+                    }
+                    </Button>
                 </form>
                 <Snackbar open={formState.snackBar['isOpen']} autoHideDuration={3000} onClose={handleSnackbarClose}>
                     <Alert onClose={handleSnackbarClose} severity={formState.snackBar['severity']}>
@@ -671,5 +759,8 @@ async function uploadProfilePicture (){
                 backgroundColor: "#FF9900",
                 color: "#000"
             }
-        }
+        },
+        loading: {
+            color: "#00569c",
+        },
     }));
