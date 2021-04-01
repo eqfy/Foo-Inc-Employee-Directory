@@ -20,7 +20,7 @@ cdk.out
 .vscode
 src/Project/bin
 
-endpoint.json
+Frontend/src/endpoint.json
 *.sublime*
 cdk.context.json
 local.session.sql
