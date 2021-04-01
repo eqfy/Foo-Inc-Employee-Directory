@@ -4,6 +4,7 @@
     "endpoint": "https://50vkyt88lc.execute-api.us-west-2.amazonaws.com/prod/",
     "UserPoolId": "us-west-2_BOlOxOE8e",
     "IdentityPoolId": "us-west-2:656d53a9-ead5-40bf-9e0f-b04c248f4cde",
+    "imageBucket": "projectstack-contractorimagebucket8a7bae80-5onesxq7srte",
     "SQLserverEndpoint": "database.c2o3vwzsqzgl.us-west-2.rds.amazonaws.com",
     "ProjectapiEndpoint218845D3": "https://50vkyt88lc.execute-api.us-west-2.amazonaws.com/prod/"
   }
