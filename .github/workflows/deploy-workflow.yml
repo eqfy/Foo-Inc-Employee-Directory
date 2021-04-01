@@ -37,7 +37,7 @@ jobs:
       # Build and Deploy CDK application
       - name: Build and Deploy
         run: |
-          cd $GITHUB_WORKSPACE/scripts
+          cd $GITHUB_WORKSPACE/scripts/CI
           chmod 700 buildAndDeploy.sh
           ./buildAndDeploy.sh
       - name: Cypress Smoke Tests
