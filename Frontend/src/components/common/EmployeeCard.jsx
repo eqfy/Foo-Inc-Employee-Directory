@@ -92,6 +92,7 @@ export default function EmployeeCard(props) {
         selectedIndexOnPage,
         setSelectedIndexOnPage,
         setCardClicked,
+        setFocusedWorkerId,
     } = props;
     const classes = useStyles();
 
@@ -206,6 +207,7 @@ export default function EmployeeCard(props) {
                 }}
                 onDoubleClick={() => {
                     if (linkToProfile) {
+                        setFocusedWorkerId(employee.employeeNumber);
                         history.push(
                             `${PagePathEnum.PROFILE}/${employee.employeeNumber}`
                         );
@@ -216,15 +218,13 @@ export default function EmployeeCard(props) {
                     <Link
                         to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
                     >
-                        <StyledOrgChartIcon workerId={employee.employeeNumber}/>
+                        <StyledOrgChartIcon
+                            workerId={employee.employeeNumber}
+                        />
                     </Link>
                 </PositionOrgChartIconDiv>
                 {linkToProfile ? (
-                    <StyledLink
-                        to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
-                    >
-                        {employeeCardContent}
-                    </StyledLink>
+                    <StyledLink>{employeeCardContent}</StyledLink>
                 ) : (
                     <div>{employeeCardContent}</div>
                 )}

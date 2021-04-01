@@ -9,6 +9,7 @@ import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { ResultEntryPerPage } from "states/searchPageState";
 import { Grid, makeStyles } from "@material-ui/core";
+import { setFocusedWorkerId } from "actions/generalAction";
 
 const gridWidth = 260;
 const gridHeight = 266;
@@ -31,6 +32,7 @@ function ResultsArea(props) {
         resultOrder,
         workers: { byId },
         loading,
+        setFocusedWorkerId,
     } = props;
 
     const [selectedIndexOnPage, setSelectedIndexOnPage] = useState(-1);
@@ -74,6 +76,7 @@ function ResultsArea(props) {
                             this
                         )}
                         setCardClicked={setCardClicked.bind(this)}
+                        setFocusedWorkerId={setFocusedWorkerId}
                     />
                 ) : (
                     emptyDiv()
@@ -181,6 +184,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     updatePage: (value) => dispatch(setPageAction(value)),
+    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);
