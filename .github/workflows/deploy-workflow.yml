@@ -42,6 +42,10 @@ jobs:
           ./deployCI.sh
       - name: Cypress Smoke Tests
         uses: cypress-io/github-action@v2
+        with:
+          working-directory: ./Frontend
+          browser: chrome
+          headless: true
         env:
           CYPRESS_baseUrl: http://frontendstack-webbsitebucket1311e45d-1vz7x0hz7s224.s3-website-us-west-2.amazonaws.com
 
