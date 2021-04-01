@@ -1,7 +1,7 @@
 /* eslint-disable no-lone-blocks */
 import React from "react";
 import { PageContainer } from "./common/PageContainer";
-import { Grid, TextField, Button, Typography, CircularProgress} from "@material-ui/core";
+import { TextField, Button, Typography, CircularProgress } from "@material-ui/core";
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
@@ -18,7 +18,6 @@ import MuiPhoneNumber from 'material-ui-phone-number';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Storage } from 'aws-amplify';
 import { getPredictiveSearchAPI } from "../../src/api/predictiveSearchAPI";
 import { coordinatedDebounce } from "components/searchPage/helpers";
 import { parseFullName } from "parse-full-name";
@@ -40,7 +39,7 @@ function AddContractor(props) {
         }
     }
 
-    const [formState, setFormState] = React.useState({
+    const defaultState = {
         selectedHireDate: new Date(),
         fieldsStatusIsValid: {},
         errors: {},
@@ -53,7 +52,8 @@ function AddContractor(props) {
         groupCodesField: {},
         officeCodesField: {},
         loadingState: {},
-    })
+    }
+    const [formState, setFormState] = React.useState(defaultState);
    // counter for timeout in case of supervisor input change
     const predictiveSearchTimer = {};
 
@@ -82,6 +82,7 @@ function AddContractor(props) {
                     });
             }, predictiveSearchTimer)(formState.supervisor['input']?formState.supervisor['input']:'');
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formState.supervisor['input']? formState.supervisor['input']:'']);
 
     if (!isAdmin) {
@@ -207,14 +208,6 @@ function AddContractor(props) {
         });
     }
 
-    // TODO: fix 'no credentials' error, add progress spinner
-    async function uploadImageAmplify(e) {
-        const file = e.target.files[0];
-        Storage.put(file.name, file)
-        .then (result => console.log(result))
-        .catch(err => console.log(err));  
-      }
-
     const validateFormField = (event) => {
         const fieldName = event.target.name;
         const fieldValue = event.target.value;
@@ -222,7 +215,6 @@ function AddContractor(props) {
         let fieldsStatusIsValid = formState.fieldsStatusIsValid;
         let errors = formState.errors;
         switch(fieldName){
-            
             case "email": {
                 fieldsStatusIsValid[fieldName] = regexHelper(fieldValue, fieldName);
                 errors[fieldName] = 'Incorrect email format';
@@ -239,9 +231,6 @@ function AddContractor(props) {
       };
     
     function regexHelper(fieldValue, fieldName){
-        let regex = '';
-
-
         if(fieldName === 'email' && fieldValue !== '') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue)
         return true;
     }
@@ -340,7 +329,7 @@ async function uploadProfilePicture (){
             Title: event.target.title.value,
             SupervisorEmployeeNumber: formState.supervisor['employeeNumber'],
             HireDate: event.target.hireDate.value,
-            TerminationDate: '', 
+            TerminationDate: null, 
             PhysicalLocation: event.target.physicalLocation.value,
             GroupCode: event.target.groupCode.value,
             CompanyCode: event.target.companyCode.value,
@@ -355,8 +344,7 @@ async function uploadProfilePicture (){
         await insertContractorAPI(details).then((response) => {
             // update snackbar success
             showSnackbar('success','Contractor added successfully');
-
-            window.location.reload();
+            // window.location.reload();
         })
         .catch((err) => {
             console.log(err);
@@ -511,6 +499,7 @@ async function uploadProfilePicture (){
                             className= {classes.textField}
                             size="small"
                             required
+                            defaultValue="hourly"
                             >
                             <MenuItem key="hourly" value="hourly">
                                 Hourly
