@@ -4,7 +4,7 @@ export const SortKeyEnum = {
     TITLE: "title",
 };
 
-export const ResultEntryPerPage = 6;
+export const ResultEntryPerPage = 8;
 
 export const PagesToFetch = 5;
 

@@ -20,7 +20,7 @@ namespace Project
                 WebsiteErrorDocument = "index.html",
             });
 
-            s3dep.ISource[] temp = {s3dep.Source.Asset("./FrontEnd/build")};
+            s3dep.ISource[] temp = {s3dep.Source.Asset("./Frontend/build")};
             //deploy the frontend to the s3 bucket
             new s3dep.BucketDeployment(this,"DeployWebsite", new s3dep.BucketDeploymentProps{
                 Sources = temp,

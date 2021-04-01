@@ -1,0 +1,42 @@
+name: CI/CD Workflow
+# This workflow is triggered on pushes to the repository branch main.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+# Initializes environment variables for the workflow
+env:
+  REGION: us-west-2 # Deployment Region
+  
+jobs:
+  deploy:
+    name: Build and Deploy
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code from git repo branch configured above, under folder $GITHUB_WORKSPACE.
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Sets up AWS profile.
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.CI_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.CI_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.REGION }}
+      # Install CDK and Yarn
+      - name: Prerequisite Installation
+        run: sudo npm install -g aws-cdk@1.95.1 yarn
+      # Install the .NET Core workload
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      # Build and Deploy CDK application
+      - name: Build and Deploy
+        run: |
+          cd $GITHUB_WORKSPACE
+          chmod 700 deployCI.sh
+          ./deployCI.sh

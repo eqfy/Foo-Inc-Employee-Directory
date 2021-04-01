@@ -17,7 +17,6 @@ function CoreInfoArea(props) {
     const { employee } = props;
 
     const information = [
-        ["Email", employee.email],
         ["Cell", employee.workCell],
         ["Phone", employee.workPhone],
         ["Employment Type", employee.employmentType],
@@ -26,8 +25,7 @@ function CoreInfoArea(props) {
         ["Company Name", employee.companyName],
         ["Office Location", employee.officeLocation],
         ["Physical Location", employee.physicalLocation],
-        ["Hire Date", employee.hireDate],
-        ["Termination Date", employee.terminationDate],
+        ["Hire Date", employee.hireDate.split(" ")[0]],
     ];
 
     // const informationEntries = information.map((entry) => getInfoEntry(entry[0], entry[1]));
@@ -52,6 +50,7 @@ function CoreInfoArea(props) {
 
 const ContainerDiv = styled.div`
     width: 30%;
+    min-width: 300px;
     height: 100%;
     border-right: 1px solid black;
 `;
