@@ -444,6 +444,7 @@ async function uploadProfilePicture (){
                             options={formState.supervisor['allSupervisors']? formState.supervisor['allSupervisors']: 
                                         (formState.loadingState['supervisor'] ? ['loading']: [])}
                             getOptionLabel={() => formState.supervisor['input']? formState.supervisor['input']:''}
+                            getOptionSelected={(option, value) => option.employeeNumber === value.employeeNumber}
                             className= {classes.textField}
                             renderInput={(params) => (
                                 <TextField
@@ -499,7 +500,7 @@ async function uploadProfilePicture (){
                             className= {classes.textField}
                             size="small"
                             required
-                            defaultValue="hourly"
+                            defaultValue=""
                             >
                             <MenuItem key="hourly" value="hourly">
                                 Hourly
