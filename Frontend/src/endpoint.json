@@ -1,10 +1,11 @@
 {
   "ProjectStack": {
-    "UserPoolClientId": "j3al51ck19ij929p0jrj3bdit",
-    "endpoint": "https://50vkyt88lc.execute-api.us-west-2.amazonaws.com/prod/",
-    "UserPoolId": "us-west-2_BOlOxOE8e",
-    "IdentityPoolId": "us-west-2:656d53a9-ead5-40bf-9e0f-b04c248f4cde",
-    "SQLserverEndpoint": "database.c2o3vwzsqzgl.us-west-2.rds.amazonaws.com",
-    "ProjectapiEndpoint218845D3": "https://50vkyt88lc.execute-api.us-west-2.amazonaws.com/prod/"
+    "UserPoolClientId": "i6gjme3un8hccgpts0fesjj4h",
+    "endpoint": "https://1jzh31ittc.execute-api.us-west-2.amazonaws.com/prod/",
+    "UserPoolId": "us-west-2_wE93LGdbJ",
+    "IdentityPoolId": "us-west-2:771eb293-69db-4ee2-8435-70db40fbcce3",
+    "imageBucket": "projectstack-contractorimagebucket8a7bae80-tjy53gqsad7o",
+    "SQLserverEndpoint": "database.cxdaea64tjfp.us-west-2.rds.amazonaws.com",
+    "ProjectapiEndpoint218845D3": "https://1jzh31ittc.execute-api.us-west-2.amazonaws.com/prod/"
   }
 }

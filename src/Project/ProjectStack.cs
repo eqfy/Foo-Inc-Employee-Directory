@@ -529,6 +529,26 @@ namespace Project
             databaseDropAllLambda.AddEnvironment("BUCKET_NAME", databaseScriptsBucket.BucketName);
 
 
+            //S3 bucket for contractor image uploads
+            Bucket contractorImageBucket = new Bucket(this, "contractorImageBucket", new BucketProps{
+                Versioned = true,
+                PublicReadAccess = true
+            });
+
+            contractorImageBucket.AddCorsRule(new CorsRule{
+                AllowedHeaders = new string[] {"*"},
+                AllowedMethods =  new HttpMethods[] {HttpMethods.GET,HttpMethods.HEAD,HttpMethods.PUT,HttpMethods.POST,HttpMethods.DELETE},
+                AllowedOrigins = new string[] {"*"},
+                ExposedHeaders = new string[] {"x-amz-server-side-encryption","x-amz-request-id","x-amz-id-2","ETag"},
+                MaxAge = 3000
+            });
+
+            contractorImageBucket.AddToResourcePolicy(new iam.PolicyStatement(new iam.PolicyStatementProps{
+                Actions = new [] {"s3:PutObject","s3:GetObject","s3:GetObjectVersion","s3:DeleteObject","s3:DeleteObjectVersion"},
+                Resources = new [] {contractorImageBucket.BucketArn+ "/*"},
+                Principals = new iam.IPrincipal[] {new iam.AnyPrincipal()}
+            }));
+
             new CfnOutput(this, "SQLserverEndpoint", new CfnOutputProps
             {
                 Value = database.DbInstanceEndpointAddress
@@ -552,6 +572,11 @@ namespace Project
             new CfnOutput(this, "IdentityPoolId", new CfnOutputProps
             {
                 Value = identity_pool.Ref
+            });
+
+            new CfnOutput(this, "imageBucket", new CfnOutputProps
+            {
+                Value = contractorImageBucket.BucketName
             });
         }
     }
