@@ -11,6 +11,7 @@ logs
 Frontend/build
 Frontend/.eslintcache
 Frontend/src/aws-exports.js
+Frontend/src/endpoint.json
 node_modules
 bower_components
 src/Project/obj
@@ -20,7 +21,6 @@ cdk.out
 .vscode
 src/Project/bin
 
-Frontend/src/endpoint.json
 *.sublime*
 cdk.context.json
 local.session.sql
