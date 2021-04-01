@@ -1,0 +1,23 @@
+name: Test
+on: [pull_request, workflow_dispatch]
+  
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Packages
+        run: |
+          sudo npm install -g yarn
+          cd Frontend
+          yarn install
+      - name: Cypress Tests
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: ./Frontend
+          browser: chrome
+          headless: true
+          start: yarn start
+          wait-on: 'http://localhost:3000'

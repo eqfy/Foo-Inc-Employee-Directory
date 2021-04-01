@@ -1,8 +1,9 @@
 import React from "react";
 
 export default function OrgChartIcon(props) {
+    const { workerId, ...rest } = props;
     return (
-        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" {...props}>
+        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" data-cy={`orgchart-icon-${workerId}`} {...rest}>
             <rect x="8" width="8" height="9" fill="#C4C4C4" />
             <rect x="16" y="16" width="8" height="9" fill="#C4C4C4" />
             <rect y="16" width="8" height="9" fill="#C4C4C4" />

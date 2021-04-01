@@ -1,46 +1,87 @@
-import { TextField, Typography } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import { clearNameAction, setNameAction } from "actions/filterAction";
 import {
-    searchWithAppliedFilterAction,
-    searchWithAppliedFilterByNameAction,
-} from "actions/searchAction";
+    makeStyles,
+    CircularProgress,
+    TextField,
+    Typography,
+} from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
+import {
+    clearAppliedFilters,
+    clearNameAction,
+    setNameAction,
+} from "actions/filterAction";
+import { setFocusedWorkerId } from "actions/generalAction";
+import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { getPredictiveSearchAPI } from "api/predictiveSearchAPI";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { parseFullName } from "parse-full-name";
 import React from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router";
 import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 
 const searchByNameTimer = {};
 
+const useStyles = makeStyles({
+    loading: {
+        color: "#00569c",
+        marginLeft: "auto",
+        marginRight: "auto",
+    },
+});
+
 function SearchByNameBar(props) {
+    // The first search by name returns a list of possible name values
+    // If the user then proceeds to click on a name, then we clear all existing filters
+    // (except workerType, sortKey and sortDirection)
+    // and do a regular search with the selected name
     const {
         firstName,
         lastName,
         searchWithAppliedFilterAction,
-        searchWithAppliedFilterByNameAction,
         setNameAction,
         clearNameAction,
+        clearAppliedFilters,
+        setFocusedWorkerId,
     } = props;
     const [options, setOptions] = React.useState([]);
     const [inputValue, setInputValue] = React.useState(
-        firstName + " " + lastName
+        firstName && lastName ? firstName + " " + lastName : ""
     );
+    const [loading, setLoading] = React.useState(false);
+
+    const classes = useStyles();
 
     React.useEffect(() => {
         if (inputValue.length >= 2) {
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
+                setLoading(true);
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
-                        setOptions(response);
+                        const seen = {};
+                        const uniqueResponse = response.filter((option) => {
+                            if (!seen[option.firstName + option.lastName]) {
+                                seen[
+                                    option.firstName + option.lastName
+                                ] = option;
+                                option.count = 1;
+                                return true;
+                            } else {
+                                seen[
+                                    option.firstName + option.lastName
+                                ].count += 1;
+                            }
+                            return false;
+                        });
+                        setOptions(uniqueResponse);
                     })
                     .catch((err) => {
                         console.error("Search by name endpoint failed: ", err);
                         setOptions([]);
+                    })
+                    .finally(() => {
+                        setLoading(false);
                     });
             }, searchByNameTimer)(inputValue);
         } else if (
@@ -58,14 +99,16 @@ function SearchByNameBar(props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputValue]);
 
-    const handleDropdownOptionClick = (option) => () => {
+    const handleDropdownOptionClick = (option, state) => () => {
         setInputValue(option.firstName + " " + option.lastName);
+        clearAppliedFilters();
         setNameAction({
             firstName: option.firstName,
             lastName: option.lastName,
         });
+        setFocusedWorkerId(option.employeeNumber);
         coordinatedDebounce(
-            searchWithAppliedFilterByNameAction,
+            searchWithAppliedFilterAction,
             SearchWithFilterTimer
         )();
     };
@@ -92,20 +135,47 @@ function SearchByNameBar(props) {
                     size="small"
                 />
             )}
-            renderOption={(option) => (
-                <div
-                    className={"search-dropdown-entry"}
-                    onClick={handleDropdownOptionClick(option)}
-                >
-                    <img
-                        src={option.imageURL || "/workerPlaceholder.png"}
-                        alt={"workerPhoto"}
-                    />
-                    <Typography noWrap>
-                        {`${option.firstName} ${option.lastName}`}
-                    </Typography>
-                </div>
-            )}
+            renderOption={(option, state) => {
+                if (loading) {
+                    return (
+                        <div className={"search-dropdown-entry"}>
+                            <CircularProgress
+                                size={"20px"}
+                                classes={{ root: classes.loading }}
+                            />
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div
+                            className={"search-dropdown-entry"}
+                            onClick={handleDropdownOptionClick(option, state)}
+                        >
+                            {option.count === 1 ? (
+                                <img
+                                    src={
+                                        option.imageURL ||
+                                        "/workerPlaceholder.png"
+                                    }
+                                    alt={"workerPhoto"}
+                                />
+                            ) : (
+                                <div className="grouped-options">
+                                    <span className="grouped-count">
+                                        {option.count}
+                                    </span>{" "}
+                                    <span className="grouped-count-text">
+                                        Found
+                                    </span>
+                                </div>
+                            )}
+                            <Typography noWrap>
+                                {`${option.firstName} ${option.lastName}`}
+                            </Typography>
+                        </div>
+                    );
+                }
+            }}
             inputValue={inputValue}
             onInputChange={(_event, value, reason) => {
                 handleTextfieldChange(value, reason);
@@ -123,12 +193,12 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    searchWithAppliedFilterByNameAction: () =>
-        dispatch(searchWithAppliedFilterByNameAction()),
     setNameAction: (name) => dispatch(setNameAction(name)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
     clearNameAction: () => dispatch(clearNameAction()),
+    clearAppliedFilters: () => dispatch(clearAppliedFilters()),
+    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchByNameBar);

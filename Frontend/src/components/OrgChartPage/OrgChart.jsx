@@ -23,7 +23,7 @@ import { parseFullName } from "parse-full-name";
 
 const useStyles = makeStyles({
     searchRect: {
-        minWidth: 300,
+        minWidth: 284,
     },
     card: {
         borderRadius: 20,
@@ -31,25 +31,28 @@ const useStyles = makeStyles({
         borderColor: "black",
         "&.current": {
             borderColor: "#00569C",
-            "&:hover:not(.contractor)": {
+            "&:hover, &.nodeSelected": {
                 boxShadow: "0 0 3px 3px #004680",
             },
         },
-        "&.contractor": {
+        "&.contractor:not(.current)": {
             borderColor: "#FF9900",
-            "&:hover": {
+            "&:hover, &.nodeSelected": {
                 boxShadow: "0 0 3px 3px #CC7A00",
             },
         },
         "&:hover": {
-            cursor: "pointer",
+            cursor: "default",
+            boxShadow: "0 0 3px 3px black",
+        },
+        "&.nodeSelected": {
             boxShadow: "0 0 3px 3px black",
         },
         display: "flex",
     },
     cardContent: {
         "&:last-child": {
-            padding: 20,
+            padding: 8,
         },
         width: 150,
         paddingLeft: "auto",
@@ -66,9 +69,12 @@ const useStyles = makeStyles({
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "nowrap",
+        cursor: "text",
     },
     loading: {
         color: "#00569c",
+        marginLeft: "auto",
+        marginRight: "auto",
     },
 });
 
@@ -80,11 +86,13 @@ function OrgChartSearchBar(props) {
     const classes = useStyles();
     const [options, setOptions] = React.useState([]);
     const [inputValue, setInputValue] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
 
     React.useEffect(() => {
         if (inputValue.length >= 2) {
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
+                setLoading(true);
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
                         setOptions(response);
@@ -95,6 +103,9 @@ function OrgChartSearchBar(props) {
                             err
                         );
                         setOptions([]);
+                    })
+                    .finally(() => {
+                        setLoading(false);
                     });
             }, predictiveSearchTimer)(inputValue);
         }
@@ -103,14 +114,14 @@ function OrgChartSearchBar(props) {
     const handleTextfieldChange = (value, reason) => {
         if (reason === "input") {
             setInputValue(value);
-        } else if (reason === "clear") {
+        } else if (reason === "clear" || (reason === "reset" && value === "")) {
             setInputValue("");
         }
     };
 
     return (
         <Autocomplete
-            options={options}
+            options={loading ? ["loading"] : options}
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
@@ -123,25 +134,37 @@ function OrgChartSearchBar(props) {
                     size="small"
                 />
             )}
-            renderOption={(option) => (
-                <div
-                    className={"orgchart-search-dropdown-entry"}
-                    onClick={() => {
-                        setInputValue(option.firstName + " " + option.lastName);
-                        history.push(
-                            `${PagePathEnum.ORGCHART}/` + option.employeeNumber
-                        );
-                    }}
-                >
-                    <img
-                        src={option.imageURL || "/workerPlaceholder.png"}
-                        alt={"workerPhoto"}
-                    />
-                    <Typography noWrap>
-                        {`${option.firstName} ${option.lastName}`}
-                    </Typography>
-                </div>
-            )}
+            renderOption={(option) =>
+                loading ? (
+                    <div className={"search-dropdown-entry"}>
+                        <CircularProgress
+                            size={"20px"}
+                            classes={{ root: classes.loading }}
+                        />
+                    </div>
+                ) : (
+                    <div
+                        className={"search-dropdown-entry"}
+                        onClick={() => {
+                            setInputValue(
+                                option.firstName + " " + option.lastName
+                            );
+                            history.push(
+                                `${PagePathEnum.ORGCHART}/` +
+                                    option.employeeNumber
+                            );
+                        }}
+                    >
+                        <img
+                            src={option.imageURL || "/workerPlaceholder.png"}
+                            alt={"workerPhoto"}
+                        />
+                        <Typography noWrap>
+                            {`${option.firstName} ${option.lastName}`}
+                        </Typography>
+                    </div>
+                )
+            }
             inputValue={inputValue}
             onInputChange={(_event, value, reason) => {
                 handleTextfieldChange(value, reason);
@@ -150,85 +173,108 @@ function OrgChartSearchBar(props) {
     );
 }
 
-let setHideTop;
-let setHideBottom;
-let orgChartHideTop = false;
-let orgChartHideBottom = false;
-
 function OrgChartNode(props) {
     const classes = useStyles();
     const history = useHistory();
 
-    const data = props.nodeData;
+    const {
+        nodeData,
+        selectedIdOnChart,
+        setSelectedIdOnChart,
+        hideTop,
+        setHideTop,
+        hideBottom,
+        setHideBottom,
+    } = props;
 
     // Add classes to display full text in a floating div if name/title is too long
     useEffect(() => {
         const nameText = document.getElementsByClassName(
-            `card-name-${data.id}`
+            `card-name-${nodeData.id}`
         )[0];
         if (nameText.clientWidth < nameText.scrollWidth) {
             nameText.classList.add("card-text-too-long");
         }
 
         const titleText = document.getElementsByClassName(
-            `card-title-${data.id}`
+            `card-title-${nodeData.id}`
         )[0];
         if (titleText.clientWidth < titleText.scrollWidth) {
             titleText.classList.add("card-text-too-long");
         }
-    }, [data.id]);
+
+        const emailText = document.getElementsByClassName(
+            `card-email-${nodeData.id}`
+        )[0];
+        if (emailText.clientWidth < emailText.scrollWidth) {
+            emailText.classList.add("card-text-too-long");
+        }
+    }, [nodeData.id]);
 
     const card = (
         <Card
             variant="outlined"
-            className={`${data.isCurrent ? "current" : ""} ${
-                data.isContractor ? "contractor" : ""
-            }`}
+            className={`${nodeData.isCurrent ? "current" : ""} ${
+                nodeData.isContractor ? "contractor" : ""
+            } ${nodeData.id === selectedIdOnChart ? "nodeSelected" : ""}`}
             classes={{ root: classes.card }}
             onClick={() => {
+                setSelectedIdOnChart(nodeData.id);
+            }}
+            onDoubleClick={() => {
                 setHideTop(false);
                 setHideBottom(false);
-                if (!data.isCurrent) {
-                    history.push(`${PagePathEnum.ORGCHART}/` + data.id);
+                setSelectedIdOnChart("");
+                if (!nodeData.isCurrent) {
+                    history.push(`${PagePathEnum.ORGCHART}/` + nodeData.id);
                 }
             }}
         >
             <CardMedia
-                image={data.image || "/workerPlaceholder.png"}
+                image={nodeData.image || "/workerPlaceholder.png"}
                 classes={{ root: classes.cardMedia }}
             />
             <CardContent classes={{ root: classes.cardContent }}>
                 <Typography
                     classes={{ root: classes.cardText }}
-                    className={`card-name-${data.id}`}
+                    className={`card-name-${nodeData.id}`}
                 >
-                    {data.name}
+                    <b>{nodeData.name}</b>
                 </Typography>
                 <Typography className={"card-name-extension"}>
-                    {data.name}
+                    <b>{nodeData.name}</b>
                 </Typography>
                 <Typography
                     classes={{ root: classes.cardText }}
-                    className={`card-title-${data.id}`}
+                    className={`card-title-${nodeData.id}`}
                 >
-                    {data.title}
+                    {nodeData.title}
                 </Typography>
                 <Typography className={"card-title-extension"}>
-                    {data.title}
+                    {nodeData.title}
+                </Typography>
+                <Typography
+                    classes={{ root: classes.cardText }}
+                    className={`card-email-${nodeData.id}`}
+                >
+                    {nodeData.email}
+                </Typography>
+                <Typography className={"card-email-extension"}>
+                    {nodeData.email}
                 </Typography>
             </CardContent>
         </Card>
     );
 
-    if (data.isCurrent) {
+    if (nodeData.isCurrent) {
         return (
             <div>
                 <div
                     className={`node-expander-top ${
-                        orgChartHideTop ? "arrow-up" : "arrow-down"
+                        hideTop ? "arrow-up" : "arrow-down"
                     }`}
                     onClick={() => {
-                        setHideTop(!orgChartHideTop);
+                        setHideTop(!hideTop);
                     }}
                 >
                     <PlayCircleFilledWhiteIcon />
@@ -236,10 +282,10 @@ function OrgChartNode(props) {
                 {card}
                 <div
                     className={`node-expander-bottom ${
-                        orgChartHideBottom ? "arrow-down" : "arrow-up"
+                        hideBottom ? "arrow-down" : "arrow-up"
                     }`}
                     onClick={() => {
-                        setHideBottom(!orgChartHideBottom);
+                        setHideBottom(!hideBottom);
                     }}
                 >
                     <PlayCircleFilledWhiteIcon />
@@ -254,24 +300,12 @@ function OrgChartNode(props) {
 function OrgChart(props) {
     const classes = useStyles();
 
-    const [hideTop, reactSetHideTop] = React.useState(false);
-    const [hideBottom, reactSetHideBottom] = React.useState(false);
+    const [hideTop, setHideTop] = React.useState(false);
+    const [hideBottom, setHideBottom] = React.useState(false);
+
+    const [selectedIdOnChart, setSelectedIdOnChart] = React.useState("");
 
     const params = useParams();
-
-    setHideTop = (hide) => {
-        orgChartHideTop = hide;
-        reactSetHideTop(orgChartHideTop);
-    };
-
-    setHideTop = setHideTop.bind(this);
-
-    setHideBottom = (hide) => {
-        orgChartHideBottom = hide;
-        reactSetHideBottom(orgChartHideBottom);
-    };
-
-    setHideBottom = setHideBottom.bind(this);
 
     useEffect(() => {
         props.setOrgChart(params["workerId"]);
@@ -299,6 +333,7 @@ function OrgChart(props) {
             <CircularProgress
                 size={"100px"}
                 classes={{ root: classes.loading }}
+                data-cy="loading-orgchart"
             />
         </div>
     ) : props.dataSetDefault === undefined ? (
@@ -315,7 +350,20 @@ function OrgChart(props) {
             pan={true}
             zoominLimit={1}
             zoomoutLimit={0.4}
-            NodeTemplate={OrgChartNode}
+            NodeTemplate={(nodeData) =>
+                OrgChartNode({
+                    ...nodeData,
+                    selectedIdOnChart: selectedIdOnChart,
+                    setSelectedIdOnChart: setSelectedIdOnChart.bind(this),
+                    hideTop: hideTop,
+                    setHideTop: setHideTop.bind(this),
+                    hideBottom: hideBottom,
+                    setHideBottom: setHideBottom.bind(this),
+                })
+            }
+            onClickChart={() => {
+                setSelectedIdOnChart("");
+            }}
         />
     );
 
@@ -362,6 +410,7 @@ const mapStateToProps = (state) => {
                 isCurrent: workerId === focusedWorkerId,
                 isContractor: worker.isContractor,
                 image: worker.image,
+                email: worker.email,
             };
         };
 
