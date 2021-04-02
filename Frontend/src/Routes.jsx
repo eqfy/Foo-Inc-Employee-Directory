@@ -23,6 +23,7 @@ export default function Routes() {
             history.replace(location.hash.substring(2));
         }
         setReady(true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return ready ? (

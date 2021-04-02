@@ -1,13 +1,13 @@
 /* eslint-disable no-lone-blocks */
 import React from "react";
 import { PageContainer } from "./common/PageContainer";
-import { Grid, TextField, Button} from "@material-ui/core";
-import {
-    MuiPickersUtilsProvider,
-    KeyboardDatePicker,
-  } from '@material-ui/pickers';
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import MuiPickersUtilsProvider from "@material-ui/pickers/MuiPickersUtilsProvider";
+import { KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import { insertContractorAPI } from "../api/contractor";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Redirect, withRouter } from "react-router-dom";

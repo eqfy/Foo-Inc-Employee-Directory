@@ -1,3 +1,4 @@
+import React from "react";
 import { setFilterAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
@@ -7,18 +8,15 @@ import { coordinatedDebounce } from "../helpers";
 import "./SearchArea.css";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-const React = require("react");
-const {
-    TextField,
-    styled,
-    List,
-    ListItemText,
-    ListItem,
-    Collapse,
-    ListItemIcon,
-    Checkbox,
-    IconButton,
-} = require("@material-ui/core");
+import TextField from "@material-ui/core/TextField";
+import styled from "@material-ui/core/styles/styled";
+import List from "@material-ui/core/List";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItem from "@material-ui/core/ListItem";
+import Collapse from "@material-ui/core/Collapse";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import Checkbox from "@material-ui/core/Checkbox";
+import IconButton from "@material-ui/core/IconButton";
 
 const FilterTextTimer = {};
 

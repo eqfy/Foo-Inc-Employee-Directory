@@ -1,4 +1,6 @@
-import { Grid, Slider, Input } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Slider from "@material-ui/core/Slider";
+import Input from "@material-ui/core/Input";
 import WorkIcon from "@material-ui/icons/Work";
 import { searchByExperienceAction } from "actions/searchAction";
 import { MAX_WORK_EXPERIENCE } from "components/common/constants";

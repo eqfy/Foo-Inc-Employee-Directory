@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import EmployeeCard from "../common/EmployeeCard";
-import { Typography } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 import "./ProfilePage.css";
 
 function getInfoEntry(description, value) {
@@ -27,8 +27,6 @@ function CoreInfoArea(props) {
         ["Physical Location", employee.physicalLocation],
         ["Hire Date", employee.hireDate.split(" ")[0]],
     ];
-
-    // const informationEntries = information.map((entry) => getInfoEntry(entry[0], entry[1]));
 
     return (
         <ContainerDiv>

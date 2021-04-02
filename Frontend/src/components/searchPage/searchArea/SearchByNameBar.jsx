@@ -1,10 +1,8 @@
-import {
-    makeStyles,
-    CircularProgress,
-    TextField,
-    Typography,
-} from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
     clearAppliedFilters,
     clearNameAction,

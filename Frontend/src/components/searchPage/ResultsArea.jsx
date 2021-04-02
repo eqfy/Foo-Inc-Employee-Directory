@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import EmployeeCard from "../common/EmployeeCard";
-import { Pagination } from "@material-ui/lab";
+import Pagination from "@material-ui/lab/Pagination";
 import styled from "styled-components";
 import "../common/Common.css";
 import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { Grid, makeStyles } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const entriesPerPage = 8;
 
@@ -51,6 +52,7 @@ function ResultsArea(props) {
         } else {
             setSelectedIndexOnPage(-1);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gridClickToggle]);
 
     const styles = useStyles();
@@ -64,7 +66,6 @@ function ResultsArea(props) {
             const employeeId = resultOrder[offset + index];
             const employee = employeeId && byId[employeeId];
             return (
-                // <div className="card-grid-col">
                 employee ? (
                     <EmployeeCard
                         employee={employee}
@@ -79,7 +80,6 @@ function ResultsArea(props) {
                 ) : (
                     emptyDiv()
                 )
-                // </div>
             );
         }
         return emptyDiv();

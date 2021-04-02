@@ -5,7 +5,7 @@ import styled from "styled-components";
 import LinkButton from "components/common/LinkButton";
 import "components/common/Common.css";
 import { PagePathEnum } from "components/common/constants";
-import { makeStyles } from "@material-ui/core";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import { connect } from "react-redux";
 
 const usePrevStyles = makeStyles({
@@ -68,6 +68,7 @@ function PrevNextButtons(props) {
             (workerId) => workerId === focusedWorkerId
         );
         setIndex(temp);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [focusedWorkerId]);
 
     return (

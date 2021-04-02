@@ -8,8 +8,9 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import "./App.css";
 import Routes from "./Routes";
-import { Slide, Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import Slide from '@material-ui/core/Slide';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 function Transition(props) {
     return <Slide {...props} direction="left" />;

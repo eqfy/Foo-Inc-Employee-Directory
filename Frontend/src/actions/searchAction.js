@@ -11,7 +11,7 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
     );
     const {
         appState: { filtersChanged },
-        searchPageState: { resultOrder, pageNumber },
+        searchPageState: { resultOrder },
     } = currState;
     searchWorker(payload)
         .then((response) => {
@@ -82,7 +82,7 @@ const createSearchPayload = (state) => {
             lastName = "",
             shownWorkerType = WorkerTypeEnum.ALL,
         },
-        searchPageState: { pageNumber, sortKey, isAscending },
+        searchPageState: { sortKey, isAscending },
     } = state;
 
     let payload = {
