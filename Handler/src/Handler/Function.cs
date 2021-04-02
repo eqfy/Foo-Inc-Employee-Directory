@@ -1444,15 +1444,20 @@ namespace Handler
 
                     contractorReader.Close();
 
+                    try{
+                        //insert the contractors skills into the database
+                        insertSkills(HttpUtility.UrlDecode(body["skills"].Value<string>()),addedContractorEmployeeNumber);
+                        return EH.response(200, "New contractor added.");
+                    }
+                    catch(System.Exception){
+                        return EH.response(400,"Invalid Skills "+ body["skills"].Value<string>());
+                    }
+                }
+                catch(System.Exception error){
+                    return EH.response(400,"Invalid query parameters: " +  error.Message);
+                }
 
-                    //insert the contractors skills into the database
-                    insertSkills(HttpUtility.UrlDecode(body["skills"].Value<string>()),addedContractorEmployeeNumber);
-                    
-                    return EH.response(200, "New contractor added.");
-                }
-                catch(System.Exception){
-                    return EH.response(400,"Invalid Skills "+ body["skills"].Value<string>());
-                }
+                
             }catch(System.Exception){
                 return EH.response(400, "Invalid body");
             }

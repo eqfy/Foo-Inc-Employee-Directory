@@ -19,7 +19,7 @@ const config = {
     },
     s3: {
         REGION: "us-west-2",
-        BUCKET: "ae-images-foo-inc"
+        BUCKET: data.ProjectStack.imageBucket
     }
 };
 
