@@ -12,7 +12,6 @@ import { insertContractorAPI, getOfficeLocations, getGroups } from "../api/contr
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Redirect, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import S3FileUpload from "react-s3";
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import MuiPhoneNumber from 'material-ui-phone-number';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -22,6 +21,8 @@ import { getPredictiveSearchAPI } from "../../src/api/predictiveSearchAPI";
 import { coordinatedDebounce } from "components/searchPage/helpers";
 import { parseFullName } from "parse-full-name";
 import { PagePathEnum } from "./common/constants";
+import { Storage } from "aws-amplify";
+import config from "../config";
 
 function AddContractor(props) {
     const {
@@ -52,6 +53,7 @@ function AddContractor(props) {
         groupCodesField: {},
         officeCodesField: {},
         loadingState: {},
+        selectedSkills: []
     }
     const [formState, setFormState] = React.useState(defaultState);
    // counter for timeout in case of supervisor input change
@@ -242,37 +244,32 @@ function AddContractor(props) {
         });
       };
 
-    let selectedSkills = []; // objects of selected skills
-    
-    // NOT SECURE. CONSIDER UPLOADING IMAGE FROM BACKEND
-    const config = {
-        bucketName: "ae-directory",
-        dirName: "images",
-        region: "us-east-2",
-        accessKeyId: "AKIAWGQ5OCKS4JJCMGEI",
-        secretAccessKey: "1tskS1oRAaqOmDCj7CGNmIz0JnG0L1bpk5t8uA4n",
-            
-    }
 
-    // THIS METHOD EXPOSES AWS AUTH KEYS TO CLIENT. 
-    // TODO: Upload from backend or replace with react-s3-uploader or a different library
 async function uploadProfilePicture (){
-        let profilePic = formState.profilePic;
-        await S3FileUpload.uploadFile(profilePic['file'], config)
-        .then((data) => {
-            profilePic['url'] = data.location;
+    if(!formState.profilePic['file']) return;
+
+    let url = `https://${config.s3.BUCKET}.s3.amazonaws.com/public/`;
+    let profilePic = formState.profilePic;
+    await Storage.put(formState.profilePic['file'].name, formState.profilePic['file'])
+        .then (result => {
+            // store the url in local state
+            url += result['key'];
+            profilePic['url'] = url;
             setFormState({
                 ...formState,
                 profilePic,
             })
         })
-        .catch((err) => {
-            console.log(err)
-        })
+        .catch(err => {
+            console.log(err);
+            showSnackbar('error','Image upload failed')
+        }); 
+        console.log(formState.profilePic);
     }
 
    const saveProfilePicture = (e) => {
         let file = e.target.files[0];
+        if (!file) return;
         let fileExt = (file.name).substring((file.name).lastIndexOf('.') + 1);
         let fileNameWithoutExt = file.name.replace(`.${fileExt}`,'');
         let newFileName = (fileNameWithoutExt + '_' + (new Date()).getTime() + '.' + fileExt).toLowerCase();
@@ -297,13 +294,12 @@ async function uploadProfilePicture (){
     }
     async function handleSubmit(event){
         event.preventDefault();
-
+        
         let skills = "";
-        for (const selectedSkill of selectedSkills){
+        for (const selectedSkill of formState.selectedSkills){
             skills += selectedSkill.category+':::'+selectedSkill.skill+'|||';
         }
         skills = skills.slice(0,-3);
-
 
         if(!event.target.groupCode || !event.target.officeCode) {
             showSnackbar('error','Operation failed. Missing office location or group.');
@@ -339,17 +335,15 @@ async function uploadProfilePicture (){
             PhotoUrl: formState.profilePic['url']? formState.profilePic['url']: '',
             EmploymentType: event.target.employmentType.value,
         }
-        console.log(details);
         // Submit form to backend
         await insertContractorAPI(details).then((response) => {
             // update snackbar success
             showSnackbar('success','Contractor added successfully');
-            // window.location.reload();
         })
         .catch((err) => {
             console.log(err);
             // update snackbar failed
-            showSnackbar('error','Operation failed. Please try again');
+            showSnackbar('error','Could not add Contractor');
             })
         .finally(() => {
         updateLoadingState('submit', false);
@@ -420,7 +414,6 @@ async function uploadProfilePicture (){
                         multiple
                         type="file"
                         onChange={ saveProfilePicture }
-                        // onChange = { uploadImageAmplify }
                     />
                         <label htmlFor="contained-button-file">
                             <Button variant="outlined" component="span" startIcon={ <AccountBoxIcon /> } className= {classes.button}>
@@ -515,7 +508,7 @@ async function uploadProfilePicture (){
                         variant="outlined" 
                         size="small"
                         type="number"
-                        InputProps={{ inputProps: { min: 0, max: 50 } }}
+                        InputProps={{ inputProps: { min: 0, max: 70 } }}
                         className= {classes.textField}
                         />
                     <br></br>
@@ -628,7 +621,7 @@ async function uploadProfilePicture (){
                             getOptionLabel={(option) => option.skill}
                             getOptionSelected={(option, value) => option.skill === value.skill}
                             className= {classes.skillsTextField}
-                            onChange={(event, value) => selectedSkills = value}
+                            onChange={(event, value) => setFormState({...formState, selectedSkills: value})}
                             renderInput={(params) => (
                             <TextField {...params} variant="outlined" label="Skill" size="small" />
                             )}
