@@ -1052,111 +1052,125 @@ namespace Handler
             LambdaLogger.Log("bucketName: " + bucketName);
             LambdaLogger.Log("objectKey: " + objectKey);
             
-            string[] skillList = skills.Split("|||");
-
-            LambdaLogger.Log("skillsList: " + skillList[0].ToString());
-
-            
-            //----Run the SQL in code for the input----
-
-            var idsScript = getS3FileSync(bucketName, "findSkillsIds.sql");
-            
-            var insertScript = getS3FileSync(bucketName, "insertContractorSkills.sql");
-
-            //Read the get ids sql from the file
-            StreamReader readers3ids = new StreamReader(idsScript.ResponseStream);
-            string idsSQL = readers3ids.ReadToEnd();
-
-            LambdaLogger.Log("idsSQL: " + idsSQL);
-
-            //Read the insert sql from the file
-            StreamReader readers3insert = new StreamReader(insertScript.ResponseStream);
-            string insertSQL = readers3insert.ReadToEnd();
-
-            LambdaLogger.Log("insertSQL: " + insertSQL);
-
-            foreach (var skill in skillList ){
+            if (skills == ""){
                 
+
+                var insertScript = getS3FileSync(bucketName, "insertContractorSkills.sql");
+
+                //Read the insert sql from the file
+                StreamReader readers3insert = new StreamReader(insertScript.ResponseStream);
+                string insertSQL = readers3insert.ReadToEnd();
                 using var con = new NpgsqlConnection(GetRDSConnectionString());
+
                 con.Open();
-                //Parse into the two strings
-                string[] skillStrings= skill.Split(":::");
-                string skillCategory = skillStrings[0];
-                string skillLabel = skillStrings[1];
-
-                LambdaLogger.Log("skill Category: " + skillCategory);
-                LambdaLogger.Log("skill Label " + skillLabel);
-
-
-                string categoryId ="";
-                string skillId="";
-                using var idsCmd = new NpgsqlCommand(idsSQL,con);
-
-                LambdaLogger.Log("idsSQL " + idsSQL);
-
-                //Add the bind variable
-                idsCmd.Parameters.AddWithValue("p0",skillCategory);
-                idsCmd.Parameters.AddWithValue("p1",skillLabel);
-                
-                LambdaLogger.Log("HELOO EXCECUTE ---------");
-                using var readerID = idsCmd.ExecuteReader();
-
-                LambdaLogger.Log("BYE EXCECUTE -----------");
-
-
-
-                //LambdaLogger.Log("Reader closed? ---------" + readerID.IsClosed); 
-                LambdaLogger.Log("Reader Rows ---------" + readerID.HasRows);
-                //LambdaLogger.Log("Reader column count ---------" + readerID.FieldCount);
-
-                while (readerID.Read()){
-                    LambdaLogger.Log("HELOO WHILE ---------" );
-                    categoryId = readerID[0].ToString();
-                   
-                    skillId = readerID[1].ToString();
-                
-                }
-                LambdaLogger.Log("BYE WHILE ---------" );
-        
-                // readerID.Read();
-                // LambdaLogger.Log("BYE READ -----");
-                // if (readerID[0] == null){
-                //     LambdaLogger.Log("NULL READER[0] -----");
-                // }else{
-                //     LambdaLogger.Log("NOT NULL READER[0] -----");
-                //}
-                // string categoryId = readerID[0].ToString();
-                // string skillId = readerID[1].ToString();
-                // LambdaLogger.Log("HELOO CLOSE -----");
-                // LambdaLogger.Log("Reader next HI ? ---------"); 
-                // readerID.NextResult();
-                // readerID.Dispose();
-                readerID.Close();
-                LambdaLogger.Log("Reader next HI ? ---------"); 
-
-
-                LambdaLogger.Log("categoryID " + categoryId);
-                LambdaLogger.Log("skillId " + skillId);
-                
-
-                //Insert the skills into the EmployeeSkills table
                 using var insertSkillCmd = new NpgsqlCommand(insertSQL,con);
-
+                
+                
                 //Add the bind variable
                 insertSkillCmd.Parameters.AddWithValue("p0",employeeNumber);
-                insertSkillCmd.Parameters.AddWithValue("p1",categoryId);
-                insertSkillCmd.Parameters.AddWithValue("p2",skillId);
+                insertSkillCmd.Parameters.AddWithValue("p1","");
+                insertSkillCmd.Parameters.AddWithValue("p2","");
 
                 insertSkillCmd.ExecuteNonQuery();
-
-                
-                //call the sql to insert the pair into the employeeSkillsTable
-                //skillFilter =  ;
-                //}
-                //es.skills LIKE '%Accounting:::Transaction Processing%' AND es.skills LIKE '%Accounting:::Reconciling%' 
-                
                 con.Dispose();
                 con.Close();
+
+
+            }else {
+                string[] skillList = skills.Split("|||");
+
+                LambdaLogger.Log("skillsList: " + skillList[0].ToString());
+
+                
+                //----Run the SQL in code for the input----
+
+                var idsScript = getS3FileSync(bucketName, "findSkillsIds.sql");
+                
+                var insertScript = getS3FileSync(bucketName, "insertContractorSkills.sql");
+
+                //Read the get ids sql from the file
+                StreamReader readers3ids = new StreamReader(idsScript.ResponseStream);
+                string idsSQL = readers3ids.ReadToEnd();
+
+                LambdaLogger.Log("idsSQL: " + idsSQL);
+
+                //Read the insert sql from the file
+                StreamReader readers3insert = new StreamReader(insertScript.ResponseStream);
+                string insertSQL = readers3insert.ReadToEnd();
+
+                LambdaLogger.Log("insertSQL: " + insertSQL);
+
+                foreach (var skill in skillList ){
+                    
+                    using var con = new NpgsqlConnection(GetRDSConnectionString());
+                    con.Open();
+                    //Parse into the two strings
+                    string[] skillStrings= skill.Split(":::");
+                    string skillCategory = skillStrings[0];
+                    string skillLabel = skillStrings[1];
+
+                    LambdaLogger.Log("skill Category: " + skillCategory);
+                    LambdaLogger.Log("skill Label " + skillLabel);
+
+
+                    string categoryId ="";
+                    string skillId="";
+                    using var idsCmd = new NpgsqlCommand(idsSQL,con);
+
+                    LambdaLogger.Log("idsSQL " + idsSQL);
+
+                    //Add the bind variable
+                    idsCmd.Parameters.AddWithValue("p0",skillCategory);
+                    idsCmd.Parameters.AddWithValue("p1",skillLabel);
+                    
+                    LambdaLogger.Log("HELOO EXCECUTE ---------");
+                    using var readerID = idsCmd.ExecuteReader();
+
+                    LambdaLogger.Log("BYE EXCECUTE -----------");
+
+
+
+                    //LambdaLogger.Log("Reader closed? ---------" + readerID.IsClosed); 
+                    LambdaLogger.Log("Reader Rows ---------" + readerID.HasRows);
+                    //LambdaLogger.Log("Reader column count ---------" + readerID.FieldCount);
+
+                    while (readerID.Read()){
+                        LambdaLogger.Log("HELOO WHILE ---------" );
+                        categoryId = readerID[0].ToString();
+                    
+                        skillId = readerID[1].ToString();
+                    
+                    }
+                    LambdaLogger.Log("BYE WHILE ---------" );
+            
+                    
+                    readerID.Close();
+                    LambdaLogger.Log("Reader next HI ? ---------"); 
+
+
+                    LambdaLogger.Log("categoryID " + categoryId);
+                    LambdaLogger.Log("skillId " + skillId);
+                    
+
+                    //Insert the skills into the EmployeeSkills table
+                    using var insertSkillCmd = new NpgsqlCommand(insertSQL,con);
+
+                    //Add the bind variable
+                    insertSkillCmd.Parameters.AddWithValue("p0",employeeNumber);
+                    insertSkillCmd.Parameters.AddWithValue("p1",categoryId);
+                    insertSkillCmd.Parameters.AddWithValue("p2",skillId);
+
+                    insertSkillCmd.ExecuteNonQuery();
+
+                    
+                    //call the sql to insert the pair into the employeeSkillsTable
+                    //skillFilter =  ;
+                    //}
+                    //es.skills LIKE '%Accounting:::Transaction Processing%' AND es.skills LIKE '%Accounting:::Reconciling%' 
+                    
+                    con.Dispose();
+                    con.Close();
+                }
             }
         }
 
@@ -1453,9 +1467,11 @@ namespace Handler
                     contractorReader.Close();
 
                     try{
+                        
                         //insert the contractors skills into the database
                         insertSkills(HttpUtility.UrlDecode(body["skills"].Value<string>()),addedContractorEmployeeNumber);
                         return EH.response(200, "New contractor added.");
+                        
                     }
                     catch(System.Exception){
                         return EH.response(400,"Invalid Skills "+ body["skills"].Value<string>());

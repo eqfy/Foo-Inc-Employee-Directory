@@ -13,6 +13,7 @@ namespace Project
             Amazon.CDK.Environment env = new Amazon.CDK.Environment();
             env.Account = System.Environment.GetEnvironmentVariable("CDK_DEFAULT_ACCOUNT");
             env.Region = System.Environment.GetEnvironmentVariable("CDK_DEFAULT_REGION");
+            env.Region = System.Environment.GetEnvironmentVariable("DEPLOY_ENVIRONMENT");
             
             new ProjectStack(app, "ProjectStack", new StackProps{Env = env});
             new FrontendStack(app, "FrontendStack");
