@@ -51,14 +51,6 @@ function AddContractor(props) {
         profilePic: {},
     })
 
-    // TODO: fix 'no credentials' error, add progress spinner
-    async function uploadImageAmplify(e) {
-        const file = e.target.files[0];
-        Storage.put(file.name, file)
-        .then (result => console.log(result))
-        .catch(err => console.log(err));  
-    }
-
     if (!isAdmin) {
         return <Redirect to={`${PagePathEnum.LOGIN}?referrer=addContractor`}/>;
     }
@@ -341,7 +333,6 @@ async function uploadProfilePicture (){
                         multiple
                         type="file"
                         onChange={ saveProfilePicture }
-                        //onChange = { uploadImageAmplify }
                     />
                         <label htmlFor="contained-button-file">
                             <Button variant="outlined" component="span" startIcon={ <AccountBoxIcon /> } className= {classes.button}>
