@@ -446,62 +446,70 @@ namespace Handler
 
         public APIGatewayProxyResponse Init(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            //Open the connection to the postgres database
-            using var con = new NpgsqlConnection(GetRDSConnectionString());
-            con.Open();
+            try{
+                //Open the connection to the postgres database
+                using var con = new NpgsqlConnection(GetRDSConnectionString());
+                con.Open();
 
-            //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
-            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
-            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+                //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+                var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+                var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
 
-            //Get the sql script from the bucket
-            var script = getS3FileSync(bucketName, objectKey);
+                //Get the sql script from the bucket
+                var script = getS3FileSync(bucketName, objectKey);
 
-            //Read the sql from the file
-            StreamReader reader = new StreamReader(script.ResponseStream);
-            String sql = reader.ReadToEnd();
-            
-            //Create the database sql command
+                //Read the sql from the file
+                StreamReader reader = new StreamReader(script.ResponseStream);
+                String sql = reader.ReadToEnd();
+                
+                //Create the database sql command
 
-            LambdaLogger.Log("sql: " + sql);
-            using var cmd = new NpgsqlCommand(sql, con);
+                LambdaLogger.Log("sql: " + sql);
+                using var cmd = new NpgsqlCommand(sql, con);
 
-            //Execute the init sql
-            cmd.ExecuteNonQuery();
-            
-            
-            //TODO close connection?
-            return EH.response(200, "Database initialized.");
+                //Execute the init sql
+                cmd.ExecuteNonQuery();
+                
+                
+                //TODO close connection?
+                return EH.response(200, "Database initialized.");
+            }catch(System.Exception){
+                return EH.response(400, "Database already initialized.");
+            }
         }
 
         public APIGatewayProxyResponse dropAll(APIGatewayProxyRequest request, ILambdaContext context)
         {
-            //Open the connection to the postgres database
-            using var con = new NpgsqlConnection(GetRDSConnectionString());
-            con.Open();
+            try{
+                //Open the connection to the postgres database
+                using var con = new NpgsqlConnection(GetRDSConnectionString());
+                con.Open();
 
-            //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
-            var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
-            var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
+                //Get the name of the bucket that holds the db scripts and the file that has the sql script we want.
+                var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME");
+                var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
 
-            //Get the sql script from the bucket
-            var script = getS3FileSync(bucketName, objectKey);
-            
-            //Read the sql from the file
-            StreamReader reader = new StreamReader(script.ResponseStream);
-            String sql = reader.ReadToEnd();
+                //Get the sql script from the bucket
+                var script = getS3FileSync(bucketName, objectKey);
+                
+                //Read the sql from the file
+                StreamReader reader = new StreamReader(script.ResponseStream);
+                String sql = reader.ReadToEnd();
 
-            LambdaLogger.Log("sql: " + sql);
-            //Create the database sql command
-            using var cmd = new NpgsqlCommand(sql, con);
+                LambdaLogger.Log("sql: " + sql);
+                //Create the database sql command
+                using var cmd = new NpgsqlCommand(sql, con);
 
-            
+                
 
-            //Execute the drop all sql 
-            cmd.ExecuteNonQuery();
+                //Execute the drop all sql 
+                cmd.ExecuteNonQuery();
 
-            //TODO close connection?
-            return EH.response(200, "Dropped all tables.");
+                //TODO close connection?
+                return EH.response(200, "Dropped all tables.");
+            }catch(System.Exception){
+                return EH.response(400, "Database doesn't exist.");
+            }
         }
 
         public APIGatewayProxyResponse GetAllFilters(APIGatewayProxyRequest request, ILambdaContext context)
