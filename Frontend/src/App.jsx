@@ -38,9 +38,9 @@ function App(props) {
 
         // Load the current user and set the current user's physical location as a filter
         configureCurrUser();
-
+        
         Auth.currentSession()
-            .then(() => {
+            .then((result) => {
                 setAdmin(true);
             })
             .catch((res) => {

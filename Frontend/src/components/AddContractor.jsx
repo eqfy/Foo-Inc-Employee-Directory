@@ -19,6 +19,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import MenuItem from '@material-ui/core/MenuItem';
 import { PagePathEnum } from './common/constants';
+import { Storage } from 'aws-amplify';
 
 function AddContractor(props) {
     const {

@@ -156,10 +156,10 @@ namespace Project
             };
             providers.Add(provider);
 
-            cognito.CfnIdentityPool identity_pool = new cognito.CfnIdentityPool(this, "Foo-identity-pool", new cognito.CfnIdentityPoolProps
+            cognito.CfnIdentityPool identity_pool = new cognito.CfnIdentityPool(this, "Fooidentitypool", new cognito.CfnIdentityPoolProps
             {
-                AllowUnauthenticatedIdentities = false,
-                IdentityPoolName = "Foo-identity-pool",
+                AllowUnauthenticatedIdentities = true,
+                IdentityPoolName = "Fooidentitypool",
                 CognitoIdentityProviders = providers
             });
 
@@ -375,18 +375,25 @@ namespace Project
             string_equals_cond.Add("cognito-identity.amazonaws.com:aud", identity_pool.Ref);
             var string_like_cond = new Dictionary<string, string>();
             string_like_cond.Add("cognito-identity.amazonaws.com:amr", "authenticated");
-
-            var conditions = new Dictionary<string, object>(){
+            var string_like_cond_noauth = new Dictionary<string, string>();
+            string_like_cond_noauth.Add("cognito-identity.amazonaws.com:amr", "unauthenticated");
+            
+            var auth_conditions = new Dictionary<string, object>(){
                 {"StringEquals", string_equals_cond},
                 {"ForAnyValue:StringLike", string_like_cond}
             };
+            var noauth_conditions = new Dictionary<string, object>(){
+                {"StringEquals", string_equals_cond},
+                {"ForAnyValue:StringLike", string_like_cond_noauth}
+            };
+
             iam.Role authenticated_role = new iam.Role(this, "cognito-auth-role", new iam.RoleProps
             {
-                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", conditions, "sts:AssumeRoleWithWebIdentity")
+                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", auth_conditions, "sts:AssumeRoleWithWebIdentity")
             });
             iam.Role unauthenticated_role = new iam.Role(this, "cognito-unauth-role", new iam.RoleProps
             {
-                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", conditions, "sts:AssumeRoleWithWebIdentity")
+                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", noauth_conditions, "sts:AssumeRoleWithWebIdentity")
             });
 
             iam.PolicyStatement cognito_policy = new iam.PolicyStatement(new iam.PolicyStatementProps
@@ -395,6 +402,14 @@ namespace Project
                 Actions = new[] { "mobileanalytics:PutEvents", "cognito-sync:*", "cognito-identity:*" },
                 Effect = iam.Effect.ALLOW
             });
+
+             iam.PolicyStatement no_auth_cognito_policy = new iam.PolicyStatement(new iam.PolicyStatementProps
+            {
+                Resources = new[] { "*" },
+                Actions = new[] { "mobileanalytics:PutEvents", "cognito-sync:*"},
+                Effect = iam.Effect.ALLOW
+            });
+
 
             iam.PolicyStatement api_policy = new iam.PolicyStatement(new iam.PolicyStatementProps
             {
@@ -412,9 +427,10 @@ namespace Project
 
 
             authenticated_role.AddToPolicy(cognito_policy);
-            authenticated_role.AddToPolicy(api_policy);
-            authenticated_role.AddToPolicy(s3_policy);
-            unauthenticated_role.AddToPolicy(cognito_policy);
+            //authenticated_role.AddToPolicy(api_policy);
+            //authenticated_role.AddToPolicy(s3_policy);
+            unauthenticated_role.AddToPolicy(no_auth_cognito_policy);
+            //unauthenticated_role.AddToPolicy(s3_policy);
 
             Dictionary<String, Object> roles = new Dictionary<string, object>{
                 {"unauthenticated", unauthenticated_role.RoleArn},
