@@ -15,7 +15,14 @@ namespace Project
             env.Region = System.Environment.GetEnvironmentVariable("CDK_DEFAULT_REGION");
             
             new ProjectStack(app, "ProjectStack", new StackProps{Env = env});
-            new FrontendStack(app, "FrontendStack");
+
+            try {
+                new FrontendStack(app, "FrontendStack");
+            } catch(System.Exception e) {
+                // Ignore. Throws if you don't have the Frontend build folder
+                Console.WriteLine(e.Message);
+            }
+            
             app.Synth();
         }
     }
