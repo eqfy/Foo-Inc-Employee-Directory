@@ -317,18 +317,18 @@ INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCod
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('29102', '02', '02', '04', 'Julokosuwaka', 'Argentina', 'Salary', 'Associate', '2016-01-01', '2019-06-01',
-                      '20004', 0, 'argentina@acme.ca', '604-555-0019', '604-556-0019', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg');
+                      '10002', 0, 'argentina@acme.ca', '604-555-0019', '604-556-0019', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg');
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('39123', '03', '03', '04', 'Wakalanabaka', 'Taco', 'Salary', 'Associate', '2017-01-01', '2020-06-01',
-                      '30023', 0, 'taco@acme.ca', '604-555-0020', '604-556-0020', 'LDFS8F3DDS', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg');
+                      '10002', 0, 'taco@acme.ca', '604-555-0020', '604-556-0020', 'LDFS8F3DDS', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330124.jpeg');
 
 /* Edge case testing employees */
 
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('50000', '03', '03', '05', 'West', 'Kanye', 'Salary', 'Associate', '2020-01-01', NULL,
-                      '30024', 1, 'kanye@acme.ca', '604-555-0021', '604-556-0021', 'LDFS8F3DDS', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg');
+                      '10005', 1, 'kanye@acme.ca', '604-555-0021', '604-556-0021', 'LDFS8F3DDS', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg');
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('50001', '03', '04', '08', 'West', 'Kanye', 'Salary', 'Associate', '2020-01-03', NULL,
@@ -339,11 +339,11 @@ INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCod
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl", "isContractor")
               VALUES ('60001', '02', '01', '03', 'Aldrin', 'Buzz', 'Salary', 'Associate', '2020-02-01', NULL,
-                      '20003', 1, 'buzz@acme.ca', '604-555-0023', '604-556-0023', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0230115.jpeg', true);
+                      '10005', 1, 'buzz@acme.ca', '604-555-0023', '604-556-0023', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0230115.jpeg', true);
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl", "isContractor")
               VALUES ('60002', '02', '02', '04', 'Aldrin', 'Buzz', 'Salary', 'Associate', '2020-03-01', NULL,
-                      '20004', 2, 'aldrin@acme.ca', '604-555-0024', '604-556-0024', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg', true);
+                      '10005', 2, 'aldrin@acme.ca', '604-555-0024', '604-556-0024', 'TH8LF9', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg', true);
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl", "isContractor")
               VALUES ('60003', '02', '02', '05', 'Armstrong', 'Neil', 'Salary', 'Associate', '2020-04-01', NULL,
