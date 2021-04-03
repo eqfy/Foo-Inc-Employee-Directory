@@ -1,5 +1,6 @@
 # Foo Inc. Associated Engineering Project
 
+When running the deploy script use -p %your account name here% to indicate the aws profile you are using if it isn't the default one. Use -e prod/test/dev to indicate which environment you want to deploy to. To change environments you have to destroy the stack.
 
 ## Deploy instructions: Start folder is **Foo-inc/**
 * cd Handler/src/Handler
