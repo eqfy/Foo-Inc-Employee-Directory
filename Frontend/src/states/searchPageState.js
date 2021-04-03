@@ -13,4 +13,5 @@ export const defualtSearchPageState = {
     pageNumber: 1,
     isAscending: true,
     sortKey: SortKeyEnum.FIRST_NAME,
+    resultLoading: true,
 };

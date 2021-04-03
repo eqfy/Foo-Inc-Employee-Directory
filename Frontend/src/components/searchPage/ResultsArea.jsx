@@ -42,8 +42,10 @@ function ResultsArea(props) {
     const [gridClickToggle, setGridClickToggle] = useState(true);
 
     const handleChange = (_event, value) => {
-        setSelectedIndexOnPage(-1);
-        updatePage(value);
+        if (value !== pageNumber) {
+            setSelectedIndexOnPage(-1);
+            updatePage(value);
+        }
     };
 
     useEffect(() => {
@@ -179,7 +181,8 @@ const mapStateToProps = (state) => ({
     workers: state.workers,
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
-    loading: state.appState.filtersChanged,
+    loading:
+        state.appState.filtersChanged || state.searchPageState.resultLoading,
 });
 
 const mapDispatchToProps = (dispatch) => ({

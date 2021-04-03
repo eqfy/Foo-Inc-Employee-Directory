@@ -30,6 +30,11 @@ export default function searchPageReducer(
                 ...state,
                 sortKey: action.payload,
             };
+        case "SET_RESULT_LOADING":
+            return {
+                ...state,
+                resultLoading: action.payload.resultLoading,
+            };
         default:
             return state;
     }

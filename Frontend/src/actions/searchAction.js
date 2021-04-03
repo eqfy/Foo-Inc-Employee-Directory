@@ -3,21 +3,17 @@ import { PagesToFetch, ResultEntryPerPage } from "states/searchPageState";
 import { searchWorker } from "../api/search";
 import { setExperienceAction, setFiltersChanged } from "./filterAction";
 
-export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
+export const searchWithAppliedFilterAction = (pageNumberOverride) => (
+    dispatch,
+    getState
+) => {
     const currState = getState();
     const {
         appState: { filtersChanged },
         searchPageState: { resultOrder, pageNumber },
     } = currState;
 
-    const pageNumberToSearch = getPageNumberToSearch(pageNumber, resultOrder);
-    if (
-        !filtersChanged &&
-        resultOrder[getPageOffset(pageNumber)] &&
-        pageNumberToSearch === pageNumber
-    ) {
-        return;
-    }
+    const pageNumberToSearch = pageNumberOverride || pageNumber;
     const payload = createSearchPayload(currState, pageNumberToSearch);
 
     searchWorker(payload)
@@ -64,6 +60,7 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
             });
         })
         .finally(() => {
+            dispatch(setResultLoading(false));
             dispatch(setFiltersChanged(false));
         });
 };
@@ -80,7 +77,30 @@ export const setPageAction = (payload) => (dispatch) => {
             pageNumber: payload,
         },
     });
+
+    dispatch(searchFromPageUpdate());
+};
+
+const searchFromPageUpdate = () => (dispatch, getState) => {
+    const currState = getState();
+    const {
+        appState: { filtersChanged },
+        searchPageState: { resultOrder, pageNumber },
+    } = currState;
+
+    if (filtersChanged) return;
+    if (resultOrder[getPageOffset(pageNumber)]) return;
+    dispatch(setResultLoading(true));
     dispatch(searchWithAppliedFilterAction());
+};
+
+const setResultLoading = (isLoading) => (dispatch) => {
+    dispatch({
+        type: "SET_RESULT_LOADING",
+        payload: {
+            resultLoading: isLoading,
+        },
+    });
 };
 
 const createSearchPayload = (state, pageNumberOverride) => {
@@ -125,24 +145,3 @@ const createSearchPayload = (state, pageNumberOverride) => {
 };
 
 const getPageOffset = (pageNumber) => (pageNumber - 1) * ResultEntryPerPage;
-
-const getPageNumberToSearch = (pageNumber = 1, resultOrder = []) => {
-    const halfPagesToFetch = Math.floor(PagesToFetch / 2);
-    const maxPages = Math.ceil(resultOrder.length / ResultEntryPerPage);
-    const prevPage = Math.max(pageNumber - 1, 1);
-    const nextPage = Math.min(pageNumber + 1, maxPages);
-    const prevPagePresent = resultOrder[getPageOffset(prevPage)];
-    const nextPagePresent = resultOrder[getPageOffset(nextPage)];
-
-    // If the prevPage and nextPage don't exist, then fetch the pages around the current pageNumber
-    // Right now this should be only used by the first page load or switching to the last page
-    // because the user cannot go directly to a page in the middle with the current pagination design
-    if (!prevPagePresent && !nextPagePresent) {
-        return Math.max(pageNumber - halfPagesToFetch, 1);
-    } else if (!prevPagePresent) {
-        return Math.max(pageNumber - PagesToFetch, 1);
-    } else if (!nextPagePresent) {
-        return Math.min(nextPage, maxPages);
-    }
-    return pageNumber;
-};
