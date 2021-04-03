@@ -443,16 +443,11 @@ namespace Project
             databaseScriptsBucket.GrantRead(predictiveSearch);
             databaseScriptsBucket.GrantRead(getAllGroupCodes);
             databaseScriptsBucket.GrantRead(getAllOfficeLocations);
-
-
-
-            //s3dep.ISource[] temp = { s3dep.Source.Asset("./Database") };
             
             //deploy the database scripts to the s3 bucket
             List<s3dep.ISource> temp = new List<s3dep.ISource>();
             temp.Add(s3dep.Source.Asset("./Database"));
             string deployEnv = System.Environment.GetEnvironmentVariable("DEPLOY_ENVIRONMENT");
-            Console.WriteLine(deployEnv);
             
             switch (deployEnv){
                 case "test":

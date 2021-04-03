@@ -7,6 +7,7 @@ while getopts "p:e:c" opt; do
     e)
       export DEPLOY_ENVIRONMENT=$OPTARG
       echo "Deploy environment: $DEPLOY_ENVIRONMENT" 
+      copy /b src/Project/ProjectStack.cs +,,
       ;;
     c)
       #TODO pass the lambda names into environment variables so we can call them
@@ -22,6 +23,7 @@ while getopts "p:e:c" opt; do
       ;;
   esac
 done
+
 
 
 
