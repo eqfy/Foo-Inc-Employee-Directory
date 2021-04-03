@@ -468,7 +468,6 @@ namespace Project
                     temp.Add(s3dep.Source.Asset("./DevDatabaseInit"));
                     break;    
             }
-
             new s3dep.BucketDeployment(this, "DeployDatabaseScripts", new s3dep.BucketDeploymentProps
             {
                 Sources = temp.ToArray(),

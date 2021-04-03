@@ -5,7 +5,7 @@ while getopts "p:e:c" opt; do
         echo "User profile set to: $userProfile"
       ;;
     e)
-      export DEPLOY_ENVIRONMENT = $OPTARG
+      export DEPLOY_ENVIRONMENT=$OPTARG
       echo "Deploy environment: $DEPLOY_ENVIRONMENT" 
       ;;
     c)

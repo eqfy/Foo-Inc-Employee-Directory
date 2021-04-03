@@ -1051,32 +1051,7 @@ namespace Handler
             var objectKey = Environment.GetEnvironmentVariable("OBJECT_KEY");
             LambdaLogger.Log("bucketName: " + bucketName);
             LambdaLogger.Log("objectKey: " + objectKey);
-            
-            if (skills == ""){
-                
-
-                var insertScript = getS3FileSync(bucketName, "insertContractorSkills.sql");
-
-                //Read the insert sql from the file
-                StreamReader readers3insert = new StreamReader(insertScript.ResponseStream);
-                string insertSQL = readers3insert.ReadToEnd();
-                using var con = new NpgsqlConnection(GetRDSConnectionString());
-
-                con.Open();
-                using var insertSkillCmd = new NpgsqlCommand(insertSQL,con);
-                
-                
-                //Add the bind variable
-                insertSkillCmd.Parameters.AddWithValue("p0",employeeNumber);
-                insertSkillCmd.Parameters.AddWithValue("p1","");
-                insertSkillCmd.Parameters.AddWithValue("p2","");
-
-                insertSkillCmd.ExecuteNonQuery();
-                con.Dispose();
-                con.Close();
-
-
-            }else {
+            if(skills != "") {
                 string[] skillList = skills.Split("|||");
 
                 LambdaLogger.Log("skillsList: " + skillList[0].ToString());
