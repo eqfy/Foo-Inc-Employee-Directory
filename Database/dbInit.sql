@@ -366,6 +366,24 @@ INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VA
 INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('20004', '4', '2');
 INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('20004', '3', '1');
 
+/* Special case Conner: More skills than normal */
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '2', '2');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '3', '1');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '3', '3');
+
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '2', '1');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '2', '2');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '2', '3');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '3', '2');
+
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '1', '2');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '1', '3');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '1', '5');
+
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '4', '1');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '4', '2');
+INSERT INTO "EmployeeSkills" ("EmployeeNumber", "SkillCategoryId", "SkillId") VALUES ('10005', '3', '1');
+
 
 INSERT INTO "ManagerLocationCompany" ("CompanyCode","ManagerEmployeeNumber") VALUES ('01', '10001');
 INSERT INTO "ManagerLocationCompany" ("CompanyCode","ManagerEmployeeNumber") VALUES ('02', '20006');
