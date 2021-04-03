@@ -1438,8 +1438,14 @@ namespace Handler
 
                 try{
                     var contractorReader = cmd.ExecuteReader();
+                    if( !contractorReader.HasRows){
+                        LambdaLogger.Log("A contractor with this email: " + HttpUtility.UrlDecode(body["Email"].Value<string>()) + "is already in the system.");    
+                        return EH.response(400, "A contractor with this email: " + HttpUtility.UrlDecode(body["Email"].Value<string>()) + "is already in the system.");
+                    }
                     contractorReader.Read();
+                    LambdaLogger.Log("A contractor with this email: " + contractorReader[0].ToString()); 
                     string addedContractorEmployeeNumber = contractorReader[0].ToString();
+                     
                     LambdaLogger.Log("added contractor id: " + addedContractorEmployeeNumber);
 
                     contractorReader.Close();
