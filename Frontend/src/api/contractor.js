@@ -11,3 +11,17 @@ export async function insertContractorAPI(payload) {
     };
     return API.put("ae-api", "addContractor", myInit);
 }
+
+export async function getOfficeLocations(companyName) {
+    const myInit = {
+        queryStringParameters: { companyName },
+    };
+    return API.get("ae-api", "getAllOfficeLocations", myInit);
+}
+
+export async function getGroups(payload) {
+    const myInit = {
+        queryStringParameters: payload,
+    };
+    return API.get("ae-api", "getAllGroupCodes", myInit);
+}
