@@ -1,182 +1,153 @@
 import React, { useState } from "react";
-import { useHistory, useLocation } from "react-router";
-import { PageContainer } from "./common/PageContainer";
-import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import FormControl from "@material-ui/core/FormControl";
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import InputLabel from "@material-ui/core/InputLabel";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
-import TextField from "@material-ui/core/TextField";
-import { connect } from "react-redux";
-import { Auth } from "aws-amplify";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import { setAdmin, setSnackbarState } from "actions/generalAction";
-import { PagePathEnum } from "./common/constants";
+import { useHistory, useLocation } from 'react-router';
+import { PageContainer } from './common/PageContainer';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import InputLabel from '@material-ui/core/InputLabel';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import TextField from '@material-ui/core/TextField';
+import { connect } from 'react-redux';
+import { Auth } from 'aws-amplify';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { setAdmin, setSnackbarState } from 'actions/generalAction';
+import { PagePathEnum } from './common/constants';
 
 function Login(props) {
-    const { isAdmin, setAdmin, setSnackbarState } = props;
-    const { search } = useLocation();
-    const { push } = useHistory();
-    const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [loggedInMessage, setLoggedInMessage] = useState(null);
+  const { isAdmin, setAdmin, setSnackbarState } = props;
+  const { search } = useLocation();
+  const { push } = useHistory();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loggedInMessage, setLoggedInMessage] = useState(null);
 
-    const toggleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
+  const toggleShowPassword = () => {
+      setShowPassword(!showPassword);
+  }
 
-    if (isAdmin) {
-        Auth.currentAuthenticatedUser()
-            .then((user) => {
-                setLoggedInMessage(`Logged in as ${user.username}`);
-            })
-            .catch(() => {
-                /* Ignore error */
+  if (isAdmin) {
+      Auth.currentAuthenticatedUser().then((user) => {
+          setLoggedInMessage(`Logged in as ${user.username}`);
+      }).catch(() => { /* Ignore error */ });
+  }
+
+  const handleLogin = async event => {
+    setLoading(true);
+    Auth.signIn(event.target.username.value, event.target.password.value)
+        .then(() => {
+            setAdmin(true);
+            if (search === '?referrer=addContractor') {
+                push(PagePathEnum.NEWCONTRACTOR);
+            }
+            setSnackbarState({
+                open: true,
+                severity: "success",
+                message: "Successfully logged in",
             });
-    }
-
-    const handleLogin = async (event) => {
-        setLoading(true);
-        Auth.signIn(event.target.username.value, event.target.password.value)
-            .then(() => {
-                setAdmin(true);
-                if (search === "?referrer=addContractor") {
-                    push(PagePathEnum.NEWCONTRACTOR);
-                }
-                setSnackbarState({
-                    open: true,
-                    severity: "success",
-                    message: "Successfully logged in",
-                });
-            })
-            .catch((e) => {
-                setSnackbarState({
-                    open: true,
-                    severity: "error",
-                    message: e.message,
-                });
-            })
-            .finally(() => {
-                setLoading(false);
+        })
+        .catch((e) => {
+            setSnackbarState({
+                open: true,
+                severity: "error",
+                message: e.message,
             });
-    };
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+  }
 
-    const handleLogout = async () => {
-        setLoading(true);
-        Auth.signOut()
-            .then(() => {
-                setAdmin(false);
-                setLoggedInMessage(null);
-                setSnackbarState({
-                    open: true,
-                    severity: "success",
-                    message: "Successfully logged out",
-                });
-            })
-            .catch((e) => {
-                setSnackbarState({
-                    open: true,
-                    severity: "error",
-                    message: e.message,
-                });
-            })
-            .finally(() => {
-                setLoading(false);
+  const handleLogout = async () => {
+    setLoading(true);
+    Auth.signOut()
+        .then(() => {
+            setAdmin(false);
+            setLoggedInMessage(null);
+            setSnackbarState({
+                open: true,
+                severity: "success",
+                message: "Successfully logged out",
             });
-    };
+        })
+        .catch((e) => {
+            setSnackbarState({
+                open: true,
+                severity: "error",
+                message: e.message,
+            });
+        })
+        .finally(() => {
+            setLoading(false);
+        })
+  }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-        if (isAdmin) {
-            handleLogout();
-        } else {
-            handleLogin(event);
-        }
-    };
+      if (isAdmin) {
+          handleLogout();
+      } else {
+          handleLogin(event);
+      }
+  }
 
-    return (
-        <PageContainer>
-            <form onSubmit={handleSubmit}>
-                <Grid container spacing={2} justify="center">
-                    <Grid item xs={3}>
-                        <TextField
-                            label="Username"
-                            placeholder="johndoe"
-                            name="username"
-                            variant="outlined"
-                            size="small"
-                            required
-                            fullWidth
-                            disabled={isAdmin}
-                        />
-                    </Grid>
+  return (
+    <PageContainer>
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={2} justify="center">
+            <Grid item xs={3}>
+                <TextField label="Username" placeholder="johndoe" name="username" variant="outlined" size="small" required fullWidth disabled={isAdmin} />
+            </Grid>
+        </Grid>
+        <Grid container spacing={2} justify="center">
+            <Grid item xs={3}>
+                <FormControl variant="outlined" size="small" required fullWidth disabled={isAdmin}>
+                    <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                    <OutlinedInput
+                        id="outlined-adornment-password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={toggleShowPassword}
+                                edge="end"
+                            >
+                                {showPassword ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                        </InputAdornment>
+                        }
+                        labelWidth={85}
+                    />
+                </FormControl>
+            </Grid>
+        </Grid>
+        <Grid container spacing={2} justify="center">
+            <Grid item>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={loading}
+                >
+                    {loading ? <CircularProgress size={20} color="inherit" /> : isAdmin ? "Log out" : "Log in"}
+                </Button>
+            </Grid>
+        </Grid>
+        {!!loggedInMessage && (
+            <Grid container spacing={2} justify="center">
+                <Grid item>
+                    {loggedInMessage}
                 </Grid>
-                <Grid container spacing={2} justify="center">
-                    <Grid item xs={3}>
-                        <FormControl
-                            variant="outlined"
-                            size="small"
-                            required
-                            fullWidth
-                            disabled={isAdmin}
-                        >
-                            <InputLabel htmlFor="outlined-adornment-password">
-                                Password
-                            </InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-password"
-                                name="password"
-                                type={showPassword ? "text" : "password"}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={toggleShowPassword}
-                                            edge="end"
-                                        >
-                                            {showPassword ? (
-                                                <Visibility />
-                                            ) : (
-                                                <VisibilityOff />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                labelWidth={85}
-                            />
-                        </FormControl>
-                    </Grid>
-                </Grid>
-                <Grid container spacing={2} justify="center">
-                    <Grid item>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <CircularProgress size={20} color="inherit" />
-                            ) : isAdmin ? (
-                                "Log out"
-                            ) : (
-                                "Log in"
-                            )}
-                        </Button>
-                    </Grid>
-                </Grid>
-                {!!loggedInMessage && (
-                    <Grid container spacing={2} justify="center">
-                        <Grid item>{loggedInMessage}</Grid>
-                    </Grid>
-                )}
-            </form>
-        </PageContainer>
-    );
+            </Grid>
+        )}
+      </form>
+    </PageContainer>
+  )
 }
 
 const mapStateToProps = (state) => ({
@@ -185,8 +156,10 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     setAdmin: (isAdmin) => dispatch(setAdmin(isAdmin)),
-    setSnackbarState: (snackbarState) =>
-        dispatch(setSnackbarState(snackbarState)),
+    setSnackbarState: (snackbarState) => dispatch(setSnackbarState(snackbarState)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Login);

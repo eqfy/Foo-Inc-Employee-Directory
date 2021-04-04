@@ -56,9 +56,9 @@ export default function UpdatePageContainer(props) {
                             redirected to login page first if he/she does not
                             have admin permissions.
                         </li>
-                        <ul>Implement supervisor predictive search</ul>
-                        <ul>Fetch office and group codes from the database</ul>
-                        <ul>Display skills with categories</ul>
+                    <ul>Implement supervisor predictive search</ul>
+                     <ul>Fetch office and group codes from the database</ul>
+                     <ul>Display skills with categories</ul>
                     </ul>
                     General:
                     <ul>

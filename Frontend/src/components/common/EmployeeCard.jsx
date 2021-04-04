@@ -2,7 +2,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@material-ui/core/Typography"; 
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import OrgChartIcon from "./OrgChartIcon";
@@ -214,9 +214,7 @@ export default function EmployeeCard(props) {
                     <Link
                         to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
                     >
-                        <StyledOrgChartIcon
-                            workerId={employee.employeeNumber}
-                        />
+                        <StyledOrgChartIcon workerId={employee.employeeNumber}/>
                     </Link>
                 </PositionOrgChartIconDiv>
                 {linkToProfile ? (
