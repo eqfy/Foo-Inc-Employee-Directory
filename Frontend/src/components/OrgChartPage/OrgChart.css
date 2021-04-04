@@ -1,3 +1,11 @@
+#chartAreaCenteredReference {
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 50%;
+    top: calc(50% + 122.5px);
+}
+
 #orgChartTopArea {
     display: flex;
     list-style: none;
@@ -122,13 +130,23 @@
 .card-text-too-long + .card-title-extension,
 .card-text-too-long + .card-email-extension {
     visibility: visible;
-    cursor: text;
+}
+
+.nodeSelected .card-text-too-long {
+    animation: hideAfterSomeTime 0s ease-in 0.5s forwards;
+}
+
+@keyframes hideAfterSomeTime {
+    to {
+        visibility: hidden;
+    }
 }
 
 .nodeSelected .card-text-too-long + .card-name-extension,
 .nodeSelected .card-text-too-long + .card-title-extension,
 .nodeSelected .card-text-too-long + .card-email-extension {
     opacity: 1;
+    cursor: text;
 }
 
 .card-text-too-long + .card-name-extension:hover,
@@ -182,4 +200,8 @@
 
 .node-expander-bottom {
     bottom: -31px;
+}
+
+.org-chart-help-button {
+    margin-left: 15px;
 }

@@ -2,7 +2,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import Typography from "@material-ui/core/Typography"; 
+import Typography from "@material-ui/core/Typography";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import OrgChartIcon from "./OrgChartIcon";
@@ -52,11 +52,13 @@ const useStyles = makeStyles({
                 opacity: 1,
             },
         },
-        ".cardSelected &.card-text-too-long + p": {
-            opacity: 1,
+        ".cardSelected &.card-text-too-long": {
+            animation: "hideAfterSomeTime 0s ease-in 0.5s forwards",
+            "& + p": {
+                opacity: 1,
+            },
         },
     },
-
     cardExtension: {
         whiteSpace: "nowrap",
         position: "absolute",
@@ -78,6 +80,11 @@ const useStyles = makeStyles({
             bottom: 22,
         },
     },
+    "@keyframes hideAfterSomeTime": {
+        to: {
+            visibility: "hidden",
+        },
+    },
 });
 
 export default function EmployeeCard(props) {
@@ -89,7 +96,7 @@ export default function EmployeeCard(props) {
         cardIndexOnPage,
         selectedIndexOnPage,
         setSelectedIndexOnPage,
-        setCardClicked,
+        setFocusedWorkerId,
     } = props;
     const classes = useStyles();
 
@@ -196,11 +203,16 @@ export default function EmployeeCard(props) {
                 }`}
                 classes={{ root: classes.card }}
                 variant="outlined"
-                onClick={() => {
-                    if (setCardClicked && setSelectedIndexOnPage) {
-                        setCardClicked(true);
-                        setSelectedIndexOnPage(cardIndexOnPage);
+                onClick={(e) => {
+                    if (linkToProfile) {
+                        if (setSelectedIndexOnPage) {
+                            setSelectedIndexOnPage(cardIndexOnPage);
+                        }
+                        if (setFocusedWorkerId) {
+                            setFocusedWorkerId(employee.employeeNumber);
+                        }
                     }
+                    e.stopPropagation();
                 }}
                 onDoubleClick={() => {
                     if (linkToProfile) {
@@ -214,18 +226,12 @@ export default function EmployeeCard(props) {
                     <Link
                         to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
                     >
-                        <StyledOrgChartIcon workerId={employee.employeeNumber}/>
+                        <StyledOrgChartIcon
+                            workerId={employee.employeeNumber}
+                        />
                     </Link>
                 </PositionOrgChartIconDiv>
-                {linkToProfile ? (
-                    <StyledLink
-                        to={`${PagePathEnum.PROFILE}/${employee.employeeNumber}`}
-                    >
-                        {employeeCardContent}
-                    </StyledLink>
-                ) : (
-                    <div>{employeeCardContent}</div>
-                )}
+                {employeeCardContent}
             </Card>
         </CardContainer>
     );
@@ -248,16 +254,6 @@ const StyledOrgChartIcon = styled(OrgChartIcon)`
         rect {
             fill: midnightblue;
         }
-    }
-`;
-
-const StyledLink = styled.div`
-    &:hover {
-        text-decoration: none;
-        cursor: default;
-    }
-    &:not(:hover) {
-        text-decoration: none;
     }
 `;
 

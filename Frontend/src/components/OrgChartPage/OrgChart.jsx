@@ -12,12 +12,17 @@ import { withRouter, useHistory, useParams } from "react-router";
 import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
-import { setOrgChart } from "../../actions/orgChartAction";
+import {
+    setOrgChart,
+    setOrgChartCenter,
+    setOrgChartZoomRatio,
+} from "../../actions/orgChartAction";
 import WorkerNotFound from "components/common/WorkerNotFound";
 import { getPredictiveSearchAPI } from "../../api/predictiveSearchAPI";
 import { PagePathEnum } from "components/common/constants";
 import { coordinatedDebounce } from "components/searchPage/helpers";
 import { parseFullName } from "parse-full-name";
+import { HelpButton } from "components/common/HelpButton";
 
 const useStyles = makeStyles({
     searchRect: {
@@ -40,7 +45,7 @@ const useStyles = makeStyles({
             },
         },
         "&:hover": {
-            cursor: "default",
+            cursor: "pointer",
             boxShadow: "0 0 3px 3px black",
         },
         "&.nodeSelected": {
@@ -67,7 +72,9 @@ const useStyles = makeStyles({
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "nowrap",
-        cursor: "text",
+        ".nodeSelected &:hover": {
+            cursor: "text",
+        },
     },
     loading: {
         color: "#00569c",
@@ -216,8 +223,12 @@ function OrgChartNode(props) {
                 nodeData.isContractor ? "contractor" : ""
             } ${nodeData.id === selectedIdOnChart ? "nodeSelected" : ""}`}
             classes={{ root: classes.card }}
-            onClick={() => {
+            onClick={(e) => {
                 setSelectedIdOnChart(nodeData.id);
+                e.stopPropagation();
+            }}
+            onMouseDown={(e) => {
+                e.stopPropagation();
             }}
             onDoubleClick={() => {
                 setHideTop(false);
@@ -271,8 +282,12 @@ function OrgChartNode(props) {
                     className={`node-expander-top ${
                         hideTop ? "arrow-up" : "arrow-down"
                     }`}
-                    onClick={() => {
+                    onClick={(e) => {
                         setHideTop(!hideTop);
+                        e.stopPropagation();
+                    }}
+                    onMouseDown={(e) => {
+                        e.stopPropagation();
                     }}
                 >
                     <PlayCircleFilledWhiteIcon />
@@ -282,8 +297,12 @@ function OrgChartNode(props) {
                     className={`node-expander-bottom ${
                         hideBottom ? "arrow-down" : "arrow-up"
                     }`}
-                    onClick={() => {
+                    onClick={(e) => {
                         setHideBottom(!hideBottom);
+                        e.stopPropagation();
+                    }}
+                    onMouseDown={(e) => {
+                        e.stopPropagation();
                     }}
                 >
                     <PlayCircleFilledWhiteIcon />
@@ -295,8 +314,26 @@ function OrgChartNode(props) {
     }
 }
 
+const getTransform = (zoom, centerX, centerY) =>
+    `matrix(${zoom}, 0, 0, ${zoom}, ${centerX}, ${centerY})`;
+
+let orgChartMouseDown = false;
+
 function OrgChart(props) {
-    const { setOrgChart } = props;
+    const {
+        dataSetMinimum,
+        dataSetHideTop,
+        dataSetHideBottom,
+        dataSetDefault,
+        centerWorkerId,
+        ready,
+        zoom,
+        centerX,
+        centerY,
+        setOrgChart,
+        setOrgChartZoomRatio,
+        setOrgChartCenter,
+    } = props;
     const classes = useStyles();
 
     const [hideTop, setHideTop] = React.useState(false);
@@ -307,7 +344,14 @@ function OrgChart(props) {
     const params = useParams();
 
     useEffect(() => {
-        setOrgChart(params["workerId"]);
+        if (centerWorkerId !== params["workerId"]) {
+            // reset center and ratio
+            setOrgChartZoomRatio(0.7);
+            setOrgChartCenter(0, 0);
+            setOrgChart(params["workerId"]);
+        }
+
+        orgChartMouseDown = false;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params]);
 
@@ -315,19 +359,19 @@ function OrgChart(props) {
 
     if (hideTop) {
         if (hideBottom) {
-            dataSet = props.dataSetMinimum;
+            dataSet = dataSetMinimum;
         } else {
-            dataSet = props.dataSetHideTop;
+            dataSet = dataSetHideTop;
         }
     } else {
         if (hideBottom) {
-            dataSet = props.dataSetHideBottom;
+            dataSet = dataSetHideBottom;
         } else {
-            dataSet = props.dataSetDefault;
+            dataSet = dataSetDefault;
         }
     }
 
-    const chartArea = !props.ready ? (
+    const chartArea = !ready ? (
         // loading state
         <div className={"orgchart-container"}>
             <CircularProgress
@@ -343,30 +387,65 @@ function OrgChart(props) {
         </div>
     ) : (
         // chart state
-        <OrganizationChart
-            datasource={dataSet}
-            collapsible={false}
-            zoom={true}
-            pan={true}
-            zoominLimit={1}
-            zoomoutLimit={0.4}
-            NodeTemplate={(nodeData) =>
-                OrgChartNode({
-                    ...nodeData,
-                    selectedIdOnChart: selectedIdOnChart,
-                    setSelectedIdOnChart: setSelectedIdOnChart.bind(this),
-                    hideTop: hideTop,
-                    setHideTop: setHideTop.bind(this),
-                    hideBottom: hideBottom,
-                    setHideBottom: setHideBottom.bind(this),
-                })
-            }
-            onClickChart={() => {
+        <div
+            className="chart-area-container"
+            onMouseUp={(e) => {
+                orgChartMouseDown = false;
+            }}
+            onMouseMove={(e) => {
+                if (orgChartMouseDown) {
+                    setOrgChartCenter(
+                        centerX + e.movementX,
+                        centerY + e.movementY
+                    );
+                }
+            }}
+            onMouseDown={(e) => {
+                orgChartMouseDown = true;
+            }}
+            onClick={(e) => {
                 setSelectedIdOnChart("");
             }}
-        />
-    );
+            onWheel={(e) => {
+                const deltaY = e.deltaY;
+                let ratio = zoom;
 
+                if (deltaY > 0) {
+                    ratio /= 1.2;
+                    if (ratio < 0.2) {
+                        ratio = 0.2;
+                    }
+                } else if (deltaY < 0) {
+                    ratio *= 1.2;
+                    if (ratio > 1) {
+                        ratio = 1;
+                    }
+                }
+
+                setOrgChartZoomRatio(ratio);
+            }}
+        >
+            <div id="chartAreaCenteredReference"></div>
+            <CustomizedOrganizationChart
+                dataSource={dataSet}
+                nodeTemplate={(nodeData) =>
+                    OrgChartNode({
+                        ...nodeData,
+                        selectedIdOnChart: selectedIdOnChart,
+                        setSelectedIdOnChart: setSelectedIdOnChart,
+                        hideTop: hideTop,
+                        setHideTop: setHideTop,
+                        hideBottom: hideBottom,
+                        setHideBottom: setHideBottom,
+                    })
+                }
+                setSelectedIdOnChart={setSelectedIdOnChart}
+                zoom={zoom}
+                centerX={centerX}
+                centerY={centerY}
+            />
+        </div>
+    );
     return (
         <div>
             <div id="searchLegendArea">
@@ -374,7 +453,43 @@ function OrgChart(props) {
                     <OrgChartSearchBar />
                 </div>
                 <ul id="legend">
-                    <li>LEGEND</li>
+                    <li>
+                        LEGEND
+                        <HelpButton className={"org-chart-help-button"}>
+                            <ol style={{ maxWidth: 600 }}>
+                                <li>
+                                    You could drag the chart using the cursor or
+                                    zoom through scrolling.
+                                </li>
+                                <li>
+                                    To hide supervisor and colleagues, or
+                                    subordinates, toggle the show or hide
+                                    buttons.
+                                </li>
+                                <li>
+                                    To see the full text of the name, title or
+                                    email of an employee/contractor, click once
+                                    on a card.
+                                </li>
+                                <li>
+                                    To see an organization chart for a different
+                                    employee/contractor in the current chart,
+                                    click twice on a card.
+                                </li>
+                                <li>
+                                    To find an employee/contractor by name and
+                                    see an organization chart for the selected
+                                    employee/contractor, use the “Search by
+                                    name” bar.
+                                </li>
+                                <li>
+                                    To see the full profile of an
+                                    employee/contractor, navigate to "Profile
+                                    View".
+                                </li>
+                            </ol>
+                        </HelpButton>
+                    </li>
                     <li>
                         <div className={"dark-blue-background"}></div>Current
                         Search
@@ -389,14 +504,38 @@ function OrgChart(props) {
     );
 }
 
+function CustomizedOrganizationChart(props) {
+    const { dataSource, nodeTemplate, zoom, centerX, centerY } = props;
+
+    useEffect(() => {
+        const orgchart = document.getElementsByClassName("orgchart")[0];
+
+        if (orgchart) {
+            orgchart["style"].transform = getTransform(zoom, centerX, centerY);
+        }
+    }, [zoom, centerX, centerY]);
+
+    return (
+        <OrganizationChart
+            datasource={dataSource}
+            collapsible={false}
+            zoom={false}
+            zoomInLimit={0.7}
+            zoomOutLimit={0.7}
+            pan={false}
+            NodeTemplate={nodeTemplate}
+        />
+    );
+}
+
 const mapStateToProps = (state) => {
     let dataSetDefault = undefined;
     let dataSetHideTop = undefined;
     let dataSetHideBottom = undefined;
     let dataSetMinimum = undefined;
 
-    // loaded and valid id
-    if (state.appState.ready && Object.keys(state.orgChartState).length > 0) {
+    // loaded and valid id (excluding zoom)
+    if (state.appState.ready && state.orgChartState.colleagues) {
         const orgChartState = state.orgChartState;
         const workers = state.workers;
         const focusedWorkerId = state.appState.focusedWorkerId;
@@ -470,13 +609,19 @@ const mapStateToProps = (state) => {
         dataSetHideTop: dataSetHideTop,
         dataSetHideBottom: dataSetHideBottom,
         dataSetMinimum: dataSetMinimum,
-        focusedWorkerId: state.appState.focusedWorkerId,
+        centerWorkerId: state.orgChartState.centerWorkerId,
+        zoom: state.orgChartState.zoom,
+        centerX: state.orgChartState.centerX,
+        centerY: state.orgChartState.centerY,
         ready: state.appState.ready,
     };
 };
 
 const mapDispatchToProps = (dispatch) => ({
     setOrgChart: (workerId) => dispatch(setOrgChart(workerId)),
+    setOrgChartZoomRatio: (zoom) => dispatch(setOrgChartZoomRatio(zoom)),
+    setOrgChartCenter: (centerX, centerY) =>
+        dispatch(setOrgChartCenter(centerX, centerY)),
 });
 
 export default withRouter(

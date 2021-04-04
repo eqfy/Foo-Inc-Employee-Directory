@@ -21,6 +21,7 @@ import { filterTypeEnum } from "states/filterState";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
+import { HelpButton } from "components/common/HelpButton";
 
 const chipColors = {
     [filterTypeEnum.LOCATION]: "#00D1FF",
@@ -177,6 +178,57 @@ function FilterArea(props) {
                     checked={isAscending}
                     handleChange={handleSortOrderChange}
                 />
+                <HelpButton className={classes.helpButton}>
+                    <ol style={{ maxWidth: 600 }}>
+                        <li>
+                            To find an employee/contractor by name, use the
+                            “Search by name” bar.
+                        </li>
+                        <li>
+                            To filter results using years of experience, use the
+                            experience slider bar.
+                        </li>
+                        <li>
+                            To filter results using location, title, company or
+                            department, use the search bar for each group or
+                            check the checkboxes. Results only need to satisfy
+                            at least one condition in each group.
+                        </li>
+                        <li>
+                            To filter results using skill, use the search bar
+                            for skill or check the checkboxes. Results need to
+                            have all skills selected.
+                        </li>
+                        <li>
+                            To show employee/contractor/all, sort using first
+                            name/last name/title in ascending or descending
+                            order, use the top row of the search page.
+                        </li>
+                        <li>
+                            To see all applied filters and remove some of them,
+                            use the applied filter bar.
+                        </li>
+                        <li>
+                            To select an employee/contractor as the focus and
+                            see full text of the name, title or email, click
+                            once on a card.
+                        </li>
+                        <li>
+                            To see the full profile of an employee/contractor,
+                            click twice on the card.
+                        </li>
+                        <li>
+                            To see the organization chart of an
+                            employee/contractor, click on the organization chart
+                            icon on the card.
+                        </li>
+                        <li>
+                            To see the full profile or organization chart of a
+                            selected employee/contractor, navigate to "Profile
+                            View" or "Organization Chart".
+                        </li>
+                    </ol>
+                </HelpButton>
             </div>
             <div className={classes.skillsBox}>
                 {chipData.length > 0 ? (
@@ -319,5 +371,8 @@ const useStyles = makeStyles(() => ({
         alignSelf: "center",
         width: "100%",
         color: "rgba(0, 0, 0, 0.54)",
+    },
+    helpButton: {
+        marginLeft: "auto",
     },
 }));

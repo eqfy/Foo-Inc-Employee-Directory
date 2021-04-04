@@ -9,11 +9,12 @@ import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { setFocusedWorkerId } from "actions/generalAction";
 
 const entriesPerPage = 8;
 
 const gridWidth = 260;
-const gridHeight = 266;
+const gridHeight = 265;
 
 const useStyles = makeStyles({
     loading: {
@@ -33,27 +34,18 @@ function ResultsArea(props) {
         resultOrder,
         workers: { byId },
         loading,
+        setFocusedWorkerId,
     } = props;
 
     const [selectedIndexOnPage, setSelectedIndexOnPage] = useState(-1);
 
-    // workaround for handling background and card both onClick
-    const [cardClicked, setCardClicked] = useState(false);
-    const [gridClickToggle, setGridClickToggle] = useState(true);
+    useEffect(() => {
+        setSelectedIndexOnPage(-1);
+    }, [loading]);
 
     const handleChange = (_event, value) => {
-        setSelectedIndexOnPage(-1);
         updatePage(value);
     };
-
-    useEffect(() => {
-        if (cardClicked) {
-            setCardClicked(false);
-        } else {
-            setSelectedIndexOnPage(-1);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gridClickToggle]);
 
     const styles = useStyles();
 
@@ -65,21 +57,17 @@ function ResultsArea(props) {
         if (offset + index < resultOrder.length) {
             const employeeId = resultOrder[offset + index];
             const employee = employeeId && byId[employeeId];
-            return (
-                employee ? (
-                    <EmployeeCard
-                        employee={employee}
-                        linkToProfile={true}
-                        cardIndexOnPage={index}
-                        selectedIndexOnPage={selectedIndexOnPage}
-                        setSelectedIndexOnPage={setSelectedIndexOnPage.bind(
-                            this
-                        )}
-                        setCardClicked={setCardClicked.bind(this)}
-                    />
-                ) : (
-                    emptyDiv()
-                )
+            return employee ? (
+                <EmployeeCard
+                    employee={employee}
+                    linkToProfile={true}
+                    cardIndexOnPage={index}
+                    selectedIndexOnPage={selectedIndexOnPage}
+                    setSelectedIndexOnPage={setSelectedIndexOnPage}
+                    setFocusedWorkerId={setFocusedWorkerId}
+                />
+            ) : (
+                emptyDiv()
             );
         }
         return emptyDiv();
@@ -101,7 +89,7 @@ function ResultsArea(props) {
         <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
             <div
                 onClick={() => {
-                    setGridClickToggle(!gridClickToggle);
+                    setSelectedIndexOnPage(-1);
                 }}
             >
                 <Grid
@@ -180,6 +168,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     updatePage: (value) => dispatch(setPageAction(value)),
+    setFocusedWorkerId: (focusedWorkerId) =>
+        dispatch(setFocusedWorkerId(focusedWorkerId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);
