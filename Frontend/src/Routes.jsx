@@ -9,7 +9,7 @@ import UpdatePageContainer from "./components/UpdatePageContainer";
 import Header from "./components/Header";
 import { PagePathEnum } from "components/common/constants";
 import { NewContractorsContainer } from "components/NewContractorsContainer";
-import Login from 'components/AdminLogin';
+import Login from "components/AdminLogin";
 
 export default function Routes() {
     const history = useHistory();
@@ -44,13 +44,15 @@ export default function Routes() {
                 <Header activeTabIndex={3} />
                 <NewContractorsContainer />
             </Route>
-            <Route path={`${PagePathEnum.LOGIN}`} render={(props) => (
-                <>
-                    <Header activeTabIndex={5} />
-                    <Login {...props} />
-                </>
-            )}>
-            </Route>
+            <Route
+                path={`${PagePathEnum.LOGIN}`}
+                render={(props) => (
+                    <>
+                        <Header activeTabIndex={5} />
+                        <Login {...props} />
+                    </>
+                )}
+            ></Route>
             <Route path={`${PagePathEnum.UPDATE}`}>
                 <Header activeTabIndex={4} />
                 <UpdatePageContainer />

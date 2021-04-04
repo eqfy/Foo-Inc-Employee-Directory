@@ -15,12 +15,12 @@ const config = {
         REGION: "us-west-2",
         USER_POOL_ID: data.ProjectStack.UserPoolId,
         APP_CLIENT_ID: data.ProjectStack.UserPoolClientId,
-        IDENTITY_POOL_ID: data.ProjectStack.IdentityPoolId
+        IDENTITY_POOL_ID: data.ProjectStack.IdentityPoolId,
     },
     s3: {
         REGION: "us-west-2",
-        BUCKET: data.ProjectStack.imageBucket
-    }
+        BUCKET: data.ProjectStack.imageBucket,
+    },
 };
 
 export default config;

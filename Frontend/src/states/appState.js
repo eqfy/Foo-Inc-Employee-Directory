@@ -33,5 +33,5 @@ export const defaultAppState = {
         open: false,
         severity: "success",
         message: "test",
-    }
+    },
 };

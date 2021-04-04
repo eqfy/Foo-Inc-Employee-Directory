@@ -1,98 +1,93 @@
 {
-  "skills": [
-    {
-      "skillLabel": "Planting",
-      "categoryLabel": "Agriculture"
-    },
-    {
-      "skillLabel": "Harvesting",
-      "categoryLabel": "Agriculture"
-    },
-    {
-      "skillLabel": "Fertilizing",
-      "categoryLabel": "Agriculture"
-    },
-    {
-      "skillLabel": "Irrigating",
-      "categoryLabel": "Agriculture"
-    },
-    {
-      "skillLabel": "Soil Preparation",
-      "categoryLabel": "Agriculture"
-    },
-    {
-      "skillLabel": "Transaction Processing",
-      "categoryLabel": "Accounting"
-    },
-    {
-      "skillLabel": "Reconciling",
-      "categoryLabel": "Accounting"
-    },
-    {
-      "skillLabel": "Auditing",
-      "categoryLabel": "Accounting"
-    },
-    {
-      "skillLabel": "Planning",
-      "categoryLabel": "Management"
-    },
-    {
-      "skillLabel": "Budgeting",
-      "categoryLabel": "Management"
-    },
-    {
-      "skillLabel": "Performance Reviews",
-      "categoryLabel": "Management"
-    },
-    {
-      "skillLabel": "Preparing Marketing Materials",
-      "categoryLabel": "Marketing & Sales"
-    },
-    {
-      "skillLabel": "Customer Service",
-      "categoryLabel": "Marketing & Sales"
-    },
-    {
-      "skillLabel": "Marketing Strategies",
-      "categoryLabel": "Marketing & Sales"
-    }
-  ],
-  "locations": [
-    "Vancouver",
-    "Victoria",
-    "Kelowna",
-    "Prince George"
-  ],
-  "titles": [
-    "General Manager",
-    "Some \"Title\"",
-    "Manager-Sales",
-    "Manager-Operations",
-    "Office Manager - Kelowna",
-    "Manager-Marketing & Sales",
-    "Office Manager - Prince George",
-    "Manager-HR/Accounting",
-    "Manager-Distribution",
-    "COO",
-    "President and CEO",
-    "Manager-Service",
-    "Operations Manager",
-    "Manager-Marketing"
-  ],
-  "departments": [
-    "Accounting",
-    "Marketing & Sales",
-    "Marketing",
-    "Operations",
-    "Administration",
-    "Distribution",
-    "Human Resources",
-    "Service",
-    "Sales"
-  ],
-  "companies": [
-    "Acme Seeds Inc.",
-    "Acme Planting Ltd.",
-    "Acme Harvesting Ltd."
-  ]
+    "skills": [
+        {
+            "skillLabel": "Planting",
+            "categoryLabel": "Agriculture"
+        },
+        {
+            "skillLabel": "Harvesting",
+            "categoryLabel": "Agriculture"
+        },
+        {
+            "skillLabel": "Fertilizing",
+            "categoryLabel": "Agriculture"
+        },
+        {
+            "skillLabel": "Irrigating",
+            "categoryLabel": "Agriculture"
+        },
+        {
+            "skillLabel": "Soil Preparation",
+            "categoryLabel": "Agriculture"
+        },
+        {
+            "skillLabel": "Transaction Processing",
+            "categoryLabel": "Accounting"
+        },
+        {
+            "skillLabel": "Reconciling",
+            "categoryLabel": "Accounting"
+        },
+        {
+            "skillLabel": "Auditing",
+            "categoryLabel": "Accounting"
+        },
+        {
+            "skillLabel": "Planning",
+            "categoryLabel": "Management"
+        },
+        {
+            "skillLabel": "Budgeting",
+            "categoryLabel": "Management"
+        },
+        {
+            "skillLabel": "Performance Reviews",
+            "categoryLabel": "Management"
+        },
+        {
+            "skillLabel": "Preparing Marketing Materials",
+            "categoryLabel": "Marketing & Sales"
+        },
+        {
+            "skillLabel": "Customer Service",
+            "categoryLabel": "Marketing & Sales"
+        },
+        {
+            "skillLabel": "Marketing Strategies",
+            "categoryLabel": "Marketing & Sales"
+        }
+    ],
+    "locations": ["Vancouver", "Victoria", "Kelowna", "Prince George"],
+    "titles": [
+        "General Manager",
+        "Some \"Title\"",
+        "Manager-Sales",
+        "Manager-Operations",
+        "Office Manager - Kelowna",
+        "Manager-Marketing & Sales",
+        "Office Manager - Prince George",
+        "Manager-HR/Accounting",
+        "Manager-Distribution",
+        "COO",
+        "President and CEO",
+        "Manager-Service",
+        "Operations Manager",
+        "Manager-Marketing"
+    ],
+    "departments": [
+        "Accounting",
+        "Marketing & Sales",
+        "Marketing",
+        "Operations",
+        "Administration",
+        "Distribution",
+        "Human Resources",
+        "Service",
+        "Sales"
+    ],
+    "companies": [
+        "Acme Seeds Inc.",
+        "Acme Planting Ltd.",
+        "Acme Harvesting Ltd."
+    ]
 }

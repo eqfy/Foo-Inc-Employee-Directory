@@ -7,7 +7,7 @@ import styled from "styled-components";
 
 const useStyles = makeStyles({
     label: {
-        textTransform: 'none',
+        textTransform: "none",
     },
 });
 

@@ -18,8 +18,8 @@ Amplify.configure({
     Storage: {
         AWSS3: {
             region: config.s3.REGION,
-            bucket: config.s3.BUCKET
-        }
+            bucket: config.s3.BUCKET,
+        },
     },
     API: {
         endpoints: [

@@ -19,7 +19,7 @@ export default function workerReducer(state = defaultWorkerState, action) {
 }
 
 const mergeList = (list1, list2) => {
-    list1.forEach(ele1 => {
+    list1.forEach((ele1) => {
         if (!list2.includes(ele1)) {
             list2.push(ele1);
         }

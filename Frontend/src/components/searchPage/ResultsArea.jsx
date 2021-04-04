@@ -65,21 +65,17 @@ function ResultsArea(props) {
         if (offset + index < resultOrder.length) {
             const employeeId = resultOrder[offset + index];
             const employee = employeeId && byId[employeeId];
-            return (
-                employee ? (
-                    <EmployeeCard
-                        employee={employee}
-                        linkToProfile={true}
-                        cardIndexOnPage={index}
-                        selectedIndexOnPage={selectedIndexOnPage}
-                        setSelectedIndexOnPage={setSelectedIndexOnPage.bind(
-                            this
-                        )}
-                        setCardClicked={setCardClicked.bind(this)}
-                    />
-                ) : (
-                    emptyDiv()
-                )
+            return employee ? (
+                <EmployeeCard
+                    employee={employee}
+                    linkToProfile={true}
+                    cardIndexOnPage={index}
+                    selectedIndexOnPage={selectedIndexOnPage}
+                    setSelectedIndexOnPage={setSelectedIndexOnPage.bind(this)}
+                    setCardClicked={setCardClicked.bind(this)}
+                />
+            ) : (
+                emptyDiv()
             );
         }
         return emptyDiv();

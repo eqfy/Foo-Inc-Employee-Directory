@@ -7,7 +7,7 @@ export async function insertContractorAPI(payload) {
         body: payload,
         headers: {
             Authorization: token,
-        }
+        },
     };
     return API.put("ae-api", "addContractor", myInit);
 }

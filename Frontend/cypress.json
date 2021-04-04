@@ -1,6 +1,6 @@
 {
-  "env": {
-    "baseUrl": "http://localhost:3000",
-    "timeoutInMs": 30000
-  }
+    "env": {
+        "baseUrl": "http://localhost:3000",
+        "timeoutInMs": 30000
+    }
 }
