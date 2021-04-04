@@ -12,11 +12,7 @@ import {
     setSortOrderAction,
     setWorkerTypeAction,
 } from "actions/filterAction";
-import {
-    convertCamelToSpaces,
-    convertSpacesToCamel,
-    coordinatedDebounce,
-} from "./helpers";
+import { coordinatedDebounce } from "./helpers";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { WorkerTypeEnum } from "states/appState";
@@ -106,7 +102,7 @@ function FilterArea(props) {
     };
 
     const handleSortKeyChange = (event) => {
-        setSortKeyAction(convertSpacesToCamel(event.target.value));
+        setSortKeyAction(event.target.value);
         coordinatedDebounce(
             searchWithAppliedFilterAction,
             SearchWithFilterTimer
@@ -165,16 +161,14 @@ function FilterArea(props) {
             <div className={classes.sortingArea}>
                 <Dropdown
                     values={Object.values(WorkerTypeEnum)}
-                    label="show"
+                    label="Show"
                     currValue={shownWorkerType}
                     handleChange={handleWorkerTypeChange}
                 />
                 <Dropdown
-                    values={Object.values(SortKeyEnum).map((key) =>
-                        convertCamelToSpaces(key)
-                    )}
-                    label="sort by"
-                    currValue={convertCamelToSpaces(sortKey)}
+                    values={Object.values(SortKeyEnum)}
+                    label="Sort by"
+                    currValue={sortKey}
                     handleChange={handleSortKeyChange}
                 />
                 <CustomCheckBox
