@@ -1,5 +1,5 @@
 import { getProfileAPI } from "api/profileAPI";
-import { setFiltersChanged } from "./filterAction";
+import { clearAppliedFilters, setFiltersChanged } from "./filterAction";
 
 export const setProfile = (workerId) => (dispatch) => {
     dispatch({
@@ -11,7 +11,6 @@ export const setProfile = (workerId) => (dispatch) => {
 
     getProfileAPI(workerId)
         .then((response) => {
-            console.log(response);
             // if employee id is valid
             if (response !== null) {
                 dispatch({
@@ -45,12 +44,10 @@ export const setProfile = (workerId) => (dispatch) => {
 };
 
 export const setProfileSkills = (skills) => (dispatch) => {
-    dispatch({
-        type: "CLEAR_APPLIED_FILTERS",
-    })
+    dispatch(clearAppliedFilters());
     dispatch({
         type: "SET_SKILL",
         payload: skills,
-    })
+    });
     dispatch(setFiltersChanged(true));
-}
+};

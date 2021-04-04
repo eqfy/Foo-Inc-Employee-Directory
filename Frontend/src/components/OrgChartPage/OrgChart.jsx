@@ -16,7 +16,7 @@ import { setOrgChart } from "../../actions/orgChartAction";
 import WorkerNotFound from "components/common/WorkerNotFound";
 import { getPredictiveSearchAPI } from "../../api/predictiveSearchAPI";
 import { PagePathEnum } from "components/common/constants";
-import { coordinatedDebounce } from "components/searchPage/helpers";
+import { coordinatedDebounce } from "components/common/helpers";
 import { parseFullName } from "parse-full-name";
 
 const useStyles = makeStyles({

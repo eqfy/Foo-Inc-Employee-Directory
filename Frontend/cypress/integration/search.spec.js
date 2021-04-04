@@ -6,6 +6,8 @@ describe('Get all filters', () => {
 
   it('gets all filters', () => {
     cy.visit(baseUrl)
+
+    cy.get('[data-cy="loading-filters"]')
     cy.get('[data-cy="loading-filters"]', { timeout }).should('not.exist')
 
     cy.get('[data-cy="expand-location-filters"]').click()
@@ -71,8 +73,15 @@ describe('Search and filter', () => {
   it('Filter by skill', () => {
     cy.visit(baseUrl)
 
-    cy.get('[data-cy="loading-filters"]', { timeout }).should('not.exist')
+    // Wait for search to complete
+    cy.get('[data-cy="loading-results"]')
+    cy.get('[data-cy="loading-results"]', { timeout }).should('not.exist')
+
     cy.get('.MuiChip-deleteIcon').click()
+
+    // Wait for search to complete
+    cy.get('[data-cy="loading-results"]')
+    cy.get('[data-cy="loading-results"]', { timeout }).should('not.exist')
 
     cy.get('[data-cy="skill-input"]').type("Acc")
 
@@ -88,6 +97,10 @@ describe('Search and filter', () => {
 
     cy.get('[data-cy="Transaction Processing checkbox"]').click()
     cy.get('[data-cy="Auditing checkbox"]').click()
+
+    // Wait for search to complete
+    cy.get('[data-cy="loading-results"]')
+    cy.get('[data-cy="loading-results"]', { timeout }).should('not.exist')
 
     cy.get('[data-cy="skill-input"]').clear().type('Man')
 

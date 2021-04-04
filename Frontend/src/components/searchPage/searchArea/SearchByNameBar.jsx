@@ -15,7 +15,7 @@ import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { parseFullName } from "parse-full-name";
 import React from "react";
 import { connect } from "react-redux";
-import { coordinatedDebounce } from "../helpers";
+import { coordinatedDebounce } from "../../common/helpers";
 import "./SearchArea.css";
 
 const searchByNameTimer = {};
