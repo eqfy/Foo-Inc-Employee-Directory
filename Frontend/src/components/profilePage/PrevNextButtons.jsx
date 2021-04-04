@@ -7,7 +7,10 @@ import "components/common/Common.css";
 import { PagePathEnum } from "components/common/constants";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { connect } from "react-redux";
-import { searchWithAppliedFilterAction } from "actions/searchAction";
+import {
+    searchWithAppliedFilterAction,
+    setPageAction,
+} from "actions/searchAction";
 import { ResultEntryPerPage } from "states/searchPageState";
 
 const usePrevStyles = makeStyles({
@@ -52,7 +55,9 @@ function PrevNextButtons(props) {
     const {
         resultOrder,
         focusedWorkerId,
+        pageNumber,
         searchWithAppliedFilterAction,
+        updatePage,
     } = props;
     const classesPrev = usePrevStyles();
     const classesNext = useNextStyles();
@@ -64,14 +69,17 @@ function PrevNextButtons(props) {
         (workerId) => workerId === focusedWorkerId
     );
 
-    const prevWorkerId = validIndex(index - 1) ? resultOrder[index - 1] : null;
-    const nextWorkerId = validIndex(index + 1) ? resultOrder[index + 1] : null;
+    const prevWorkerId = resultOrder[index - 1];
+    const nextWorkerId = resultOrder[index + 1];
     React.useEffect(() => {
         if (!prevWorkerId && validIndex(index - 1)) {
             searchWithAppliedFilterAction(indexToPageNumber(index - 1));
         }
         if (!nextWorkerId && validIndex(index + 1)) {
             searchWithAppliedFilterAction(indexToPageNumber(index + 1));
+        }
+        if (indexToPageNumber(index) !== pageNumber) {
+            updatePage(indexToPageNumber(index));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
@@ -88,11 +96,13 @@ function PrevNextButtons(props) {
 const mapStateToProps = (state) => ({
     focusedWorkerId: state.appState.focusedWorkerId,
     resultOrder: state.searchPageState.resultOrder,
+    pageNumber: state.searchPageState.pageNumber,
 });
 
 const mapDispatchToProps = (dispatch) => ({
     searchWithAppliedFilterAction: (pageNumberOverride) =>
         dispatch(searchWithAppliedFilterAction(pageNumberOverride)),
+    updatePage: (value) => dispatch(setPageAction(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PrevNextButtons);
