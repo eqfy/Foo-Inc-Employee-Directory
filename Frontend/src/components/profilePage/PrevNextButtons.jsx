@@ -75,7 +75,6 @@ function PrevNextButtons(props) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
-    console.log(index, prevWorkerId, nextWorkerId, resultOrder);
 
     return (
         <Container className="flex">
