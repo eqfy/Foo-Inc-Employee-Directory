@@ -459,14 +459,29 @@ namespace Project
             databaseScriptsBucket.GrantRead(predictiveSearch);
             databaseScriptsBucket.GrantRead(getAllGroupCodes);
             databaseScriptsBucket.GrantRead(getAllOfficeLocations);
-
-
-
-            s3dep.ISource[] temp = { s3dep.Source.Asset("./Database") };
+            
             //deploy the database scripts to the s3 bucket
+            List<s3dep.ISource> temp = new List<s3dep.ISource>();
+            temp.Add(s3dep.Source.Asset("./Database"));
+            string deployEnv = System.Environment.GetEnvironmentVariable("DEPLOY_ENVIRONMENT");
+            
+            switch (deployEnv){
+                case "test":
+                    temp.Add(s3dep.Source.Asset("./TestDatabaseInit"));
+                    break;
+                case "prod":
+                    temp.Add(s3dep.Source.Asset("./ProdDatabaseInit"));
+                    break;
+                case "dev":
+                    temp.Add(s3dep.Source.Asset("./DevDatabaseInit"));
+                    break;
+                default:
+                    temp.Add(s3dep.Source.Asset("./DevDatabaseInit"));
+                    break;    
+            }
             new s3dep.BucketDeployment(this, "DeployDatabaseScripts", new s3dep.BucketDeploymentProps
             {
-                Sources = temp,
+                Sources = temp.ToArray(),
                 DestinationBucket = databaseScriptsBucket
             });
 
