@@ -343,7 +343,7 @@ async function uploadProfilePicture (){
         .catch((err) => {
             console.log(err);
             // update snackbar failed
-            showSnackbar('error','Could not add Contractor');
+            showSnackbar('error','Could not add Contractor. Please ensure a contractor with email provided does not exist in directory');
             })
         .finally(() => {
         updateLoadingState('submit', false);
