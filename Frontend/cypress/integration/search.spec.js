@@ -124,7 +124,8 @@ describe("Search and filter", () => {
         cy.get('[data-cy="loading-results"]');
         cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
 
-        cy.get('[data-cy="employee-card"]').should("have.length", 1);
+        cy.get('[data-cy="employee-card"]').should("have.length", 2);
+        cy.contains("Annie Ameras").should("exist");
         cy.contains("Connie Conner").should("exist");
     });
 });

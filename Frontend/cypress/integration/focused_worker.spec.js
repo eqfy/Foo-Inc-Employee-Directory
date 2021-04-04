@@ -12,16 +12,16 @@ describe("Focused worker", () => {
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
         cy.get(".current").should("contain", "Wally Westerson");
 
-        cy.get("[id=60002]").should("contain", "Buzz Aldrin").dblclick();
+        cy.get("[id=20104]").should("contain", "Gordon Trent").dblclick();
 
-        cy.url().should("eq", `${baseUrl}/orgchart/60002`);
+        cy.url().should("eq", `${baseUrl}/orgchart/20104`);
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
-        cy.get(".current").should("contain", "Buzz Aldrin");
+        cy.get(".current").should("contain", "Gordon Trent");
 
         cy.contains("Profile View").click();
 
-        cy.url().should("eq", `${baseUrl}/profile/60002`);
-        cy.contains("Buzz Aldrin").should("exist");
+        cy.url().should("eq", `${baseUrl}/profile/20104`);
+        cy.contains("Gordon Trent").should("exist");
     });
 
     it("profile view sets focused worker", () => {
@@ -32,27 +32,29 @@ describe("Focused worker", () => {
         cy.get('[data-cy="loading-results"]');
         cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
 
+        cy.contains("Alice Allen").dblclick();
+
         cy.contains("Profile View").click();
 
-        cy.url().should("eq", `${baseUrl}/profile/20004`);
-        cy.contains("Wally Westerson").should("exist");
-
-        cy.contains("Previous").click();
-        cy.url().should("eq", `${baseUrl}/profile/20002`);
-        cy.contains("Sam Smithers").should("exist");
-
-        cy.contains("Previous").click();
-        cy.url().should("eq", `${baseUrl}/profile/60003`);
-        cy.contains("Neil Armstrong").should("exist");
+        cy.url().should("eq", `${baseUrl}/profile/60645`);
+        cy.contains("Alice Allen").should("exist");
 
         cy.contains("Next").click();
-        cy.url().should("eq", `${baseUrl}/profile/20002`);
-        cy.contains("Sam Smithers").should("exist");
+        cy.url().should("eq", `${baseUrl}/profile/60105`);
+        cy.contains("Allison Martin").should("exist");
+
+        cy.contains("Next").click();
+        cy.url().should("eq", `${baseUrl}/profile/60815`);
+        cy.contains("Amanda Hamiton").should("exist");
+
+        cy.contains("Previous").click();
+        cy.url().should("eq", `${baseUrl}/profile/60105`);
+        cy.contains("Allison Martin").should("exist");
 
         cy.contains("Organization Chart").click();
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
 
-        cy.url().should("eq", `${baseUrl}/orgchart/20002`);
-        cy.get(".current").should("contain", "Sam Smithers");
+        cy.url().should("eq", `${baseUrl}/orgchart/60105`);
+        cy.get(".current").should("contain", "Allison Martin");
     });
 });
