@@ -79,7 +79,7 @@ export default function appStateReducer(state = defaultAppState, action) {
                 lastName: action.payload.lastName,
             };
         case "CLEAR_APPLIED_FILTERS":
-            // this resets all filters except name, orderBy, orderDir
+            // this resets all filters except orderBy and orderDir
             return {
                 ...state,
                 skillState: {},
@@ -88,6 +88,8 @@ export default function appStateReducer(state = defaultAppState, action) {
                 departmentState: [],
                 companyState: [],
                 yearsPriorExperience: 0,
+                firstName: "",
+                lastName: "",
                 shownWorkerType: WorkerTypeEnum.ALL,
             };
         case "SET_FILTERS_CHANGED":
