@@ -1,4 +1,4 @@
-import { DEFAULT_SEARCH_TIMEOUT } from "components/common/constants";
+import { DEFAULT_SEARCH_TIMEOUT } from "./constants";
 
 // Debouces a function that is coordinated by a timer object
 // The timer can be any object (typically {}) defined outside of a React component

@@ -4,7 +4,7 @@ import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { matchSorter } from "match-sorter";
 import { connect } from "react-redux";
-import { coordinatedDebounce } from "../helpers";
+import { coordinatedDebounce } from "../../common/helpers";
 import "./SearchArea.css";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
@@ -223,7 +223,10 @@ function CheckboxList(props) {
                         }}
                         key={filterName + index}
                     >
-                        <ListItemIcon className="filter-list-icon" data-cy={`${filterName} checkbox`}>
+                        <ListItemIcon
+                            className="filter-list-icon"
+                            data-cy={`${filterName} checkbox`}
+                        >
                             <StyledCheckbox
                                 edge="start"
                                 checked={appliedFilters.includes(filterName)}

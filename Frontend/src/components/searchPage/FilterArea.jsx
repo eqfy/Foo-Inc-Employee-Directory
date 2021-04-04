@@ -12,7 +12,7 @@ import {
     setSortOrderAction,
     setWorkerTypeAction,
 } from "actions/filterAction";
-import { coordinatedDebounce } from "./helpers";
+import { coordinatedDebounce } from "../common/helpers";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { WorkerTypeEnum } from "states/appState";

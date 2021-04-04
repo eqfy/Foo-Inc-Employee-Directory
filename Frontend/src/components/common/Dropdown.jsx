@@ -4,7 +4,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { convertCamelToSpaces } from "components/searchPage/helpers";
+import { convertCamelToSpaces } from "./helpers";
 
 export default function Dropdown(props) {
     const classes = useStyles();
