@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import CustomCheckBox from "../common/CustomCheckbox";
 import Dropdown from "../common/Dropdown";
 import Chip from "@material-ui/core/Chip";

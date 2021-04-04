@@ -1,10 +1,13 @@
-import { CircularProgress, Fade, Grid, styled } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Fade from "@material-ui/core/Fade";
+import Grid from "@material-ui/core/Grid";
+import styled from "@material-ui/core/styles/styled";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import React from "react";
 import SearchByNameBar from "./SearchByNameBar";
 import "./SearchArea.css";
 import ExperienceSlider from "./ExperienceSlider";
 import ApplyFilterWidget from "./ApplyFilterWidget";
-import { makeStyles } from "@material-ui/core";
 import { connect } from "react-redux";
 import { filterTypeEnum } from "states/filterState";
 

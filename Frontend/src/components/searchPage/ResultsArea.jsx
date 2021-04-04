@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import EmployeeCard from "../common/EmployeeCard";
-import { Pagination } from "@material-ui/lab";
+import Pagination from "@material-ui/lab/Pagination";
 import styled from "styled-components";
 import "../common/Common.css";
 import { setPageAction } from "actions/searchAction";
@@ -8,8 +8,9 @@ import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { ResultEntryPerPage } from "states/searchPageState";
-import { Grid, makeStyles } from "@material-ui/core";
 import { setFocusedWorkerId } from "actions/generalAction";
+import Grid from "@material-ui/core/Grid";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const gridWidth = 260;
 const gridHeight = 266;
@@ -54,6 +55,7 @@ function ResultsArea(props) {
         } else {
             setSelectedIndexOnPage(-1);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gridClickToggle]);
 
     const styles = useStyles();
@@ -66,24 +68,18 @@ function ResultsArea(props) {
         if (offset + index < resultOrder.length) {
             const employeeId = resultOrder[offset + index];
             const employee = employeeId && byId[employeeId];
-            return (
-                // <div className="card-grid-col">
-                employee ? (
-                    <EmployeeCard
-                        employee={employee}
-                        linkToProfile={true}
-                        cardIndexOnPage={index}
-                        selectedIndexOnPage={selectedIndexOnPage}
-                        setSelectedIndexOnPage={setSelectedIndexOnPage.bind(
-                            this
-                        )}
-                        setCardClicked={setCardClicked.bind(this)}
-                        setFocusedWorkerId={setFocusedWorkerId}
-                    />
-                ) : (
-                    emptyDiv()
-                )
-                // </div>
+            return employee ? (
+                <EmployeeCard
+                    employee={employee}
+                    linkToProfile={true}
+                    cardIndexOnPage={index}
+                    selectedIndexOnPage={selectedIndexOnPage}
+                    setSelectedIndexOnPage={setSelectedIndexOnPage.bind(this)}
+                    setCardClicked={setCardClicked.bind(this)}
+                    setFocusedWorkerId={setFocusedWorkerId}
+                />
+            ) : (
+                emptyDiv()
             );
         }
         return emptyDiv();

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import LinkButton from "components/common/LinkButton";
 import "components/common/Common.css";
 import { PagePathEnum } from "components/common/constants";
-import { makeStyles } from "@material-ui/core";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import { connect } from "react-redux";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { ResultEntryPerPage } from "states/searchPageState";

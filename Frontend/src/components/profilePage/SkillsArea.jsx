@@ -1,7 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { Button, Typography, makeStyles, Chip } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import Chip from "@material-ui/core/Chip";
 import "./ProfilePage.css";
 import { setProfileSkills } from "actions/profileAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
@@ -119,7 +122,6 @@ function SkillsArea(props) {
         <ContainerDiv>
             <StyledHeading className="heading">
                 Skills
-                {/* TODO: Implement search functionality */}
                 <SkillButton
                     variant="contained"
                     disableElevation

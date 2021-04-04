@@ -1,5 +1,4 @@
 import { API } from "aws-amplify";
-import mockPredictiveSearch from "../mocks/mockPredictiveSearch.json";
 
 export async function getPredictiveSearchAPI(firstName, lastName) {
     const info = {

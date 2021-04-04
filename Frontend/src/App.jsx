@@ -8,8 +8,9 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import "./App.css";
 import Routes from "./Routes";
-import { Slide, Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import Slide from '@material-ui/core/Slide';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 function Transition(props) {
     return <Slide {...props} direction="left" />;
@@ -38,9 +39,9 @@ function App(props) {
 
         // Load the current user and set the current user's physical location as a filter
         configureCurrUser();
-
+        
         Auth.currentSession()
-            .then(() => {
+            .then((result) => {
                 setAdmin(true);
             })
             .catch((res) => {

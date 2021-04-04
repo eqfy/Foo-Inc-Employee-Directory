@@ -14,7 +14,7 @@ describe('Focused worker', () => {
 
     cy.get('[id=60002]')
       .should('contain', 'Buzz Aldrin')
-      .click()
+      .dblclick()
 
     cy.url().should('eq', `${baseUrl}/orgchart/60002`)
     cy.get('[data-cy="loading-orgchart"]', { timeout }).should('not.exist');
@@ -30,6 +30,9 @@ describe('Focused worker', () => {
   it('profile view sets focused worker', () => {
     cy.visit(baseUrl)
 
+    // Wait for the progress circle to show up, then wait for it to disappear
+    // essentially wait for the search to complete
+    cy.get('[data-cy="loading-results"]')
     cy.get('[data-cy="loading-results"]', { timeout }).should('not.exist')
 
     cy.contains('Profile View').click()

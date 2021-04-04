@@ -3,7 +3,7 @@ import LinkButton from "components/common/LinkButton";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import styled from "styled-components";
 import { PagePathEnum } from 'components/common/constants';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const useStyles = makeStyles({
     root: {

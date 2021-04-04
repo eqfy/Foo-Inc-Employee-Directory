@@ -116,7 +116,7 @@ const createSearchPayload = (state, pageNumberOverride) => {
             lastName = "",
             shownWorkerType = WorkerTypeEnum.ALL,
         },
-        searchPageState: { pageNumber, sortKey, isAscending },
+        searchPageState: { sortKey, isAscending, pageNumber },
     } = state;
 
     let payload = {

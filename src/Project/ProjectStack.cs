@@ -156,10 +156,10 @@ namespace Project
             };
             providers.Add(provider);
 
-            cognito.CfnIdentityPool identity_pool = new cognito.CfnIdentityPool(this, "Foo-identity-pool", new cognito.CfnIdentityPoolProps
+            cognito.CfnIdentityPool identity_pool = new cognito.CfnIdentityPool(this, "Fooidentitypool", new cognito.CfnIdentityPoolProps
             {
-                AllowUnauthenticatedIdentities = false,
-                IdentityPoolName = "Foo-identity-pool",
+                AllowUnauthenticatedIdentities = true,
+                IdentityPoolName = "Fooidentitypool",
                 CognitoIdentityProviders = providers
             });
 
@@ -375,18 +375,25 @@ namespace Project
             string_equals_cond.Add("cognito-identity.amazonaws.com:aud", identity_pool.Ref);
             var string_like_cond = new Dictionary<string, string>();
             string_like_cond.Add("cognito-identity.amazonaws.com:amr", "authenticated");
-
-            var conditions = new Dictionary<string, object>(){
+            var string_like_cond_noauth = new Dictionary<string, string>();
+            string_like_cond_noauth.Add("cognito-identity.amazonaws.com:amr", "unauthenticated");
+            
+            var auth_conditions = new Dictionary<string, object>(){
                 {"StringEquals", string_equals_cond},
                 {"ForAnyValue:StringLike", string_like_cond}
             };
+            var noauth_conditions = new Dictionary<string, object>(){
+                {"StringEquals", string_equals_cond},
+                {"ForAnyValue:StringLike", string_like_cond_noauth}
+            };
+
             iam.Role authenticated_role = new iam.Role(this, "cognito-auth-role", new iam.RoleProps
             {
-                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", conditions, "sts:AssumeRoleWithWebIdentity")
+                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", auth_conditions, "sts:AssumeRoleWithWebIdentity")
             });
             iam.Role unauthenticated_role = new iam.Role(this, "cognito-unauth-role", new iam.RoleProps
             {
-                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", conditions, "sts:AssumeRoleWithWebIdentity")
+                AssumedBy = new iam.FederatedPrincipal("cognito-identity.amazonaws.com", noauth_conditions, "sts:AssumeRoleWithWebIdentity")
             });
 
             iam.PolicyStatement cognito_policy = new iam.PolicyStatement(new iam.PolicyStatementProps
@@ -395,6 +402,14 @@ namespace Project
                 Actions = new[] { "mobileanalytics:PutEvents", "cognito-sync:*", "cognito-identity:*" },
                 Effect = iam.Effect.ALLOW
             });
+
+             iam.PolicyStatement no_auth_cognito_policy = new iam.PolicyStatement(new iam.PolicyStatementProps
+            {
+                Resources = new[] { "*" },
+                Actions = new[] { "mobileanalytics:PutEvents", "cognito-sync:*"},
+                Effect = iam.Effect.ALLOW
+            });
+
 
             iam.PolicyStatement api_policy = new iam.PolicyStatement(new iam.PolicyStatementProps
             {
@@ -412,9 +427,10 @@ namespace Project
 
 
             authenticated_role.AddToPolicy(cognito_policy);
-            authenticated_role.AddToPolicy(api_policy);
-            authenticated_role.AddToPolicy(s3_policy);
-            unauthenticated_role.AddToPolicy(cognito_policy);
+            //authenticated_role.AddToPolicy(api_policy);
+            //authenticated_role.AddToPolicy(s3_policy);
+            unauthenticated_role.AddToPolicy(no_auth_cognito_policy);
+            //unauthenticated_role.AddToPolicy(s3_policy);
 
             Dictionary<String, Object> roles = new Dictionary<string, object>{
                 {"unauthenticated", unauthenticated_role.RoleArn},
@@ -443,14 +459,29 @@ namespace Project
             databaseScriptsBucket.GrantRead(predictiveSearch);
             databaseScriptsBucket.GrantRead(getAllGroupCodes);
             databaseScriptsBucket.GrantRead(getAllOfficeLocations);
-
-
-
-            s3dep.ISource[] temp = { s3dep.Source.Asset("./Database") };
+            
             //deploy the database scripts to the s3 bucket
+            List<s3dep.ISource> temp = new List<s3dep.ISource>();
+            temp.Add(s3dep.Source.Asset("./Database"));
+            string deployEnv = System.Environment.GetEnvironmentVariable("DEPLOY_ENVIRONMENT");
+            
+            switch (deployEnv){
+                case "test":
+                    temp.Add(s3dep.Source.Asset("./TestDatabaseInit"));
+                    break;
+                case "prod":
+                    temp.Add(s3dep.Source.Asset("./ProdDatabaseInit"));
+                    break;
+                case "dev":
+                    temp.Add(s3dep.Source.Asset("./DevDatabaseInit"));
+                    break;
+                default:
+                    temp.Add(s3dep.Source.Asset("./DevDatabaseInit"));
+                    break;    
+            }
             new s3dep.BucketDeployment(this, "DeployDatabaseScripts", new s3dep.BucketDeploymentProps
             {
-                Sources = temp,
+                Sources = temp.ToArray(),
                 DestinationBucket = databaseScriptsBucket
             });
 
@@ -529,6 +560,26 @@ namespace Project
             databaseDropAllLambda.AddEnvironment("BUCKET_NAME", databaseScriptsBucket.BucketName);
 
 
+            //S3 bucket for contractor image uploads
+            Bucket contractorImageBucket = new Bucket(this, "contractorImageBucket", new BucketProps{
+                Versioned = true,
+                PublicReadAccess = true
+            });
+
+            contractorImageBucket.AddCorsRule(new CorsRule{
+                AllowedHeaders = new string[] {"*"},
+                AllowedMethods =  new HttpMethods[] {HttpMethods.GET,HttpMethods.HEAD,HttpMethods.PUT,HttpMethods.POST,HttpMethods.DELETE},
+                AllowedOrigins = new string[] {"*"},
+                ExposedHeaders = new string[] {"x-amz-server-side-encryption","x-amz-request-id","x-amz-id-2","ETag"},
+                MaxAge = 3000
+            });
+
+            contractorImageBucket.AddToResourcePolicy(new iam.PolicyStatement(new iam.PolicyStatementProps{
+                Actions = new [] {"s3:PutObject","s3:GetObject","s3:GetObjectVersion","s3:DeleteObject","s3:DeleteObjectVersion"},
+                Resources = new [] {contractorImageBucket.BucketArn+ "/*"},
+                Principals = new iam.IPrincipal[] {new iam.AnyPrincipal()}
+            }));
+
             new CfnOutput(this, "SQLserverEndpoint", new CfnOutputProps
             {
                 Value = database.DbInstanceEndpointAddress
@@ -552,6 +603,11 @@ namespace Project
             new CfnOutput(this, "IdentityPoolId", new CfnOutputProps
             {
                 Value = identity_pool.Ref
+            });
+
+            new CfnOutput(this, "imageBucket", new CfnOutputProps
+            {
+                Value = contractorImageBucket.BucketName
             });
         }
     }
