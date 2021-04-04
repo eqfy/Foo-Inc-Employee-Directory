@@ -328,7 +328,7 @@ INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCod
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('50000', '03', '03', '05', 'West', 'Kanye', 'Salary', 'Associate', '2020-01-01', NULL,
-                      '10005', 1, 'kanye@acme.ca', '604-555-0021', '604-556-0021', 'LDFS8F3DDS', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0330125.jpeg');
+                      '10005', 1, 'kanye@acme.ca', '604-555-0021', '604-556-0021', 'LDFS8F3DDS', 'https://ae-images-foo-inc.s3-us-west-2.amazonaws.com/0129102.jpeg');
 INSERT INTO "Employee" ("EmployeeNumber", "CompanyCode", "OfficeCode", "GroupCode", "LastName", "FirstName", "EmploymentType", "Title", "HireDate", "TerminationDate",
                       "SupervisorEmployeeNumber", "YearsPriorExperience", "Email", "WorkPhone", "WorkCell", "PhysicalLocationId", "PhotoUrl")
               VALUES ('50001', '03', '04', '08', 'West', 'Kanye', 'Salary', 'Associate', '2020-01-03', NULL,
