@@ -7,6 +7,8 @@ import "components/common/Common.css";
 import { PagePathEnum } from "components/common/constants";
 import { makeStyles } from "@material-ui/core";
 import { connect } from "react-redux";
+import { searchWithAppliedFilterAction } from "actions/searchAction";
+import { ResultEntryPerPage } from "states/searchPageState";
 
 const usePrevStyles = makeStyles({
     root: {
@@ -20,17 +22,12 @@ const useNextStyles = makeStyles({
     },
 });
 
-const previousButton = (index, classes, resultOrder) => {
-    let prevEmployeeId;
-    if (resultOrder.length > 0 && index > 0) {
-        prevEmployeeId = resultOrder[index - 1];
-    }
-
+const previousButton = (classes, prevWorkerId) => {
     return (
         <LinkButton
             classes={classes}
-            to={`${PagePathEnum.PROFILE}/${prevEmployeeId}`}
-            disabled={!prevEmployeeId}
+            to={`${PagePathEnum.PROFILE}/${prevWorkerId}`}
+            disabled={!prevWorkerId}
         >
             <ArrowLeftIcon />
             Previous
@@ -38,17 +35,12 @@ const previousButton = (index, classes, resultOrder) => {
     );
 };
 
-const nextButton = (index, classes, resultOrder) => {
-    let nextEmployeeId;
-    if (index !== -1 && index < resultOrder.length) {
-        nextEmployeeId = resultOrder[index + 1];
-    }
-
+const nextButton = (classes, nextWorkerId) => {
     return (
         <LinkButton
             classes={classes}
-            to={`${PagePathEnum.PROFILE}/${nextEmployeeId}`}
-            disabled={!nextEmployeeId}
+            to={`${PagePathEnum.PROFILE}/${nextWorkerId}`}
+            disabled={!nextWorkerId}
         >
             Next
             <ArrowRightIcon />
@@ -57,24 +49,39 @@ const nextButton = (index, classes, resultOrder) => {
 };
 
 function PrevNextButtons(props) {
-    const { resultOrder, focusedWorkerId } = props;
+    const {
+        resultOrder,
+        focusedWorkerId,
+        searchWithAppliedFilterAction,
+    } = props;
     const classesPrev = usePrevStyles();
     const classesNext = useNextStyles();
 
-    const [index, setIndex] = React.useState(-1);
+    const validIndex = (i) => i >= 0 && i < resultOrder.length;
+    const indexToPageNumber = (i) => Math.floor(i / ResultEntryPerPage) + 1;
 
+    const index = resultOrder.findIndex(
+        (workerId) => workerId === focusedWorkerId
+    );
+
+    const prevWorkerId = validIndex(index - 1) ? resultOrder[index - 1] : null;
+    const nextWorkerId = validIndex(index + 1) ? resultOrder[index + 1] : null;
     React.useEffect(() => {
-        const temp = resultOrder.findIndex(
-            (workerId) => workerId === focusedWorkerId
-        );
-        setIndex(temp);
-    }, [focusedWorkerId]);
+        if (!prevWorkerId && validIndex(index - 1)) {
+            searchWithAppliedFilterAction(indexToPageNumber(index - 1));
+        }
+        if (!nextWorkerId && validIndex(index + 1)) {
+            searchWithAppliedFilterAction(indexToPageNumber(index + 1));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [index]);
+    console.log(index, prevWorkerId, nextWorkerId, resultOrder);
 
     return (
         <Container className="flex">
-            {previousButton(index, classesPrev, resultOrder)}
+            {previousButton(classesPrev, prevWorkerId)}
             <Separator />
-            {nextButton(index, classesNext, resultOrder)}
+            {nextButton(classesNext, nextWorkerId)}
         </Container>
     );
 }
@@ -84,7 +91,12 @@ const mapStateToProps = (state) => ({
     resultOrder: state.searchPageState.resultOrder,
 });
 
-export default connect(mapStateToProps)(PrevNextButtons);
+const mapDispatchToProps = (dispatch) => ({
+    searchWithAppliedFilterAction: (pageNumberOverride) =>
+        dispatch(searchWithAppliedFilterAction(pageNumberOverride)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PrevNextButtons);
 
 const Container = styled.div`
     height: 30px;

@@ -42,7 +42,7 @@ export const searchWithAppliedFilterAction = (pageNumberOverride) => (
             });
             dispatch({
                 type: "SET_SEARCH_RESULT_ORDER",
-                payload: { resultOrder: newResultOrder },
+                payload: { resultOrder: [...newResultOrder] },
             });
             if (filtersChanged) {
                 dispatch(setPageAction(1));
