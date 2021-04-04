@@ -7,7 +7,7 @@ import { MAX_WORK_EXPERIENCE } from "components/common/constants";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import React from "react";
 import { connect } from "react-redux";
-import { coordinatedDebounce } from "../helpers";
+import { coordinatedDebounce } from "../../common/helpers";
 
 function ExperienceSlider(props) {
     const { yearsPriorExperience, searchByExperienceAction } = props;
