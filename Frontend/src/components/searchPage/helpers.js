@@ -12,3 +12,11 @@ export const coordinatedDebounce = (
         timer["TimerID"] = setTimeout(func, delay, ...arguments);
     };
 };
+
+export const convertCamelToSpaces = (str) =>
+    str.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+
+export const convertSpacesToCamel = (str) =>
+    str
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
