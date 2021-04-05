@@ -144,4 +144,5 @@ const createSearchPayload = (state, pageNumberOverride) => {
     return payload;
 };
 
-const getPageOffset = (pageNumber) => (pageNumber - 1) * ResultEntryPerPage;
+const getPageOffset = (pageNumber) =>
+    (pageNumber - 1 - ((pageNumber - 1) % PagesToFetch)) * ResultEntryPerPage;

@@ -56,7 +56,7 @@
     background: #00569c;
 }
 
-.chart-area-container .orgchart-container {
+.App .orgchart-container {
     border: none;
     display: flex;
     justify-content: center;
@@ -66,41 +66,45 @@
     overflow: hidden;
 }
 
-.chart-area-container .orgchart {
+.App .orgchart {
     background: none;
 }
 
-.chart-area-container .orgchart ul li .oc-node {
+.App .orgchart ul li .oc-node {
     margin-bottom: 70px;
 }
 
-.chart-area-container .orgchart ul li .oc-node.selected,
-.chart-area-container .orgchart ul li .oc-node:hover {
+.App .orgchart ul li .oc-node.selected,
+.App .orgchart ul li .oc-node:hover {
     background: none;
 }
 
-.chart-area-container .orgchart > ul > li > ul li > .oc-node::before {
+.App .orgchart > ul > li > ul li > .oc-node::before {
     background-color: black;
     height: 40px;
     width: 2px;
     top: -36px;
 }
 
-.chart-area-container .orgchart ul li .oc-node:not(:only-child)::after {
+.App .orgchart ul li .oc-node:not(:only-child)::after {
     background-color: black;
     width: 2px;
     height: 40px;
     bottom: -36px;
 }
 
-.chart-area-container .orgchart > ul > li > ul li::before,
-.chart-area-container .orgchart > ul > li > ul li::after {
+.App .orgchart > ul > li > ul li::before,
+.App .orgchart > ul > li > ul li::after {
     border-color: black;
     top: -36px;
 }
 
 .loaded-chart {
     cursor: move;
+}
+
+.chart-hidden {
+    visibility: hidden;
 }
 
 .card-name-extension,

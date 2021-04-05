@@ -334,7 +334,6 @@ function OrgChartArea(props) {
                                 setHideTop: setHideTop,
                                 hideBottom: hideBottom,
                                 setHideBottom: setHideBottom,
-                                ready: ready,
                             })
                         }
                         setSelectedIdOnChart={setSelectedIdOnChart}
@@ -352,6 +351,8 @@ function OrgChartArea(props) {
 function CustomizedOrganizationChart(props) {
     const { dataSource, nodeTemplate, zoom, centerX, centerY, ready } = props;
 
+    const [hidden, setHidden] = React.useState(true);
+
     useEffect(() => {
         if (ready) {
             const orgChart = document.getElementsByClassName("orgchart")[0];
@@ -359,6 +360,8 @@ function CustomizedOrganizationChart(props) {
             if (orgChart) {
                 orgChart["style"].cursor = "move";
             }
+
+            setHidden(false);
         }
     }, [ready]);
 
@@ -379,6 +382,7 @@ function CustomizedOrganizationChart(props) {
             zoomOutLimit={0.7}
             pan={false}
             NodeTemplate={nodeTemplate}
+            chartClass={hidden ? "chart-hidden" : ""}
         />
     );
 }
