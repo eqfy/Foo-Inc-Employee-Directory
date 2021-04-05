@@ -8,7 +8,7 @@ import "./OrgChart.css";
 import React from "react";
 import { getPredictiveSearchAPI } from "../../api/predictiveSearchAPI";
 import { PagePathEnum } from "components/common/constants";
-import { coordinatedDebounce } from "components/searchPage/helpers";
+import { coordinatedDebounce } from "components/common/helpers";
 import { parseFullName } from "parse-full-name";
 import { HelpButton } from "components/common/HelpButton";
 
