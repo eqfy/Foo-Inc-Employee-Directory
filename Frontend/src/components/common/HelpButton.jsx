@@ -4,6 +4,12 @@ import Menu from "@material-ui/core/Menu";
 import React from "react";
 
 const useStyles = makeStyles({
+    helpButtonContainer: {
+        width: 25,
+        height: 25,
+        marginTop: "auto",
+        marginBottom: "auto",
+    },
     help: {
         width: 25,
         height: 25,
@@ -15,6 +21,9 @@ const useStyles = makeStyles({
         },
     },
     menu: {
+        "& ol": {
+            maxWidth: 600,
+        },
         "& li": {
             margin: 5,
         },
@@ -34,15 +43,7 @@ export function HelpButton(props) {
     };
 
     return (
-        <div
-            style={{
-                width: 25,
-                height: 25,
-                marginTop: "auto",
-                marginBottom: "auto",
-            }}
-            className={props.className}
-        >
+        <div className={`${classes.helpButtonContainer} ${props.className}`}>
             <HelpIcon
                 classes={{ root: classes.help }}
                 onClick={handlePopoverOpen}

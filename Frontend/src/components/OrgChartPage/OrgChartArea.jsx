@@ -1,4 +1,3 @@
-import TextField from "@material-ui/core/TextField";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
@@ -6,28 +5,16 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import { connect } from "react-redux";
-import { withRouter, useHistory, useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
-import {
-    setOrgChart,
-    setOrgChartCenter,
-    setOrgChartZoomRatio,
-} from "../../actions/orgChartAction";
+import { setOrgChart } from "../../actions/orgChartAction";
 import WorkerNotFound from "components/common/WorkerNotFound";
-import { getPredictiveSearchAPI } from "../../api/predictiveSearchAPI";
 import { PagePathEnum } from "components/common/constants";
-import { coordinatedDebounce } from "components/searchPage/helpers";
-import { parseFullName } from "parse-full-name";
-import { HelpButton } from "components/common/HelpButton";
 
 const useStyles = makeStyles({
-    searchRect: {
-        minWidth: 284,
-    },
     card: {
         borderRadius: 20,
         borderWidth: 4,
@@ -82,101 +69,6 @@ const useStyles = makeStyles({
         marginRight: "auto",
     },
 });
-
-// counter for timeout in case of input change
-const predictiveSearchTimer = {};
-
-function OrgChartSearchBar(props) {
-    const history = useHistory();
-    const classes = useStyles();
-    const [options, setOptions] = React.useState([]);
-    const [inputValue, setInputValue] = React.useState("");
-    const [loading, setLoading] = React.useState(false);
-
-    React.useEffect(() => {
-        if (inputValue.length >= 2) {
-            coordinatedDebounce((name) => {
-                const { first, last } = parseFullName(name);
-                setLoading(true);
-                getPredictiveSearchAPI(first, last)
-                    .then((response) => {
-                        setOptions(response);
-                    })
-                    .catch((err) => {
-                        console.error(
-                            "Org chart predictive search endpoint failed: ",
-                            err
-                        );
-                        setOptions([]);
-                    })
-                    .finally(() => {
-                        setLoading(false);
-                    });
-            }, predictiveSearchTimer)(inputValue);
-        }
-    }, [inputValue]);
-
-    const handleTextfieldChange = (value, reason) => {
-        if (reason === "input") {
-            setInputValue(value);
-        } else if (reason === "clear" || (reason === "reset" && value === "")) {
-            setInputValue("");
-        }
-    };
-
-    return (
-        <Autocomplete
-            options={loading ? ["loading"] : options}
-            getOptionLabel={() => inputValue}
-            openOnFocus={true}
-            freeSolo={true}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Search by name"
-                    classes={{ root: classes.searchRect }}
-                    size="small"
-                />
-            )}
-            renderOption={(option) =>
-                loading ? (
-                    <div className={"search-dropdown-entry"}>
-                        <CircularProgress
-                            size={"20px"}
-                            classes={{ root: classes.loading }}
-                        />
-                    </div>
-                ) : (
-                    <div
-                        className={"search-dropdown-entry"}
-                        onClick={() => {
-                            setInputValue(
-                                option.firstName + " " + option.lastName
-                            );
-                            history.push(
-                                `${PagePathEnum.ORGCHART}/` +
-                                    option.employeeNumber
-                            );
-                        }}
-                    >
-                        <img
-                            src={option.imageURL || "/workerPlaceholder.png"}
-                            alt={"workerPhoto"}
-                        />
-                        <Typography noWrap>
-                            {`${option.firstName} ${option.lastName}`}
-                        </Typography>
-                    </div>
-                )
-            }
-            inputValue={inputValue}
-            onInputChange={(_event, value, reason) => {
-                handleTextfieldChange(value, reason);
-            }}
-        />
-    );
-}
 
 function OrgChartNode(props) {
     const classes = useStyles();
@@ -319,7 +211,7 @@ const getTransform = (zoom, centerX, centerY) =>
 
 let orgChartMouseDown = false;
 
-function OrgChart(props) {
+function OrgChartArea(props) {
     const {
         dataSetMinimum,
         dataSetHideTop,
@@ -327,12 +219,7 @@ function OrgChart(props) {
         dataSetDefault,
         centerWorkerId,
         ready,
-        zoom,
-        centerX,
-        centerY,
         setOrgChart,
-        setOrgChartZoomRatio,
-        setOrgChartCenter,
     } = props;
     const classes = useStyles();
 
@@ -341,13 +228,22 @@ function OrgChart(props) {
 
     const [selectedIdOnChart, setSelectedIdOnChart] = React.useState("");
 
+    const [zoom, setZoom] = React.useState(0.7);
+    const [center, setCenter] = React.useState({
+        x: 0,
+        y: 0,
+    });
+
     const params = useParams();
 
     useEffect(() => {
         if (centerWorkerId !== params["workerId"]) {
             // reset center and ratio
-            setOrgChartZoomRatio(0.7);
-            setOrgChartCenter(0, 0);
+            setZoom(0.7);
+            setCenter({
+                x: 0,
+                y: 0,
+            });
             setOrgChart(params["workerId"]);
         }
 
@@ -371,141 +267,100 @@ function OrgChart(props) {
         }
     }
 
-    const chartArea = !ready ? (
-        // loading state
-        <div className={"orgchart-container"}>
-            <CircularProgress
-                size={"100px"}
-                classes={{ root: classes.loading }}
-                data-cy="loading-orgchart"
-            />
-        </div>
-    ) : props.dataSetDefault === undefined ? (
-        // invalid state
-        <div className={"orgchart-container"}>
-            <WorkerNotFound />
-        </div>
-    ) : (
-        // chart state
-        <div
-            className="chart-area-container"
-            onMouseUp={(e) => {
-                orgChartMouseDown = false;
-            }}
-            onMouseMove={(e) => {
-                if (orgChartMouseDown) {
-                    setOrgChartCenter(
-                        centerX + e.movementX,
-                        centerY + e.movementY
-                    );
-                }
-            }}
-            onMouseDown={(e) => {
-                orgChartMouseDown = true;
-            }}
-            onClick={(e) => {
-                setSelectedIdOnChart("");
-            }}
-            onWheel={(e) => {
-                const deltaY = e.deltaY;
-                let ratio = zoom;
-
-                if (deltaY > 0) {
-                    ratio /= 1.2;
-                    if (ratio < 0.2) {
-                        ratio = 0.2;
-                    }
-                } else if (deltaY < 0) {
-                    ratio *= 1.2;
-                    if (ratio > 1) {
-                        ratio = 1;
-                    }
-                }
-
-                setOrgChartZoomRatio(ratio);
-            }}
-        >
-            <div id="chartAreaCenteredReference"></div>
-            <CustomizedOrganizationChart
-                dataSource={dataSet}
-                nodeTemplate={(nodeData) =>
-                    OrgChartNode({
-                        ...nodeData,
-                        selectedIdOnChart: selectedIdOnChart,
-                        setSelectedIdOnChart: setSelectedIdOnChart,
-                        hideTop: hideTop,
-                        setHideTop: setHideTop,
-                        hideBottom: hideBottom,
-                        setHideBottom: setHideBottom,
-                    })
-                }
-                setSelectedIdOnChart={setSelectedIdOnChart}
-                zoom={zoom}
-                centerX={centerX}
-                centerY={centerY}
-            />
-        </div>
-    );
     return (
-        <div>
-            <div id="searchLegendArea">
-                <div id="searchArea">
-                    <OrgChartSearchBar />
+        <div className="chart-area-container">
+            {!ready ? (
+                // loading state
+                <div className={"orgchart-container"}>
+                    <CircularProgress
+                        size={"100px"}
+                        classes={{ root: classes.loading }}
+                        data-cy="loading-orgchart"
+                    />
                 </div>
-                <ul id="legend">
-                    <li>
-                        LEGEND
-                        <HelpButton className={"org-chart-help-button"}>
-                            <ol style={{ maxWidth: 600 }}>
-                                <li>
-                                    You could drag the chart using the cursor or
-                                    zoom through scrolling.
-                                </li>
-                                <li>
-                                    To hide supervisor and colleagues, or
-                                    subordinates, toggle the show or hide
-                                    buttons.
-                                </li>
-                                <li>
-                                    To see the full text of the name, title or
-                                    email of an employee/contractor, click once
-                                    on a card.
-                                </li>
-                                <li>
-                                    To see an organization chart for a different
-                                    employee/contractor in the current chart,
-                                    click twice on a card.
-                                </li>
-                                <li>
-                                    To find an employee/contractor by name and
-                                    see an organization chart for the selected
-                                    employee/contractor, use the “Search by
-                                    name” bar.
-                                </li>
-                                <li>
-                                    To see the full profile of an
-                                    employee/contractor, navigate to "Profile
-                                    View".
-                                </li>
-                            </ol>
-                        </HelpButton>
-                    </li>
-                    <li>
-                        <div className={"dark-blue-background"}></div>Current
-                        Search
-                    </li>
-                    <li>
-                        <div className={"orange-background"}></div>Contractor
-                    </li>
-                </ul>
-            </div>
-            {chartArea}
+            ) : props.dataSetDefault === undefined ? (
+                // invalid state
+                <div className={"orgchart-container"}>
+                    <WorkerNotFound />
+                </div>
+            ) : (
+                // chart state
+                <div
+                    className="chart-area-container loaded-chart"
+                    onMouseUp={(e) => {
+                        orgChartMouseDown = false;
+                    }}
+                    onMouseMove={(e) => {
+                        if (orgChartMouseDown) {
+                            setCenter({
+                                x: center.x + e.movementX,
+                                y: center.y + e.movementY,
+                            });
+                        }
+                    }}
+                    onMouseDown={(e) => {
+                        orgChartMouseDown = true;
+                    }}
+                    onClick={(e) => {
+                        setSelectedIdOnChart("");
+                    }}
+                    onWheel={(e) => {
+                        const deltaY = e.deltaY;
+                        let ratio = zoom;
+
+                        if (deltaY > 0) {
+                            ratio /= 1.2;
+                            if (ratio < 0.2) {
+                                ratio = 0.2;
+                            }
+                        } else if (deltaY < 0) {
+                            ratio *= 1.2;
+                            if (ratio > 1) {
+                                ratio = 1;
+                            }
+                        }
+
+                        setZoom(ratio);
+                    }}
+                >
+                    <CustomizedOrganizationChart
+                        dataSource={dataSet}
+                        nodeTemplate={(nodeData) =>
+                            OrgChartNode({
+                                ...nodeData,
+                                selectedIdOnChart: selectedIdOnChart,
+                                setSelectedIdOnChart: setSelectedIdOnChart,
+                                hideTop: hideTop,
+                                setHideTop: setHideTop,
+                                hideBottom: hideBottom,
+                                setHideBottom: setHideBottom,
+                                ready: ready,
+                            })
+                        }
+                        setSelectedIdOnChart={setSelectedIdOnChart}
+                        zoom={zoom}
+                        centerX={center.x}
+                        centerY={center.y}
+                        ready={ready}
+                    />
+                </div>
+            )}
         </div>
     );
 }
 
 function CustomizedOrganizationChart(props) {
-    const { dataSource, nodeTemplate, zoom, centerX, centerY } = props;
+    const { dataSource, nodeTemplate, zoom, centerX, centerY, ready } = props;
+
+    useEffect(() => {
+        if (ready) {
+            const orgChart = document.getElementsByClassName("orgchart")[0];
+
+            if (orgChart) {
+                orgChart["style"].cursor = "move";
+            }
+        }
+    }, [ready]);
 
     useEffect(() => {
         const orgchart = document.getElementsByClassName("orgchart")[0];
@@ -610,20 +465,12 @@ const mapStateToProps = (state) => {
         dataSetHideBottom: dataSetHideBottom,
         dataSetMinimum: dataSetMinimum,
         centerWorkerId: state.orgChartState.centerWorkerId,
-        zoom: state.orgChartState.zoom,
-        centerX: state.orgChartState.centerX,
-        centerY: state.orgChartState.centerY,
         ready: state.appState.ready,
     };
 };
 
 const mapDispatchToProps = (dispatch) => ({
     setOrgChart: (workerId) => dispatch(setOrgChart(workerId)),
-    setOrgChartZoomRatio: (zoom) => dispatch(setOrgChartZoomRatio(zoom)),
-    setOrgChartCenter: (centerX, centerY) =>
-        dispatch(setOrgChartCenter(centerX, centerY)),
 });
 
-export default withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(OrgChart)
-);
+export default connect(mapStateToProps, mapDispatchToProps)(OrgChartArea);

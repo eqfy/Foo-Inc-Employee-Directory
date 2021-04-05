@@ -21,6 +21,7 @@ const useStyles = makeStyles({
         marginRight: "auto",
         "&.link-to-profile:hover": {
             boxShadow: "0 0 3px 3px black",
+            cursor: "pointer",
         },
         "&.link-to-profile.cardSelected": {
             boxShadow: "0 0 3px 3px black",
@@ -89,13 +90,10 @@ const useStyles = makeStyles({
 
 export default function EmployeeCard(props) {
     // linkToProfile: employeeCard in profile page does not need to redirect to itself
-    // offset: to set and identify current selected card
     const {
         employee,
         linkToProfile,
-        cardIndexOnPage,
-        selectedIndexOnPage,
-        setSelectedIndexOnPage,
+        focusedWorkerId,
         setFocusedWorkerId,
     } = props;
     const classes = useStyles();
@@ -197,7 +195,7 @@ export default function EmployeeCard(props) {
         <CardContainer data-cy="employee-card">
             <Card
                 className={`${linkToProfile ? "link-to-profile" : ""} ${
-                    cardIndexOnPage === selectedIndexOnPage
+                    focusedWorkerId === employee.employeeNumber
                         ? "cardSelected"
                         : ""
                 }`}
@@ -205,9 +203,6 @@ export default function EmployeeCard(props) {
                 variant="outlined"
                 onClick={(e) => {
                     if (linkToProfile) {
-                        if (setSelectedIndexOnPage) {
-                            setSelectedIndexOnPage(cardIndexOnPage);
-                        }
                         if (setFocusedWorkerId) {
                             setFocusedWorkerId(employee.employeeNumber);
                         }

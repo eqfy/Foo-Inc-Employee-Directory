@@ -1,24 +1,5 @@
 import { getOrgChartAPI } from "api/orgChartAPI";
 
-export const setOrgChartZoomRatio = (zoom) => (dispatch) => {
-    dispatch({
-        type: "SET_ZOOM",
-        payload: {
-            zoom: zoom,
-        },
-    });
-};
-
-export const setOrgChartCenter = (centerX, centerY) => (dispatch) => {
-    dispatch({
-        type: "SET_CENTER",
-        payload: {
-            centerX: centerX,
-            centerY: centerY,
-        },
-    });
-};
-
 export const setOrgChart = (workerId) => (dispatch) => {
     dispatch({
         type: "SET_READY",

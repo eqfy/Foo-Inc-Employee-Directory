@@ -32,7 +32,6 @@
     float: right;
     margin-right: 20px;
     margin-top: 20px;
-    /* display: inline-flex; */
     list-style: none;
     font-size: 20px;
 }
@@ -42,7 +41,7 @@
     align-items: center;
 }
 
-#legend div {
+#legend div:not(.org-chart-help-button) {
     width: 15px;
     height: 15px;
     display: inline-block;
@@ -57,7 +56,7 @@
     background: #00569c;
 }
 
-.orgchart-container {
+.chart-area-container .orgchart-container {
     border: none;
     display: flex;
     justify-content: center;
@@ -67,37 +66,41 @@
     overflow: hidden;
 }
 
-.orgchart {
+.chart-area-container .orgchart {
     background: none;
 }
 
-.orgchart ul li .oc-node {
+.chart-area-container .orgchart ul li .oc-node {
     margin-bottom: 70px;
 }
 
-.orgchart ul li .oc-node.selected,
-.orgchart ul li .oc-node:hover {
+.chart-area-container .orgchart ul li .oc-node.selected,
+.chart-area-container .orgchart ul li .oc-node:hover {
     background: none;
 }
 
-.orgchart > ul > li > ul li > .oc-node::before {
+.chart-area-container .orgchart > ul > li > ul li > .oc-node::before {
     background-color: black;
     height: 40px;
     width: 2px;
     top: -36px;
 }
 
-.orgchart ul li .oc-node:not(:only-child)::after {
+.chart-area-container .orgchart ul li .oc-node:not(:only-child)::after {
     background-color: black;
     width: 2px;
     height: 40px;
     bottom: -36px;
 }
 
-.orgchart > ul > li > ul li::before,
-.orgchart > ul > li > ul li::after {
+.chart-area-container .orgchart > ul > li > ul li::before,
+.chart-area-container .orgchart > ul > li > ul li::after {
     border-color: black;
     top: -36px;
+}
+
+.loaded-chart {
+    cursor: move;
 }
 
 .card-name-extension,

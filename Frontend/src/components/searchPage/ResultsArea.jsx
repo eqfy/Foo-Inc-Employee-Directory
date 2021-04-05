@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import EmployeeCard from "../common/EmployeeCard";
 import Pagination from "@material-ui/lab/Pagination";
 import styled from "styled-components";
@@ -34,14 +34,13 @@ function ResultsArea(props) {
         resultOrder,
         workers: { byId },
         loading,
+        focusedWorkerId,
         setFocusedWorkerId,
     } = props;
 
-    const [selectedIndexOnPage, setSelectedIndexOnPage] = useState(-1);
-
-    useEffect(() => {
-        setSelectedIndexOnPage(-1);
-    }, [loading]);
+    // useEffect(() => {
+    //     setSelectedIndexOnPage(-1);
+    // }, [loading]);
 
     const handleChange = (_event, value) => {
         updatePage(value);
@@ -61,9 +60,7 @@ function ResultsArea(props) {
                 <EmployeeCard
                     employee={employee}
                     linkToProfile={true}
-                    cardIndexOnPage={index}
-                    selectedIndexOnPage={selectedIndexOnPage}
-                    setSelectedIndexOnPage={setSelectedIndexOnPage}
+                    focusedWorkerId={focusedWorkerId}
                     setFocusedWorkerId={setFocusedWorkerId}
                 />
             ) : (
@@ -87,11 +84,7 @@ function ResultsArea(props) {
 
     return (
         <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
-            <div
-                onClick={() => {
-                    setSelectedIndexOnPage(-1);
-                }}
-            >
+            <div>
                 <Grid
                     container
                     spacing={2}
@@ -164,6 +157,7 @@ const mapStateToProps = (state) => ({
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
     loading: state.appState.filtersChanged,
+    focusedWorkerId: state.appState.focusedWorkerId,
 });
 
 const mapDispatchToProps = (dispatch) => ({

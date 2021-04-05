@@ -179,53 +179,28 @@ function FilterArea(props) {
                     handleChange={handleSortOrderChange}
                 />
                 <HelpButton className={classes.helpButton}>
-                    <ol style={{ maxWidth: 600 }}>
+                    <li>
+                        Filters will be applied according to the following
+                        rules:
+                    </li>
+                    <ol>
                         <li>
-                            To find an employee/contractor by name, use the
-                            “Search by name” bar.
+                            Filters are grouped by type, all groups have an AND
+                            relationship (e.g. if Location and Title type
+                            filters are applied, the returned result must
+                            satisfy the conditions in both filter type groups)
                         </li>
                         <li>
-                            To filter results using years of experience, use the
-                            experience slider bar.
+                            Skill type filters have an AND relationship (e.g. if
+                            Planning (Accounting) and Planting (Agriculture) are
+                            applied, the returned result must possess both
+                            skills)
                         </li>
                         <li>
-                            To filter results using location, title, company or
-                            department, use the search bar for each group or
-                            check the checkboxes. Results only need to satisfy
-                            at least one condition in each group.
-                        </li>
-                        <li>
-                            To filter results using skill, use the search bar
-                            for skill or check the checkboxes. Results need to
-                            have all skills selected.
-                        </li>
-                        <li>
-                            To show employee/contractor/all, sort using first
-                            name/last name/title in ascending or descending
-                            order, use the top row of the search page.
-                        </li>
-                        <li>
-                            To see all applied filters and remove some of them,
-                            use the applied filter bar.
-                        </li>
-                        <li>
-                            To select an employee/contractor as the focus and
-                            see full text of the name, title or email, click
-                            once on a card.
-                        </li>
-                        <li>
-                            To see the full profile of an employee/contractor,
-                            click twice on the card.
-                        </li>
-                        <li>
-                            To see the organization chart of an
-                            employee/contractor, click on the organization chart
-                            icon on the card.
-                        </li>
-                        <li>
-                            To see the full profile or organization chart of a
-                            selected employee/contractor, navigate to "Profile
-                            View" or "Organization Chart".
+                            Non-skill type filters have an OR relationship (e.g.
+                            if Vancouver and Victoria are both applied, then the
+                            returned result can be located in either Vancouver
+                            or Victoria)
                         </li>
                     </ol>
                 </HelpButton>
