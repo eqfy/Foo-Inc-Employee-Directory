@@ -1,32 +1,37 @@
 import { WorkerTypeEnum } from "states/appState";
+import { PagesToFetch, ResultEntryPerPage } from "states/searchPageState";
 import { searchWorker } from "../api/search";
 import { setExperienceAction, setFiltersChanged } from "./filterAction";
 
-export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
+export const searchWithAppliedFilterAction = (pageNumberOverride) => (
+    dispatch,
+    getState
+) => {
     const currState = getState();
-    const payload = createSearchPayload(currState);
-    console.log(
-        "Search With Applied Filters Action dispatched.\nPayload: %o",
-        payload
-    );
     const {
         appState: { filtersChanged },
-        searchPageState: { resultOrder },
+        searchPageState: { resultOrder, pageNumber },
     } = currState;
+
+    const pageNumberToSearch = pageNumberOverride || pageNumber;
+    const payload = createSearchPayload(currState, pageNumberToSearch);
+
     searchWorker(payload)
         .then((response) => {
             let workersById = {};
             let workersAllId = [];
             let newResultOrder = [];
-            if (!filtersChanged) {
+            if (filtersChanged) {
+                newResultOrder = Array(response.totalCount);
+            } else {
                 newResultOrder = resultOrder;
             }
-            dispatch(setFiltersChanged(false));
 
             response.data.forEach((worker, index) => {
                 workersById[worker.employeeNumber] = worker;
                 workersAllId.push(worker.employeeNumber);
-                newResultOrder[index] = worker.employeeNumber;
+                newResultOrder[index + getPageOffset(pageNumberToSearch)] =
+                    worker.employeeNumber;
             });
             dispatch({
                 type: "ADD_WORKERS",
@@ -37,21 +42,26 @@ export const searchWithAppliedFilterAction = () => (dispatch, getState) => {
             });
             dispatch({
                 type: "SET_SEARCH_RESULT_ORDER",
-                payload: { resultOrder: newResultOrder },
+                payload: { resultOrder: [...newResultOrder] },
             });
-            dispatch(setPageAction(1));
+            if (filtersChanged) {
+                dispatch(setPageAction(1));
+            }
         })
         .catch((error) => {
             console.error(
                 "Search endpoint failed (experience filter).\nErr:",
                 error
             );
-            // FIXME temporarily set result to empty if an error occured
-            dispatch(setFiltersChanged(false));
+            // FIXME Set result to empty, should ideally show an error message
             dispatch({
                 type: "SET_SEARCH_RESULT_ORDER",
                 payload: { resultOrder: [] },
             });
+        })
+        .finally(() => {
+            dispatch(setResultLoading(false));
+            dispatch(setFiltersChanged(false));
         });
 };
 
@@ -67,9 +77,33 @@ export const setPageAction = (payload) => (dispatch) => {
             pageNumber: payload,
         },
     });
+
+    dispatch(searchFromPageUpdate());
 };
 
-const createSearchPayload = (state) => {
+const searchFromPageUpdate = () => (dispatch, getState) => {
+    const currState = getState();
+    const {
+        appState: { filtersChanged },
+        searchPageState: { resultOrder, pageNumber },
+    } = currState;
+
+    if (filtersChanged) return;
+    if (resultOrder[getPageOffset(pageNumber)]) return;
+    dispatch(setResultLoading(true));
+    dispatch(searchWithAppliedFilterAction());
+};
+
+const setResultLoading = (isLoading) => (dispatch) => {
+    dispatch({
+        type: "SET_RESULT_LOADING",
+        payload: {
+            resultLoading: isLoading,
+        },
+    });
+};
+
+const createSearchPayload = (state, pageNumberOverride) => {
     const {
         appState: {
             skillState = {},
@@ -82,7 +116,7 @@ const createSearchPayload = (state) => {
             lastName = "",
             shownWorkerType = WorkerTypeEnum.ALL,
         },
-        searchPageState: { sortKey, isAscending },
+        searchPageState: { sortKey, isAscending, pageNumber },
     } = state;
 
     let payload = {
@@ -98,16 +132,16 @@ const createSearchPayload = (state) => {
         division: departmentState,
         companyName: companyState,
         shownWorkerType: shownWorkerType,
-        // TODO change this so that we actually only get 3 (or potentially more pages of result)
-        // offset: (pageNumber - 1) * 6,
-        // fetch: 6,
-        offset: 0,
-        fetch: 100,
+        offset: getPageOffset(pageNumberOverride || pageNumber),
+        fetch: PagesToFetch * ResultEntryPerPage,
         orderBy: sortKey,
         orderDir: isAscending ? "ASC" : "DESC",
     };
     if (firstName !== "" || lastName !== "") {
-        payload = { ...payload, firstName, lastName };
+        payload.firstName = firstName;
+        payload.lastName = lastName;
     }
     return payload;
 };
+
+const getPageOffset = (pageNumber) => (pageNumber - 1) * ResultEntryPerPage;

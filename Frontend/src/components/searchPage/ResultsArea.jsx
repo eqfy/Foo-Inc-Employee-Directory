@@ -7,11 +7,10 @@ import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { ResultEntryPerPage } from "states/searchPageState";
+import { setFocusedWorkerId } from "actions/generalAction";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { setFocusedWorkerId } from "actions/generalAction";
-
-const entriesPerPage = 8;
 
 const gridWidth = 260;
 const gridHeight = 265;
@@ -38,12 +37,10 @@ function ResultsArea(props) {
         setFocusedWorkerId,
     } = props;
 
-    // useEffect(() => {
-    //     setSelectedIndexOnPage(-1);
-    // }, [loading]);
-
     const handleChange = (_event, value) => {
-        updatePage(value);
+        if (value !== pageNumber) {
+            updatePage(value);
+        }
     };
 
     const styles = useStyles();
@@ -70,10 +67,10 @@ function ResultsArea(props) {
         return emptyDiv();
     };
 
-    const offset = (pageNumber - 1) * entriesPerPage;
+    const offset = (pageNumber - 1) * ResultEntryPerPage;
     const employeeList = [];
 
-    for (let i = 0; i < entriesPerPage; i++) {
+    for (let i = 0; i < ResultEntryPerPage; i++) {
         const employee = getEmployee(i);
         employeeList.push(
             <Grid item xs={3} key={i}>
@@ -95,7 +92,9 @@ function ResultsArea(props) {
                     <Grid item xs={12}>
                         <StyledPagination
                             count={Math.max(
-                                Math.ceil(resultOrder.length / entriesPerPage),
+                                Math.ceil(
+                                    resultOrder.length / ResultEntryPerPage
+                                ),
                                 1
                             )}
                             page={pageNumber}
@@ -156,14 +155,14 @@ const mapStateToProps = (state) => ({
     workers: state.workers,
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
-    loading: state.appState.filtersChanged,
+    loading:
+        state.appState.filtersChanged || state.searchPageState.resultLoading,
     focusedWorkerId: state.appState.focusedWorkerId,
 });
 
 const mapDispatchToProps = (dispatch) => ({
     updatePage: (value) => dispatch(setPageAction(value)),
-    setFocusedWorkerId: (focusedWorkerId) =>
-        dispatch(setFocusedWorkerId(focusedWorkerId)),
+    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);

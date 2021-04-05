@@ -160,12 +160,12 @@ public static class EH{
     public static string createOrderByFilter(string order){
         string orderByFilter ="";
         if(order == "firstName"){
-            orderByFilter = " ORDER BY \"FirstName\"";
+            orderByFilter = " ORDER BY \"FirstName\",\"EmployeeNumber\"";
         } else if(order == "lastName"){
-            orderByFilter = " ORDER BY \"LastName\"";
+            orderByFilter = " ORDER BY \"LastName\",\"EmployeeNumber\"";
 
         }else if(order == "title"){
-            orderByFilter = " ORDER BY \"Title\"";
+            orderByFilter = " ORDER BY \"Title\",\"EmployeeNumber\"";
         }
         //throw expection TODO
         return orderByFilter;

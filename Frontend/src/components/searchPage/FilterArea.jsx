@@ -12,7 +12,7 @@ import {
     setSortOrderAction,
     setWorkerTypeAction,
 } from "actions/filterAction";
-import { coordinatedDebounce } from "./helpers";
+import { coordinatedDebounce } from "../common/helpers";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { WorkerTypeEnum } from "states/appState";
@@ -162,13 +162,13 @@ function FilterArea(props) {
             <div className={classes.sortingArea}>
                 <Dropdown
                     values={Object.values(WorkerTypeEnum)}
-                    label="show"
+                    label="Show"
                     currValue={shownWorkerType}
                     handleChange={handleWorkerTypeChange}
                 />
                 <Dropdown
                     values={Object.values(SortKeyEnum)}
-                    label="sort by"
+                    label="Sort by"
                     currValue={sortKey}
                     handleChange={handleSortKeyChange}
                 />
