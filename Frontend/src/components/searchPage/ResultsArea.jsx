@@ -7,10 +7,10 @@ import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { ResultEntryPerPage } from "states/searchPageState";
+import { setFocusedWorkerId } from "actions/generalAction";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-
-const entriesPerPage = 8;
 
 const gridWidth = 260;
 const gridHeight = 266;
@@ -33,6 +33,7 @@ function ResultsArea(props) {
         resultOrder,
         workers: { byId },
         loading,
+        setFocusedWorkerId,
     } = props;
 
     const [selectedIndexOnPage, setSelectedIndexOnPage] = useState(-1);
@@ -42,8 +43,10 @@ function ResultsArea(props) {
     const [gridClickToggle, setGridClickToggle] = useState(true);
 
     const handleChange = (_event, value) => {
-        setSelectedIndexOnPage(-1);
-        updatePage(value);
+        if (value !== pageNumber) {
+            setSelectedIndexOnPage(-1);
+            updatePage(value);
+        }
     };
 
     useEffect(() => {
@@ -65,30 +68,27 @@ function ResultsArea(props) {
         if (offset + index < resultOrder.length) {
             const employeeId = resultOrder[offset + index];
             const employee = employeeId && byId[employeeId];
-            return (
-                employee ? (
-                    <EmployeeCard
-                        employee={employee}
-                        linkToProfile={true}
-                        cardIndexOnPage={index}
-                        selectedIndexOnPage={selectedIndexOnPage}
-                        setSelectedIndexOnPage={setSelectedIndexOnPage.bind(
-                            this
-                        )}
-                        setCardClicked={setCardClicked.bind(this)}
-                    />
-                ) : (
-                    emptyDiv()
-                )
+            return employee ? (
+                <EmployeeCard
+                    employee={employee}
+                    linkToProfile={true}
+                    cardIndexOnPage={index}
+                    selectedIndexOnPage={selectedIndexOnPage}
+                    setSelectedIndexOnPage={setSelectedIndexOnPage.bind(this)}
+                    setCardClicked={setCardClicked.bind(this)}
+                    setFocusedWorkerId={setFocusedWorkerId}
+                />
+            ) : (
+                emptyDiv()
             );
         }
         return emptyDiv();
     };
 
-    const offset = (pageNumber - 1) * entriesPerPage;
+    const offset = (pageNumber - 1) * ResultEntryPerPage;
     const employeeList = [];
 
-    for (let i = 0; i < entriesPerPage; i++) {
+    for (let i = 0; i < ResultEntryPerPage; i++) {
         const employee = getEmployee(i);
         employeeList.push(
             <Grid item xs={3} key={i}>
@@ -114,7 +114,9 @@ function ResultsArea(props) {
                     <Grid item xs={12}>
                         <StyledPagination
                             count={Math.max(
-                                Math.ceil(resultOrder.length / entriesPerPage),
+                                Math.ceil(
+                                    resultOrder.length / ResultEntryPerPage
+                                ),
                                 1
                             )}
                             page={pageNumber}
@@ -175,11 +177,13 @@ const mapStateToProps = (state) => ({
     workers: state.workers,
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
-    loading: state.appState.filtersChanged,
+    loading:
+        state.appState.filtersChanged || state.searchPageState.resultLoading,
 });
 
 const mapDispatchToProps = (dispatch) => ({
     updatePage: (value) => dispatch(setPageAction(value)),
+    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResultsArea);
