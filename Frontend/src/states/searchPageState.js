@@ -6,7 +6,7 @@ export const SortKeyEnum = {
 
 export const ResultEntryPerPage = 8;
 
-export const PagesToFetch = 5;
+export const PagesToFetch = 10;
 
 export const defualtSearchPageState = {
     resultOrder: [],
