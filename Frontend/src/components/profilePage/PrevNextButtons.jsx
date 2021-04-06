@@ -55,7 +55,6 @@ function PrevNextButtons(props) {
     const {
         resultOrder,
         focusedWorkerId,
-        showPrevNext,
         pageNumber,
         searchWithAppliedFilterAction,
         updatePage,
@@ -86,18 +85,17 @@ function PrevNextButtons(props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
-    return showPrevNext ? (
+    return (
         <Container className="flex">
             {previousButton(classesPrev, prevWorkerId)}
             <Separator />
             {nextButton(classesNext, nextWorkerId)}
         </Container>
-    ) : null;
+    );
 }
 
 const mapStateToProps = (state) => ({
     focusedWorkerId: state.appState.focusedWorkerId,
-    showPrevNext: state.appState.profileShowPrevNext,
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
 });
