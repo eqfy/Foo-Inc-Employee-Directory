@@ -1,7 +1,11 @@
 import { WorkerTypeEnum } from "states/appState";
 import { PagesToFetch, ResultEntryPerPage } from "states/searchPageState";
 import { searchWorker } from "../api/search";
-import { setExperienceAction, setFiltersChanged } from "./filterAction";
+import {
+    setExperienceAction,
+    setFiltersChanged,
+    setResultLoading,
+} from "./filterAction";
 
 export const searchWithAppliedFilterAction = (pageNumberOverride) => (
     dispatch,
@@ -13,7 +17,9 @@ export const searchWithAppliedFilterAction = (pageNumberOverride) => (
         searchPageState: { resultOrder, pageNumber },
     } = currState;
 
-    const pageNumberToSearch = pageNumberOverride || pageNumber;
+    const pageNumberToSearch = getStartPageForFetch(
+        pageNumberOverride || (filtersChanged ? 1 : pageNumber)
+    );
     const payload = createSearchPayload(currState, pageNumberToSearch);
 
     searchWorker(payload)
@@ -91,16 +97,7 @@ const searchFromPageUpdate = () => (dispatch, getState) => {
     if (filtersChanged) return;
     if (resultOrder[getPageOffset(pageNumber)]) return;
     dispatch(setResultLoading(true));
-    dispatch(searchWithAppliedFilterAction(getStartPageForFetch(pageNumber)));
-};
-
-const setResultLoading = (isLoading) => (dispatch) => {
-    dispatch({
-        type: "SET_RESULT_LOADING",
-        payload: {
-            resultLoading: isLoading,
-        },
-    });
+    dispatch(searchWithAppliedFilterAction(pageNumber));
 };
 
 const createSearchPayload = (state, pageNumberOverride) => {
@@ -144,7 +141,8 @@ const createSearchPayload = (state, pageNumberOverride) => {
     return payload;
 };
 
-const getPageOffset = (pageNumber) => (pageNumber - 1) * ResultEntryPerPage;
+const getPageOffset = (pageNumber) =>
+    Math.max((pageNumber - 1) * ResultEntryPerPage, 0);
 
 const getStartPageForFetch = (pageNumber) =>
-    Math.floor(pageNumber / PagesToFetch) * PagesToFetch + 1;
+    Math.floor((pageNumber - 1) / PagesToFetch) * PagesToFetch + 1;
