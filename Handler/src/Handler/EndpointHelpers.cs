@@ -157,31 +157,26 @@ public static class EH{
         return shownWorkerTypeFilter;
     }
 
-    public static string createOrderByFilter(string order){
-        string orderByFilter ="";
-        if(order == "firstName"){
-            orderByFilter = " ORDER BY \"FirstName\",\"EmployeeNumber\"";
-        } else if(order == "lastName"){
-            orderByFilter = " ORDER BY \"LastName\",\"EmployeeNumber\"";
-
-        }else if(order == "title"){
-            orderByFilter = " ORDER BY \"Title\",\"EmployeeNumber\"";
-        }
-        //throw expection TODO
-        return orderByFilter;
-    }
-
-    public static string createOrderDirFilter(string orderDir){
-        string orderDirFilter = "";
-
+    public static string createOrderByFilter(string order, string orderDir){
+        string orderDirFilter ="";
         if(orderDir == "ASC"){
             orderDirFilter = " ASC";
         } else if(orderDir == "DESC"){
             orderDirFilter = " DESC";
+        } else{
+            throw new System.Exception("Invalid orderDir");
+        }
+        string orderByFilter ="";
+        if(order == "firstName"){
+            orderByFilter = " ORDER BY \"FirstName\" " + orderDirFilter + ", \"EmployeeNumber\" " + orderDirFilter;
+        } else if(order == "lastName"){
+            orderByFilter = " ORDER BY \"LastName\" " + orderDirFilter + ", \"EmployeeNumber\" " + orderDirFilter;
 
+        }else if(order == "title"){
+            orderByFilter = " ORDER BY \"Title\" " + orderDirFilter + ", \"EmployeeNumber\" " + orderDirFilter;
         }
         //throw expection TODO
-        return orderDirFilter;
+        return orderByFilter;
     }
 
     public static string createOffsetFilter(ref int parameterCounter){
