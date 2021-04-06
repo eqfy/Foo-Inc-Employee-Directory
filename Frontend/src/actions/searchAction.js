@@ -91,7 +91,7 @@ const searchFromPageUpdate = () => (dispatch, getState) => {
     if (filtersChanged) return;
     if (resultOrder[getPageOffset(pageNumber)]) return;
     dispatch(setResultLoading(true));
-    dispatch(searchWithAppliedFilterAction());
+    dispatch(searchWithAppliedFilterAction(getStartPageForFetch(pageNumber)));
 };
 
 const setResultLoading = (isLoading) => (dispatch) => {
@@ -145,3 +145,6 @@ const createSearchPayload = (state, pageNumberOverride) => {
 };
 
 const getPageOffset = (pageNumber) => (pageNumber - 1) * ResultEntryPerPage;
+
+const getStartPageForFetch = (pageNumber) =>
+    Math.floor(pageNumber / PagesToFetch) * PagesToFetch + 1;
