@@ -19,7 +19,13 @@ const useStyles = makeStyles({
     },
 });
 export function ProfilePageContainer(props) {
-    const { workers, ready, setProfile, setFocusedWorkerId } = props;
+    const {
+        isMyProfile,
+        workers,
+        ready,
+        setProfile,
+        setFocusedWorkerId,
+    } = props;
     const classes = useStyles();
 
     const workerId = useParams()["workerId"];
@@ -30,7 +36,8 @@ export function ProfilePageContainer(props) {
                 // If URL contains workerId that's not in the workers object, make an API call for it
                 setProfile(workerId);
                 return;
-            } else {
+            }
+            if (!isMyProfile) {
                 // update workerId
                 setFocusedWorkerId(workerId);
             }
@@ -46,7 +53,7 @@ export function ProfilePageContainer(props) {
             <PageContainer>
                 <StyledDiv className="flex space-between">
                     <SearchButton />
-                    <PrevNextButtons />
+                    {!isMyProfile ? <PrevNextButtons /> : null}
                 </StyledDiv>
                 <div className="flex">
                     <CoreInfoArea employee={worker} />
