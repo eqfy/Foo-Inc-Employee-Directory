@@ -14,10 +14,8 @@ export const mockCurrentEmployeeNumber = "20004";
 
 export const defaultAppState = {
     isAdmin: false,
-    currPage: pageEnum.SEARCH,
     currWorkerId: mockCurrentEmployeeNumber,
-    focusedWorkerId: mockCurrentEmployeeNumber,
-    profileShowPrevNext: false,
+    focusedWorkerId: "000000",
     ready: true,
     filtersChanged: false,
     skillState: {},
@@ -33,5 +31,5 @@ export const defaultAppState = {
         open: false,
         severity: "success",
         message: "test",
-    }
+    },
 };

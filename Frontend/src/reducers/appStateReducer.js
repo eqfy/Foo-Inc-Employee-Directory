@@ -12,11 +12,6 @@ export default function appStateReducer(state = defaultAppState, action) {
                 ...state,
                 isAdmin: action.payload.isAdmin,
             };
-        case "SET_CURR_PAGE":
-            return {
-                ...state,
-                currPage: action.payload.currPage,
-            };
         case "SET_CURR_WORKERID":
             return {
                 ...state,
@@ -26,11 +21,6 @@ export default function appStateReducer(state = defaultAppState, action) {
             return {
                 ...state,
                 focusedWorkerId: action.payload.focusedWorkerId,
-            };
-        case "SET_PROFILE_SHOW_PREV_NEXT":
-            return {
-                ...state,
-                profileShowPrevNext: action.payload.profileShowPrevNext,
             };
         case "SET_READY":
             return {
