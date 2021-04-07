@@ -3,6 +3,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import AddIcon from "@material-ui/icons/Add";
 import {
     clearAppliedFilters,
     clearNameAction,
@@ -121,7 +122,7 @@ function SearchByNameBar(props) {
 
     return (
         <Autocomplete
-            options={options}
+            options={loading ? ["loading"] : options}
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
@@ -160,11 +161,20 @@ function SearchByNameBar(props) {
                             ) : (
                                 <div className="grouped-options">
                                     <span className="grouped-count">
-                                        {option.count}
+                                        {Math.min(option.count, 5)}
                                     </span>{" "}
-                                    <span className="grouped-count-text">
-                                        Found
-                                    </span>
+                                    {option.count > 5 ? (
+                                        <>
+                                            <AddIcon className="grouped-count-icon" />
+                                            <span className="grouped-count-text text-with-add">
+                                                found
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="grouped-count-text">
+                                            found
+                                        </span>
+                                    )}
                                 </div>
                             )}
                             <Typography noWrap>

@@ -9,7 +9,8 @@ import UpdatePageContainer from "./components/UpdatePageContainer";
 import Header from "./components/Header";
 import { PagePathEnum } from "components/common/constants";
 import { NewContractorsContainer } from "components/NewContractorsContainer";
-import Login from 'components/AdminLogin';
+import Login from "components/AdminLogin";
+import { PageTabIndexEnum } from "states/appState";
 
 export default function Routes() {
     const history = useHistory();
@@ -29,34 +30,36 @@ export default function Routes() {
     return ready ? (
         <Switch>
             <Route exact path={PagePathEnum.SEARCH}>
-                <Header activeTabIndex={0} />
+                <Header activeTabIndex={PageTabIndexEnum.SEARCH} />
                 <SearchPageContainer />
             </Route>
             <Route path={`${PagePathEnum.PROFILE}/:workerId`}>
-                <Header activeTabIndex={1} />
+                <Header activeTabIndex={PageTabIndexEnum.PROFILE} />
                 <ProfilePageContainer />
             </Route>
             <Route path={`${PagePathEnum.ORGCHART}/:workerId`}>
-                <Header activeTabIndex={2} />
+                <Header activeTabIndex={PageTabIndexEnum.ORGCHART} />
                 <OrgChartPageContainer />
             </Route>
             <Route path={`${PagePathEnum.NEWCONTRACTOR}`}>
-                <Header activeTabIndex={3} />
+                <Header activeTabIndex={PageTabIndexEnum.NEWCONTRACTOR} />
                 <NewContractorsContainer />
             </Route>
-            <Route path={`${PagePathEnum.LOGIN}`} render={(props) => (
-                <>
-                    <Header activeTabIndex={5} />
-                    <Login {...props} />
-                </>
-            )}>
-            </Route>
+            <Route
+                path={`${PagePathEnum.LOGIN}`}
+                render={(props) => (
+                    <>
+                        <Header activeTabIndex={PageTabIndexEnum.LOGIN} />
+                        <Login {...props} />
+                    </>
+                )}
+            ></Route>
             <Route path={`${PagePathEnum.UPDATE}`}>
-                <Header activeTabIndex={4} />
+                <Header activeTabIndex={PageTabIndexEnum.UPDATE} />
                 <UpdatePageContainer />
             </Route>
             <Route path="/">
-                <Header activeTabIndex={0} />
+                <Header activeTabIndex={PageTabIndexEnum.SEARCH} />
                 <Redirect to={PagePathEnum.SEARCH} />
             </Route>
             <Route>

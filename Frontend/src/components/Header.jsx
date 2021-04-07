@@ -1,18 +1,19 @@
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import React from "react";
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Toolbar from '@material-ui/core/Toolbar';
-import makeStyles from '@material-ui/styles/makeStyles';
-import Avatar from '@material-ui/core/Avatar';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Toolbar from "@material-ui/core/Toolbar";
+import makeStyles from "@material-ui/styles/makeStyles";
+import Avatar from "@material-ui/core/Avatar";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import logo from "./../assets/ae_logo.png";
 import "./Header.css";
 import { useLocation } from "react-router";
 import { PagePathEnum } from "./common/constants";
+import { PageTabIndexEnum } from "states/appState";
 
 const useStyles = makeStyles({
     tabIndicator: {
@@ -46,25 +47,29 @@ function Header(props) {
         props.activeTabIndex
     );
 
+    const { pathname } = useLocation();
+
     const updateTabIndex = (_event, newTabIndex) => {
         setCurrentTabIndex(newTabIndex);
     };
 
-    const { pathname } = useLocation();
-
     React.useEffect(() => {
         if (pathname.startsWith(PagePathEnum.SEARCH)) {
-            setCurrentTabIndex(0);
+            setCurrentTabIndex(PageTabIndexEnum.SEARCH);
         } else if (pathname.startsWith(PagePathEnum.PROFILE)) {
-            setCurrentTabIndex(1);
+            setCurrentTabIndex(PageTabIndexEnum.PROFILE);
         } else if (pathname.startsWith(PagePathEnum.ORGCHART)) {
-            setCurrentTabIndex(2);
+            setCurrentTabIndex(PageTabIndexEnum.ORGCHART);
         } else if (pathname.startsWith(PagePathEnum.NEWCONTRACTOR)) {
-            setCurrentTabIndex(isAdmin ? 3 : 5);
+            setCurrentTabIndex(
+                isAdmin
+                    ? PageTabIndexEnum.NEWCONTRACTOR
+                    : PageTabIndexEnum.LOGIN
+            );
         } else if (pathname.startsWith(PagePathEnum.UPDATE)) {
-            setCurrentTabIndex(4);
+            setCurrentTabIndex(PageTabIndexEnum.UPDATE);
         } else if (pathname.startsWith(PagePathEnum.LOGIN)) {
-            setCurrentTabIndex(5);
+            setCurrentTabIndex(PageTabIndexEnum.LOGIN);
         }
     }, [pathname, currWorkerId, focusedWorkerId, isAdmin]);
 
@@ -75,10 +80,6 @@ function Header(props) {
         setAnchorEl(event.currentTarget);
     };
     const handlePopoverClose = (_event) => {
-        setAnchorEl(null);
-    };
-    const handleMyProfileClick = () => {
-        setCurrentTabIndex(1);
         setAnchorEl(null);
     };
 
@@ -160,9 +161,23 @@ function Header(props) {
                             classes={{ root: classes.myProfileMenuItem }}
                             component={Link}
                             to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
-                            onClick={handleMyProfileClick}
+                            onClick={() => {
+                                handlePopoverClose();
+                                setCurrentTabIndex(PageTabIndexEnum.PROFILE);
+                            }}
                         >
                             My profile
+                        </MenuItem>
+                        <MenuItem
+                            classes={{ root: classes.myProfileMenuItem }}
+                            component={Link}
+                            to={`${PagePathEnum.ORGCHART}/${currWorkerId}`}
+                            onClick={() => {
+                                handlePopoverClose();
+                                setCurrentTabIndex(PageTabIndexEnum.ORGCHART);
+                            }}
+                        >
+                            My org chart
                         </MenuItem>
                         <MenuItem
                             classes={{ root: classes.myProfileMenuItem }}
