@@ -69,6 +69,7 @@ export function ProfilePageContainer(props) {
                     <CircularProgress
                         size={"100px"}
                         classes={{ root: classes.loading }}
+                        data-cy={"loading-profile"}
                     />
                 </CenteredPageContainer>
             );

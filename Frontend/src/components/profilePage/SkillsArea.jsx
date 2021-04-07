@@ -70,7 +70,7 @@ const parseSkillsToTable = (
     for (const skillCategory in skillObject) {
         let skillCounter = 0;
         skillEntries.push(
-            <tr key={`skillGroup${categoryCounter++}`}>
+            <tr key={`skillGroup${categoryCounter++}`} data-cy={`profile-skill-group-${skillCategory}`}>
                 <SkillCategoryTd>
                     <StyledTypography
                         display="inline"
@@ -89,6 +89,7 @@ const parseSkillsToTable = (
                                 label={skill}
                                 classes={{ root: styles.skillChip }}
                                 key={`skill${skillCounter++}`}
+                                data-cy={`profile-skill-chip-${skill}`}
                                 onClick={() => {
                                     const skills = {};
                                     skills[skillCategory] = [skill];
@@ -134,7 +135,7 @@ function SkillsArea(props) {
                     Search with these skills
                 </SkillButton>
             </StyledHeading>
-            <StyledSkillContainer>
+            <StyledSkillContainer data-cy="profile-skill-content">
                 {parseSkillsToTable(
                     skillObject,
                     styles,

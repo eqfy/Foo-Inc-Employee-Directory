@@ -138,6 +138,7 @@ function OrgChartSearchBar(props) {
                         <CircularProgress
                             size={"20px"}
                             classes={{ root: classes.loading }}
+                            data-cy={"loading-orgchart"}
                         />
                     </div>
                 ) : (

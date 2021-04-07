@@ -39,6 +39,7 @@ function CoreInfoArea(props) {
                 color="textPrimary"
                 // @ts-ignore
                 component="p"
+                data-cy="core-info-content"
             >
                 {information.map((entry) => getInfoEntry(entry[0], entry[1]))}
             </StyledTypography>
