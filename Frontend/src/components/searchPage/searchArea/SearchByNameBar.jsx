@@ -121,7 +121,7 @@ function SearchByNameBar(props) {
 
     return (
         <Autocomplete
-            options={options}
+            options={loading ? ["loading"] : options}
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
