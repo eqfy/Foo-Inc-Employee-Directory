@@ -161,12 +161,20 @@ function SearchByNameBar(props) {
                             ) : (
                                 <div className="grouped-options">
                                     <span className="grouped-count">
-                                        {option.count < 100 ? option.count : 99}
-                                    </span>
-                                    <AddIcon className="grouped-count-icon" />
-                                    <span className="grouped-count-text">
-                                        found
-                                    </span>
+                                        {Math.min(option.count, 5)}
+                                    </span>{" "}
+                                    {option.count > 5 ? (
+                                        <>
+                                            <AddIcon className="grouped-count-icon" />
+                                            <span className="grouped-count-text text-with-add">
+                                                found
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="grouped-count-text">
+                                            found
+                                        </span>
+                                    )}
                                 </div>
                             )}
                             <Typography noWrap>

@@ -46,7 +46,12 @@
 .search-dropdown-entry .grouped-count-text {
     font-size: 11px;
     position: relative;
-    left: -12px;
+}
+
+.search-dropdown-entry .text-with-add {
+    position: relative;
+    left: -14px;
+    bottom: -2px;
 }
 
 .search-dropdown-entry .grouped-count-icon {
