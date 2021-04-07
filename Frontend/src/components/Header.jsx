@@ -82,9 +82,6 @@ function Header(props) {
     const handlePopoverClose = (_event) => {
         setAnchorEl(null);
     };
-    const handleMyProfileClick = () => {
-        setAnchorEl(null);
-    };
 
     return (
         <div className="App">
@@ -164,9 +161,17 @@ function Header(props) {
                             classes={{ root: classes.myProfileMenuItem }}
                             component={Link}
                             to={`${PagePathEnum.MYPROFILE}/${currWorkerId}`}
-                            onClick={handleMyProfileClick}
+                            onClick={handlePopoverClose}
                         >
                             My profile
+                        </MenuItem>
+                        <MenuItem
+                            classes={{ root: classes.myProfileMenuItem }}
+                            component={Link}
+                            to={`${PagePathEnum.ORGCHART}/${currWorkerId}`}
+                            onClick={handlePopoverClose}
+                        >
+                            My org chart
                         </MenuItem>
                         <MenuItem
                             classes={{ root: classes.myProfileMenuItem }}
