@@ -3,6 +3,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import AddIcon from "@material-ui/icons/Add";
 import {
     clearAppliedFilters,
     clearNameAction,
@@ -160,10 +161,11 @@ function SearchByNameBar(props) {
                             ) : (
                                 <div className="grouped-options">
                                     <span className="grouped-count">
-                                        {option.count}
-                                    </span>{" "}
+                                        {option.count < 100 ? option.count : 99}
+                                    </span>
+                                    <AddIcon className="grouped-count-icon" />
                                     <span className="grouped-count-text">
-                                        Found
+                                        found
                                     </span>
                                 </div>
                             )}
