@@ -55,7 +55,7 @@ export const setSortKeyAction = (sortKey = SortKeyEnum.NONE) => (dispatch) => {
         type: "SET_SORT_KEY",
         payload: sortKey,
     });
-    dispatch(setFiltersChanged(true));
+    dispatch(setResultLoading(true));
 };
 
 export const setSortOrderAction = (sortOrder) => (dispatch) => {
@@ -63,7 +63,7 @@ export const setSortOrderAction = (sortOrder) => (dispatch) => {
         type: "SET_SORT_ORDER",
         payload: sortOrder,
     });
-    dispatch(setFiltersChanged(true));
+    dispatch(setResultLoading(true));
 };
 
 export const setExperienceAction = (workerExperience) => (dispatch) => {
@@ -98,6 +98,15 @@ export const setFiltersChanged = (isChanged) => (dispatch) => {
     dispatch({
         type: "SET_FILTERS_CHANGED",
         payload: isChanged,
+    });
+};
+
+export const setResultLoading = (isLoading) => (dispatch) => {
+    dispatch({
+        type: "SET_RESULT_LOADING",
+        payload: {
+            resultLoading: isLoading,
+        },
     });
 };
 

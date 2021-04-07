@@ -119,6 +119,7 @@ function ResultsArea(props) {
                                 ),
                                 1
                             )}
+                            siblingCount={3}
                             page={pageNumber}
                             onChange={handleChange}
                         />

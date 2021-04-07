@@ -1,5 +1,5 @@
 import { getProfileAPI } from "api/profileAPI";
-import { setFilterAction, setFiltersChanged } from "./filterAction";
+import { setFilterAction, setResultLoading } from "./filterAction";
 import { searchWithAppliedFilterAction } from "./searchAction";
 
 export const setFocusedWorkerId = (payload) => (dispatch) => {
@@ -31,7 +31,7 @@ export const setSnackbarState = (snackbarState) => (dispatch) => {
 
 export const configureCurrUser = () => (dispatch, getState) => {
     const currWorkerId = getState().appState.currWorkerId;
-    dispatch(setFiltersChanged(true));
+    dispatch(setResultLoading(true));
     getProfileAPI(currWorkerId)
         .then((response) => {
             if (response) {

@@ -44,7 +44,7 @@ function ApplyFilterArea(props) {
 
     return (
         <div className="apply-filter full-height">
-            <div className="heading">Apply filters</div>
+            <div className="heading">Filters</div>
             {loaded ? (
                 <div className="filter-widgets">
                     <ExperienceSlider />
