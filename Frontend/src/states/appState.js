@@ -1,7 +1,10 @@
-export const pageEnum = {
-    SEARCH: "search",
-    PROFILE: "profile",
-    ORGCHART: "orgchart",
+export const PageTabIndexEnum = {
+    SEARCH: 0,
+    PROFILE: 1,
+    ORGCHART: 2,
+    NEWCONTRACTOR: 3,
+    UPDATE: 4, // TODO Remove this in final release
+    LOGIN: 5,
 };
 
 export const WorkerTypeEnum = {
@@ -14,10 +17,8 @@ export const mockCurrentEmployeeNumber = "20004";
 
 export const defaultAppState = {
     isAdmin: false,
-    currPage: pageEnum.SEARCH,
     currWorkerId: mockCurrentEmployeeNumber,
     focusedWorkerId: mockCurrentEmployeeNumber,
-    profileShowPrevNext: false,
     ready: true,
     filtersChanged: false,
     skillState: {},
@@ -33,5 +34,5 @@ export const defaultAppState = {
         open: false,
         severity: "success",
         message: "test",
-    }
+    },
 };

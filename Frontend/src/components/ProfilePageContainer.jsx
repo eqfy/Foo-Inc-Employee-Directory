@@ -30,10 +30,9 @@ export function ProfilePageContainer(props) {
                 // If URL contains workerId that's not in the workers object, make an API call for it
                 setProfile(workerId);
                 return;
-            } else {
-                // update workerId
-                setFocusedWorkerId(workerId);
             }
+            // update workerId
+            setFocusedWorkerId(workerId);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [workerId]);

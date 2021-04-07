@@ -690,11 +690,7 @@ namespace Handler
                 
                 string orderByFilter ="";
                 if(orderBys.Count > 0){
-                    orderByFilter = EH.createOrderByFilter(orderBys[0]);
-                }
-                string orderDirFilter ="";
-                if(orderDir.Count > 0){
-                    orderDirFilter = EH.createOrderDirFilter(orderDir[0]);
+                    orderByFilter = EH.createOrderByFilter(orderBys[0], orderDir[0]);
                 }
                 
                 string offsetFilter ="";
@@ -774,7 +770,6 @@ namespace Handler
                 sql += orderByFilter;
                 //Only add the fetch and offset filters if there is an orderBy
                 if(orderBys.Count > 0){
-                    sql += orderDirFilter;
                     sql += offsetFilter;
                     sql += fetchFilter;
                 }

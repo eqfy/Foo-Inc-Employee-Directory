@@ -33,7 +33,7 @@ const previousButton = (classes, prevWorkerId) => {
             disabled={!prevWorkerId}
         >
             <ArrowLeftIcon />
-            Previous
+            Previous search result
         </LinkButton>
     );
 };
@@ -45,7 +45,7 @@ const nextButton = (classes, nextWorkerId) => {
             to={`${PagePathEnum.PROFILE}/${nextWorkerId}`}
             disabled={!nextWorkerId}
         >
-            Next
+            Next search result
             <ArrowRightIcon />
         </LinkButton>
     );
@@ -68,9 +68,10 @@ function PrevNextButtons(props) {
     const index = resultOrder.findIndex(
         (workerId) => workerId === focusedWorkerId
     );
+    const foundInResultOrder = index >= 0;
 
-    const prevWorkerId = resultOrder[index - 1];
-    const nextWorkerId = resultOrder[index + 1];
+    const prevWorkerId = foundInResultOrder ? resultOrder[index - 1] : null;
+    const nextWorkerId = foundInResultOrder ? resultOrder[index + 1] : null;
     React.useEffect(() => {
         if (!prevWorkerId && validIndex(index - 1)) {
             searchWithAppliedFilterAction(indexToPageNumber(index - 1));
@@ -78,7 +79,7 @@ function PrevNextButtons(props) {
         if (!nextWorkerId && validIndex(index + 1)) {
             searchWithAppliedFilterAction(indexToPageNumber(index + 1));
         }
-        if (indexToPageNumber(index) !== pageNumber) {
+        if (foundInResultOrder && indexToPageNumber(index) !== pageNumber) {
             updatePage(indexToPageNumber(index));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
