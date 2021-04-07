@@ -5,7 +5,6 @@ export const PageTabIndexEnum = {
     NEWCONTRACTOR: 3,
     UPDATE: 4, // TODO Remove this in final release
     LOGIN: 5,
-    MYPROFILE: 5,
 };
 
 export const WorkerTypeEnum = {
@@ -19,7 +18,7 @@ export const mockCurrentEmployeeNumber = "20004";
 export const defaultAppState = {
     isAdmin: false,
     currWorkerId: mockCurrentEmployeeNumber,
-    focusedWorkerId: "000000",
+    focusedWorkerId: mockCurrentEmployeeNumber,
     ready: true,
     filtersChanged: false,
     skillState: {},

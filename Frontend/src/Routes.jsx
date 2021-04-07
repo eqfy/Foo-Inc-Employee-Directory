@@ -35,7 +35,7 @@ export default function Routes() {
             </Route>
             <Route path={`${PagePathEnum.PROFILE}/:workerId`}>
                 <Header activeTabIndex={PageTabIndexEnum.PROFILE} />
-                <ProfilePageContainer isMyProfile={false} />
+                <ProfilePageContainer />
             </Route>
             <Route path={`${PagePathEnum.ORGCHART}/:workerId`}>
                 <Header activeTabIndex={PageTabIndexEnum.ORGCHART} />
@@ -57,10 +57,6 @@ export default function Routes() {
             <Route path={`${PagePathEnum.UPDATE}`}>
                 <Header activeTabIndex={PageTabIndexEnum.UPDATE} />
                 <UpdatePageContainer />
-            </Route>
-            <Route path={`${PagePathEnum.MYPROFILE}/:workerId`}>
-                <Header activeTabIndex={PageTabIndexEnum.MYPROFILE} />
-                <ProfilePageContainer isMyProfile={true} />
             </Route>
             <Route path="/">
                 <Header activeTabIndex={PageTabIndexEnum.SEARCH} />

@@ -47,11 +47,11 @@ function Header(props) {
         props.activeTabIndex
     );
 
+    const { pathname } = useLocation();
+
     const updateTabIndex = (_event, newTabIndex) => {
         setCurrentTabIndex(newTabIndex);
     };
-
-    const { pathname } = useLocation();
 
     React.useEffect(() => {
         if (pathname.startsWith(PagePathEnum.SEARCH)) {
@@ -160,8 +160,11 @@ function Header(props) {
                         <MenuItem
                             classes={{ root: classes.myProfileMenuItem }}
                             component={Link}
-                            to={`${PagePathEnum.MYPROFILE}/${currWorkerId}`}
-                            onClick={handlePopoverClose}
+                            to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
+                            onClick={() => {
+                                handlePopoverClose();
+                                setCurrentTabIndex(PageTabIndexEnum.PROFILE);
+                            }}
                         >
                             My profile
                         </MenuItem>
@@ -169,7 +172,10 @@ function Header(props) {
                             classes={{ root: classes.myProfileMenuItem }}
                             component={Link}
                             to={`${PagePathEnum.ORGCHART}/${currWorkerId}`}
-                            onClick={handlePopoverClose}
+                            onClick={() => {
+                                handlePopoverClose();
+                                setCurrentTabIndex(PageTabIndexEnum.ORGCHART);
+                            }}
                         >
                             My org chart
                         </MenuItem>

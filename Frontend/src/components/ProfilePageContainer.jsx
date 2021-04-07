@@ -19,13 +19,7 @@ const useStyles = makeStyles({
     },
 });
 export function ProfilePageContainer(props) {
-    const {
-        isMyProfile,
-        workers,
-        ready,
-        setProfile,
-        setFocusedWorkerId,
-    } = props;
+    const { workers, ready, setProfile, setFocusedWorkerId } = props;
     const classes = useStyles();
 
     const workerId = useParams()["workerId"];
@@ -37,10 +31,8 @@ export function ProfilePageContainer(props) {
                 setProfile(workerId);
                 return;
             }
-            if (!isMyProfile) {
-                // update workerId
-                setFocusedWorkerId(workerId);
-            }
+            // update workerId
+            setFocusedWorkerId(workerId);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [workerId]);
@@ -53,7 +45,7 @@ export function ProfilePageContainer(props) {
             <PageContainer>
                 <StyledDiv className="flex space-between">
                     <SearchButton />
-                    {!isMyProfile ? <PrevNextButtons /> : null}
+                    <PrevNextButtons />
                 </StyledDiv>
                 <div className="flex">
                     <CoreInfoArea employee={worker} />
