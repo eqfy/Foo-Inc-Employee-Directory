@@ -2,12 +2,14 @@
 describe("Add contractor tests", () => {
     const baseUrl = Cypress.env("baseUrl");
     const timeout = Cypress.env("timeoutInMs");
+    const adminUsername = "andre";
+    const adminPassword = "Pass123!";
 
-    it.skip("should add a contractor", () => {
+    it("should add a contractor", () => {
         cy.visit(baseUrl+'/addContractor');
         cy.url().should('eq', baseUrl+'/login?referrer=addContractor');
-        cy.get('[name=username]').type("moses_admin");
-        cy.get('[name=password]').type("Moses123!");
+        cy.get('[name=username]').type(adminUsername);
+        cy.get('[name=password]').type(adminPassword);
         cy.get('button[type=submit]').click();
         cy.url().should('eq', baseUrl+'/addContractor');
         
@@ -55,8 +57,8 @@ describe("Add contractor tests", () => {
     it("should not add a contractor (missing form fields)", () => {
         cy.visit(baseUrl+'/addContractor');
         cy.url().should('eq', baseUrl+'/login?referrer=addContractor');
-        cy.get('[data-cy="admin-login-username-input"]').type("andre");
-        cy.get('[data-cy="admin-login-password-input"]').type("Pass123!");
+        cy.get('[name=username]').type(adminUsername);
+        cy.get('[name=password]').type(adminPassword);
         cy.get('button[type=submit]').click();
         cy.url().should('eq', baseUrl+'/addContractor');
         
