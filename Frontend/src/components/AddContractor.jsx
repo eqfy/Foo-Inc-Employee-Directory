@@ -24,7 +24,6 @@ import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import MuiPhoneNumber from "material-ui-phone-number";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import MenuItem from "@material-ui/core/MenuItem";
 import { getPredictiveSearchAPI } from "../../src/api/predictiveSearchAPI";
 import { parseFullName } from "parse-full-name";
 import { PagePathEnum } from "./common/constants";
@@ -531,6 +530,7 @@ function AddContractor(props) {
                             variant="outlined"
                             label="Supervisor"
                             size="small"
+                            name="supervisor"
                             required
                         />
                     )}
@@ -577,24 +577,22 @@ function AddContractor(props) {
                     }}
                 />
                 <br></br>
-                <TextField
-                    id="outlined-select-employment-type"
-                    select
-                    label="Employment type"
-                    variant="outlined"
-                    name="employmentType"
+                <Autocomplete
+                    options={["Hourly","Salary"]}
+                    getOptionLabel={(option) => option}
                     className={classes.textField}
-                    size="small"
-                    required
-                    defaultValue=""
-                >
-                    <MenuItem key="hourly" value="hourly">
-                        Hourly
-                    </MenuItem>
-                    <MenuItem key="salary" value="salary">
-                        Salary
-                    </MenuItem>
-                </TextField>
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            placeholder="Hourly"
+                            name="employmentType"
+                            variant="outlined"
+                            label="Employment Type"
+                            size="small"
+                            required
+                        />
+                    )}
+                />
                 <TextField
                     label="Years Prior Experience"
                     name="YPE"
@@ -734,6 +732,7 @@ function AddContractor(props) {
                             variant="outlined"
                             label="Skill"
                             size="small"
+                            name="skill"
                         />
                     )}
                 />

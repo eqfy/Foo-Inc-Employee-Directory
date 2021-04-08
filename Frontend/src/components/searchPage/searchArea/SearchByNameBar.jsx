@@ -132,6 +132,7 @@ function SearchByNameBar(props) {
                     variant="outlined"
                     label="Search by name"
                     size="small"
+                    name="searchByName"
                 />
             )}
             renderOption={(option, state) => {
