@@ -2,10 +2,11 @@
 
 import { parseFullName } from "parse-full-name";
 
-describe.only("is sortable", () => {
+describe("is sortable", () => {
     const baseUrl = Cypress.env("baseUrl");
     const timeout = Cypress.env("timeoutInMs");
     beforeEach(() => {
+        cy.reload();
         cy.visit(baseUrl);
         // Wait for search to complete
         cy.get('[data-cy="loading-results"]');
@@ -52,7 +53,7 @@ describe.only("is sortable", () => {
     });
 
     it("for LastName ASC", () => {
-        cy.get(".MuiSelect-root").contains("Sort by").click();
+        cy.get(".MuiSelect-root").contains("First Name").click();
         cy.get('[data-value="lastName"]').click();
         return cy.get('[data-cy="employee-card-name"]').then(($el) => {
             const names = $el
@@ -69,7 +70,7 @@ describe.only("is sortable", () => {
 
     it("for LastName DESC", () => {
         cy.contains("Ascending").click();
-        cy.get(".MuiSelect-root").contains("Sort by").click();
+        cy.get(".MuiSelect-root").contains("First Name").click();
         cy.get('[data-value="lastName"]').click();
 
         return cy.get('[data-cy="employee-card-name"]').then(($el) => {
@@ -86,7 +87,7 @@ describe.only("is sortable", () => {
     });
 
     it("for Title ASC", () => {
-        cy.get(".MuiSelect-root").contains("Sort by").click();
+        cy.get(".MuiSelect-root").contains("First Name").click();
         cy.get('[data-value="title"]').click();
         return cy.get('[data-cy="employee-card-name"]').then(($el) => {
             const titles = $el
@@ -101,7 +102,7 @@ describe.only("is sortable", () => {
 
     it("for Title DESC", () => {
         cy.contains("Ascending").click();
-        cy.get(".MuiSelect-root").contains("Sort by").click();
+        cy.get(".MuiSelect-root").contains("First Name").click();
         cy.get('[data-value="title"]').click();
         return cy.get('[data-cy="employee-card-name"]').then(($el) => {
             const titles = $el

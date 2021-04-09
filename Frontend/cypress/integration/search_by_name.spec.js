@@ -18,7 +18,11 @@ describe("Search page search by name", () => {
         cy.get('[data-cy="loading-name-result"]').should("not.exist", {
             timeout,
         });
-        cy.get(".search-dropdown-entry").contains("Gregore Da Silva").click();
+        cy.get(".search-dropdown-entry")
+            .contains("Gregore Da Silva", {
+                timeout,
+            })
+            .click();
 
         // Check that existing filters are cleared and name is the only filter
         cy.get(".MuiChip-label").should("have.length", 1);
@@ -43,7 +47,11 @@ describe("Search page search by name", () => {
             timeout,
         });
         cy.get(".search-dropdown-entry").contains("found");
-        cy.get(".search-dropdown-entry").contains("Buzz Aldrin").click();
+        cy.get(".search-dropdown-entry")
+            .contains("Buzz Aldrin", {
+                timeout,
+            })
+            .click();
 
         // Check that existing filters are cleared and name is the only filter
         cy.get(".MuiChip-label").should("have.length", 1);
