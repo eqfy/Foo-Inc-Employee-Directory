@@ -128,4 +128,19 @@ describe("Search and filter", () => {
         cy.contains("Annie Ameras").should("exist");
         cy.contains("Connie Conner").should("exist");
     });
+
+    it("Filter by worker type", () => {
+        cy.visit(baseUrl);
+
+        // Wait for search to complete
+        cy.get('[data-cy="loading-results"]');
+        cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
+
+        cy.get(".MuiChip-deleteIcon").click();
+
+        cy.get(".MuiSelect-root").contains("All").click();
+        cy.get('[data-value="contractor"]').click();
+
+        // TODO we should go to profile page and verify that worker is a contractor
+    });
 });

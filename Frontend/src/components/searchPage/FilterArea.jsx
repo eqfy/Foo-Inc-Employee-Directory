@@ -174,6 +174,7 @@ function FilterArea(props) {
                 <CustomCheckBox
                     name="sortAsc"
                     label="Ascending"
+                    cy-test="sort-dir"
                     checked={isAscending}
                     handleChange={handleSortOrderChange}
                 />
@@ -212,7 +213,8 @@ function FilterArea(props) {
                         }}
                     >
                         <IconButton
-                            aria-label="deleteAll"
+                            aria-label="clear-filters"
+                            data-cy="clear-filters"
                             className={classes.deleteAllButton}
                             size="small"
                             onClick={handleDeleteAll}

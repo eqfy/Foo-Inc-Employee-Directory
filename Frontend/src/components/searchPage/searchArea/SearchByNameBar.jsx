@@ -126,6 +126,7 @@ function SearchByNameBar(props) {
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
+            data-cy="search-by-name"
             renderInput={(params) => (
                 <TextField
                     {...params}
@@ -137,7 +138,10 @@ function SearchByNameBar(props) {
             renderOption={(option, state) => {
                 if (loading) {
                     return (
-                        <div className={"search-dropdown-entry"}>
+                        <div
+                            className={"search-dropdown-entry"}
+                            data-cy="loading-name-result"
+                        >
                             <CircularProgress
                                 size={"20px"}
                                 classes={{ root: classes.loading }}
