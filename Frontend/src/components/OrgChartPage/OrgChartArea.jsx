@@ -1,210 +1,21 @@
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import Card from "@material-ui/core/Card";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
 import { connect } from "react-redux";
-import { useHistory, useParams } from "react-router";
+import { useParams } from "react-router";
 import OrganizationChart from "@dabeng/react-orgchart";
 import "./OrgChart.css";
 import React, { useEffect } from "react";
 import { setOrgChart } from "../../actions/orgChartAction";
 import WorkerNotFound from "components/common/WorkerNotFound";
-import { PagePathEnum } from "components/common/constants";
+import OrgChartNode from "./OrgChartNode";
 
 const useStyles = makeStyles({
-    card: {
-        borderRadius: 20,
-        borderWidth: 4,
-        borderColor: "black",
-        "&.current": {
-            borderColor: "#00569C",
-            "&:hover, &.nodeSelected": {
-                boxShadow: "0 0 3px 3px #004680",
-            },
-        },
-        "&.contractor:not(.current)": {
-            borderColor: "#FF9900",
-            "&:hover, &.nodeSelected": {
-                boxShadow: "0 0 3px 3px #CC7A00",
-            },
-        },
-        "&:hover": {
-            cursor: "pointer",
-            boxShadow: "0 0 3px 3px black",
-        },
-        "&.nodeSelected": {
-            boxShadow: "0 0 3px 3px black",
-        },
-        display: "flex",
-    },
-    cardContent: {
-        "&:last-child": {
-            padding: 8,
-        },
-        width: 150,
-        paddingLeft: "auto",
-        paddingRight: "auto",
-    },
-    cardMedia: {
-        minWidth: 80,
-        minHeight: 80,
-        margin: 5,
-        borderRadius: 13,
-    },
-    cardText: {
-        textAlign: "left",
-        textOverflow: "ellipsis",
-        overflow: "hidden",
-        whiteSpace: "nowrap",
-        ".nodeSelected &:hover": {
-            cursor: "text",
-        },
-    },
     loading: {
         color: "#00569c",
         marginLeft: "auto",
         marginRight: "auto",
     },
 });
-
-function OrgChartNode(props) {
-    const classes = useStyles();
-    const history = useHistory();
-
-    const {
-        nodeData,
-        selectedIdOnChart,
-        setSelectedIdOnChart,
-        hideTop,
-        setHideTop,
-        hideBottom,
-        setHideBottom,
-    } = props;
-
-    // Add classes to display full text in a floating div if name/title is too long
-    useEffect(() => {
-        const nameText = document.getElementsByClassName(
-            `card-name-${nodeData.id}`
-        )[0];
-        if (nameText.clientWidth < nameText.scrollWidth) {
-            nameText.classList.add("card-text-too-long");
-        }
-
-        const titleText = document.getElementsByClassName(
-            `card-title-${nodeData.id}`
-        )[0];
-        if (titleText.clientWidth < titleText.scrollWidth) {
-            titleText.classList.add("card-text-too-long");
-        }
-
-        const emailText = document.getElementsByClassName(
-            `card-email-${nodeData.id}`
-        )[0];
-        if (emailText.clientWidth < emailText.scrollWidth) {
-            emailText.classList.add("card-text-too-long");
-        }
-    }, [nodeData.id]);
-
-    const card = (
-        <Card
-            variant="outlined"
-            className={`${nodeData.isCurrent ? "current" : ""} ${
-                nodeData.isContractor ? "contractor" : ""
-            } ${nodeData.id === selectedIdOnChart ? "nodeSelected" : ""}`}
-            classes={{ root: classes.card }}
-            onClick={(e) => {
-                setSelectedIdOnChart(nodeData.id);
-                e.stopPropagation();
-            }}
-            onMouseDown={(e) => {
-                e.stopPropagation();
-            }}
-            onDoubleClick={() => {
-                setHideTop(false);
-                setHideBottom(false);
-                setSelectedIdOnChart("");
-                if (!nodeData.isCurrent) {
-                    history.push(`${PagePathEnum.ORGCHART}/` + nodeData.id);
-                }
-            }}
-        >
-            <CardMedia
-                image={nodeData.image || "/workerPlaceholder.png"}
-                classes={{ root: classes.cardMedia }}
-            />
-            <CardContent classes={{ root: classes.cardContent }}>
-                <Typography
-                    classes={{ root: classes.cardText }}
-                    className={`card-name-${nodeData.id}`}
-                >
-                    <b>{nodeData.name}</b>
-                </Typography>
-                <Typography className={"card-name-extension"}>
-                    <b>{nodeData.name}</b>
-                </Typography>
-                <Typography
-                    classes={{ root: classes.cardText }}
-                    className={`card-title-${nodeData.id}`}
-                >
-                    {nodeData.title}
-                </Typography>
-                <Typography className={"card-title-extension"}>
-                    {nodeData.title}
-                </Typography>
-                <Typography
-                    classes={{ root: classes.cardText }}
-                    className={`card-email-${nodeData.id}`}
-                >
-                    {nodeData.email}
-                </Typography>
-                <Typography className={"card-email-extension"}>
-                    {nodeData.email}
-                </Typography>
-            </CardContent>
-        </Card>
-    );
-
-    if (nodeData.isCurrent) {
-        return (
-            <div>
-                <div
-                    className={`node-expander-top ${
-                        hideTop ? "arrow-up" : "arrow-down"
-                    }`}
-                    onClick={(e) => {
-                        setHideTop(!hideTop);
-                        e.stopPropagation();
-                    }}
-                    onMouseDown={(e) => {
-                        e.stopPropagation();
-                    }}
-                >
-                    <PlayCircleFilledWhiteIcon />
-                </div>
-                {card}
-                <div
-                    className={`node-expander-bottom ${
-                        hideBottom ? "arrow-down" : "arrow-up"
-                    }`}
-                    onClick={(e) => {
-                        setHideBottom(!hideBottom);
-                        e.stopPropagation();
-                    }}
-                    onMouseDown={(e) => {
-                        e.stopPropagation();
-                    }}
-                >
-                    <PlayCircleFilledWhiteIcon />
-                </div>
-            </div>
-        );
-    } else {
-        return card;
-    }
-}
 
 const getTransform = (zoom, centerX, centerY) =>
     `matrix(${zoom}, 0, 0, ${zoom}, ${centerX}, ${centerY})`;
@@ -225,8 +36,6 @@ function OrgChartArea(props) {
 
     const [hideTop, setHideTop] = React.useState(false);
     const [hideBottom, setHideBottom] = React.useState(false);
-
-    const [selectedIdOnChart, setSelectedIdOnChart] = React.useState("");
 
     const [zoom, setZoom] = React.useState(0.7);
     const [center, setCenter] = React.useState({
@@ -301,9 +110,6 @@ function OrgChartArea(props) {
                     onMouseDown={(e) => {
                         orgChartMouseDown = true;
                     }}
-                    onClick={(e) => {
-                        setSelectedIdOnChart("");
-                    }}
                     onWheel={(e) => {
                         const deltaY = e.deltaY;
                         let ratio = zoom;
@@ -325,18 +131,15 @@ function OrgChartArea(props) {
                 >
                     <CustomizedOrganizationChart
                         dataSource={dataSet}
-                        nodeTemplate={(nodeData) =>
-                            OrgChartNode({
-                                ...nodeData,
-                                selectedIdOnChart: selectedIdOnChart,
-                                setSelectedIdOnChart: setSelectedIdOnChart,
-                                hideTop: hideTop,
-                                setHideTop: setHideTop,
-                                hideBottom: hideBottom,
-                                setHideBottom: setHideBottom,
-                            })
-                        }
-                        setSelectedIdOnChart={setSelectedIdOnChart}
+                        nodeTemplate={({ nodeData }) => (
+                            <OrgChartNode
+                                nodeData={nodeData}
+                                hideTop={hideTop}
+                                setHideTop={setHideTop}
+                                hideBottom={hideBottom}
+                                setHideBottom={setHideBottom}
+                            />
+                        )}
                         zoom={zoom}
                         centerX={center.x}
                         centerY={center.y}
