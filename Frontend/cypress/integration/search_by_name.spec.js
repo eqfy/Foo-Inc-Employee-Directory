@@ -14,14 +14,16 @@ describe("Search page search by name", () => {
 
         // Search by name
         cy.get("[data-cy=search-by-name]").type("Da Silva");
-        cy.get('[data-cy="loading-name-result"]').should("exist");
-        cy.get('[data-cy="loading-name-result"]').should("not.exist", {
+        cy.get('[data-cy="loading-name-result"]', {
             timeout,
-        });
-        cy.get(".search-dropdown-entry")
-            .contains("Gregore Da Silva", {
-                timeout,
-            })
+        }).should("exist");
+        cy.get('[data-cy="loading-name-result"]', {
+            timeout,
+        }).should("not.exist");
+        cy.get(".search-dropdown-entry", {
+            timeout,
+        })
+            .contains("Gregore Da Silva")
             .click();
         cy.get(".search-dropdown-entry").should("not.exist");
 
@@ -43,15 +45,17 @@ describe("Search page search by name", () => {
 
         // Search by name for duplicate
         cy.get("[data-cy=search-by-name]").type("B Aldrin");
-        cy.get('[data-cy="loading-name-result"]').should("exist");
-        cy.get('[data-cy="loading-name-result"]').should("not.exist", {
+        cy.get('[data-cy="loading-name-result"]', {
             timeout,
-        });
+        }).should("exist");
+        cy.get('[data-cy="loading-name-result"]', {
+            timeout,
+        }).should("not.exist");
         cy.get(".search-dropdown-entry").contains("found");
-        cy.get(".search-dropdown-entry")
-            .contains("Buzz Aldrin", {
-                timeout,
-            })
+        cy.get(".search-dropdown-entry", {
+            timeout,
+        })
+            .contains("Buzz Aldrin")
             .click();
         cy.get(".search-dropdown-entry").should("not.exist");
 
