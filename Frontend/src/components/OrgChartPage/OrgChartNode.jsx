@@ -11,7 +11,6 @@ import "./OrgChart.css";
 import React, { useEffect } from "react";
 import { PagePathEnum } from "components/common/constants";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { coordinatedDebounce } from "components/common/helpers";
 import { setSnackbarState } from "actions/generalAction";
 
 const useStyles = makeStyles({

@@ -19,6 +19,12 @@ const useStyles = makeStyles({
             color: "#004680",
             cursor: "pointer",
         },
+        "&.search": {
+            color: "white",
+            "&:hover": {
+                color: "#c9c9c9",
+            },
+        },
     },
     menu: {
         "& ol": {
@@ -31,6 +37,7 @@ const useStyles = makeStyles({
 });
 
 export function HelpButton(props) {
+    const { searchHelpButton } = props;
     const classes = useStyles();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -46,6 +53,7 @@ export function HelpButton(props) {
         <div className={`${classes.helpButtonContainer} ${props.className}`}>
             <HelpIcon
                 classes={{ root: classes.help }}
+                className={searchHelpButton ? "search" : ""}
                 onClick={handlePopoverOpen}
             />
             <Menu

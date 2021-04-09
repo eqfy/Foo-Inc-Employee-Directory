@@ -21,7 +21,6 @@ import { filterTypeEnum } from "states/filterState";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
-import { HelpButton } from "components/common/HelpButton";
 
 const chipColors = {
     [filterTypeEnum.LOCATION]: "#00D1FF",
@@ -178,32 +177,6 @@ function FilterArea(props) {
                     checked={isAscending}
                     handleChange={handleSortOrderChange}
                 />
-                <HelpButton className={classes.helpButton}>
-                    <li>
-                        Filters will be applied according to the following
-                        rules:
-                    </li>
-                    <ol>
-                        <li>
-                            Filters are grouped by type, all groups have an AND
-                            relationship (e.g. if Location and Title type
-                            filters are applied, the returned result must
-                            satisfy the conditions in both filter type groups)
-                        </li>
-                        <li>
-                            Skill type filters have an AND relationship (e.g. if
-                            Planning (Accounting) and Planting (Agriculture) are
-                            applied, the returned result must possess both
-                            skills)
-                        </li>
-                        <li>
-                            Non-skill type filters have an OR relationship (e.g.
-                            if Vancouver and Victoria are both applied, then the
-                            returned result can be located in either Vancouver
-                            or Victoria)
-                        </li>
-                    </ol>
-                </HelpButton>
             </div>
             <div className={classes.skillsBox}>
                 {chipData.length > 0 ? (
@@ -346,8 +319,5 @@ const useStyles = makeStyles(() => ({
         alignSelf: "center",
         width: "100%",
         color: "rgba(0, 0, 0, 0.54)",
-    },
-    helpButton: {
-        marginLeft: "auto",
     },
 }));
