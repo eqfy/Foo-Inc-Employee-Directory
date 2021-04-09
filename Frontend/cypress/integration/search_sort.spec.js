@@ -9,7 +9,7 @@ describe("is sortable", () => {
         cy.reload();
         cy.visit(baseUrl);
         // Wait for search to complete
-        cy.get('[data-cy="loading-results"]');
+        cy.get('[data-cy="loading-results"]', { timeout });
         cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
 
         cy.get(".MuiChip-deleteIcon").click();

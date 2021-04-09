@@ -23,6 +23,7 @@ describe("Search page search by name", () => {
                 timeout,
             })
             .click();
+        cy.get(".search-dropdown-entry").should("not.exist");
 
         // Check that existing filters are cleared and name is the only filter
         cy.get(".MuiChip-label").should("have.length", 1);
@@ -52,6 +53,7 @@ describe("Search page search by name", () => {
                 timeout,
             })
             .click();
+        cy.get(".search-dropdown-entry").should("not.exist");
 
         // Check that existing filters are cleared and name is the only filter
         cy.get(".MuiChip-label").should("have.length", 1);

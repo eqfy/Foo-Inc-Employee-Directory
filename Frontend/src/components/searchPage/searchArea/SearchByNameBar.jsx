@@ -53,9 +53,9 @@ function SearchByNameBar(props) {
 
     React.useEffect(() => {
         if (inputValue.length >= 2) {
+            setLoading(true);
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
-                setLoading(true);
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
                         const seen = {};
