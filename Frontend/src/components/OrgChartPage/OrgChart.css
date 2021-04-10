@@ -1,3 +1,11 @@
+#chartAreaCenteredReference {
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: 50%;
+    top: calc(50% + 122.5px);
+}
+
 #orgChartTopArea {
     display: flex;
     list-style: none;
@@ -24,7 +32,6 @@
     float: right;
     margin-right: 20px;
     margin-top: 20px;
-    /* display: inline-flex; */
     list-style: none;
     font-size: 20px;
 }
@@ -34,7 +41,7 @@
     align-items: center;
 }
 
-#legend div {
+#legend div:not(.org-chart-help-button) {
     width: 15px;
     height: 15px;
     display: inline-block;
@@ -49,7 +56,7 @@
     background: #00569c;
 }
 
-.orgchart-container {
+.App .orgchart-container {
     border: none;
     display: flex;
     justify-content: center;
@@ -59,82 +66,45 @@
     overflow: hidden;
 }
 
-.orgchart {
+.App .orgchart {
     background: none;
 }
 
-.orgchart ul li .oc-node {
+.App .orgchart ul li .oc-node {
     margin-bottom: 70px;
 }
 
-.orgchart ul li .oc-node.selected,
-.orgchart ul li .oc-node:hover {
+.App .orgchart ul li .oc-node.selected,
+.App .orgchart ul li .oc-node:hover {
     background: none;
 }
 
-.orgchart > ul > li > ul li > .oc-node::before {
+.App .orgchart > ul > li > ul li > .oc-node::before {
     background-color: black;
     height: 40px;
     width: 2px;
     top: -36px;
 }
 
-.orgchart ul li .oc-node:not(:only-child)::after {
+.App .orgchart ul li .oc-node:not(:only-child)::after {
     background-color: black;
     width: 2px;
     height: 40px;
     bottom: -36px;
 }
 
-.orgchart > ul > li > ul li::before,
-.orgchart > ul > li > ul li::after {
+.App .orgchart > ul > li > ul li::before,
+.App .orgchart > ul > li > ul li::after {
     border-color: black;
     top: -36px;
 }
 
-.card-name-extension,
-.card-title-extension,
-.card-email-extension {
-    position: absolute;
-    margin-top: 0;
-    margin-bottom: 0;
-    background-color: #fff;
-    opacity: 0;
+.loaded-chart {
+    cursor: move;
+}
+
+.chart-hidden {
     visibility: hidden;
-    transition: opacity 0.5s ease;
-    z-index: 30;
-    white-space: nowrap;
-}
-
-.card-name-extension {
-    top: 15px;
-}
-
-.card-title-extension {
-    top: 39px;
-}
-
-.card-email-extension {
-    top: 63px;
-}
-
-.card-text-too-long + .card-name-extension,
-.card-text-too-long + .card-title-extension,
-.card-text-too-long + .card-email-extension {
-    visibility: visible;
-    cursor: text;
-}
-
-.nodeSelected .card-text-too-long + .card-name-extension,
-.nodeSelected .card-text-too-long + .card-title-extension,
-.nodeSelected .card-text-too-long + .card-email-extension {
-    opacity: 1;
-}
-
-.card-text-too-long + .card-name-extension:hover,
-.card-text-too-long + .card-title-extension:hover,
-.card-text-too-long + .card-email-extension:hover {
-    opacity: 1;
 }
 
 .node-expander-top,
@@ -182,4 +152,8 @@
 
 .node-expander-bottom {
     bottom: -31px;
+}
+
+.org-chart-help-button {
+    margin-left: 15px;
 }

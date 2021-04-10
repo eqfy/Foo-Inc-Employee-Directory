@@ -12,7 +12,7 @@ describe("Focused worker", () => {
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
         cy.get(".current").should("contain", "Wally Westerson");
 
-        cy.get("[id=20104]").should("contain", "Gordon Trent").dblclick();
+        cy.get("[id=20104]").should("contain", "Gordon Trent").click();
 
         cy.url().should("eq", `${baseUrl}/orgchart/20104`);
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
@@ -32,7 +32,7 @@ describe("Focused worker", () => {
         cy.get('[data-cy="loading-results"]');
         cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
 
-        cy.contains("Alice Allen").dblclick();
+        cy.contains("Alice Allen").click();
 
         cy.contains("Profile View").click();
 

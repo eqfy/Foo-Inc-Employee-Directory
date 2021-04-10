@@ -50,7 +50,13 @@ const convertSkillsToSkillObject = (skills) => {
         }
     });
 
-    return skillObject;
+    // return sorted skillObject
+    return Object.keys(skillObject)
+        .sort()
+        .reduce((obj, key) => {
+            obj[key] = skillObject[key].sort();
+            return obj;
+        }, {});
 };
 
 const parseSkillsToTable = (

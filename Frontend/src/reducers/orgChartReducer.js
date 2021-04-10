@@ -4,6 +4,7 @@ export default function orgChartReducer(state = defaultOrgChartState, action) {
     switch (action.type) {
         case "SET_ORGCHART":
             return {
+                ...state,
                 ...action.payload.orgChartState,
             };
         case "RESET_ORGCHART":
