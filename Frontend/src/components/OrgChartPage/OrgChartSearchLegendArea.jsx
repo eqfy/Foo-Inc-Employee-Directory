@@ -138,13 +138,12 @@ export default function OrgChartSearchLegendArea() {
                                 subordinates, toggle the show or hide buttons.
                             </li>
                             <li>
-                                To see the full text of the name, title or email
-                                of an employee/contractor, click once on a card.
+                                To see the full text of the name, title or
+                                email, hover the mouse over the text.
                             </li>
                             <li>
-                                To see an organization chart for a different
-                                employee/contractor in the current chart, click
-                                twice on a card.
+                                To copy the name, title or email, click on the
+                                copy button next to the text.
                             </li>
                             <li>
                                 To find an employee/contractor by name and see
