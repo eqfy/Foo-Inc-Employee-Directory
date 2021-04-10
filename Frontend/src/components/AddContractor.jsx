@@ -30,9 +30,10 @@ import { PagePathEnum } from "./common/constants";
 import { Storage } from "aws-amplify";
 import config from "../config";
 import { coordinatedDebounce } from "./common/helpers";
+import { setSnackbarState } from 'actions/generalAction';
 
 function AddContractor(props) {
-    const { filterData, isAdmin } = props;
+    const { filterData, isAdmin, setSnackbarState } = props;
 
     const classes = useStyles();
     const { companyAllId, locationAllId, skillAllId } = filterData;
@@ -193,13 +194,10 @@ function AddContractor(props) {
     }
 
     function showSnackbar(severity, message) {
-        let snackBar = formState.snackBar;
-        snackBar["severity"] = severity;
-        snackBar["isOpen"] = true;
-        snackBar["message"] = message;
-        setFormState({
-            ...formState,
-            snackBar,
+        setSnackbarState({
+            open: true,
+            severity,
+            message,
         });
     }
 
@@ -536,7 +534,9 @@ function AddContractor(props) {
                     )}
                     renderOption={(option) =>
                         formState.loadingState["supervisor"] ? (
-                            <div className={"search-dropdown-entry"}>
+                            <div 
+                                className={"search-dropdown-entry"}
+                                data-cy="loading-supervisor-result">
                                 <CircularProgress
                                     size={"20px"}
                                     classes={{ root: classes.loading }}
@@ -781,7 +781,12 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default withRouter(connect(mapStateToProps)(AddContractor));
+const mapDispatchToProps = (dispatch) => ({
+    setSnackbarState: (snackbarState) => dispatch(setSnackbarState(snackbarState)),
+});
+
+export default withRouter(connect(mapStateToProps, 
+    mapDispatchToProps)(AddContractor));
 
 const useStyles = makeStyles(() => ({
     root: {
