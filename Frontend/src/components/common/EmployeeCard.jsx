@@ -24,9 +24,15 @@ const useStyles = makeStyles({
         borderColor: "black",
         marginLeft: "auto",
         marginRight: "auto",
+        "&.contractor-card": {
+            borderColor: "#FF9900",
+        },
         "&.link-to-profile:hover": {
             boxShadow: "0 0 3px 3px black",
             cursor: "pointer",
+            "&.contractor-card": {
+                boxShadow: "0 0 3px 3px #CC7A00",
+            },
         },
     },
     cardContent: {
@@ -208,7 +214,9 @@ function EmployeeCard(props) {
     return (
         <CardContainer data-cy="employee-card">
             <Card
-                className={`${linkToProfile ? "link-to-profile" : ""}`}
+                className={`${linkToProfile ? "link-to-profile" : ""} ${
+                    employee.isContractor ? "contractor-card" : ""
+                }`}
                 classes={{ root: classes.card }}
                 variant="outlined"
             >

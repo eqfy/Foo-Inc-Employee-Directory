@@ -17,10 +17,23 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { setAdmin, setSnackbarState } from "actions/generalAction";
 import { PagePathEnum } from "./common/constants";
+import logo from "./../assets/ae_logo.png";
 
 const useStyles = makeStyles({
-    form: {
-        marginTop: "calc(50vh - 160px)",
+    formContainer: {
+        marginTop: "calc(50vh - 250px)",
+    },
+    logoTitleContainer: {
+        textAlign: "center",
+        fontSize: 30,
+        marginBottom: 50,
+    },
+    logo: {
+        display: "block",
+        marginLeft: "auto",
+        marginRight: "auto",
+        width: 200,
+        marginBottom: 30,
     },
     textField: {
         minWidth: 300,
@@ -127,82 +140,101 @@ function Login(props) {
 
     return (
         <PageContainer>
-            <form onSubmit={handleSubmit} className={styles.form}>
-                <Grid container spacing={2} justify="center">
-                    <Grid item xs={3} classes={{ root: styles.textField }}>
-                        <TextField
-                            label="Username"
-                            placeholder="johndoe"
-                            name="username"
-                            variant="outlined"
-                            size="small"
-                            required
-                            fullWidth
-                            disabled={isAdmin}
-                        />
-                    </Grid>
-                </Grid>
-                <Grid container spacing={2} justify="center">
-                    <Grid item xs={3} classes={{ root: styles.textField }}>
-                        <FormControl
-                            variant="outlined"
-                            size="small"
-                            required
-                            fullWidth
-                            disabled={isAdmin}
-                        >
-                            <InputLabel htmlFor="outlined-adornment-password">
-                                Password
-                            </InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-password"
-                                name="password"
-                                type={showPassword ? "text" : "password"}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={toggleShowPassword}
-                                            edge="end"
-                                        >
-                                            {showPassword ? (
-                                                <Visibility />
-                                            ) : (
-                                                <VisibilityOff />
-                                            )}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                labelWidth={85}
-                            />
-                        </FormControl>
-                    </Grid>
-                </Grid>
-                <Grid container spacing={2} justify="center">
-                    <Grid item>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            disabled={loading}
-                            className={isAdmin ? "" : "logIn"}
-                            classes={{ root: styles.logButton }}
-                        >
-                            {loading ? (
-                                <CircularProgress size={20} color="inherit" />
-                            ) : isAdmin ? (
-                                "Log out"
-                            ) : (
-                                "Log in"
-                            )}
-                        </Button>
-                    </Grid>
-                </Grid>
-                {!!loggedInMessage && (
+            <div className={styles.formContainer}>
+                <form onSubmit={handleSubmit} className={styles.formContainer}>
                     <Grid container spacing={2} justify="center">
-                        <Grid item>{loggedInMessage}</Grid>
+                        <Grid
+                            item
+                            xs={3}
+                            classes={{ root: styles.logoTitleContainer }}
+                        >
+                            <img
+                                className={styles.logo}
+                                src={logo}
+                                alt={logo}
+                            />
+                            <b>Admin Login Window</b>
+                        </Grid>
                     </Grid>
-                )}
-            </form>
+                    <Grid container spacing={2} justify="center">
+                        <Grid item xs={3} classes={{ root: styles.textField }}>
+                            <TextField
+                                label="Username"
+                                placeholder="johndoe"
+                                name="username"
+                                variant="outlined"
+                                size="small"
+                                required
+                                fullWidth
+                                disabled={isAdmin}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2} justify="center">
+                        <Grid item xs={3} classes={{ root: styles.textField }}>
+                            <FormControl
+                                variant="outlined"
+                                size="small"
+                                required
+                                fullWidth
+                                disabled={isAdmin}
+                            >
+                                <InputLabel htmlFor="outlined-adornment-password">
+                                    Password
+                                </InputLabel>
+                                <OutlinedInput
+                                    id="outlined-adornment-password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={toggleShowPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? (
+                                                    <Visibility />
+                                                ) : (
+                                                    <VisibilityOff />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    labelWidth={85}
+                                />
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2} justify="center">
+                        <Grid item>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                disabled={loading}
+                                className={isAdmin ? "" : "logIn"}
+                                classes={{ root: styles.logButton }}
+                            >
+                                {loading ? (
+                                    <CircularProgress
+                                        size={20}
+                                        color="inherit"
+                                    />
+                                ) : isAdmin ? (
+                                    "Log out"
+                                ) : (
+                                    "Log in"
+                                )}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    {!!loggedInMessage && (
+                        <Grid container spacing={2} justify="center">
+                            <Grid item>{loggedInMessage}</Grid>
+                        </Grid>
+                    )}
+                </form>
+            </div>
         </PageContainer>
     );
 }

@@ -130,8 +130,8 @@ export default function OrgChartSearchLegendArea() {
                     <HelpButton className={"org-chart-help-button"}>
                         <ol>
                             <li>
-                                You could drag the chart using the cursor or
-                                zoom through scrolling.
+                                Move around by dragging with the cursor, zoom
+                                in/out by scrolling up/down.
                             </li>
                             <li>
                                 To hide supervisor and colleagues, or
