@@ -46,6 +46,7 @@
     height: 15px;
     display: inline-block;
     margin-right: 15px;
+    border-radius: 3px;
 }
 
 .orange-background {
