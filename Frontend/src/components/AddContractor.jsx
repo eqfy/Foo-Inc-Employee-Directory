@@ -738,22 +738,22 @@ function AddContractor(props) {
                 />
                 <div
                     className={classes.submitBtnWrapper}>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        className={classes.submitBtn}
-                    >
-                        {" "}
-                        {formState.loadingState["submit"] ? (
-                            <CircularProgress
-                                size={"20px"}
-                                className={classes.loading}
-                            />
-                        ) : (
-                            "Add contractor"
-                        )}
-                    </Button>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={classes.submitBtn}
+                >
+                    {" "}
+                    {formState.loadingState["submit"] ? (
+                        <CircularProgress
+                            size={"20px"}
+                            className={classes.loading}
+                        />
+                    ) : (
+                        "Add contractor"
+                    )}
+                </Button>
                 </div>
             </form>
             <Snackbar
