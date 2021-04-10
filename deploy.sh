@@ -10,7 +10,6 @@ while getopts "p:e:c" opt; do
       copy /b src/Project/ProjectStack.cs +,,
       ;;
     c)
-      #TODO pass the lambda names into environment variables so we can call them
       clean=true
       ;;
     \?)
@@ -38,9 +37,25 @@ echo "***Deploying backend***"
 if [ $userProfile ]
 then
     cdk deploy ProjectStack --outputs-file Frontend/src/endpoint.json --require-approval never --profile $userProfile
+    if [ $clean ]
+    then
+        dbinitName=`aws lambda list-functions --profile $userProfile | awk '/ProjectStack-databaseInit/ {print $2}' | grep -v arn | tr -d , | sed -e 's/^"//' -e 's/"$//'`
+        dropTablesName=`aws lambda list-functions --profile $userProfile | awk '/ProjectStack-databaseDropAll/ {print $2}' | grep -v arn | tr -d , | sed -e 's/^"//' -e 's/"$//'`
+        aws lambda invoke --function-name $dropTablesName --profile $userProfile response.json
+        aws lambda invoke --function-name $dbinitName --profile $userProfile response.json
+    fi
 else
     cdk deploy ProjectStack --outputs-file Frontend/src/endpoint.json --require-approval never
+    if [ $clean ]
+    then
+        dbinitName=`aws lambda list-functions | awk '/ProjectStack-databaseInit/ {print $2}' | grep -v arn | tr -d , | sed -e 's/^"//' -e 's/"$//'`
+        dropTablesName=`aws lambda list-functions | awk '/ProjectStack-databaseDropAll/ {print $2}' | grep -v arn | tr -d , | sed -e 's/^"//' -e 's/"$//'`
+        aws lambda invoke --function-name $dropTablesName sresponse.json
+        aws lambda invoke --function-name $dbinitName response.json
+    fi
 fi
+
+
 cd Frontend
 echo "***Building frontend***"
 yarn install
