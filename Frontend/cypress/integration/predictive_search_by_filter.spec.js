@@ -23,7 +23,7 @@ describe("Predictive search by filters", () => {
             },
             {
                 type: "title",
-                initialLength: 15,
+                initialLength: 14,
                 actions: [
                     {
                         typeIn: "CO",
