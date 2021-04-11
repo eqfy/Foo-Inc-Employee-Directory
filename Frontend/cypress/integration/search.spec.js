@@ -129,18 +129,29 @@ describe("Search and filter", () => {
         cy.contains("Connie Conner").should("exist");
     });
 
-    it("Filter by worker type", () => {
+    it.only("Filter by worker type", () => {
         cy.visit(baseUrl);
 
         // Wait for search to complete
         cy.get('[data-cy="loading-results"]');
         cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
-
         cy.get(".MuiChip-deleteIcon").click();
 
+        // Filter by contractor
         cy.get(".MuiSelect-root").contains("All").click();
         cy.get('[data-value="contractor"]').click();
 
-        // TODO we should go to profile page and verify that worker is a contractor
+        // Go to profile page and verify that worker is a contractor
+        cy.get("[data-cy=employee-card]", { timeout }).first().click();
+        cy.get(".heading").contains("Contractor");
+
+        // Filter by regular employee
+        cy.contains("Search Home").click();
+        cy.get(".MuiSelect-root").contains("Contractor").click();
+        cy.get('[data-value="employee"]').click();
+
+        // Go to profile page and verify that worker is a contractor
+        cy.get("[data-cy=employee-card]", { timeout }).first().click();
+        cy.get(".heading").contains("Contractor").should("not.exist");
     });
 });

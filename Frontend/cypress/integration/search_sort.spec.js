@@ -3,7 +3,7 @@
 
 import { parseFullName } from "parse-full-name";
 
-describe("is sortable", () => {
+describe("Search page is sortable", () => {
     const baseUrl = Cypress.env("baseUrl");
     const timeout = Cypress.env("timeoutInMs");
     beforeEach(() => {
