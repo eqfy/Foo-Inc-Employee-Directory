@@ -129,7 +129,7 @@ describe("Search and filter", () => {
         cy.contains("Connie Conner").should("exist");
     });
 
-    it.only("Filter by worker type", () => {
+    it("Filter by worker type", () => {
         cy.visit(baseUrl);
 
         // Wait for search to complete
