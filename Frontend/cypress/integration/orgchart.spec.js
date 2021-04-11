@@ -57,6 +57,7 @@ describe("Org chart", () => {
         // no supervisor
         cy.visit(`${baseUrl}/orgchart/10001`);
 
+        cy.get('[data-cy="loading-orgchart"]').should("exist");
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
 
         checkValidWorker(10001);
@@ -64,6 +65,7 @@ describe("Org chart", () => {
         // normal worker
         cy.visit(`${baseUrl}/orgchart/20004`);
 
+        cy.get('[data-cy="loading-orgchart"]').should("exist");
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
 
         checkValidWorker(20004);
@@ -71,6 +73,7 @@ describe("Org chart", () => {
         // no subordinates
         cy.visit(`${baseUrl}/orgchart/20104`);
 
+        cy.get('[data-cy="loading-orgchart"]').should("exist");
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
 
         checkValidWorker(20104);
@@ -81,6 +84,7 @@ describe("Org chart", () => {
 
         cy.visit(baseUrl);
 
+        cy.get('[data-cy="loading-filters"]').should("exist");
         cy.get('[data-cy="loading-filters"]', { timeout }).should("not.exist");
 
         cy.get(".MuiChip-deleteIcon", { timeout }).click();
@@ -91,25 +95,27 @@ describe("Org chart", () => {
             .click();
         cy.get(".filter-list-button").contains("President and CEO").click();
 
+        cy.get('[data-cy="loading-results"]').should("exist");
         cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
 
         cy.get('[data-cy="employee-card"]')
             .find('[data-cy="orgchart-icon-10001"]')
             .click();
 
+        cy.get('[data-cy="loading-orgchart"]').should("exist");
+        cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
+        
         checkValidWorker(10001);
 
         // from profile
 
-        cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
-
         cy.visit(`${baseUrl}/profile/20104`);
 
-        cy.get('[data-cy="loading-profile"]', { timeout }).should("not.exist");
+        cy.get('[data-cy="loading-profile"]').should("not.exist");
 
         cy.contains("Organization Chart").click();
 
-        cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
+        cy.get('[data-cy="loading-orgchart"]').should("not.exist");
 
         checkValidWorker(20104);
     });
@@ -129,6 +135,7 @@ describe("Org chart", () => {
     it("invalid worker", () => {
         cy.visit(`${baseUrl}/orgchart/100030`);
 
+        cy.get('[data-cy="loading-orgchart"]').should("exist");
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
 
         checkValidWorker(100030);
