@@ -36,7 +36,9 @@ function CoreInfoArea(props) {
             <CardContainer>
                 <EmployeeCard employee={employee} linkToProfile={false} />
             </CardContainer>
-            <div className="heading">Core Information</div>
+            <div className="heading">
+                Core Information{employee.isContractor && " (Contractor)"}
+            </div>
             <StyledTypography
                 variant="body1"
                 color="textPrimary"
