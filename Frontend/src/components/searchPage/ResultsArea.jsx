@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import EmployeeCard from "../common/EmployeeCard";
 import Pagination from "@material-ui/lab/Pagination";
 import styled from "styled-components";
@@ -13,7 +13,7 @@ import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const gridWidth = 260;
-const gridHeight = 266;
+const gridHeight = 265;
 
 const useStyles = makeStyles({
     loading: {
@@ -33,30 +33,15 @@ function ResultsArea(props) {
         resultOrder,
         workers: { byId },
         loading,
+        focusedWorkerId,
         setFocusedWorkerId,
     } = props;
 
-    const [selectedIndexOnPage, setSelectedIndexOnPage] = useState(-1);
-
-    // workaround for handling background and card both onClick
-    const [cardClicked, setCardClicked] = useState(false);
-    const [gridClickToggle, setGridClickToggle] = useState(true);
-
     const handleChange = (_event, value) => {
         if (value !== pageNumber) {
-            setSelectedIndexOnPage(-1);
             updatePage(value);
         }
     };
-
-    useEffect(() => {
-        if (cardClicked) {
-            setCardClicked(false);
-        } else {
-            setSelectedIndexOnPage(-1);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gridClickToggle]);
 
     const styles = useStyles();
 
@@ -72,10 +57,7 @@ function ResultsArea(props) {
                 <EmployeeCard
                     employee={employee}
                     linkToProfile={true}
-                    cardIndexOnPage={index}
-                    selectedIndexOnPage={selectedIndexOnPage}
-                    setSelectedIndexOnPage={setSelectedIndexOnPage.bind(this)}
-                    setCardClicked={setCardClicked.bind(this)}
+                    focusedWorkerId={focusedWorkerId}
                     setFocusedWorkerId={setFocusedWorkerId}
                 />
             ) : (
@@ -99,11 +81,7 @@ function ResultsArea(props) {
 
     return (
         <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
-            <div
-                onClick={() => {
-                    setGridClickToggle(!gridClickToggle);
-                }}
-            >
+            <div>
                 <Grid
                     container
                     spacing={2}
@@ -180,6 +158,7 @@ const mapStateToProps = (state) => ({
     pageNumber: state.searchPageState.pageNumber,
     loading:
         state.appState.filtersChanged || state.searchPageState.resultLoading,
+    focusedWorkerId: state.appState.focusedWorkerId,
 });
 
 const mapDispatchToProps = (dispatch) => ({

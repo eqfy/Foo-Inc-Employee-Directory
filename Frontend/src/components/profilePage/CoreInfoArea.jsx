@@ -23,7 +23,10 @@ function CoreInfoArea(props) {
         ["Years Prior Experience", employee.yearsPriorExperience],
         ["Division", employee.division],
         ["Company Name", employee.companyName],
-        ["Office Location", employee.officeLocation],
+        [
+            "Office Location",
+            employee.officeLocation.split(" ||| ").sort().join(", "),
+        ],
         ["Physical Location", employee.physicalLocation],
         ["Hire Date", employee.hireDate.split(" ")[0]],
     ];
@@ -33,7 +36,9 @@ function CoreInfoArea(props) {
             <CardContainer>
                 <EmployeeCard employee={employee} linkToProfile={false} />
             </CardContainer>
-            <div className="heading">Core Information</div>
+            <div className="heading">
+                Core Information{employee.isContractor && " (Contractor)"}
+            </div>
             <StyledTypography
                 variant="body1"
                 color="textPrimary"

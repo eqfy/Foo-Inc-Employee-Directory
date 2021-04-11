@@ -178,6 +178,9 @@ function FilterArea(props) {
                     checked={isAscending}
                     handleChange={handleSortOrderChange}
                 />
+                <div className={classes.legend}>
+                    <div className={classes.orangeSquare}></div>Contractor
+                </div>
             </div>
             <div className={classes.skillsBox}>
                 {chipData.length > 0 ? (
@@ -321,5 +324,16 @@ const useStyles = makeStyles(() => ({
         alignSelf: "center",
         width: "100%",
         color: "rgba(0, 0, 0, 0.54)",
+    },
+    legend: {
+        display: "flex",
+        margin: "auto 15px auto auto",
+    },
+    orangeSquare: {
+        width: 15,
+        height: 15,
+        backgroundColor: "#FF9900",
+        margin: "auto 10px auto 0",
+        borderRadius: 3,
     },
 }));
