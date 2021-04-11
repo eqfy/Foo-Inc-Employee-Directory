@@ -7,7 +7,7 @@ describe("Predictive search by filters", () => {
     it("non-skill filter", () => {
         cy.visit(baseUrl);
 
-        cy.get('[data-cy="loading-filters"]');
+        cy.get('[data-cy="loading-filters"]').should("exist");
         cy.get('[data-cy="loading-filters"]', { timeout }).should("not.exist");
 
         // dependent on database knowledge
@@ -23,7 +23,7 @@ describe("Predictive search by filters", () => {
             },
             {
                 type: "title",
-                initialLength: 14,
+                initialLength: 15,
                 actions: [
                     {
                         typeIn: "CO",
@@ -103,7 +103,7 @@ describe("Predictive search by filters", () => {
             }
 
             // clear would auto-hide
-            cy.get(`[data-cy="${type}-input"]`).clear();
+            cy.get(`[data-cy="${type}-input"]`).find("input").clear();
             cy.get(".filter-list-button").should("not.exist");
         }
     });
@@ -111,7 +111,7 @@ describe("Predictive search by filters", () => {
     it("skill filter", () => {
         cy.visit(baseUrl);
 
-        cy.get('[data-cy="loading-filters"]');
+        cy.get('[data-cy="loading-filters"]').should("exist");
         cy.get('[data-cy="loading-filters"]', { timeout }).should("not.exist");
 
         const skillArea = cy.get(".filter-form").contains("Filter by skill");

@@ -26,7 +26,7 @@ describe("Predictive search by filters", () => {
             yearsPriorExperience: "0.0",
             division: "Marketing",
             companyName: "Acme Seeds Inc.",
-            officeLocation: "Corporate ||| Vancouver",
+            officeLocation: "Corporate, Vancouver",
             physicalLocation: "Vancouver",
             hireDate: "10/1/1999",
             skills: {},
@@ -41,7 +41,7 @@ describe("Predictive search by filters", () => {
             yearsPriorExperience: "2.0",
             division: "Accounting",
             companyName: "Acme Seeds Inc.",
-            officeLocation: "Vancouver ||| Corporate",
+            officeLocation: "Corporate, Vancouver",
             physicalLocation: "Victoria",
             hireDate: "1/1/2020",
             skills: {
@@ -73,7 +73,7 @@ describe("Predictive search by filters", () => {
             yearsPriorExperience: "3.2",
             division: "Human Resources",
             companyName: "Acme Seeds Inc.",
-            officeLocation: "Corporate ||| Vancouver",
+            officeLocation: "Corporate, Vancouver",
             physicalLocation: "Vancouver",
             hireDate: "5/28/1997",
             skills: {
@@ -91,7 +91,9 @@ describe("Predictive search by filters", () => {
             },
         },
     };
-    const checkValidWorker = (workerId) => {
+
+    // check whether worker is valid, and optionally check for skills to search transition
+    const checkValidWorker = (workerId, checkForSkills = false) => {
         if (!validWorkers[workerId]) {
             cy.contains(
                 "Sorry, there is no employee or contractor with matching id."
@@ -123,7 +125,7 @@ describe("Predictive search by filters", () => {
                     .should("exist");
             }
 
-            // check skill
+            // check skills
             const skills = () => cy.get('[data-cy="profile-skill-content"]');
             const skillRow = (skillCategory) =>
                 skills().find(
@@ -138,10 +140,43 @@ describe("Predictive search by filters", () => {
                         .contains(skillCategory)
                         .should("exist");
                     for (const skill of expectedResult.skills[skillCategory]) {
-                        skillRow(skillCategory)
-                            .find(`[data-cy="profile-skill-chip-${skill}"]`)
-                            .should("exist");
+                        if (!checkForSkills) {
+                            skillRow(skillCategory)
+                                .find(`[data-cy="profile-skill-chip-${skill}"]`)
+                                .should("exist");
+                        } else {
+                            // click on each chip and make sure search page has the corresponding chip in filter area
+                            skillRow(skillCategory)
+                                .find(`[data-cy="profile-skill-chip-${skill}"]`)
+                                .click();
+
+                            cy.get(".MuiChip-label").should("have.length", 1);
+                            cy.get(".MuiChip-label")
+                                .contains(`${skill} (${skillCategory})`)
+                                .should("exist");
+                            cy.contains("Profile View").click();
+                        }
                     }
+                }
+
+                // check "search with these skills"
+                if (checkForSkills) {
+                    cy.contains("Search with these skills").click();
+                    let totalSkillCount = 0;
+                    for (const skillCategory in expectedResult.skills) {
+                        for (const skill of expectedResult.skills[
+                            skillCategory
+                        ]) {
+                            cy.get(".MuiChip-label")
+                                .contains(`${skill} (${skillCategory})`)
+                                .should("exist");
+                            totalSkillCount++;
+                        }
+                    }
+                    cy.get(".MuiChip-label").should(
+                        "have.length",
+                        totalSkillCount
+                    );
                 }
             }
         }
@@ -150,32 +185,35 @@ describe("Predictive search by filters", () => {
     it("valid workers from url", () => {
         cy.visit(`${baseUrl}/profile/10003`);
 
-        cy.get('[data-cy="loading-profile"]');
+        cy.get('[data-cy="loading-profile"]').should("exist");
         cy.get('[data-cy="loading-profile"]', { timeout }).should("not.exist");
 
-        checkValidWorker(10003);
+        checkValidWorker(10003, true);
 
         cy.visit(`${baseUrl}/profile/10005`);
 
-        cy.get('[data-cy="loading-profile"]');
+        cy.get('[data-cy="loading-profile"]').should("exist");
         cy.get('[data-cy="loading-profile"]', { timeout }).should("not.exist");
 
-        checkValidWorker(10005);
+        checkValidWorker(10005, true);
     });
-
 
     it("invalid worker from url", () => {
         cy.visit(`${baseUrl}/profile/123456`);
+
+        cy.get('[data-cy="loading-profile"]').should("exist");
+        cy.get('[data-cy="loading-profile"]', { timeout }).should("not.exist");
+
         checkValidWorker(123456);
     });
 
     it("valid worker from profile + previous / next", () => {
         cy.visit(baseUrl);
 
-        cy.get('[data-cy="loading-results"]');
+        cy.get('[data-cy="loading-results"]').should("exist");
         cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
 
-        cy.contains("Allison Martin").dblclick();
+        cy.contains("Allison Martin").click();
 
         cy.get('[data-cy="loading-profile"]').should("not.exist");
         checkValidWorker(60105);
@@ -194,7 +232,7 @@ describe("Predictive search by filters", () => {
     it("valid worker from org chart", () => {
         cy.visit(`${baseUrl}/orgchart/10003`);
 
-        cy.get('[data-cy="loading-orgchart"]');
+        cy.get('[data-cy="loading-orgchart"]').should("exist");
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
 
         cy.contains("Profile View").click();
@@ -204,9 +242,12 @@ describe("Predictive search by filters", () => {
 
         cy.contains("Organization Chart").click();
 
-        cy.get('[data-cy="loading-orgchart"]').should("not.exist");
-
         cy.contains("Connie Conner").click();
+
+        cy.get('[data-cy="loading-orgchart"]').should("exist");
+        cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
+
+        cy.contains("Profile View").click();
 
         checkValidWorker(10005);
     });
