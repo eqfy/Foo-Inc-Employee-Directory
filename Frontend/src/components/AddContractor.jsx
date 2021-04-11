@@ -227,19 +227,26 @@ function AddContractor(props) {
 
         let fieldsStatusIsValid = formState.fieldsStatusIsValid;
         let errors = formState.errors;
-        switch (fieldName) {
-            case "email":
-                fieldsStatusIsValid[fieldName] = regexHelper(
-                    fieldValue,
-                    fieldName
-                );
-                errors[fieldName] = "Incorrect email format";
-                setFormState({
-                    ...formState,
-                    fieldsStatusIsValid,
-                    errors,
-                });
 
+        const verifyField = (errorMsg = "") => {
+            fieldsStatusIsValid[fieldName] = regexHelper(fieldValue, fieldName);
+            errors[fieldName] = errorMsg;
+            setFormState({
+                ...formState,
+                fieldsStatusIsValid,
+                errors,
+            });
+        };
+
+        switch (fieldName) {
+            case "firstName":
+                verifyField("Invalid first name");
+                break;
+            case "lastName":
+                verifyField("Invalid first name");
+                break;
+            case "email":
+                verifyField("Incorrect email format");
                 break;
             default: {
             }
@@ -247,6 +254,12 @@ function AddContractor(props) {
     };
 
     function regexHelper(fieldValue, fieldName) {
+        if (fieldName === "firstName" && fieldValue.length > 0) {
+            return fieldValue.trim() !== "";
+        }
+        if (fieldName === "lastName" && fieldValue.length > 0) {
+            return fieldValue.trim() !== "";
+        }
         if (fieldName === "email" && fieldValue !== "")
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue);
         return true;
@@ -346,8 +359,8 @@ function AddContractor(props) {
         await uploadProfilePicture();
 
         const details = {
-            FirstName: event.target.firstName.value,
-            LastName: event.target.lastName.value,
+            FirstName: event.target.firstName.value.trim(),
+            LastName: event.target.lastName.value.trim(),
             Email: event.target.email.value,
             WorkPhone: event.target.workPhone.value,
             WorkCell:
