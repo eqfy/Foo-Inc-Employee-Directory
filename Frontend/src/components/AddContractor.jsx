@@ -523,10 +523,11 @@ function AddContractor(props) {
                         option.employeeNumber === value.employeeNumber
                     }
                     className={classes.textField}
+                    noOptionsText="No supervisors found"
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            placeholder="James Smith"
+                            placeholder="Search Supervisor"
                             variant="outlined"
                             label="Supervisor"
                             size="small"
@@ -736,22 +737,25 @@ function AddContractor(props) {
                         />
                     )}
                 />
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.submitBtn}
-                >
-                    {" "}
-                    {formState.loadingState["submit"] ? (
-                        <CircularProgress
-                            size={"20px"}
-                            className={classes.loading}
-                        />
-                    ) : (
-                        "Add contractor"
-                    )}
-                </Button>
+                <div
+                    className={classes.submitBtnWrapper}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        className={classes.submitBtn}
+                    >
+                        {" "}
+                        {formState.loadingState["submit"] ? (
+                            <CircularProgress
+                                size={"20px"}
+                                className={classes.loading}
+                            />
+                        ) : (
+                            "Add contractor"
+                        )}
+                    </Button>
+                </div>
             </form>
             <Snackbar
                 open={formState.snackBar["isOpen"]}
@@ -782,9 +786,8 @@ export default withRouter(connect(mapStateToProps)(AddContractor));
 
 const useStyles = makeStyles(() => ({
     root: {
-        width: "50%",
-        marginLeft: "auto",
-        marginRight: "auto",
+        display: "flex",
+        justifyContent:"center",
     },
     input: {
         display: "none",
@@ -803,6 +806,10 @@ const useStyles = makeStyles(() => ({
     skillsTextField: {
         minWidth: 230,
         maxWidth: 480,
+    },
+    submitBtnWrapper: {
+        display: "flex",
+        justifyContent:"center",
     },
     submitBtn: {
         width: 200,
