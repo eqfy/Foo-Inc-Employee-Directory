@@ -134,12 +134,10 @@ function LoadingResult(props) {
             className={"orgchart-container"}
             style={{ height: "calc(100vh - 280px)" }}
         >
-            Sorry, no employee or contractor satisfies the filters.
+            Sorry, no results satisfy the applied filters.
             <br />
-            Please try unchecking some filters or lowering the minimum work
-            experience filter
-            <br />
-            (currently, the most senior employee has 11 years of experience)
+            Please try deleting some filters or lowering the minimum work
+            experience filter.
         </div>
     ) : (
         props.children
