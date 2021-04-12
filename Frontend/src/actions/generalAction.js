@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { getProfileAPI } from "api/profileAPI";
 import { setFilterAction, setResultLoading } from "./filterAction";
 import { searchWithAppliedFilterAction } from "./searchAction";
@@ -30,7 +31,11 @@ export const setSnackbarState = (snackbarState) => (dispatch) => {
 };
 
 export const configureCurrUser = () => (dispatch, getState) => {
-    const currWorkerId = getState().appState.currWorkerId;
+    // Get the current employee number from the cookies, if non exist then default to the one in the redux state
+    let currWorkerId = Cookies.get("CurrentEmployeeNumber");
+    if (!currWorkerId) {
+        currWorkerId = getState().appState.currWorkerId;
+    }
     dispatch(setResultLoading(true));
     getProfileAPI(currWorkerId)
         .then((response) => {
