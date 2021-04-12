@@ -11,7 +11,11 @@ import { coordinatedDebounce } from "../../common/helpers";
 
 function ExperienceSlider(props) {
     const { yearsPriorExperience, searchByExperienceAction } = props;
-    const [value, setValue] = React.useState(yearsPriorExperience);
+    const [value, setValue] = React.useState(0);
+
+    React.useEffect(() => {
+        setValue(yearsPriorExperience);
+    }, [yearsPriorExperience]);
 
     const setAndDispatchValue = (targetValue) => {
         if (isNaN(targetValue)) {
