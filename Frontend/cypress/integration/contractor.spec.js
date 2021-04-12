@@ -8,14 +8,16 @@ describe("Add contractor tests", () => {
     const testEmail = testFirstName+"@gmail.com";
     const domWait = 3000;
 
-    it("should add a contractor", () => {
+    beforeEach(() => {
         cy.visit(baseUrl+'/addContractor');
         cy.url().should('eq', baseUrl+'/login?referrer=addContractor');
         cy.get('[name=username]').type(adminUsername);
         cy.get('[name=password]').type(adminPassword);
         cy.get('button[type=submit]').click();
         cy.url().should('eq', baseUrl+'/addContractor');
-        
+      })
+      
+    it("should add a contractor", () => {
         cy.intercept('predictiveSearchResource?*').as('getSupervisor');
         cy.intercept('getAllOfficeLocations?*').as('getOfficeLocations');
         cy.intercept('getAllGroupCodes?*').as('getAllGroupCodes');
@@ -56,12 +58,6 @@ describe("Add contractor tests", () => {
     });
 
     it("should not add a contractor (email already exists)", () => {
-        cy.visit(baseUrl+'/addContractor');
-        cy.url().should('eq', baseUrl+'/login?referrer=addContractor');
-        cy.get('[name=username]').type(adminUsername);
-        cy.get('[name=password]').type(adminPassword);
-        cy.get('button[type=submit]').click();
-        cy.url().should('eq', baseUrl+'/addContractor');
         
         cy.intercept('predictiveSearchResource?*').as('getSupervisor');
         cy.intercept('getAllOfficeLocations?*').as('getOfficeLocations');
@@ -123,13 +119,6 @@ describe("Add contractor tests", () => {
     });
     
     it("should not add a contractor (missing form fields)", () => {
-        cy.visit(baseUrl+'/addContractor');
-        cy.url().should('eq', baseUrl+'/login?referrer=addContractor');
-        cy.get('[name=username]').type(adminUsername);
-        cy.get('[name=password]').type(adminPassword);
-        cy.get('button[type=submit]').click();
-        cy.url().should('eq', baseUrl+'/addContractor');
-        
 
         cy.get('form').within(() => {
             cy.get('[name=firstName]').type(testFirstName);
