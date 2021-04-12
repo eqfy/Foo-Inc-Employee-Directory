@@ -23,7 +23,6 @@ describe("Predictive search by filters", () => {
             },
             {
                 type: "title",
-                initialLength: 14,
                 actions: [
                     {
                         typeIn: "CO",
@@ -84,7 +83,10 @@ describe("Predictive search by filters", () => {
 
         for (const { type, initialLength, actions } of testGroups) {
             cy.get(`[data-cy="expand-${type}-filters"]`).click();
-            cy.get(".filter-list-button").should("have.length", initialLength);
+            // do not check initial length of title filters (db could add random titles)
+            if (type !== "title") {
+                cy.get(".filter-list-button").should("have.length", initialLength);
+            }
             cy.get(`[data-cy="expand-${type}-filters"]`).click();
 
             for (const action of actions) {
@@ -95,11 +97,13 @@ describe("Predictive search by filters", () => {
                         .contains(result)
                         .should("exist");
                 }
-
-                cy.get(".filter-list-button").should(
-                    "have.length",
-                    action.results.length
-                );
+                // again, do not check length of title filters (db could add random titles)
+                if (type !== "title") {
+                    cy.get(".filter-list-button").should(
+                        "have.length",
+                        action.results.length
+                    );   
+                }
             }
 
             // clear would auto-hide
