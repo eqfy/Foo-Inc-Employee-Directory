@@ -243,7 +243,7 @@ function AddContractor(props) {
                 verifyField("Invalid first name");
                 break;
             case "lastName":
-                verifyField("Invalid first name");
+                verifyField("Invalid last name");
                 break;
             case "email":
                 verifyField("Incorrect email format");
@@ -349,6 +349,14 @@ function AddContractor(props) {
         }
 
         // validate email field
+        if (!regexHelper(event.target.firstName.value, "firstName")) {
+            showSnackbar("error", "Operation failed. First name is invalid.");
+            return;
+        }
+        if (!regexHelper(event.target.lastName.value, "lastName")) {
+            showSnackbar("error", "Operation failed. Last name is invalid.");
+            return;
+        }
         if (!regexHelper(event.target.email.value, "email")) {
             showSnackbar("error", "Operation failed. Email field is invalid.");
             return;
