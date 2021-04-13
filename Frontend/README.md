@@ -1,8 +1,8 @@
 # Foo Inc Frontend
 
-**:warning: Please install/add all tools and configurations first from the Config & Release document**
+**:warning: Please refer to Config & Release document first to install all tools and setup all configurations**
 
-This directory contains the frontend code for the Foo Inc. Associated Engineering project. This project is bootstrapped with [Create React App](https://github.com/facebook/create-react-app). 
+This directory contains the frontend code for the Foo Inc. Associated Engineering project and is bootstrapped with [Create React App](https://github.com/facebook/create-react-app). 
 
 Before running the scripts from below, please run `yarn` to install all frontend dependencies.
 
