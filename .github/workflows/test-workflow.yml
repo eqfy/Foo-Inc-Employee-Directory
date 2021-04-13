@@ -30,8 +30,9 @@ jobs:
       - name: Build backend
         run: |
           cd $GITHUB_WORKSPACE
-          chmod 700 deployCI.sh
-          ./deployCI.sh
+          dotnet tool install -g Amazon.Lambda.Tools
+          chmod 700 deployBackend.sh
+          ./deployBackend.sh -c -e dev
       # Install frontend packages
       - name: Install packages
         run: |
