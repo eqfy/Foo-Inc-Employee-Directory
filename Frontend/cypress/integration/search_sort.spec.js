@@ -19,7 +19,11 @@ describe("Search page is sortable", () => {
             const names = $el
                 .map((_index, html) => Cypress.$(html).text())
                 .get();
-            const sortedNames = names.sort();
+            const sortedNames = [...names].sort((a, b) => {
+                const aFirst = parseFullName(a).first;
+                const bFirst = parseFullName(b).first;
+                return aFirst > bFirst;
+            });
             cy.wrap(names).should("deep.equal", sortedNames);
         });
     });
@@ -32,7 +36,9 @@ describe("Search page is sortable", () => {
                 .map((_index, html) => Cypress.$(html).text())
                 .get();
             const sortedNames = [...names].sort((a, b) => {
-                return a < b;
+                const aFirst = parseFullName(a).first;
+                const bFirst = parseFullName(b).first;
+                return aFirst < bFirst;
             });
             cy.wrap(names).should("deep.equal", sortedNames);
         });
@@ -79,10 +85,10 @@ describe("Search page is sortable", () => {
             const titles = $el
                 .map((_index, html) => Cypress.$(html).text())
                 .get();
-            const sortedNames = [...titles].sort((a, b) => {
+            const sortedTitles = [...titles].sort((a, b) => {
                 return a > b;
             });
-            cy.wrap(titles).should("deep.equal", sortedNames);
+            cy.wrap(titles).should("deep.equal", sortedTitles);
         });
     });
 
@@ -94,10 +100,10 @@ describe("Search page is sortable", () => {
             const titles = $el
                 .map((_index, html) => Cypress.$(html).text())
                 .get();
-            const sortedNames = [...titles].sort((a, b) => {
+            const sortedTitles = [...titles].sort((a, b) => {
                 return a < b;
             });
-            cy.wrap(titles).should("deep.equal", sortedNames);
+            cy.wrap(titles).should("deep.equal", sortedTitles);
         });
     });
 });
