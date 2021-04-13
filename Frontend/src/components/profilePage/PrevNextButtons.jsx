@@ -55,6 +55,7 @@ function PrevNextButtons(props) {
     const {
         resultOrder,
         focusedWorkerId,
+        profileLinkedToSeachResults,
         pageNumber,
         searchWithAppliedFilterAction,
         updatePage,
@@ -70,17 +71,25 @@ function PrevNextButtons(props) {
     );
     const foundInResultOrder = index >= 0;
 
-    const prevWorkerId = foundInResultOrder ? resultOrder[index - 1] : null;
-    const nextWorkerId = foundInResultOrder ? resultOrder[index + 1] : null;
+    const prevWorkerId =
+        profileLinkedToSeachResults && foundInResultOrder
+            ? resultOrder[index - 1]
+            : null;
+    const nextWorkerId =
+        profileLinkedToSeachResults && foundInResultOrder
+            ? resultOrder[index + 1]
+            : null;
     React.useEffect(() => {
-        if (!prevWorkerId && validIndex(index - 1)) {
-            searchWithAppliedFilterAction(indexToPageNumber(index - 1));
-        }
-        if (!nextWorkerId && validIndex(index + 1)) {
-            searchWithAppliedFilterAction(indexToPageNumber(index + 1));
-        }
-        if (foundInResultOrder && indexToPageNumber(index) !== pageNumber) {
-            updatePage(indexToPageNumber(index));
+        if (profileLinkedToSeachResults) {
+            if (!prevWorkerId && validIndex(index - 1)) {
+                searchWithAppliedFilterAction(indexToPageNumber(index - 1));
+            }
+            if (!nextWorkerId && validIndex(index + 1)) {
+                searchWithAppliedFilterAction(indexToPageNumber(index + 1));
+            }
+            if (foundInResultOrder && indexToPageNumber(index) !== pageNumber) {
+                updatePage(indexToPageNumber(index));
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
@@ -96,6 +105,7 @@ function PrevNextButtons(props) {
 
 const mapStateToProps = (state) => ({
     focusedWorkerId: state.appState.focusedWorkerId,
+    profileLinkedToSeachResults: state.appState.profileLinkedToSearchResults,
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
 });

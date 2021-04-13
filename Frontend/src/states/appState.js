@@ -3,8 +3,7 @@ export const PageTabIndexEnum = {
     PROFILE: 1,
     ORGCHART: 2,
     NEWCONTRACTOR: 3,
-    UPDATE: 4, // TODO Remove this in final release
-    LOGIN: 5,
+    LOGIN: 4,
 };
 
 export const WorkerTypeEnum = {
@@ -35,4 +34,5 @@ export const defaultAppState = {
         severity: "success",
         message: "test",
     },
+    profileLinkedToSearchResults: false,
 };

@@ -11,7 +11,10 @@ import "./OrgChart.css";
 import React, { useEffect } from "react";
 import { PagePathEnum } from "components/common/constants";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { setSnackbarState } from "actions/generalAction";
+import {
+    setProfileLinkedToSearchResults,
+    setSnackbarState,
+} from "actions/generalAction";
 
 const useStyles = makeStyles({
     card: {
@@ -160,6 +163,7 @@ function OrgChartNode(props) {
         hideBottom,
         setHideBottom,
         setSnackbarState,
+        setProfileLinkedToSearchResults,
     } = props;
 
     // Add classes to display full text in a floating div if name/title is too long
@@ -204,6 +208,7 @@ function OrgChartNode(props) {
                 setHideTop(false);
                 setHideBottom(false);
                 if (!nodeData.isCurrent) {
+                    setProfileLinkedToSearchResults(false);
                     history.push(`${PagePathEnum.ORGCHART}/` + nodeData.id);
                 }
             }}
@@ -303,6 +308,8 @@ function OrgChartNode(props) {
 const mapDispatchToProps = (dispatch) => ({
     setSnackbarState: (snackbarState) =>
         dispatch(setSnackbarState(snackbarState)),
+    setProfileLinkedToSearchResults: (profileLinkedToSearchResults) =>
+        dispatch(setProfileLinkedToSearchResults(profileLinkedToSearchResults)),
 });
 
 export default connect(null, mapDispatchToProps)(OrgChartNode);

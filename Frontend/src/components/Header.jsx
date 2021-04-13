@@ -14,6 +14,7 @@ import "./Header.css";
 import { useLocation } from "react-router";
 import { PagePathEnum } from "./common/constants";
 import { PageTabIndexEnum } from "states/appState";
+import { setProfileLinkedToSearchResults } from "actions/generalAction";
 
 const useStyles = makeStyles({
     tabIndicator: {
@@ -42,7 +43,13 @@ const useStyles = makeStyles({
 });
 
 function Header(props) {
-    const { focusedWorkerId, currWorkerId, isAdmin, currWorkerImgURL } = props;
+    const {
+        focusedWorkerId,
+        currWorkerId,
+        isAdmin,
+        currWorkerImgURL,
+        setProfileLinkedToSearchResults,
+    } = props;
     const [currentTabIndex, setCurrentTabIndex] = React.useState(
         props.activeTabIndex
     );
@@ -163,6 +170,7 @@ function Header(props) {
                             to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
                             onClick={() => {
                                 handlePopoverClose();
+                                setProfileLinkedToSearchResults(false);
                                 setCurrentTabIndex(PageTabIndexEnum.PROFILE);
                             }}
                         >
@@ -174,6 +182,7 @@ function Header(props) {
                             to={`${PagePathEnum.ORGCHART}/${currWorkerId}`}
                             onClick={() => {
                                 handlePopoverClose();
+                                setProfileLinkedToSearchResults(false);
                                 setCurrentTabIndex(PageTabIndexEnum.ORGCHART);
                             }}
                         >
@@ -208,4 +217,9 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(Header);
+const mapDispatchToProps = (dispatch) => ({
+    setProfileLinkedToSearchResults: (profileLinkedToSearchResults) =>
+        dispatch(setProfileLinkedToSearchResults(profileLinkedToSearchResults)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
