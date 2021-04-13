@@ -153,6 +153,7 @@ function CollapsableCategoryBox(props) {
                 button
                 className="category"
                 onClick={handleExpandMoreClick}
+                data-cy={`category-title-${label}`}
             >
                 <ListItemText primary={label} className="category-text" />
                 {!expanded ? (
@@ -161,7 +162,12 @@ function CollapsableCategoryBox(props) {
                     <ExpandLessIcon className="expand-icon" />
                 )}
             </ListItem>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <Collapse
+                in={expanded}
+                timeout="auto"
+                unmountOnExit
+                data-cy={`category-checkboxes-${label}`}
+            >
                 {children}
             </Collapse>
         </>

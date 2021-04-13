@@ -126,13 +126,13 @@ function SearchByNameBar(props) {
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
-            data-cy="search-by-name"
             renderInput={(params) => (
                 <TextField
                     {...params}
                     variant="outlined"
                     label="Search by name"
                     size="small"
+                    data-cy="search-by-name"
                 />
             )}
             renderOption={(option, state) => {
