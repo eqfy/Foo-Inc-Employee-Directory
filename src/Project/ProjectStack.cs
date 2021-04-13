@@ -100,23 +100,6 @@ namespace Project
             });
 
 
-            //Lambdas
-            //"./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"
-            lambda.Function getEmployees = new lambda.Function(this, "getEmployees", new lambda.FunctionProps
-            {
-                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
-                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
-                Handler = "Handler::Handler.Function::Get",
-                Vpc = vpc,
-                VpcSubnets = selection,
-                AllowPublicSubnet = true,
-                Timeout = Duration.Seconds(60),
-                MemorySize = 512,
-                //SecurityGroups = new[] {SG}
-                SecurityGroups = new[] { securityGroup }
-                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
-            });
-
             //APIGateway
             string[] cors_headers = { "Content-Type", "X-Amz-Date,Authorization", "X-Api-Key", "X-Amz-Security-Token" };
 
@@ -173,30 +156,7 @@ namespace Project
             {
                 AuthorizationType = apiGateway.AuthorizationType.COGNITO,
                 Authorizer = cognitoAuthorizer,
-                
             };
-
-            apiGateway.Resource employeeResource = api.Root.AddResource("employee");
-            apiGateway.LambdaIntegration getEmployeeIntegration = new apiGateway.LambdaIntegration(getEmployees);
-            apiGateway.Method getEmployeeMethod = employeeResource.AddMethod("GET", getEmployeeIntegration);
-       
-            lambda.Function getEmployeeByName = new lambda.Function(this, "getEmployeeByName", new lambda.FunctionProps
-            {
-                Runtime = lambda.Runtime.DOTNET_CORE_3_1,
-                Code = lambda.Code.FromAsset("./Handler/src/Handler/bin/Release/netcoreapp3.1/publish"),
-                Handler = "Handler::Handler.Function::GetByName",
-                Vpc = vpc,
-                VpcSubnets = selection,
-                AllowPublicSubnet = true,
-                Timeout = Duration.Seconds(60),
-                MemorySize = 512,
-                //SecurityGroups = new[] {SG}
-                SecurityGroups = new[] { securityGroup }
-                //SecurityGroups = new[] {ec2.SecurityGroup.FromSecurityGroupId(this,"lambdasecurity", database.Connections.SecurityGroups[0].SecurityGroupId)}
-            });
-            apiGateway.Resource employeeByNameResource = api.Root.AddResource("employeeByName");
-            apiGateway.LambdaIntegration getEmployeeByNameIntegration = new apiGateway.LambdaIntegration(getEmployeeByName);
-            apiGateway.Method getEmployeeByNameMethod = employeeByNameResource.AddMethod("GET", getEmployeeByNameIntegration);
 
             lambda.Function getAllFilters = new lambda.Function(this, "getAllFilters", new lambda.FunctionProps
             {
@@ -452,7 +412,6 @@ namespace Project
             databaseScriptsBucket.GrantRead(databaseDropAllLambda);
             databaseScriptsBucket.GrantRead(getOrgChart);
             databaseScriptsBucket.GrantRead(getAllFilters);
-            databaseScriptsBucket.GrantRead(getEmployeeByName);
             databaseScriptsBucket.GrantRead(search);
             databaseScriptsBucket.GrantRead(getEmployeeID);
             databaseScriptsBucket.GrantRead(addContractor);
@@ -486,16 +445,6 @@ namespace Project
             });
 
             //Add database information to the lambdas
-            getEmployees.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
-            getEmployees.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
-            getEmployees.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-
-            getEmployeeByName.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
-            getEmployeeByName.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
-            getEmployeeByName.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
-            getEmployeeByName.AddEnvironment("OBJECT_KEY", "getByName.sql");
-            getEmployeeByName.AddEnvironment("BUCKET_NAME", databaseScriptsBucket.BucketName);
-
             search.AddEnvironment("RDS_ENDPOINT", database.DbInstanceEndpointAddress);
             search.AddEnvironment("RDS_PASSWORD", databasePassword.ToString());
             search.AddEnvironment("RDS_NAME", database.InstanceIdentifier);
