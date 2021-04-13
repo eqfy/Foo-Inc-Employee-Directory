@@ -133,6 +133,7 @@ function SearchByNameBar(props) {
                     variant="outlined"
                     label="Search by name"
                     size="small"
+                    data-cy="search-by-name"
                 />
             )}
             renderOption={(option, state) => {

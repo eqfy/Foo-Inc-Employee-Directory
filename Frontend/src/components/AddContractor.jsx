@@ -24,16 +24,16 @@ import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import MuiPhoneNumber from "material-ui-phone-number";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import MenuItem from "@material-ui/core/MenuItem";
 import { getPredictiveSearchAPI } from "../../src/api/predictiveSearchAPI";
 import { parseFullName } from "parse-full-name";
 import { PagePathEnum } from "./common/constants";
 import { Storage } from "aws-amplify";
 import config from "../config";
 import { coordinatedDebounce } from "./common/helpers";
+import { setSnackbarState } from 'actions/generalAction';
 
 function AddContractor(props) {
-    const { filterData, isAdmin } = props;
+    const { filterData, isAdmin, setSnackbarState } = props;
 
     const classes = useStyles();
     const { companyAllId, locationAllId, skillAllId } = filterData;
@@ -194,13 +194,10 @@ function AddContractor(props) {
     }
 
     function showSnackbar(severity, message) {
-        let snackBar = formState.snackBar;
-        snackBar["severity"] = severity;
-        snackBar["isOpen"] = true;
-        snackBar["message"] = message;
-        setFormState({
-            ...formState,
-            snackBar,
+        setSnackbarState({
+            open: true,
+            severity,
+            message,
         });
     }
 
@@ -530,12 +527,15 @@ function AddContractor(props) {
                             variant="outlined"
                             label="Supervisor"
                             size="small"
+                            name="supervisor"
                             required
                         />
                     )}
                     renderOption={(option) =>
                         formState.loadingState["supervisor"] ? (
-                            <div className={"search-dropdown-entry"}>
+                            <div 
+                                className={"search-dropdown-entry"}
+                                data-cy="loading-supervisor-result">
                                 <CircularProgress
                                     size={"20px"}
                                     classes={{ root: classes.loading }}
@@ -576,24 +576,22 @@ function AddContractor(props) {
                     }}
                 />
                 <br></br>
-                <TextField
-                    id="outlined-select-employment-type"
-                    select
-                    label="Employment type"
-                    variant="outlined"
-                    name="employmentType"
+                <Autocomplete
+                    options={["Hourly","Salary"]}
+                    getOptionLabel={(option) => option}
                     className={classes.textField}
-                    size="small"
-                    required
-                    defaultValue=""
-                >
-                    <MenuItem key="hourly" value="hourly">
-                        Hourly
-                    </MenuItem>
-                    <MenuItem key="salary" value="salary">
-                        Salary
-                    </MenuItem>
-                </TextField>
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            placeholder="Hourly"
+                            name="employmentType"
+                            variant="outlined"
+                            label="Employment Type"
+                            size="small"
+                            required
+                        />
+                    )}
+                />
                 <TextField
                     label="Years Prior Experience"
                     name="YPE"
@@ -602,6 +600,7 @@ function AddContractor(props) {
                     type="number"
                     InputProps={{ inputProps: { min: 0, max: 70 } }}
                     className={classes.textField}
+                    required
                 />
                 <br></br>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -733,27 +732,28 @@ function AddContractor(props) {
                             variant="outlined"
                             label="Skill"
                             size="small"
+                            name="skill"
                         />
                     )}
                 />
                 <div
                     className={classes.submitBtnWrapper}>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        className={classes.submitBtn}
-                    >
-                        {" "}
-                        {formState.loadingState["submit"] ? (
-                            <CircularProgress
-                                size={"20px"}
-                                className={classes.loading}
-                            />
-                        ) : (
-                            "Add contractor"
-                        )}
-                    </Button>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    className={classes.submitBtn}
+                >
+                    {" "}
+                    {formState.loadingState["submit"] ? (
+                        <CircularProgress
+                            size={"20px"}
+                            className={classes.loading}
+                        />
+                    ) : (
+                        "Add contractor"
+                    )}
+                </Button>
                 </div>
             </form>
             <Snackbar
@@ -781,7 +781,12 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default withRouter(connect(mapStateToProps)(AddContractor));
+const mapDispatchToProps = (dispatch) => ({
+    setSnackbarState: (snackbarState) => dispatch(setSnackbarState(snackbarState)),
+});
+
+export default withRouter(connect(mapStateToProps, 
+    mapDispatchToProps)(AddContractor));
 
 const useStyles = makeStyles(() => ({
     root: {
