@@ -130,6 +130,7 @@ function EmployeeCard(props) {
                     variant="body1"
                     color="textPrimary"
                     component="span"
+                    data-cy={`employee-card-${type.toLowerCase()}`}
                 >
                     <b>{type}: </b>
                     <span>{content}</span>
