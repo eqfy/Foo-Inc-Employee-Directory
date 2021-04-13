@@ -148,7 +148,7 @@ function AddContractor(props) {
             })
             .catch((err) => {
                 // handle errors
-                console.log(err);
+                console.error(err);
             })
             .finally(() => {
                 updateLoadingState("officeCode", false);
@@ -182,7 +182,7 @@ function AddContractor(props) {
             })
             .catch((err) => {
                 // handle errors
-                console.log(err);
+                console.error(err);
             })
             .finally(() => {
                 updateLoadingState("groupCode", false);
@@ -291,10 +291,9 @@ function AddContractor(props) {
                 });
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 showSnackbar("error", "Image upload failed");
             });
-        console.log(formState.profilePic);
     }
 
     const saveProfilePicture = (e) => {
@@ -397,7 +396,7 @@ function AddContractor(props) {
                 showSnackbar("success", "Contractor added successfully");
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 // update snackbar failed
                 showSnackbar(
                     "error",
