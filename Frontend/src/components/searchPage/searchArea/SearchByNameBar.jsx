@@ -126,7 +126,6 @@ function SearchByNameBar(props) {
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
-            data-cy="search-by-name"
             renderInput={(params) => (
                 <TextField
                     {...params}
