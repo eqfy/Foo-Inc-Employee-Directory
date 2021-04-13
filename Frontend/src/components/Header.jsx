@@ -73,8 +73,6 @@ function Header(props) {
                     ? PageTabIndexEnum.NEWCONTRACTOR
                     : PageTabIndexEnum.LOGIN
             );
-        } else if (pathname.startsWith(PagePathEnum.UPDATE)) {
-            setCurrentTabIndex(PageTabIndexEnum.UPDATE);
         } else if (pathname.startsWith(PagePathEnum.LOGIN)) {
             setCurrentTabIndex(PageTabIndexEnum.LOGIN);
         }
@@ -124,12 +122,6 @@ function Header(props) {
                             classes={{ root: classes.tab }}
                             component={Link}
                             to={`${PagePathEnum.NEWCONTRACTOR}`}
-                        />
-                        <Tab
-                            label="Update Note"
-                            classes={{ root: classes.tab }}
-                            component={Link}
-                            to={`${PagePathEnum.UPDATE}`}
                         />
                         <Tab
                             classes={{ root: classes.myProfile }}
