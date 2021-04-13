@@ -143,15 +143,15 @@ describe("Search and filter", () => {
 
         // Go to profile page and verify that worker is a contractor
         cy.get("[data-cy=employee-card]", { timeout }).first().click();
-        cy.get(".heading").contains("Contractor");
+        cy.get(".heading").should("contain.text", "Contractor");
 
         // Filter by regular employee
         cy.contains("Search Home").click();
         cy.get(".MuiSelect-root").contains("Contractor").click();
         cy.get('[data-value="employee"]').click();
 
-        // Go to profile page and verify that worker is a contractor
+        // Go to profile page and verify that worker is not a contractor
         cy.get("[data-cy=employee-card]", { timeout }).first().click();
-        cy.get(".heading").contains("Contractor").should("not.exist");
+        cy.get(".heading").should("not.contain.text", "Contractor");
     });
 });

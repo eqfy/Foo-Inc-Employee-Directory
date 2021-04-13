@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe("Search page search by name", () => {
     const baseUrl = Cypress.env("baseUrl");
     const timeout = Cypress.env("timeoutInMs");
@@ -29,7 +31,15 @@ describe("Search page search by name", () => {
 
         // Check that existing filters are cleared and name is the only filter
         cy.get(".MuiChip-label").should("have.length", 1);
-        cy.get(".MuiChip-label").contains("Searched name: Gregore Da Silva");
+        cy.get(".MuiChip-label").should(
+            "contain.text",
+            "Searched name: Gregore Da Silva"
+        );
+
+        // Check that there is one result
+        cy.get('[data-cy="employee-card"]')
+            .should("have.length", 1)
+            .should("contain.text", "Gregore Da Silva");
 
         // Delete the name filter and check if search by name bar is coordinated
         cy.get(".MuiAutocomplete-endAdornment").click();
@@ -51,7 +61,7 @@ describe("Search page search by name", () => {
         cy.get('[data-cy="loading-name-result"]', {
             timeout,
         }).should("not.exist");
-        cy.get(".search-dropdown-entry").contains("found");
+        cy.get(".search-dropdown-entry").should("contain.text", "found");
         cy.get(".search-dropdown-entry", {
             timeout,
         })
@@ -61,22 +71,25 @@ describe("Search page search by name", () => {
 
         // Check that existing filters are cleared and name is the only filter
         cy.get(".MuiChip-label").should("have.length", 1);
-        cy.get(".MuiChip-label").contains("Searched name: Buzz Aldrin");
+        cy.get(".MuiChip-label").should(
+            "contain.text",
+            "Searched name: Buzz Aldrin"
+        );
 
         // Check that there are two results
         cy.get('[data-cy="employee-card"]')
             .should("have.length", 2)
-            .contains("Buzz Aldrin");
+            .should("contain.text", "Buzz Aldrin");
 
         // Selects Sales as a department filter by dropdown
         cy.get("[data-cy=expand-department-filters]").click();
         cy.get('[data-cy="Sales checkbox"]').click();
-        cy.get(".MuiChip-label").contains("Sales");
+        cy.get(".MuiChip-label").should("contain.text", "Sales");
         cy.get(".MuiChip-label").should("have.length", 2);
 
         // Check that there is now only one result
         cy.get('[data-cy="employee-card"]')
             .should("have.length", 1)
-            .contains("Buzz Aldrin");
+            .should("contain.text", "Buzz Aldrin");
     });
 });

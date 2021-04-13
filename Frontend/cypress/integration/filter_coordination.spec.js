@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe("Filter coordination", () => {
     const baseUrl = Cypress.env("baseUrl");
     const timeout = Cypress.env("timeoutInMs");
