@@ -4,7 +4,7 @@ describe("Org chart", () => {
     const baseUrl = Cypress.env("baseUrl");
     const timeout = Cypress.env("timeoutInMs");
 
-    const hierachy = {
+    const hierarchy = {
         10001: {
             10001: [10002, 10101],
         },
@@ -18,17 +18,20 @@ describe("Org chart", () => {
 
     // check whether worker is valid, and optionally check for skills to search transition
     const checkValidWorker = (workerId) => {
-        if (!hierachy[workerId]) {
+        if (!hierarchy[workerId]) {
             cy.contains(
                 "Sorry, there is no employee or contractor with matching id."
             ).should("exist");
         } else {
-            const currentHierachy = hierachy[workerId];
-            const firstLevelId = Object.keys(currentHierachy)[0];
+            // check for current
+            cy.get(`#${workerId}`).find(".current").should("exist");
+
+            const currentHierarchy = hierarchy[workerId];
+            const firstLevelId = Object.keys(currentHierarchy)[0];
             const firstLevelDiv = () => cy.get(`#${firstLevelId}`);
             firstLevelDiv().should("exist");
 
-            const secondLevel = currentHierachy[firstLevelId];
+            const secondLevel = currentHierarchy[firstLevelId];
             for (const peer of secondLevel) {
                 if (typeof peer === "number") {
                     // no subordinate
@@ -108,6 +111,7 @@ describe("Org chart", () => {
 
         cy.visit(`${baseUrl}/profile/20104`);
 
+        cy.get('[data-cy="loading-profile"]').should("exist");
         cy.get('[data-cy="loading-profile"]').should("not.exist");
 
         cy.contains("Organization Chart").click();

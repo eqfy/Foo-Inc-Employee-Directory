@@ -104,16 +104,13 @@ describe("Predictive search by filters", () => {
             const expectedResult = validWorkers[workerId];
             card()
                 .find(`.card-name-${workerId}`)
-                .contains(expectedResult.name)
-                .should("exist");
+                .should("contain.text", expectedResult.name);
             card()
                 .find(`.card-title-${workerId}`)
-                .contains(expectedResult.title)
-                .should("exist");
+                .should("contain.text", expectedResult.title);
             card()
                 .find(`.card-email-${workerId}`)
-                .contains(expectedResult.email)
-                .should("exist");
+                .should("contain.text", expectedResult.email);
 
             // check core info
             const coreInfo = () =>
@@ -121,8 +118,10 @@ describe("Predictive search by filters", () => {
             for (let counter = 0; counter < coreInfoKeys.length; counter++) {
                 coreInfo()
                     .eq(counter)
-                    .contains(expectedResult[coreInfoKeys[counter]])
-                    .should("exist");
+                    .should(
+                        "contain.text",
+                        expectedResult[coreInfoKeys[counter]]
+                    );
             }
 
             // check skills
@@ -132,13 +131,12 @@ describe("Predictive search by filters", () => {
                     `[data-cy="profile-skill-group-${skillCategory}"]`
                 );
             if (Object.keys(expectedResult.skills).length === 0) {
-                skills().contains("No skills").should("exist");
+                skills().should("contain.text", "No skills");
             } else {
                 for (const skillCategory in expectedResult.skills) {
                     skillRow(skillCategory)
                         .find("td")
-                        .contains(skillCategory)
-                        .should("exist");
+                        .should("contain.text", skillCategory);
                     for (const skill of expectedResult.skills[skillCategory]) {
                         if (!checkForSkills) {
                             skillRow(skillCategory)
@@ -151,9 +149,10 @@ describe("Predictive search by filters", () => {
                                 .click();
 
                             cy.get(".MuiChip-label").should("have.length", 1);
-                            cy.get(".MuiChip-label")
-                                .contains(`${skill} (${skillCategory})`)
-                                .should("exist");
+                            cy.get(".MuiChip-label").should(
+                                "contain.text",
+                                `${skill} (${skillCategory})`
+                            );
                             cy.contains("Profile View").click();
                         }
                     }
@@ -167,9 +166,10 @@ describe("Predictive search by filters", () => {
                         for (const skill of expectedResult.skills[
                             skillCategory
                         ]) {
-                            cy.get(".MuiChip-label")
-                                .contains(`${skill} (${skillCategory})`)
-                                .should("exist");
+                            cy.get(".MuiChip-label").should(
+                                "contain.text",
+                                `${skill} (${skillCategory})`
+                            );
                             totalSkillCount++;
                         }
                     }
