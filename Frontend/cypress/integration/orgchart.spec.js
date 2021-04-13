@@ -91,20 +91,17 @@ describe("Org chart", () => {
 
         cy.get(".filter-form")
             .contains("Filter by title")
-            .get(`[data-cy="expand-title-filters"]`)
+            .get(`[data-cy="expand-title-filters"]`, { timeout })
             .click();
         cy.get(".filter-list-button").contains("President and CEO").click();
 
-        cy.get('[data-cy="loading-results"]').should("exist");
-        cy.get('[data-cy="loading-results"]', { timeout }).should("not.exist");
-
-        cy.get('[data-cy="employee-card"]')
+        cy.get('[data-cy="employee-card"]', { timeout })
             .find('[data-cy="orgchart-icon-10001"]')
             .click();
 
         cy.get('[data-cy="loading-orgchart"]').should("exist");
         cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
-        
+
         checkValidWorker(10001);
 
         // from profile

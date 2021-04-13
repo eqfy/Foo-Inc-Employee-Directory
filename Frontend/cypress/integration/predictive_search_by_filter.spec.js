@@ -85,7 +85,10 @@ describe("Predictive search by filters", () => {
             cy.get(`[data-cy="expand-${type}-filters"]`).click();
             // do not check initial length of title filters (db could add random titles)
             if (type !== "title") {
-                cy.get(".filter-list-button").should("have.length", initialLength);
+                cy.get(".filter-list-button").should(
+                    "have.length",
+                    initialLength
+                );
             }
             cy.get(`[data-cy="expand-${type}-filters"]`).click();
 
@@ -102,7 +105,7 @@ describe("Predictive search by filters", () => {
                     cy.get(".filter-list-button").should(
                         "have.length",
                         action.results.length
-                    );   
+                    );
                 }
             }
 
@@ -118,15 +121,18 @@ describe("Predictive search by filters", () => {
         cy.get('[data-cy="loading-filters"]').should("exist");
         cy.get('[data-cy="loading-filters"]', { timeout }).should("not.exist");
 
-        const skillArea = cy.get(".filter-form").contains("Filter by skill");
+        const skillArea = () =>
+            cy.get(".filter-form").contains("Filter by skill");
 
         // dependent on database knowledge
         const getCategoryTitle = (category) => {
-            return skillArea.get(`[data-cy="category-title-${category}"]`);
+            return skillArea().get(`[data-cy="category-title-${category}"]`);
         };
 
         const getCategoryCheckboxes = (category) => {
-            return skillArea.get(`[data-cy="category-checkboxes-${category}"]`);
+            return skillArea().get(
+                `[data-cy="category-checkboxes-${category}"]`
+            );
         };
 
         const checkCategoryHasSkills = (cyCategory, array) => {
@@ -141,8 +147,8 @@ describe("Predictive search by filters", () => {
         };
 
         // initial check
-        skillArea.get(`[data-cy="expand-skill-filters"]`).click();
-        skillArea.get(".category").should("have.length", 4);
+        skillArea().get(`[data-cy="expand-skill-filters"]`).click();
+        skillArea().get(".category").should("have.length", 4);
 
         getCategoryCheckboxes("Accounting").should("not.exist");
         getCategoryTitle("Accounting").click();
@@ -185,8 +191,8 @@ describe("Predictive search by filters", () => {
         );
 
         // on click all hidden
-        skillArea.get(`[data-cy="expand-skill-filters"]`).click();
-        skillArea.get(".category").should("not.exist");
+        skillArea().get(`[data-cy="expand-skill-filters"]`).click();
+        skillArea().get(".category").should("not.exist");
         getCategoryCheckboxes("Accounting").should("not.exist");
         getCategoryCheckboxes("Agriculture").should("not.exist");
         getCategoryCheckboxes("Management").should("not.exist");
