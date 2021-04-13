@@ -55,10 +55,11 @@ export const configureCurrUser = () => (dispatch, getState) => {
                 // Initiate a search with the current user's physical location
                 dispatch(searchWithAppliedFilterAction());
             } else {
-                Promise.reject("The current logged in worker does not exist.");
+                dispatch(searchWithAppliedFilterAction());
+                throw new Error("The current logged in worker does not exist.");
             }
         })
         .catch((error) => {
-            console.error("Configure current user failed.\nErr:", error);
+            console.error("Configure current user failed: ", error);
         });
 };
