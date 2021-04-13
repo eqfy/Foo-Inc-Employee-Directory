@@ -1,7 +1,7 @@
 # Foo Inc. Associated Engineering Project
-**Please refer to the Config & Release document for detailed instructions on how to set up this project.**
+**:warning: Please refer to the Config & Release document for detailed instructions on how to set up this project.**
 
-**:warning: Please install/add all tools and configurations first before attempting to deploy.**
+**:warning: Before running the deploy script, you must have all tools and configurations installed and configured correctly!**
 
 When running the deploy script (`./ deploy`) use `-p %your-account-name-here%` to indicate the AWS profile you are using if it isn't the default one. Use `-e prod`, `-e test` or `-e dev` to indicate which environment you want to deploy to. You can change environements at any time but that will require you to run dropAllTables and then initDatabase.
 
