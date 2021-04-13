@@ -14,6 +14,7 @@ import "./Header.css";
 import { useLocation } from "react-router";
 import { PagePathEnum } from "./common/constants";
 import { PageTabIndexEnum } from "states/appState";
+import { setProfileLinkedToSearchResults } from "actions/generalAction";
 
 const useStyles = makeStyles({
     tabIndicator: {
@@ -42,7 +43,13 @@ const useStyles = makeStyles({
 });
 
 function Header(props) {
-    const { focusedWorkerId, currWorkerId, isAdmin, currWorkerImgURL } = props;
+    const {
+        focusedWorkerId,
+        currWorkerId,
+        isAdmin,
+        currWorkerImgURL,
+        setProfileLinkedToSearchResults,
+    } = props;
     const [currentTabIndex, setCurrentTabIndex] = React.useState(
         props.activeTabIndex
     );
@@ -66,8 +73,6 @@ function Header(props) {
                     ? PageTabIndexEnum.NEWCONTRACTOR
                     : PageTabIndexEnum.LOGIN
             );
-        } else if (pathname.startsWith(PagePathEnum.UPDATE)) {
-            setCurrentTabIndex(PageTabIndexEnum.UPDATE);
         } else if (pathname.startsWith(PagePathEnum.LOGIN)) {
             setCurrentTabIndex(PageTabIndexEnum.LOGIN);
         }
@@ -119,12 +124,6 @@ function Header(props) {
                             to={`${PagePathEnum.NEWCONTRACTOR}`}
                         />
                         <Tab
-                            label="Update Note"
-                            classes={{ root: classes.tab }}
-                            component={Link}
-                            to={`${PagePathEnum.UPDATE}`}
-                        />
-                        <Tab
                             classes={{ root: classes.myProfile }}
                             icon={
                                 <Avatar
@@ -163,6 +162,7 @@ function Header(props) {
                             to={`${PagePathEnum.PROFILE}/${currWorkerId}`}
                             onClick={() => {
                                 handlePopoverClose();
+                                setProfileLinkedToSearchResults(false);
                                 setCurrentTabIndex(PageTabIndexEnum.PROFILE);
                             }}
                         >
@@ -174,6 +174,7 @@ function Header(props) {
                             to={`${PagePathEnum.ORGCHART}/${currWorkerId}`}
                             onClick={() => {
                                 handlePopoverClose();
+                                setProfileLinkedToSearchResults(false);
                                 setCurrentTabIndex(PageTabIndexEnum.ORGCHART);
                             }}
                         >
@@ -208,4 +209,9 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(Header);
+const mapDispatchToProps = (dispatch) => ({
+    setProfileLinkedToSearchResults: (profileLinkedToSearchResults) =>
+        dispatch(setProfileLinkedToSearchResults(profileLinkedToSearchResults)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

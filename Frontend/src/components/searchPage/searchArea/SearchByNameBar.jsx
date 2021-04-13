@@ -53,9 +53,9 @@ function SearchByNameBar(props) {
 
     React.useEffect(() => {
         if (inputValue.length >= 2) {
+            setLoading(true);
             coordinatedDebounce((name) => {
                 const { first, last } = parseFullName(name);
-                setLoading(true);
                 getPredictiveSearchAPI(first, last)
                     .then((response) => {
                         const seen = {};
@@ -126,18 +126,23 @@ function SearchByNameBar(props) {
             getOptionLabel={() => inputValue}
             openOnFocus={true}
             freeSolo={true}
+            data-cy="search-by-name"
             renderInput={(params) => (
                 <TextField
                     {...params}
                     variant="outlined"
                     label="Search by name"
                     size="small"
+                    data-cy="search-by-name"
                 />
             )}
             renderOption={(option, state) => {
                 if (loading) {
                     return (
-                        <div className={"search-dropdown-entry"}>
+                        <div
+                            className={"search-dropdown-entry"}
+                            data-cy="loading-name-result"
+                        >
                             <CircularProgress
                                 size={"20px"}
                                 classes={{ root: classes.loading }}
@@ -161,9 +166,9 @@ function SearchByNameBar(props) {
                             ) : (
                                 <div className="grouped-options">
                                     <span className="grouped-count">
-                                        {Math.min(option.count, 5)}
+                                        {Math.min(option.count, 3)}
                                     </span>{" "}
-                                    {option.count > 5 ? (
+                                    {option.count > 3 ? (
                                         <>
                                             <AddIcon className="grouped-count-icon" />
                                             <span className="grouped-count-text text-with-add">

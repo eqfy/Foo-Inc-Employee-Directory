@@ -92,6 +92,12 @@ export default function appStateReducer(state = defaultAppState, action) {
                 ...state,
                 snackbarState: action.payload.snackbarState,
             };
+        case "SET_PROFILE_LINKED_TO_SEARCH_RESULTS":
+            return {
+                ...state,
+                profileLinkedToSearchResults:
+                    action.payload.profileLinkedToSearchResults,
+            };
         default:
             return state;
     }

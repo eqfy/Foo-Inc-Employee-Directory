@@ -24,16 +24,16 @@ import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import MuiPhoneNumber from "material-ui-phone-number";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import MenuItem from "@material-ui/core/MenuItem";
 import { getPredictiveSearchAPI } from "../../src/api/predictiveSearchAPI";
 import { parseFullName } from "parse-full-name";
 import { PagePathEnum } from "./common/constants";
 import { Storage } from "aws-amplify";
 import config from "../config";
 import { coordinatedDebounce } from "./common/helpers";
+import { setSnackbarState } from 'actions/generalAction';
 
 function AddContractor(props) {
-    const { filterData, isAdmin } = props;
+    const { filterData, isAdmin, setSnackbarState } = props;
 
     const classes = useStyles();
     const { companyAllId, locationAllId, skillAllId } = filterData;
@@ -148,7 +148,7 @@ function AddContractor(props) {
             })
             .catch((err) => {
                 // handle errors
-                console.log(err);
+                console.error(err);
             })
             .finally(() => {
                 updateLoadingState("officeCode", false);
@@ -182,7 +182,7 @@ function AddContractor(props) {
             })
             .catch((err) => {
                 // handle errors
-                console.log(err);
+                console.error(err);
             })
             .finally(() => {
                 updateLoadingState("groupCode", false);
@@ -194,13 +194,10 @@ function AddContractor(props) {
     }
 
     function showSnackbar(severity, message) {
-        let snackBar = formState.snackBar;
-        snackBar["severity"] = severity;
-        snackBar["isOpen"] = true;
-        snackBar["message"] = message;
-        setFormState({
-            ...formState,
-            snackBar,
+        setSnackbarState({
+            open: true,
+            severity,
+            message,
         });
     }
 
@@ -227,19 +224,26 @@ function AddContractor(props) {
 
         let fieldsStatusIsValid = formState.fieldsStatusIsValid;
         let errors = formState.errors;
-        switch (fieldName) {
-            case "email":
-                fieldsStatusIsValid[fieldName] = regexHelper(
-                    fieldValue,
-                    fieldName
-                );
-                errors[fieldName] = "Incorrect email format";
-                setFormState({
-                    ...formState,
-                    fieldsStatusIsValid,
-                    errors,
-                });
 
+        const verifyField = (errorMsg = "") => {
+            fieldsStatusIsValid[fieldName] = regexHelper(fieldValue, fieldName);
+            errors[fieldName] = errorMsg;
+            setFormState({
+                ...formState,
+                fieldsStatusIsValid,
+                errors,
+            });
+        };
+
+        switch (fieldName) {
+            case "firstName":
+                verifyField("Invalid first name");
+                break;
+            case "lastName":
+                verifyField("Invalid last name");
+                break;
+            case "email":
+                verifyField("Incorrect email format");
                 break;
             default: {
             }
@@ -247,6 +251,12 @@ function AddContractor(props) {
     };
 
     function regexHelper(fieldValue, fieldName) {
+        if (fieldName === "firstName" && fieldValue.length > 0) {
+            return fieldValue.trim() !== "";
+        }
+        if (fieldName === "lastName" && fieldValue.length > 0) {
+            return fieldValue.trim() !== "";
+        }
         if (fieldName === "email" && fieldValue !== "")
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue);
         return true;
@@ -278,10 +288,9 @@ function AddContractor(props) {
                 });
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 showSnackbar("error", "Image upload failed");
             });
-        console.log(formState.profilePic);
     }
 
     const saveProfilePicture = (e) => {
@@ -336,6 +345,14 @@ function AddContractor(props) {
         }
 
         // validate email field
+        if (!regexHelper(event.target.firstName.value, "firstName")) {
+            showSnackbar("error", "Operation failed. First name is invalid.");
+            return;
+        }
+        if (!regexHelper(event.target.lastName.value, "lastName")) {
+            showSnackbar("error", "Operation failed. Last name is invalid.");
+            return;
+        }
         if (!regexHelper(event.target.email.value, "email")) {
             showSnackbar("error", "Operation failed. Email field is invalid.");
             return;
@@ -346,8 +363,8 @@ function AddContractor(props) {
         await uploadProfilePicture();
 
         const details = {
-            FirstName: event.target.firstName.value,
-            LastName: event.target.lastName.value,
+            FirstName: event.target.firstName.value.trim(),
+            LastName: event.target.lastName.value.trim(),
             Email: event.target.email.value,
             WorkPhone: event.target.workPhone.value,
             WorkCell:
@@ -376,7 +393,7 @@ function AddContractor(props) {
                 showSnackbar("success", "Contractor added successfully");
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 // update snackbar failed
                 showSnackbar(
                     "error",
@@ -502,19 +519,23 @@ function AddContractor(props) {
                         option.employeeNumber === value.employeeNumber
                     }
                     className={classes.textField}
+                    noOptionsText="No supervisors found"
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            placeholder="James Smith"
+                            placeholder="Search Supervisor"
                             variant="outlined"
                             label="Supervisor"
                             size="small"
+                            name="supervisor"
                             required
                         />
                     )}
                     renderOption={(option) =>
                         formState.loadingState["supervisor"] ? (
-                            <div className={"search-dropdown-entry"}>
+                            <div 
+                                className={"search-dropdown-entry"}
+                                data-cy="loading-supervisor-result">
                                 <CircularProgress
                                     size={"20px"}
                                     classes={{ root: classes.loading }}
@@ -555,24 +576,22 @@ function AddContractor(props) {
                     }}
                 />
                 <br></br>
-                <TextField
-                    id="outlined-select-employment-type"
-                    select
-                    label="Employment type"
-                    variant="outlined"
-                    name="employmentType"
+                <Autocomplete
+                    options={["Hourly","Salary"]}
+                    getOptionLabel={(option) => option}
                     className={classes.textField}
-                    size="small"
-                    required
-                    defaultValue=""
-                >
-                    <MenuItem key="hourly" value="hourly">
-                        Hourly
-                    </MenuItem>
-                    <MenuItem key="salary" value="salary">
-                        Salary
-                    </MenuItem>
-                </TextField>
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            placeholder="Hourly"
+                            name="employmentType"
+                            variant="outlined"
+                            label="Employment Type"
+                            size="small"
+                            required
+                        />
+                    )}
+                />
                 <TextField
                     label="Years Prior Experience"
                     name="YPE"
@@ -581,6 +600,7 @@ function AddContractor(props) {
                     type="number"
                     InputProps={{ inputProps: { min: 0, max: 70 } }}
                     className={classes.textField}
+                    required
                 />
                 <br></br>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -712,9 +732,12 @@ function AddContractor(props) {
                             variant="outlined"
                             label="Skill"
                             size="small"
+                            name="skill"
                         />
                     )}
                 />
+                <div
+                    className={classes.submitBtnWrapper}>
                 <Button
                     type="submit"
                     variant="contained"
@@ -731,6 +754,7 @@ function AddContractor(props) {
                         "Add contractor"
                     )}
                 </Button>
+                </div>
             </form>
             <Snackbar
                 open={formState.snackBar["isOpen"]}
@@ -757,13 +781,17 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default withRouter(connect(mapStateToProps)(AddContractor));
+const mapDispatchToProps = (dispatch) => ({
+    setSnackbarState: (snackbarState) => dispatch(setSnackbarState(snackbarState)),
+});
+
+export default withRouter(connect(mapStateToProps, 
+    mapDispatchToProps)(AddContractor));
 
 const useStyles = makeStyles(() => ({
     root: {
-        width: "50%",
-        marginLeft: "auto",
-        marginRight: "auto",
+        display: "flex",
+        justifyContent:"center",
     },
     input: {
         display: "none",
@@ -782,6 +810,10 @@ const useStyles = makeStyles(() => ({
     skillsTextField: {
         minWidth: 230,
         maxWidth: 480,
+    },
+    submitBtnWrapper: {
+        display: "flex",
+        justifyContent:"center",
     },
     submitBtn: {
         width: 200,
