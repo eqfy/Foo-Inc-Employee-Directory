@@ -1,6 +1,8 @@
 {
   "env": {
     "baseUrl": "http://localhost:3000",
-    "timeoutInMs": 30000
+    "timeoutInMs": 30000,
+    "adminUsername": "andre",
+    "adminPassword": "Pass123!"
   }
 }

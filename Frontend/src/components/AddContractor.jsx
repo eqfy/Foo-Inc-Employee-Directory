@@ -601,6 +601,7 @@ function AddContractor(props) {
                     type="number"
                     InputProps={{ inputProps: { min: 0, max: 70 } }}
                     className={classes.textField}
+                    required
                 />
                 <br></br>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>

@@ -2,11 +2,12 @@
 
 describe("Add contractor tests", () => {
     const baseUrl = Cypress.env("baseUrl");
-    const adminUsername = "andre";
-    const adminPassword = "Pass123!";
+    const timeout = Cypress.env("timeoutInMs");
+    const adminUsername = Cypress.env("adminUsername");
+    const adminPassword = Cypress.env("adminPassword");
     const testFirstName = "Johnie"+new Date().getTime();
     const testEmail = testFirstName+"@gmail.com";
-    const domWait = 3000;
+    const domWait = 3000; //ms
 
     beforeEach(() => {
         cy.visit(baseUrl+'/addContractor');
@@ -14,7 +15,7 @@ describe("Add contractor tests", () => {
         cy.get('[name=username]').type(adminUsername);
         cy.get('[name=password]').type(adminPassword);
         cy.get('button[type=submit]').click();
-        cy.url().should('eq', baseUrl+'/addContractor');
+        cy.url({timeout}).should('eq', baseUrl+'/addContractor');
       })
       
     it("should add a contractor", () => {
@@ -125,18 +126,14 @@ describe("Add contractor tests", () => {
             cy.get('[name=lastName]').type('Doe');
             cy.get('[name=email]').type(testEmail);
             cy.get('[name=workPhone]').type('2345678910');
-            cy.get('[name=title]').type('Contractor');
-            cy.get('[name=YPE]').type('10');
-          })
-
-          cy.intercept({
-            method: 'PUT',
-            url: '/addContractor',
-            onRequest: () => {
-              throw new Error('Should not have sent request to add contractor')
-            }
           })
 
         cy.get('button[type=submit]').click();
+
+        cy.get('input:invalid').should('have.length', 6);
+        // eslint-disable-next-line jest/valid-expect-in-promise
+        cy.get('[name=title]').invoke('prop', 'validationMessage')
+        .should('equal', 'Please fill out this field.');
+
     });
 });
