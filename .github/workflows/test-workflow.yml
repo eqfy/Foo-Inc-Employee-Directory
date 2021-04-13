@@ -32,7 +32,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           dotnet tool install -g Amazon.Lambda.Tools
           chmod 700 deployBackend.sh
-          ./deployBackend.sh -c -e dev
+          ./deployBackend.sh -c -e test
       # Install frontend packages
       - name: Install packages
         run: |
