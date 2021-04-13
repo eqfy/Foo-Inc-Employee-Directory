@@ -11,6 +11,8 @@ import { PagePathEnum } from "components/common/constants";
 import { coordinatedDebounce } from "components/common/helpers";
 import { parseFullName } from "parse-full-name";
 import { HelpButton } from "components/common/HelpButton";
+import { setProfileLinkedToSearchResults } from "actions/generalAction";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
     searchRect: {
@@ -27,6 +29,7 @@ const useStyles = makeStyles({
 const predictiveSearchTimer = {};
 
 function OrgChartSearchBar(props) {
+    const { setProfileLinkedToSearchResults } = props;
     const history = useHistory();
     const classes = useStyles();
     const [options, setOptions] = React.useState([]);
@@ -94,6 +97,7 @@ function OrgChartSearchBar(props) {
                             setInputValue(
                                 option.firstName + " " + option.lastName
                             );
+                            setProfileLinkedToSearchResults(false);
                             history.push(
                                 `${PagePathEnum.ORGCHART}/` +
                                     option.employeeNumber
@@ -118,11 +122,16 @@ function OrgChartSearchBar(props) {
     );
 }
 
-export default function OrgChartSearchLegendArea() {
+function OrgChartSearchLegendArea(props) {
+    const { setProfileLinkedToSearchResults } = props;
     return (
         <div id="searchLegendArea">
             <div id="searchArea">
-                <OrgChartSearchBar />
+                <OrgChartSearchBar
+                    setProfileLinkedToSearchResults={
+                        setProfileLinkedToSearchResults
+                    }
+                />
             </div>
             <ul id="legend">
                 <li>
@@ -168,3 +177,10 @@ export default function OrgChartSearchLegendArea() {
         </div>
     );
 }
+
+const mapDispatchToProps = (dispatch) => ({
+    setProfileLinkedToSearchResults: (profileLinkedToSearchResults) =>
+        dispatch(setProfileLinkedToSearchResults(profileLinkedToSearchResults)),
+});
+
+export default connect(null, mapDispatchToProps)(OrgChartSearchLegendArea);

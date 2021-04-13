@@ -30,6 +30,17 @@ export const setSnackbarState = (snackbarState) => (dispatch) => {
     });
 };
 
+export const setProfileLinkedToSearchResults = (
+    profileLinkedToSearchResults
+) => (dispatch) => {
+    dispatch({
+        type: "SET_PROFILE_LINKED_TO_SEARCH_RESULTS",
+        payload: {
+            profileLinkedToSearchResults,
+        },
+    });
+};
+
 export const configureCurrUser = () => (dispatch, getState) => {
     // Get the current employee number from the cookies, if non exist then default to the one in the redux state
     let currWorkerId = Cookies.get("CurrentEmployeeNumber");

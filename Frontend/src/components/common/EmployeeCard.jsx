@@ -11,7 +11,11 @@ import "../common/Common.css";
 import React, { useEffect } from "react";
 import { PagePathEnum } from "./constants";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { setSnackbarState } from "actions/generalAction";
+import {
+    setFocusedWorkerId,
+    setProfileLinkedToSearchResults,
+    setSnackbarState,
+} from "actions/generalAction";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles({
@@ -114,7 +118,13 @@ const useStyles = makeStyles({
 
 function EmployeeCard(props) {
     // linkToProfile: employeeCard in profile page does not need to redirect to itself
-    const { employee, linkToProfile, setSnackbarState } = props;
+    const {
+        employee,
+        linkToProfile,
+        setSnackbarState,
+        setProfileLinkedToSearchResults,
+        setFocusedWorkerId,
+    } = props;
     const classes = useStyles();
 
     const history = useHistory();
@@ -186,6 +196,9 @@ function EmployeeCard(props) {
             classes={{ root: classes.cardContent }}
             onClick={(e) => {
                 if (linkToProfile) {
+                    console.log("hello");
+                    setFocusedWorkerId(employee.employeeNumber);
+                    setProfileLinkedToSearchResults(true);
                     history.push(
                         `${PagePathEnum.PROFILE}/${employee.employeeNumber}`
                     );
@@ -224,6 +237,10 @@ function EmployeeCard(props) {
                 <PositionOrgChartIconDiv>
                     <Link
                         to={`${PagePathEnum.ORGCHART}/${employee.employeeNumber}`}
+                        onClick={() => {
+                            setFocusedWorkerId(employee.employeeNumber);
+                            setProfileLinkedToSearchResults(true);
+                        }}
                     >
                         <StyledOrgChartIcon
                             workerId={employee.employeeNumber}
@@ -239,6 +256,9 @@ function EmployeeCard(props) {
 const mapDispatchToProps = (dispatch) => ({
     setSnackbarState: (snackbarState) =>
         dispatch(setSnackbarState(snackbarState)),
+    setProfileLinkedToSearchResults: (profileLinkedToSearchResults) =>
+        dispatch(setProfileLinkedToSearchResults(profileLinkedToSearchResults)),
+    setFocusedWorkerId: (workerId) => dispatch(setFocusedWorkerId(workerId)),
 });
 
 export default connect(null, mapDispatchToProps)(EmployeeCard);

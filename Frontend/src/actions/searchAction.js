@@ -6,11 +6,15 @@ import {
     setFiltersChanged,
     setResultLoading,
 } from "./filterAction";
+import { setProfileLinkedToSearchResults } from "./generalAction";
 
 export const searchWithAppliedFilterAction = (pageNumberOverride) => (
     dispatch,
     getState
 ) => {
+    // unlink profile from search results
+    dispatch(setProfileLinkedToSearchResults(false));
+
     const currState = getState();
     const {
         appState: { filtersChanged },

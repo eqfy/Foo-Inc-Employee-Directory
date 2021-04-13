@@ -6,6 +6,4 @@ export const PagePathEnum = {
     ORGCHART: "/orgchart",
     NEWCONTRACTOR: "/addContractor",
     LOGIN: "/login",
-    // TODO: remove after update
-    UPDATE: "/update",
 };
