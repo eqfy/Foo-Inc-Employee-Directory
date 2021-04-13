@@ -13,7 +13,7 @@ export const searchWithAppliedFilterAction = (pageNumberOverride) => (
     getState
 ) => {
     // unlink profile from search results
-    setProfileLinkedToSearchResults(false)(dispatch);
+    dispatch(setProfileLinkedToSearchResults(false));
 
     const currState = getState();
     const {
