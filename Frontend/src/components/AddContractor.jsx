@@ -30,7 +30,10 @@ import { PagePathEnum } from "./common/constants";
 import { Storage } from "aws-amplify";
 import config from "../config";
 import { coordinatedDebounce } from "./common/helpers";
-import { setSnackbarState } from 'actions/generalAction';
+import { setSnackbarState } from "actions/generalAction";
+
+// counter for timeout in case of supervisor input change
+const predictiveSearchTimer = {};
 
 function AddContractor(props) {
     const { filterData, isAdmin, setSnackbarState } = props;
@@ -61,8 +64,6 @@ function AddContractor(props) {
         selectedSkills: [],
     };
     const [formState, setFormState] = React.useState(defaultState);
-    // counter for timeout in case of supervisor input change
-    const predictiveSearchTimer = {};
 
     React.useEffect(() => {
         if (
@@ -504,10 +505,10 @@ function AddContractor(props) {
                 />
                 <Autocomplete
                     options={
-                        formState.supervisor["allSupervisors"]
-                            ? formState.supervisor["allSupervisors"]
-                            : formState.loadingState["supervisor"]
+                        formState.loadingState["supervisor"]
                             ? ["loading"]
+                            : formState.supervisor["allSupervisors"]
+                            ? formState.supervisor["allSupervisors"]
                             : []
                     }
                     getOptionLabel={() =>
@@ -532,10 +533,12 @@ function AddContractor(props) {
                         />
                     )}
                     renderOption={(option) =>
+                        option === "loading" ||
                         formState.loadingState["supervisor"] ? (
-                            <div 
+                            <div
                                 className={"search-dropdown-entry"}
-                                data-cy="loading-supervisor-result">
+                                data-cy="loading-supervisor-result"
+                            >
                                 <CircularProgress
                                     size={"20px"}
                                     classes={{ root: classes.loading }}
@@ -577,7 +580,7 @@ function AddContractor(props) {
                 />
                 <br></br>
                 <Autocomplete
-                    options={["Hourly","Salary"]}
+                    options={["Hourly", "Salary"]}
                     getOptionLabel={(option) => option}
                     className={classes.textField}
                     renderInput={(params) => (
@@ -736,24 +739,23 @@ function AddContractor(props) {
                         />
                     )}
                 />
-                <div
-                    className={classes.submitBtnWrapper}>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    className={classes.submitBtn}
-                >
-                    {" "}
-                    {formState.loadingState["submit"] ? (
-                        <CircularProgress
-                            size={"20px"}
-                            className={classes.loading}
-                        />
-                    ) : (
-                        "Add contractor"
-                    )}
-                </Button>
+                <div className={classes.submitBtnWrapper}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        className={classes.submitBtn}
+                    >
+                        {" "}
+                        {formState.loadingState["submit"] ? (
+                            <CircularProgress
+                                size={"20px"}
+                                className={classes.loading}
+                            />
+                        ) : (
+                            "Add contractor"
+                        )}
+                    </Button>
                 </div>
             </form>
             <Snackbar
@@ -782,16 +784,18 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    setSnackbarState: (snackbarState) => dispatch(setSnackbarState(snackbarState)),
+    setSnackbarState: (snackbarState) =>
+        dispatch(setSnackbarState(snackbarState)),
 });
 
-export default withRouter(connect(mapStateToProps, 
-    mapDispatchToProps)(AddContractor));
+export default withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(AddContractor)
+);
 
 const useStyles = makeStyles(() => ({
     root: {
         display: "flex",
-        justifyContent:"center",
+        justifyContent: "center",
     },
     input: {
         display: "none",
@@ -813,7 +817,7 @@ const useStyles = makeStyles(() => ({
     },
     submitBtnWrapper: {
         display: "flex",
-        justifyContent:"center",
+        justifyContent: "center",
     },
     submitBtn: {
         width: 200,
