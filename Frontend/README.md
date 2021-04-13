@@ -1,6 +1,10 @@
 # Foo Inc Frontend
 
-This directory contains the frontend code for the Foo Inc. Associated Engineering project.
+**:warning: Please install/add all tools and configurations first from the Config & Release document**
+
+This directory contains the frontend code for the Foo Inc. Associated Engineering project. This project is bootstrapped with [Create React App](https://github.com/facebook/create-react-app). 
+
+Before running the scripts from below, please run `yarn` to install all frontend dependencies.
 
 ## File Structure
 All source code is in the `./src` directory
@@ -11,12 +15,9 @@ All source code is in the `./src` directory
 + `./src/assets` contains assets for this project
 + `./src/components` contains the main UI components and related logic
 + `./src/mocks` contains mock backend API responses
-+ `./src/reducers` contains Redux reducers. **Purely for updating Redux store, NO transformation of data is done here!**
++ `./src/reducers` contains Redux reducers
 + `./src/states` contains default and mock states
 
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
@@ -30,10 +31,9 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `yarn test`
+### `yarn cypress`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the Cypress app where you can run all of the E2E tests. Be sure to run `yarn start` first or else the Cypress tests will not be able to run.
 
 ### `yarn build`
 
@@ -44,6 +44,12 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `yarn test` 
+**(Currently does nothing because all of our tests are handled by `yarn cypress`)**
+
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `yarn eject`
 
