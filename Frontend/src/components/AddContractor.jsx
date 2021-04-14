@@ -121,7 +121,7 @@ function AddContractor(props) {
         }
     };
 
-    async function handleCompanyTextFieldChange(event, values) {
+    async function handleCompanyTextFieldChange(event, values, reason) {
         // get office locations
         let selectedCompanyCode = formState.selectedCompanyCode;
         let officeCodesField = formState.officeCodesField;
@@ -131,13 +131,16 @@ function AddContractor(props) {
         groupCodesField["isVisible"] = false;
         groupCodesField["options"] = [];
         selectedCompanyCode["value"] = values;
-        updateLoadingState("officeCode", true);
         setFormState({
             ...formState,
             selectedCompanyCode,
             officeCodesField,
             groupCodesField,
         });
+
+        if (reason === "clear") return;
+
+        updateLoadingState("officeCode", true);
         await getOfficeLocations(values)
             .then((response) => {
                 officeCodesField["isVisible"] = true;
@@ -156,16 +159,19 @@ function AddContractor(props) {
             });
     }
 
-    async function handleOfficeTextFieldChange(event, values) {
+    async function handleOfficeTextFieldChange(event, values, reason) {
         // get group codes
         let groupCodesField = formState.groupCodesField;
         groupCodesField["isVisible"] = false;
         groupCodesField["options"] = [];
-        updateLoadingState("groupCode", true);
         setFormState({
             ...formState,
             groupCodesField,
         });
+
+        if (reason === "clear") return;
+
+        updateLoadingState("groupCode", true);
 
         let requestPayload = {
             companyName: formState.selectedCompanyCode["value"],
