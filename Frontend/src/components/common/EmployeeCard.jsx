@@ -196,7 +196,6 @@ function EmployeeCard(props) {
             classes={{ root: classes.cardContent }}
             onClick={(e) => {
                 if (linkToProfile) {
-                    console.log("hello");
                     setFocusedWorkerId(employee.employeeNumber);
                     setProfileLinkedToSearchResults(true);
                     history.push(
