@@ -5,18 +5,6 @@
 
 When running the deploy script (`./ deploy`) use `-p %your-account-name-here%` to indicate the AWS profile you are using if it isn't the default one. Use `-e prod`, `-e test` or `-e dev` to indicate which environment you want to deploy to. You can change environements at any time but that will require you to run dropAllTables and then initDatabase.
 
-## Deploy instructions: Start folder is **Foo-inc/**
-* cd Handler/src/Handler
-* dotnet build -c Release
-* dotnet tool install -g Amazon.Lambda.Tools  **only if you haven't already done this before**
-* dotnet lambda package
-* cd ../../..
-* cd Frontend
-* yarn build
-* cd ..
-* cdk deploy ProjectStack --outputs-file Frontend/build/endpoint.json
-* cdk deploy FrontendStack
-
 ## How to initialize the Database
 After deploying everything else:
 * go to the AWS console in your browser
