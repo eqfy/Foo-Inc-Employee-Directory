@@ -1,12 +1,12 @@
 import { defaultAppState } from "./appState";
 import { defaultFilterState } from "./filterState";
 import { defaultOrgChartState } from "./orgChartState";
-import { defualtSearchPageState } from "./searchPageState";
+import { defaultSearchPageState } from "./searchPageState";
 import { defaultWorkerState } from "./workerState";
 
 const defaultRootState = {
     appState: defaultAppState,
-    searchPageState: defualtSearchPageState,
+    searchPageState: defaultSearchPageState,
     orgChartState: defaultOrgChartState,
     workers: defaultWorkerState,
     filters: defaultFilterState,

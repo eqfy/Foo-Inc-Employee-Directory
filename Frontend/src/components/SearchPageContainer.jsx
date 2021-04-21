@@ -46,6 +46,6 @@ const useStyles = makeStyles({
         minWidth: 250,
     },
     filterAndResultAreaItem: {
-        minWidth: 1040,
+        minWidth: 1300,
     },
 });

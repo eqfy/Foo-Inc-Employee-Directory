@@ -6,12 +6,15 @@ export const SortKeyEnum = {
 
 export const ResultEntryPerPage = 8;
 
+export const ResultEntryCountListGridRatio = 2;
+
 export const PagesToFetch = 10;
 
-export const defualtSearchPageState = {
+export const defaultSearchPageState = {
     resultOrder: [],
     pageNumber: 1,
     isAscending: true,
+    isListView: false,
     sortKey: SortKeyEnum.FIRST_NAME,
     resultLoading: true,
 };
