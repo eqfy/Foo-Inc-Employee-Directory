@@ -51,10 +51,6 @@
     padding-top: 6px;
 }
 
-.apply-filter .expand-icon {
-    color: rgba(0, 0, 0, 0.54);
-}
-
 .apply-filter .filter-list-button {
     padding-left: 6px;
     padding-top: 0;
@@ -70,8 +66,31 @@
     font-weight: 500;
 }
 
+.apply-filter .MuiOutlinedInput-adornedEnd {
+    padding-right: 6px;
+}
+
+.apply-filter .filter-bar-adornment {
+    display: flex;
+    align-items: center;
+}
+
 .apply-filter .expand-more {
     padding: 0;
+    display: inline;
+}
+
+.apply-filter .expand-icon {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.apply-filter .and-or-btn {
+    display: inline;
+    min-width: 0;
+    width: 32px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.763);
+    padding: 3px 0;
 }
 
 .apply-filter .categorized-filter-list {

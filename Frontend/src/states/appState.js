@@ -1,3 +1,5 @@
+import { AndOrEnum } from "./filterState";
+
 export const PageTabIndexEnum = {
     SEARCH: 0,
     PROFILE: 1,
@@ -21,6 +23,7 @@ export const defaultAppState = {
     ready: true,
     filtersChanged: false,
     skillState: {},
+    skillAndOr: AndOrEnum.AND,
     locationState: [],
     titleState: [],
     departmentState: [],
