@@ -280,7 +280,7 @@ function ResultsAreaListView(props) {
                             Phone
                         </TableCell>
                         <TableCell classes={{ root: classes.headRow }}>
-                            Division
+                            Department
                         </TableCell>
                         <TableCell classes={{ root: classes.headRow }}>
                             Location
@@ -306,12 +306,4 @@ export default connect(null, mapDispatchToProps)(ResultsAreaListView);
 
 const StyledOrgChartIcon = styled(OrgChartIcon)`
     transform: matrix(0.7, 0, 0, 0.7, 0, 2);
-    rect {
-        transition: fill 0.25s;
-    }
-    &:hover {
-        rect {
-            fill: midnightblue;
-        }
-    }
 `;

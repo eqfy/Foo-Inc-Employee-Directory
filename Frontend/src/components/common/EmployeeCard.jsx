@@ -272,14 +272,6 @@ const PositionOrgChartIconDiv = styled.div`
 
 const StyledOrgChartIcon = styled(OrgChartIcon)`
     position: absolute;
-    rect {
-        transition: fill 0.25s;
-    }
-    &:hover {
-        rect {
-            fill: midnightblue;
-        }
-    }
 `;
 
 // This is to provide the absolute elements a coordination, and not hiding them

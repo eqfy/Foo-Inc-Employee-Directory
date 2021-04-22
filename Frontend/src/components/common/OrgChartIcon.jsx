@@ -1,9 +1,17 @@
 import React from "react";
+import styled from "styled-components";
 
-export default function OrgChartIcon(props) {
+function OrgChartIcon(props) {
     const { workerId, ...rest } = props;
     return (
-        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" data-cy={`orgchart-icon-${workerId}`} {...rest}>
+        <svg
+            width="24"
+            height="25"
+            viewBox="0 0 24 25"
+            fill="none"
+            data-cy={`orgchart-icon-${workerId}`}
+            {...rest}
+        >
             <rect x="8" width="8" height="9" fill="#C4C4C4" />
             <rect x="16" y="16" width="8" height="9" fill="#C4C4C4" />
             <rect y="16" width="8" height="9" fill="#C4C4C4" />
@@ -15,3 +23,14 @@ export default function OrgChartIcon(props) {
         </svg>
     );
 }
+
+export default styled(OrgChartIcon)`
+    rect {
+        transition: fill 0.25s;
+    }
+    &:hover {
+        rect {
+            fill: midnightblue;
+        }
+    }
+`;
