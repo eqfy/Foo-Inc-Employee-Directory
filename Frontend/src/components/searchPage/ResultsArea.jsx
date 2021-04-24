@@ -1,5 +1,4 @@
 import React from "react";
-import EmployeeCard from "../common/EmployeeCard";
 import Pagination from "@material-ui/lab/Pagination";
 import styled from "styled-components";
 import "../common/Common.css";
@@ -7,22 +6,26 @@ import { setPageAction } from "actions/searchAction";
 import { connect } from "react-redux";
 import Fade from "@material-ui/core/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { ResultEntryPerPage } from "states/searchPageState";
+import {
+    ResultEntryCountListGridRatio,
+    ResultEntryPerPage,
+} from "states/searchPageState";
 import { setFocusedWorkerId } from "actions/generalAction";
 import Grid from "@material-ui/core/Grid";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import ResultsAreaGridView from "./ResultsAreaGridView";
+import ResultsAreaListView from "./ResultsAreaListView";
 
 const gridWidth = 260;
-const gridHeight = 265;
 
 const useStyles = makeStyles({
-    loading: {
-        color: "#00569c",
-    },
     gridContainer: {
         width: gridWidth * 4,
         marginLeft: "auto",
         marginRight: "auto",
+    },
+    loading: {
+        color: "#00569c",
     },
 });
 
@@ -31,53 +34,22 @@ function ResultsArea(props) {
         pageNumber,
         updatePage,
         resultOrder,
+        isListView,
         workers: { byId },
         loading,
-        focusedWorkerId,
         setFocusedWorkerId,
     } = props;
 
     const handleChange = (_event, value) => {
-        if (value !== pageNumber) {
-            updatePage(value);
+        const targetValue = isListView
+            ? ResultEntryCountListGridRatio * value - 1
+            : value;
+        if (targetValue !== pageNumber) {
+            updatePage(targetValue);
         }
     };
 
     const styles = useStyles();
-
-    const emptyDiv = () => {
-        return <div style={{ height: gridHeight }}></div>;
-    };
-
-    const getEmployee = (index) => {
-        if (offset + index < resultOrder.length) {
-            const employeeId = resultOrder[offset + index];
-            const employee = employeeId && byId[employeeId];
-            return employee ? (
-                <EmployeeCard
-                    employee={employee}
-                    linkToProfile={true}
-                    focusedWorkerId={focusedWorkerId}
-                    setFocusedWorkerId={setFocusedWorkerId}
-                />
-            ) : (
-                emptyDiv()
-            );
-        }
-        return emptyDiv();
-    };
-
-    const offset = (pageNumber - 1) * ResultEntryPerPage;
-    const employeeList = [];
-
-    for (let i = 0; i < ResultEntryPerPage; i++) {
-        const employee = getEmployee(i);
-        employeeList.push(
-            <Grid item xs={3} key={i}>
-                {employee}
-            </Grid>
-        );
-    }
 
     return (
         <LoadingResult loading={loading} hasResult={resultOrder.length > 0}>
@@ -88,17 +60,42 @@ function ResultsArea(props) {
                     justify="center"
                     classes={{ root: styles.gridContainer }}
                 >
-                    {employeeList}
+                    {isListView ? (
+                        // @ts-ignore
+                        <ResultsAreaListView
+                            pageNumber={pageNumber}
+                            byId={byId}
+                            resultOrder={resultOrder}
+                            setFocusedWorkerId={setFocusedWorkerId}
+                        />
+                    ) : (
+                        // @ts-ignore
+                        <ResultsAreaGridView
+                            pageNumber={pageNumber}
+                            byId={byId}
+                            resultOrder={resultOrder}
+                            setFocusedWorkerId={setFocusedWorkerId}
+                        />
+                    )}
                     <Grid item xs={12}>
                         <StyledPagination
                             count={Math.max(
                                 Math.ceil(
-                                    resultOrder.length / ResultEntryPerPage
+                                    resultOrder.length /
+                                        ResultEntryPerPage /
+                                        (isListView
+                                            ? ResultEntryCountListGridRatio
+                                            : 1)
                                 ),
                                 1
                             )}
                             siblingCount={3}
-                            page={pageNumber}
+                            page={Math.ceil(
+                                pageNumber /
+                                    (isListView
+                                        ? ResultEntryCountListGridRatio
+                                        : 1)
+                            )}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -154,6 +151,7 @@ const mapStateToProps = (state) => ({
     workers: state.workers,
     resultOrder: state.searchPageState.resultOrder,
     pageNumber: state.searchPageState.pageNumber,
+    isListView: state.searchPageState.isListView,
     loading:
         state.appState.filtersChanged || state.searchPageState.resultLoading,
     focusedWorkerId: state.appState.focusedWorkerId,

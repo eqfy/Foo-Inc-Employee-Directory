@@ -119,3 +119,10 @@ const toggleFilter = (filterId = "", filterState = []) => {
     }
     return filterState;
 };
+
+export const setListViewAction = (isListView) => (dispatch) => {
+    dispatch({
+        type: "SET_LIST_VIEW",
+        payload: isListView,
+    });
+};

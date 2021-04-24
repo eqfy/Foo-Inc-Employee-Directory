@@ -112,11 +112,11 @@ describe("Org chart", () => {
         cy.visit(`${baseUrl}/profile/20104`);
 
         cy.get('[data-cy="loading-profile"]').should("exist");
-        cy.get('[data-cy="loading-profile"]').should("not.exist");
+        cy.get('[data-cy="loading-profile"]', { timeout }).should("not.exist");
 
         cy.contains("Organization Chart").click();
 
-        cy.get('[data-cy="loading-orgchart"]').should("not.exist");
+        cy.get('[data-cy="loading-orgchart"]', { timeout }).should("not.exist");
 
         checkValidWorker(20104);
     });
