@@ -7,6 +7,11 @@ export const filterTypeEnum = {
     NAME: "name",
 };
 
+export const AndOrEnum = {
+    AND: "and",
+    OR: "or",
+};
+
 export const defaultFilterState = {
     byId: {},
     allId: [],

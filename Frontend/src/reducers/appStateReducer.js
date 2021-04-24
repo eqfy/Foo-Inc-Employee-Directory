@@ -32,6 +32,11 @@ export default function appStateReducer(state = defaultAppState, action) {
                 ...state,
                 skillState: action.payload,
             };
+        case "SET_SKILL_LOGIC":
+            return {
+                ...state,
+                skillLogic: action.payload,
+            };
         case "SET_LOCATION":
             return {
                 ...state,

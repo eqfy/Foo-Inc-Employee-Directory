@@ -1,7 +1,8 @@
 import React from "react";
-import { setFilterAction } from "actions/filterAction";
+import { setFilterAction, setSkillLogicAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
+import { AndOrEnum, filterTypeEnum } from "states/filterState";
 import { matchSorter } from "match-sorter";
 import { connect } from "react-redux";
 import { coordinatedDebounce } from "../../common/helpers";
@@ -17,6 +18,7 @@ import Collapse from "@material-ui/core/Collapse";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 
 const FilterTextTimer = {};
 
@@ -26,7 +28,9 @@ function ApplyFilterWidget(props) {
         filterState,
         type,
         isCategorized,
+        skillLogic,
         setFilterAction,
+        setskillLogicAction,
         searchWithAppliedFilterAction,
     } = props;
     const filters = filterData[`${type}AllId`];
@@ -80,6 +84,18 @@ function ApplyFilterWidget(props) {
         setIsPredictive(false);
     };
 
+    const handleAndOrClick = () => {
+        if (skillLogic === AndOrEnum.AND) {
+            setskillLogicAction(AndOrEnum.OR);
+        } else {
+            setskillLogicAction(AndOrEnum.AND);
+        }
+        coordinatedDebounce(
+            searchWithAppliedFilterAction,
+            SearchWithFilterTimer
+        )();
+    };
+
     const textFieldLabel = `Filter by ${type}`;
 
     return (
@@ -93,19 +109,30 @@ function ApplyFilterWidget(props) {
                 data-cy={`${type}-input`}
                 InputProps={{
                     endAdornment: (
-                        <IconButton
-                            type="submit"
-                            className="expand-more expand-icon"
-                            aria-label="expand less"
-                            onClick={handleExpandMoreClick}
-                            data-cy={`expand-${type}-filters`}
-                        >
-                            {!expanded ? (
-                                <ExpandMoreIcon />
-                            ) : (
-                                <ExpandLessIcon />
+                        <span className="filter-bar-adornment">
+                            {type === filterTypeEnum.SKILL && (
+                                <Button
+                                    className="and-or-btn"
+                                    onClick={handleAndOrClick}
+                                    data-cy={`${skillLogic}-${type}-filters`}
+                                >
+                                    {skillLogic}
+                                </Button>
                             )}
-                        </IconButton>
+                            <IconButton
+                                type="submit"
+                                className="expand-more expand-icon"
+                                aria-label="expand more/less"
+                                onClick={handleExpandMoreClick}
+                                data-cy={`expand-${type}-filters`}
+                            >
+                                {!expanded ? (
+                                    <ExpandMoreIcon />
+                                ) : (
+                                    <ExpandLessIcon />
+                                )}
+                            </IconButton>
+                        </span>
                     ),
                 }}
             />
@@ -261,6 +288,7 @@ const mapStateToProps = (state) => {
             titleState = [],
             departmentState = [],
             companyState = [],
+            skillLogic,
         },
     } = state;
     return {
@@ -272,12 +300,15 @@ const mapStateToProps = (state) => {
             departmentState,
             companyState,
         },
+        skillLogic,
     };
 };
 
 const mapDispatchToProps = (dispatch) => ({
     setFilterAction: (filterType, filterId, category) =>
         dispatch(setFilterAction(filterType, filterId, category)),
+    setskillLogicAction: (skillLogic) =>
+        dispatch(setSkillLogicAction(skillLogic)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
 });
