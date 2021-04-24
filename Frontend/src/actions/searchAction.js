@@ -1,4 +1,5 @@
 import { WorkerTypeEnum } from "states/appState";
+import { AndOrEnum } from "states/filterState";
 import { PagesToFetch, ResultEntryPerPage } from "states/searchPageState";
 import { searchWorker } from "../api/search";
 import {
@@ -116,6 +117,7 @@ const createSearchPayload = (state, pageNumberOverride) => {
             firstName = "",
             lastName = "",
             shownWorkerType = WorkerTypeEnum.ALL,
+            skillLogic = AndOrEnum.AND,
         },
         searchPageState: { sortKey, isAscending, pageNumber },
     } = state;
@@ -137,6 +139,7 @@ const createSearchPayload = (state, pageNumberOverride) => {
         fetch: PagesToFetch * ResultEntryPerPage,
         orderBy: sortKey,
         orderDir: isAscending ? "ASC" : "DESC",
+        skillLogic,
     };
     if (firstName !== "" || lastName !== "") {
         payload.firstName = firstName;

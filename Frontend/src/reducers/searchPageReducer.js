@@ -1,7 +1,7 @@
-import { defualtSearchPageState } from "states/searchPageState";
+import { defaultSearchPageState } from "states/searchPageState";
 
 export default function searchPageReducer(
-    state = defualtSearchPageState,
+    state = defaultSearchPageState,
     action
 ) {
     switch (action.type) {
@@ -29,6 +29,11 @@ export default function searchPageReducer(
             return {
                 ...state,
                 sortKey: action.payload,
+            };
+        case "SET_LIST_VIEW":
+            return {
+                ...state,
+                isListView: action.payload,
             };
         case "SET_RESULT_LOADING":
             return {

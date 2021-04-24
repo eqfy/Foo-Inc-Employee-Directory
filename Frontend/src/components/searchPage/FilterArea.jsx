@@ -11,6 +11,7 @@ import {
     setSortKeyAction,
     setSortOrderAction,
     setWorkerTypeAction,
+    setListViewAction,
 } from "actions/filterAction";
 import { coordinatedDebounce } from "../common/helpers";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
@@ -21,6 +22,7 @@ import { filterTypeEnum } from "states/filterState";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
+import CustomSwitch from "components/common/CustomSwitch";
 
 const chipColors = {
     [filterTypeEnum.LOCATION]: "#00D1FF",
@@ -33,7 +35,7 @@ const chipColors = {
 
 function FilterArea(props) {
     const {
-        areaState: { isAscending, sortKey },
+        areaState: { isAscending, sortKey, isListView },
         filterState: {
             firstName,
             lastName,
@@ -48,6 +50,7 @@ function FilterArea(props) {
         setWorkerTypeAction,
         setSortKeyAction,
         setSortOrderAction,
+        setListViewAction,
         searchWithAppliedFilterAction,
         clearNameAction,
         clearAppliedFilters,
@@ -117,6 +120,10 @@ function FilterArea(props) {
         )();
     };
 
+    const handleListViewChange = (event) => {
+        setListViewAction(event.target.checked);
+    };
+
     const handleDelete = (chipToDelete) => () => {
         if (chipToDelete.type === "name") {
             clearNameAction();
@@ -178,6 +185,13 @@ function FilterArea(props) {
                     checked={isAscending}
                     handleChange={handleSortOrderChange}
                 />
+                <CustomSwitch
+                    name="gridListView"
+                    checkedLabel="Grid View"
+                    uncheckedLabel="List View"
+                    checked={isListView}
+                    handleChange={handleListViewChange}
+                />
                 <div className={classes.legend}>
                     <div className={classes.orangeSquare}></div>Contractor
                 </div>
@@ -233,7 +247,7 @@ function FilterArea(props) {
 
 const mapStateToProps = (state) => {
     const {
-        searchPageState: { isAscending, sortKey },
+        searchPageState: { isAscending, sortKey, isListView },
         appState: {
             firstName = "",
             lastName = "",
@@ -250,6 +264,7 @@ const mapStateToProps = (state) => {
         areaState: {
             isAscending,
             sortKey,
+            isListView,
         },
         filterState: {
             firstName,
@@ -271,6 +286,7 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(setWorkerTypeAction(workerTypeFilter)),
     setSortKeyAction: (sortKey) => dispatch(setSortKeyAction(sortKey)),
     setSortOrderAction: (sortOrder) => dispatch(setSortOrderAction(sortOrder)),
+    setListViewAction: (isListView) => dispatch(setListViewAction(isListView)),
     clearNameAction: () => dispatch(clearNameAction()),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),

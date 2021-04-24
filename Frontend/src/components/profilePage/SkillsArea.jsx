@@ -10,6 +10,8 @@ import { setProfileSkills } from "actions/profileAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { useHistory } from "react-router";
 import { PagePathEnum } from "components/common/constants";
+import { setSkillLogicAction } from "actions/filterAction";
+import { AndOrEnum } from "states/filterState";
 
 const useStyles = makeStyles({
     skillTitle: {
@@ -76,7 +78,10 @@ const parseSkillsToTable = (
     for (const skillCategory in skillObject) {
         let skillCounter = 0;
         skillEntries.push(
-            <tr key={`skillGroup${categoryCounter++}`} data-cy={`profile-skill-group-${skillCategory}`}>
+            <tr
+                key={`skillGroup${categoryCounter++}`}
+                data-cy={`profile-skill-group-${skillCategory}`}
+            >
                 <SkillCategoryTd>
                     <StyledTypography
                         display="inline"
@@ -119,7 +124,12 @@ const parseSkillsToTable = (
 };
 
 function SkillsArea(props) {
-    const { employee, setProfileSkills, searchWithAppliedFilterAction } = props;
+    const {
+        employee,
+        setProfileSkills,
+        searchWithAppliedFilterAction,
+        setSkillLogicAction,
+    } = props;
     const styles = useStyles();
     const history = useHistory();
 
@@ -134,6 +144,7 @@ function SkillsArea(props) {
                     disableElevation
                     onClick={() => {
                         setProfileSkills(skillObject);
+                        setSkillLogicAction(AndOrEnum.AND);
                         searchWithAppliedFilterAction();
                         history.push(PagePathEnum.SEARCH);
                     }}
@@ -158,6 +169,8 @@ const mapDispatchToProps = (dispatch) => ({
     setProfileSkills: (skills) => dispatch(setProfileSkills(skills)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
+    setSkillLogicAction: (skillLogic) =>
+        dispatch(setSkillLogicAction(skillLogic)),
 });
 
 const ContainerDiv = styled.div`

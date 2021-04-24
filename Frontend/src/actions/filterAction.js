@@ -82,6 +82,14 @@ export const setNameAction = (workerName) => (dispatch) => {
     dispatch(setFiltersChanged(true));
 };
 
+export const setSkillLogicAction = (skillLogic) => (dispatch) => {
+    dispatch({
+        type: "SET_SKILL_LOGIC",
+        payload: skillLogic,
+    });
+    dispatch(setFiltersChanged(true));
+};
+
 export const clearNameAction = () => (dispatch) => {
     dispatch({ type: "SET_NAME", payload: { firstName: "", lastName: "" } });
     dispatch(setFiltersChanged(true));
@@ -118,4 +126,11 @@ const toggleFilter = (filterId = "", filterState = []) => {
         filterState.splice(currIndex, 1);
     }
     return filterState;
+};
+
+export const setListViewAction = (isListView) => (dispatch) => {
+    dispatch({
+        type: "SET_LIST_VIEW",
+        payload: isListView,
+    });
 };
