@@ -1,5 +1,5 @@
 import React from "react";
-import { setFilterAction, setskillLogicAction } from "actions/filterAction";
+import { setFilterAction, setSkillLogicAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { AndOrEnum, filterTypeEnum } from "states/filterState";
@@ -308,7 +308,7 @@ const mapDispatchToProps = (dispatch) => ({
     setFilterAction: (filterType, filterId, category) =>
         dispatch(setFilterAction(filterType, filterId, category)),
     setskillLogicAction: (skillLogic) =>
-        dispatch(setskillLogicAction(skillLogic)),
+        dispatch(setSkillLogicAction(skillLogic)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
 });
