@@ -117,7 +117,7 @@ const createSearchPayload = (state, pageNumberOverride) => {
             firstName = "",
             lastName = "",
             shownWorkerType = WorkerTypeEnum.ALL,
-            skillAndOr = AndOrEnum.AND,
+            skillLogic = AndOrEnum.AND,
         },
         searchPageState: { sortKey, isAscending, pageNumber },
     } = state;
@@ -139,7 +139,7 @@ const createSearchPayload = (state, pageNumberOverride) => {
         fetch: PagesToFetch * ResultEntryPerPage,
         orderBy: sortKey,
         orderDir: isAscending ? "ASC" : "DESC",
-        skillAndOr,
+        skillLogic,
     };
     if (firstName !== "" || lastName !== "") {
         payload.firstName = firstName;

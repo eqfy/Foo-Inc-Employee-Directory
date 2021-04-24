@@ -82,10 +82,10 @@ export const setNameAction = (workerName) => (dispatch) => {
     dispatch(setFiltersChanged(true));
 };
 
-export const setSkillAndOrAction = (skillAndOr) => (dispatch) => {
+export const setskillLogicAction = (skillLogic) => (dispatch) => {
     dispatch({
-        type: "SET_SKILL_AND_OR",
-        payload: skillAndOr,
+        type: "SET_SKILL_LOGIC",
+        payload: skillLogic,
     });
     dispatch(setFiltersChanged(true));
 };

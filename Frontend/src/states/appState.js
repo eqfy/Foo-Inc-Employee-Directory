@@ -23,7 +23,7 @@ export const defaultAppState = {
     ready: true,
     filtersChanged: false,
     skillState: {},
-    skillAndOr: AndOrEnum.AND,
+    skillLogic: AndOrEnum.AND,
     locationState: [],
     titleState: [],
     departmentState: [],

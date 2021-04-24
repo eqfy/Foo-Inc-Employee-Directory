@@ -1,5 +1,5 @@
 import React from "react";
-import { setFilterAction, setSkillAndOrAction } from "actions/filterAction";
+import { setFilterAction, setskillLogicAction } from "actions/filterAction";
 import { searchWithAppliedFilterAction } from "actions/searchAction";
 import { SearchWithFilterTimer } from "components/SearchPageContainer";
 import { AndOrEnum, filterTypeEnum } from "states/filterState";
@@ -18,8 +18,6 @@ import Collapse from "@material-ui/core/Collapse";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
-import Grid from "@material-ui/core/Grid";
-import Switch from "@material-ui/core/Switch";
 import Button from "@material-ui/core/Button";
 
 const FilterTextTimer = {};
@@ -30,9 +28,9 @@ function ApplyFilterWidget(props) {
         filterState,
         type,
         isCategorized,
-        skillAndOr,
+        skillLogic,
         setFilterAction,
-        setSkillAndOrAction,
+        setskillLogicAction,
         searchWithAppliedFilterAction,
     } = props;
     const filters = filterData[`${type}AllId`];
@@ -87,10 +85,10 @@ function ApplyFilterWidget(props) {
     };
 
     const handleAndOrClick = () => {
-        if (skillAndOr === AndOrEnum.AND) {
-            setSkillAndOrAction(AndOrEnum.OR);
+        if (skillLogic === AndOrEnum.AND) {
+            setskillLogicAction(AndOrEnum.OR);
         } else {
-            setSkillAndOrAction(AndOrEnum.AND);
+            setskillLogicAction(AndOrEnum.AND);
         }
         coordinatedDebounce(
             searchWithAppliedFilterAction,
@@ -116,9 +114,9 @@ function ApplyFilterWidget(props) {
                                 <Button
                                     className="and-or-btn"
                                     onClick={handleAndOrClick}
-                                    data-cy={`${skillAndOr}-${type}-filters`}
+                                    data-cy={`${skillLogic}-${type}-filters`}
                                 >
-                                    {skillAndOr}
+                                    {skillLogic}
                                 </Button>
                             )}
                             <IconButton
@@ -290,7 +288,7 @@ const mapStateToProps = (state) => {
             titleState = [],
             departmentState = [],
             companyState = [],
-            skillAndOr,
+            skillLogic,
         },
     } = state;
     return {
@@ -302,15 +300,15 @@ const mapStateToProps = (state) => {
             departmentState,
             companyState,
         },
-        skillAndOr,
+        skillLogic,
     };
 };
 
 const mapDispatchToProps = (dispatch) => ({
     setFilterAction: (filterType, filterId, category) =>
         dispatch(setFilterAction(filterType, filterId, category)),
-    setSkillAndOrAction: (skillAndOr) =>
-        dispatch(setSkillAndOrAction(skillAndOr)),
+    setskillLogicAction: (skillLogic) =>
+        dispatch(setskillLogicAction(skillLogic)),
     searchWithAppliedFilterAction: () =>
         dispatch(searchWithAppliedFilterAction()),
 });
