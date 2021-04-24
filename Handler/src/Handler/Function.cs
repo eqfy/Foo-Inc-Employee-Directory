@@ -631,12 +631,20 @@ namespace Handler
                 List<string> offsets = EH.getMultiValueQueryStringParameters("offset", request);
                 List<string> fetchs = EH.getMultiValueQueryStringParameters("fetch", request);
                 List<string> orderDir = EH.getMultiValueQueryStringParameters("orderDir", request);
+                var skillLogic = HttpUtility.UrlDecode(request.QueryStringParameters["skillLogic"]);  
 
                 //Create the sql filters from the information we got from the query parameters
                 string skillFilter="";
                 if(skills.Count > 0){
-                    skillFilter = EH.createSkillFilter(skills,ref parameterCounter);
+                  if (skillLogic == "and") {
+                    LambdaLogger.Log("and");
+                    skillFilter = EH.createSkillFilterAnd(skills,ref parameterCounter);
+                  } else {
+                    LambdaLogger.Log("or");
+                    skillFilter = EH.createSkillFilterOr(skills, ref parameterCounter);
+                  }
                 }
+                LambdaLogger.Log("skillFilter" + skillFilter);
 
                 string locationsFilter="";
                 if(locations.Count > 0){

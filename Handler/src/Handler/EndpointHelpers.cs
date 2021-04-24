@@ -19,13 +19,26 @@ public static class EH{
         
     }
 
-    public static string createSkillFilter(List<string> skills, ref int parameterCounter){
+    public static string createSkillFilterAnd(List<string> skills, ref int parameterCounter){
         string skillFilter = "";
         
         for (int i = 0; i < skills.Count; i++ ){
                 skillFilter += " es.\"skills\" LIKE :p"+parameterCounter +  " AND";
                 parameterCounter++;
         }
+        return skillFilter;
+    }
+
+    public static string createSkillFilterOr(List<string> skills, ref int parameterCounter){
+        string skillFilter = " (";
+        for(int i = 0; i < skills.Count; i++){
+            skillFilter += "es.\"skills\" LIKE :p"+parameterCounter++;
+            if(i < skills.Count - 1) {
+                skillFilter += " OR ";
+            }
+        }
+
+        skillFilter += ") AND";
         return skillFilter;
     }
 
