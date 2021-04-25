@@ -22,7 +22,10 @@ import { filterTypeEnum } from "states/filterState";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
-import CustomSwitch from "components/common/CustomSwitch";
+import ToggleButton from "@material-ui/lab/ToggleButton";
+import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
+import ViewListIcon from "@material-ui/icons/ViewList";
+import AppsIcon from "@material-ui/icons/Apps";
 
 const chipColors = {
     [filterTypeEnum.LOCATION]: "#00D1FF",
@@ -120,8 +123,8 @@ function FilterArea(props) {
         )();
     };
 
-    const handleListViewChange = (event) => {
-        setListViewAction(event.target.checked);
+    const handleListViewChange = (event, newValue) => {
+        setListViewAction(newValue === "list");
     };
 
     const handleDelete = (chipToDelete) => () => {
@@ -185,15 +188,34 @@ function FilterArea(props) {
                     checked={isAscending}
                     handleChange={handleSortOrderChange}
                 />
-                <CustomSwitch
-                    name="gridListView"
-                    checkedLabel="Grid View"
-                    uncheckedLabel="List View"
-                    checked={isListView}
-                    handleChange={handleListViewChange}
-                />
-                <div className={classes.legend}>
-                    <div className={classes.orangeSquare}></div>Contractor
+                <div className={classes.listToggleLegendArea}>
+                    <ToggleButtonGroup
+                        value={isListView ? "list" : "grid"}
+                        exclusive
+                        onChange={handleListViewChange}
+                        aria-label="list/grid view"
+                        classes={{
+                            root: classes.listGridViewToggleButtonGroup,
+                        }}
+                    >
+                        <ToggleButton
+                            value="grid"
+                            aria-label="grid view"
+                            classes={{ root: classes.listGridViewToggleButton }}
+                        >
+                            <AppsIcon />
+                        </ToggleButton>
+                        <ToggleButton
+                            value="list"
+                            aria-label="list view"
+                            classes={{ root: classes.listGridViewToggleButton }}
+                        >
+                            <ViewListIcon />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                    <div className={classes.legend}>
+                        <div className={classes.orangeSquare}></div>Contractor
+                    </div>
                 </div>
             </div>
             <div className={classes.skillsBox}>
@@ -341,6 +363,10 @@ const useStyles = makeStyles(() => ({
         width: "100%",
         color: "rgba(0, 0, 0, 0.54)",
     },
+    listToggleLegendArea: {
+        display: "flex",
+        margin: "auto 0 auto auto",
+    },
     legend: {
         display: "flex",
         margin: "auto 15px auto auto",
@@ -351,5 +377,13 @@ const useStyles = makeStyles(() => ({
         backgroundColor: "#FF9900",
         margin: "auto 10px auto 0",
         borderRadius: 3,
+    },
+    listGridViewToggleButton: {
+        width: 40,
+        height: 40,
+    },
+    listGridViewToggleButtonGroup: {
+        float: "right",
+        marginRight: 30,
     },
 }));
