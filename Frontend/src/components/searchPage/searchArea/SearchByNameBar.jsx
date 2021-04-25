@@ -29,6 +29,8 @@ const useStyles = makeStyles({
     },
 });
 
+const countToShowPlus = 9;
+
 function SearchByNameBar(props) {
     // The first search by name returns a list of possible name values
     // If the user then proceeds to click on a name, then we clear all existing filters
@@ -165,9 +167,12 @@ function SearchByNameBar(props) {
                             ) : (
                                 <div className="grouped-options">
                                     <span className="grouped-count">
-                                        {Math.min(option.count, 3)}
+                                        {Math.min(
+                                            option.count,
+                                            countToShowPlus
+                                        )}
                                     </span>{" "}
-                                    {option.count > 3 ? (
+                                    {option.count > countToShowPlus ? (
                                         <>
                                             <AddIcon className="grouped-count-icon" />
                                             <span className="grouped-count-text text-with-add">
