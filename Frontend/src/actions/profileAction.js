@@ -30,16 +30,17 @@ export const setProfile = (workerId) => (dispatch) => {
                     },
                 });
             }
-
+        })
+        .catch((error) => {
+            console.error("Profile endpoint failed.\nErr:", error);
+        })
+        .finally(() => {
             dispatch({
                 type: "SET_READY",
                 payload: {
                     ready: true,
                 },
             });
-        })
-        .catch((error) => {
-            console.error("Profile endpoint failed.\nErr:", error);
         });
 };
 

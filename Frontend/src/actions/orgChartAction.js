@@ -73,15 +73,16 @@ export const setOrgChart = (workerId) => (dispatch) => {
                     },
                 });
             }
-
+        })
+        .catch((error) => {
+            console.error("Org chart endpoint failed.\nErr:", error);
+        })
+        .finally(() => {
             dispatch({
                 type: "SET_READY",
                 payload: {
                     ready: true,
                 },
             });
-        })
-        .catch((error) => {
-            console.error("Org chart endpoint failed.\nErr:", error);
         });
 };

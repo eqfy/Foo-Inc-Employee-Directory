@@ -72,5 +72,6 @@ export const configureCurrUser = () => (dispatch, getState) => {
         })
         .catch((error) => {
             console.error("Configure current user failed: ", error);
+            dispatch(setResultLoading(false));
         });
 };
