@@ -181,11 +181,11 @@ namespace Handler
 
                 if (firstNamePrefix != string.Empty && lastNamePrefix != string.Empty)
                 {
-                    sql += " WHERE LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2 LIMIT 40";
+                    sql += " WHERE LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2";
                 }
                 else
                 {
-                    sql += " WHERE (LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2) OR (LOWER(\"FirstName\") LIKE :p2 AND LOWER(\"LastName\") LIKE :p1) LIMIT 40";
+                    sql += " WHERE (LOWER(\"FirstName\") LIKE :p1 AND LOWER(\"LastName\") LIKE :p2) OR (LOWER(\"FirstName\") LIKE :p2 AND LOWER(\"LastName\") LIKE :p1)";
                 }
 
                 LambdaLogger.Log("sql: " + sql);
@@ -637,14 +637,11 @@ namespace Handler
                 string skillFilter="";
                 if(skills.Count > 0){
                   if (skillLogic == "and") {
-                    LambdaLogger.Log("and");
                     skillFilter = EH.createSkillFilterAnd(skills,ref parameterCounter);
                   } else {
-                    LambdaLogger.Log("or");
                     skillFilter = EH.createSkillFilterOr(skills, ref parameterCounter);
                   }
                 }
-                LambdaLogger.Log("skillFilter" + skillFilter);
 
                 string locationsFilter="";
                 if(locations.Count > 0){
